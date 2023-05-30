@@ -8,7 +8,7 @@ import {
   HumanMessagePromptTemplate,
   SystemMessagePromptTemplate,
 } from "langchain/prompts";
-import { PlaywrightWebBaseLoader } from "langchain/document_loaders/web/playwright";
+// import { PlaywrightWebBaseLoader } from "langchain/document_loaders/web/playwright";
 // import { PuppeteerWebBaseLoader } from "langchain/document_loaders/web/puppeteer";
 // import { PlaywrightWebBaseLoader } from '../../utils/WebLoader';
 // import * as cheerio from "langchain/document_loaders/web/cheerio";
@@ -48,8 +48,8 @@ export default async function handler(req, res) {
     //     waitUntil: "domcontentloaded",
     //   },
     // });
-    const loader = new PlaywrightWebBaseLoader("https://www.bbc.com/news/uk-65746524");
-    const docs = await loader.load();
+    // const loader = new PlaywrightWebBaseLoader("https://www.bbc.com/news/uk-65746524");
+    // const docs = await loader.load();
 
     const llm = new ChatOpenAI({
       openAIApiKey: OPENAI_API_KEY,
@@ -90,7 +90,7 @@ export default async function handler(req, res) {
 
     chain
       .call({
-        input_documents: docs,
+        // input_documents: docs,
         input: body.question,
         chat_history: body.history
       })
