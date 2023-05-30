@@ -181,7 +181,7 @@ export default function Chat() {
             );
           })}
           {!finished && incoming.message && (
-            <CardConvo key={index} message={incoming.message} />
+            <CardConvo message={{ message: incoming.message, role: "ai" }} />
           )}
         </Stack>
 
