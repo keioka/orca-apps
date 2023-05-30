@@ -2,7 +2,7 @@
   "expo": {
     "name": "Olive AI - Learn Lang",
     "slug": "olive",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -32,6 +32,16 @@
       "eas": {
         "projectId": "22841e05-4e2d-4563-b79f-140e7a6d50b3"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "13.0"
+          }
+        }
+      ]
+    ]
   }
 }
