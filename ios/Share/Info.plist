@@ -6,20 +6,6 @@
     <string>app.olive.ai</string>
     <key>HostAppURLScheme</key>
     <string>app.olive.ai</string>
-    <key>HostAppURLScheme</key>
-    <string>app.olive.ai</string>
-    <!-- <key>NSExtension</key>
-                <dict>
-                  <key>NSExtensionAttributes</key>
-                  <dict>
-                    <key>NSExtensionActivationRule</key>
-                    <string>TRUEPREDICATE</string>
-                  </dict>
-                  <key>NSExtensionMainStoryboard</key>
-                  <string>MainInterface</string>
-                  <key>NSExtensionPointIdentifier</key>
-                  <string>com.apple.share-services</string>
-                </dict> -->
     <key>NSExtension</key>
     <dict>
       <key>NSExtensionAttributes</key>
@@ -39,6 +25,32 @@
       <string>MainInterface</string>
       <key>NSExtensionPointIdentifier</key>
       <string>com.apple.share-services</string>
+    </dict>
+    <key>ReactShareViewBackgroundColor</key>
+    <dict>
+      <key>Red</key>
+      <integer>1</integer>
+      <key>Green</key>
+      <integer>1</integer>
+      <key>Blue</key>
+      <integer>1</integer>
+      <key>Alpha</key>
+      <integer>1</integer>
+      <key>Transparent</key>
+      <false/>
+    </dict>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <true/>
+      <key>NSExceptionDomains</key>
+      <dict>
+        <key>localhost</key>
+        <dict>
+          <key>NSExceptionAllowsInsecureHTTPLoads</key>
+          <true/>
+        </dict>
+      </dict>
     </dict>
   </dict>
 </plist>
