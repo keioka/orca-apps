@@ -77,7 +77,7 @@ export default async function handler(req, res) {
     // We can also construct an LLMChain from a ChatPromptTemplate and a chat model.
     const chatPrompt = ChatPromptTemplate.fromPromptMessages([
       SystemMessagePromptTemplate.fromTemplate(
-        "You are a helpful assistant that answers questions as best you can."
+        "You are an English teacher. Asking questions as many as possible one by one and don't talk too much about yourself."
       ),
       HumanMessagePromptTemplate.fromTemplate("{input}"),
     ]);

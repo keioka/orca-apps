@@ -37,6 +37,21 @@ async function enqueuePromise(promise: Promise<HTMLAudioElement>, cb: (audio: HT
   await queuedPromise; // Wait for the enqueued promise to resolve
 }
 
+async function query(data) {
+  const response = await fetch(
+    "https://flowise-j57m.onrender.com/api/v1/prediction/6e944969-9443-423a-9397-cac4563f1683",
+    {
+      headers: {
+        Authorization: "Bearer REDACTED_FLOWISE_API_KEY",
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      body: JSON.stringify(data)
+    }
+  );
+  const result = await response.json();
+  return result;
+}
 
 export default function Chat() {
   const [incoming, setIncoming] = useState({ role: "ai", message: "" });
@@ -59,13 +74,9 @@ export default function Chat() {
 
   useEffect(() => {
     async function fetchMetadata() {
-      console.log(">>>>>>>>>>>")
       try {
         const res = await getMetadata("https://www.bbc.com/news/uk-65746524")
-        console.log(res)
         if (res) {
-          console.log({ res })
-          console.log(res.cover)
           setNewsImageUrl(res.cover)
           setNewsTitle(res.title)
         }
@@ -83,7 +94,24 @@ export default function Chat() {
     }
   }, [finished])
 
+  const handleAsk = async (e) => {
+
+    const res = await query({
+      "question": input,
+      "overrideConfig": {
+        "temperature": 1,
+        "maxTokens": 1,
+        "topP": 1,
+        "frequencyPenalty": 1,
+      }
+    })
+
+    console.log("handleAsk", { res })
+  }
+
   const handleSubmit = async (e) => {
+    handleAsk(e);
+
     e.preventDefault();
 
     setFinished(false);
@@ -101,8 +129,6 @@ export default function Chat() {
       }),
     });
 
-    console.log(res)
-
     if (res.status !== 200) {
       console.error("Error fetching chat stream");
       setFinished(true);
@@ -112,7 +138,6 @@ export default function Chat() {
     setIncoming({ role: "ai", message: "" });
 
     const stream = res.body;
-    console.log(stream)
     const reader = stream.getReader();
 
     const audioQueue: Promise<HTMLAudioElement>[] = []
@@ -130,7 +155,6 @@ export default function Chat() {
         }
 
         const decodedValue = new TextDecoder().decode(value);
-        console.log(decodedValue)
         sentence += decodedValue;
 
         setIncoming(({ role, message }) => ({ role, message: message + decodedValue }));
@@ -150,8 +174,6 @@ export default function Chat() {
       setFinished(true)
     }
   };
-
-  console.log({ newsImageUrl, newsTitle })
 
   return (
     <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
