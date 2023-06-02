@@ -4,7 +4,7 @@ import { Box, Card, CardActions, CardContent, Button, Stack, Grid, Typography, T
 // import Image from "next/image";
 import { CardConvo } from "components/CardConvo";
 
-const apiUrl = 'https://og-link-preview.p.rapidapi.com';
+const apiUrl = '/api/metatag';
 
 async function getMetadata(url: string) {
   try {
@@ -63,12 +63,8 @@ export default function Chat() {
   const [finished, setFinished] = useState(true);
   const [messages, setMessages] = useState([
     {
-      role: "human",
-      message: "hello mr robot 👋",
-    },
-    {
       role: "ai",
-      message: "🤖 beep boop. hi. what do u want",
+      message: "What do you think about the article?",
     },
   ]);
 
@@ -77,7 +73,7 @@ export default function Chat() {
       try {
         const res = await getMetadata("https://www.bbc.com/news/uk-65746524")
         if (res) {
-          setNewsImageUrl(res.cover)
+          setNewsImageUrl(res.image)
           setNewsTitle(res.title)
         }
       } catch (error) {
@@ -116,7 +112,6 @@ export default function Chat() {
 
     setFinished(false);
     setMessages((prev) => [...prev, { role: "human", message: input }]);
-    console.log(input)
 
     const res = await fetch("/api/chatStream", {
       method: "POST",
@@ -181,16 +176,29 @@ export default function Chat() {
         <Grid container spacing={2}>
           <Grid item xs={4}>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <img src={newsImageUrl} width="100%" height="auto" style={{
-                objectFit: "cover",
-              }} />
+              <img
+                src={newsImageUrl}
+                width="100%"
+                height="auto"
+                style={{
+                  objectFit: "cover",
+                }}
+              />
             </Box>
           </Grid>
           <Grid item xs={8}>
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} py={2}>
-              <Typography variant="body1" component="span">
-                {newsTitle}
-              </Typography>
+            <Box>
+              <Stack>
+                <Typography variant="body1" component="span">
+                  {newsTitle}
+                </Typography>
+                <Typography variant="body2" component="span">
+                  {newsTitle}
+                </Typography>
+                <Button variant="contained" color="primary" size="small">
+                  Read more
+                </Button>
+              </Stack>
             </Box>
           </Grid>
         </Grid>
@@ -216,9 +224,12 @@ export default function Chat() {
                 onChange={(e) => setInput(e.target.value)}
                 rows={4}
                 maxLength={200}
-                className="w-full rounded-sm border
-         p-4 text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:outline-none"
                 placeholder={"Ask a question"}
+                inputProps={{
+                  style: {
+                    fontSize: 12,
+                  }
+                }}
               />
               <Box>
                 {finished ? (
