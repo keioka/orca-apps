@@ -1,4 +1,4 @@
-import type { LaunchOptions, Page, Browser } from "playwright";
+import type { LaunchOptions, Page, Browser, chromium, BrowserType } from "playwright";
 import { Document } from 'langchain/document';
 import { BaseDocumentLoader } from 'langchain/document_loaders';
 import type { DocumentLoader } from "langchain/document_loaders";
@@ -22,9 +22,7 @@ export type PlaywrightWebBaseLoaderOptions = {
   evaluate?: PlaywrightEvaluate;
 };
 
-export class PlaywrightWebBaseLoader
-  extends BaseDocumentLoader
-  implements DocumentLoader {
+export class PlaywrightWebBaseLoader extends BaseDocumentLoader implements DocumentLoader {
   options: PlaywrightWebBaseLoaderOptions | undefined;
 
   constructor(
@@ -39,8 +37,6 @@ export class PlaywrightWebBaseLoader
     url: string,
     options?: PlaywrightWebBaseLoaderOptions
   ): Promise<string> {
-    const { chromium } = await PlaywrightWebBaseLoader.imports();
-
     const browser = await chromium.launch({
       headless: true,
       ...options?.launchOptions,
@@ -70,20 +66,5 @@ export class PlaywrightWebBaseLoader
 
     const metadata = { source: this.webPath };
     return [new Document({ pageContent: text, metadata })];
-  }
-
-  static async imports(): Promise<{
-    chromium: typeof import("playwright").chromium;
-  }> {
-    try {
-      const { chromium } = await import("playwright");
-
-      return { chromium };
-    } catch (e) {
-      console.error(e);
-      throw new Error(
-        "Please install playwright as a dependency with, e.g. `yarn add playwright`"
-      );
-    }
   }
 }
