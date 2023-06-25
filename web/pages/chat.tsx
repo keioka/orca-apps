@@ -6,6 +6,11 @@ import { CardConvo } from "components/CardConvo";
 
 const apiUrl = '/api/metatag';
 
+
+const ja = {
+  learningMode: "学習モード",
+}
+
 async function getMetadata(url: string) {
   try {
     const response = await fetch(`${apiUrl}?${new URLSearchParams({ url })}`,
@@ -67,6 +72,8 @@ export default function Chat() {
       message: "What do you think about the article?",
     },
   ]);
+
+  const localeTexts = ja
 
   useEffect(() => {
     async function fetchMetadata() {
@@ -175,11 +182,11 @@ export default function Chat() {
       <Box sx={{ width: "100%" }}>
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Box sx={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "center" }}>
               <img
                 src={newsImageUrl}
                 width="100%"
-                height="auto"
+                height="100%"
                 style={{
                   objectFit: "cover",
                 }}
@@ -189,21 +196,21 @@ export default function Chat() {
           <Grid item xs={8}>
             <Box>
               <Stack>
-                <Typography variant="body1" component="span">
-                  {newsTitle}
-                </Typography>
                 <Typography variant="body2" component="span">
                   {newsTitle}
                 </Typography>
-                <Button variant="contained" color="primary" size="small">
-                  Read more
+                <Typography variant="body2" component="span">
+                  {/* {newsTitle} */}
+                </Typography>
+                <Button variant="contained" color="primary" size="small" lang="ja">
+                  {localeTexts.learningMode}
                 </Button>
               </Stack>
             </Box>
           </Grid>
         </Grid>
       </Box>
-      <Box sx={{ maxWidth: "720px", minWidth: "320px", width: "100%", py: 3, boxSizing: "border-box" }}>
+      <Box sx={{ maxWidth: "720px", minWidth: "320px", width: "100%", py: 3, boxSizing: "border-box", background: "#FAFAFA", minHeight: "100vh" }}>
         <Stack spacing={3} sx={{ overflowY: "scroll", paddingBottom: 32 }}>
           {messages.map((message, index) => {
             return (

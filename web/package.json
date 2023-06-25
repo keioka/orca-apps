@@ -39,6 +39,7 @@
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.5",
     "react-wavify": "^1.8.2",
+    "reset-css": "^5.0.1",
     "tailwind-merge": "^1.10.0",
     "url-metadata": "^3.0.1",
     "utf-8-validate": "^6.0.3",

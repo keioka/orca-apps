@@ -75,8 +75,6 @@ export const config = {
 // }
 
 async function scrape(url: string) {
-  console.log({ url })
-
   const api = `https://lexper.p.rapidapi.com/v1.1/extract?url=${url}&js_timeout=30&media=true`;
   const options = {
     method: 'GET',
@@ -107,8 +105,7 @@ async function scrape(url: string) {
 // }
 
 const qaPrompt = `
-  You are an English teacher. The following are exerpts from conversations with an AI
-  English tutor. The tutor asks questions about the context. Start conversation and ask me question first
+  You are an English teacher. Ask questions based on the context to provide conversational answer without any prior knowledge.
 `
 
 // "You are an English teacher. Ask questions based on the context to provide conversational answer without any prior knowledge."
@@ -175,10 +172,6 @@ export default async function handler(req, res) {
     const store = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings({ openAIApiKey: OPENAI_API_KEY }));
     // const model = new OpenAI({ openAIApiKey: env.OPENAI_API_KEY });
     // const chain = RetrievalQAChain.fromLLM(llm, store.asRetriever());
-    console.log({
-      docs,
-      a: store.asRetriever()
-    })
 
     let chain = ConversationalRetrievalQAChain.fromLLM(
       chatLLM,
@@ -204,10 +197,6 @@ export default async function handler(req, res) {
     // chain.call({ query: query }).catch(console.error);
 
     // We can also construct an LLMChain from a ChatPromptTemplate and a chat model.
-
-
-
-
 
     chain
       .call({
