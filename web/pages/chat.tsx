@@ -180,7 +180,7 @@ export default function Chat() {
   return (
     <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
       <Box sx={{ width: "100%" }}>
-        <Grid container spacing={2}>
+        <Grid container>
           <Grid item xs={4}>
             <Box sx={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "center" }}>
               <img
@@ -194,8 +194,8 @@ export default function Chat() {
             </Box>
           </Grid>
           <Grid item xs={8}>
-            <Box>
-              <Stack>
+            <Box px={2} py={1.5}>
+              <Stack spacing={1}>
                 <Typography variant="body2" component="span">
                   {newsTitle}
                 </Typography>
