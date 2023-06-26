@@ -3,12 +3,15 @@ import { callTextToSpeechAPI } from "utils/client";
 import { Box, Card, CardActions, CardContent, Button, Stack, Grid, Typography, TextField } from "@mui/material";
 // import Image from "next/image";
 import { CardConvo } from "components/CardConvo";
+import { CardLoading } from "components/CardLoading";
+import { ScreenLearningMode } from "components/ScreenLearningMode";
 
 const apiUrl = '/api/metatag';
 
 
 const ja = {
   learningMode: "学習モード",
+  chatMode: "チャットモード",
 }
 
 async function getMetadata(url: string) {
@@ -42,6 +45,11 @@ async function enqueuePromise(promise: Promise<HTMLAudioElement>, cb: (audio: HT
   await queuedPromise; // Wait for the enqueued promise to resolve
 }
 
+enum MODE {
+  CHAT,
+  LEARNING
+}
+
 async function query(data) {
   const response = await fetch(
     "https://flowise-j57m.onrender.com/api/v1/prediction/6e944969-9443-423a-9397-cac4563f1683",
@@ -62,6 +70,7 @@ export default function Chat() {
   const [incoming, setIncoming] = useState({ role: "ai", message: "" });
   const [newsTitle, setNewsTitle] = useState("");
   const [newsImageUrl, setNewsImageUrl] = useState("");
+  const [mode, setMode] = useState<MODE>(MODE.CHAT);
   const [newMessage, setNewMessage] = useState({ role: "ai", message: "" });
   const [input, setInput] = useState("");
   const [history, setHistory] = useState([]);
@@ -202,67 +211,76 @@ export default function Chat() {
                 <Typography variant="body2" component="span">
                   {/* {newsTitle} */}
                 </Typography>
-                <Button variant="contained" color="primary" size="small" lang="ja">
-                  {localeTexts.learningMode}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  lang="ja"
+                  onClick={() => setMode(mode === MODE.LEARNING ? MODE.CHAT : MODE.LEARNING)}
+                >
+                  {mode === MODE.LEARNING ? localeTexts.learningMode : localeTexts.chatMode}
                 </Button>
               </Stack>
             </Box>
           </Grid>
         </Grid>
       </Box>
-      <Box sx={{ maxWidth: "720px", minWidth: "320px", width: "100%", py: 3, boxSizing: "border-box", background: "#FAFAFA", minHeight: "100vh" }}>
-        <Stack spacing={3} sx={{ overflowY: "scroll", paddingBottom: 32 }}>
-          {messages.map((message, index) => {
-            return (
-              <CardConvo key={index} message={message} />
-            );
-          })}
-          {!finished && incoming.message && (
-            <CardConvo message={{ message: incoming.message, role: "ai" }} />
-          )}
-        </Stack>
-
-
-        <Box sx={{ position: "fixed", bottom: 0, left: 0, width: "100%", padding: 3, paddingBottom: 8, background: "#fff", borderTop: "2px solid #f4f4f4", boxSizing: "border-box" }}>
-          <form onSubmit={handleSubmit}>
-            <Stack spacing={2}>
-              <TextField
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                rows={4}
-                maxLength={200}
-                placeholder={"Ask a question"}
-                inputProps={{
-                  style: {
-                    fontSize: 12,
-                  }
-                }}
-              />
-              <Box>
-                {finished ? (
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    color="primary"
-                    size="large"
-                    sx={{
-                      width: "100%",
-                      borderRadius: 2,
-                      color: "#fff",
-                      boxShadow: "none",
-                    }}
-                  >
-                    Submit
-                  </Button>
-                ) : (
-                  <Button disabled>
-                    Thinking
-                  </Button>
-                )}
-              </Box>
+      <Box sx={{ maxWidth: "720px", minWidth: "320px", width: "100%", boxSizing: "border-box", background: "#FAFAFA", minHeight: "100vh" }}>
+        {
+          mode === MODE.LEARNING && <>
+            <ScreenLearningMode />
+          </>
+        }
+        {
+          mode === MODE.CHAT && <>
+            <Stack spacing={3} sx={{ overflowY: "scroll", paddingBottom: 32 }}>
+              {messages.map((message, index) => {
+                return (
+                  <CardConvo key={index} message={message} loading={false} />
+                );
+              })}
+              {!finished &&
+                <CardConvo loading={!incoming.message} message={{ message: incoming.message, role: "ai" }} />
+              }
             </Stack>
-          </form>
-        </Box>
+
+
+            <Box sx={{ position: "fixed", bottom: 0, left: 0, width: "100%", padding: 3, paddingBottom: 8, background: "#fff", borderTop: "2px solid #f4f4f4", boxSizing: "border-box" }}>
+              <form onSubmit={handleSubmit}>
+                <Stack spacing={2}>
+                  <TextField
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    rows={4}
+                    maxLength={200}
+                    placeholder={"Ask a question"}
+                    inputProps={{
+                      style: {
+                        fontSize: 12,
+                      }
+                    }}
+                  />
+                  <Box>
+                    <Button
+                      variant="contained"
+                      type="submit"
+                      color="primary"
+                      size="large"
+                      disabled={!finished}
+                      sx={{
+                        width: "100%",
+                        borderRadius: 2,
+                        color: "#fff",
+                        boxShadow: "none",
+                      }}
+                    >
+                      Talk
+                    </Button>
+                  </Box>
+                </Stack>
+              </form>
+            </Box>
+          </>}
       </Box>
     </Box>
   );
