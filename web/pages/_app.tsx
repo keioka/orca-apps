@@ -55,6 +55,25 @@ const theme = createTheme({
           boxShadow: 'none',
         }
       }
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          padding: "0px 16px",
+          "&.Mui-selected": {
+            borderRadius: "24px",
+            background: "#9FD1D5",
+            color: "#fff",
+            borderBottom: "none",
+            padding: "4px 16px",
+            border: "none"
+          },
+          "& > MuiButtonBase-root": {
+            padding: "14px 16px",
+            border: "none"
+          }
+        }
+      }
     }
   }
 })
