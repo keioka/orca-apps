@@ -59,17 +59,17 @@ const theme = createTheme({
     MuiTab: {
       styleOverrides: {
         root: {
-          padding: "0px 16px",
+          minHeight: "12px !important",
+          padding: "8px 12px !important",
           "&.Mui-selected": {
-            borderRadius: "24px",
+            borderRadius: "4px",
             background: "#9FD1D5",
             color: "#fff",
             borderBottom: "none",
-            padding: "4px 16px",
+            padding: "4px 8px",
             border: "none"
           },
-          "& > MuiButtonBase-root": {
-            padding: "14px 16px",
+          "MuiButton": {
             border: "none"
           }
         }
