@@ -30,14 +30,20 @@ export function ScreenLearningMode() {
           width: '100%',
           py: 2,
           justifyContent: 'center',
+          '& .MuiTabs-flexContainer': {
+            justifyContent: 'center',
+          }
         }}
       >
         <Tab value="one" label="Summary" />
         <Tab value="two" label="Sentence" />
         <Tab value="three" label="Vocabulary" />
-
       </Tabs>
       <Box sx={{ height: "100vh", boxSizing: "border-box" }} p={2}>
+        {/* {value === 'zero' &&
+          <iframe src="https://www.instagram.com" width="100%" height="100%" id="main-frame" allow="fullscreen" />
+        } */}
+
         {value === 'one' &&
 
           <Card sx={{ width: '100%', padding: 2, boxSizing: "border-box" }}>
@@ -69,15 +75,25 @@ export function ScreenLearningMode() {
         {value === 'three' &&
           <Stack spacing={1}>
             <Card sx={{ width: '100%', padding: 2, boxSizing: "border-box" }}>
-              <Typography variant="body2" component="span">
-                "Your community club is ready to provide services at its multiple branches and via its online portals."
-              </Typography>
+              <Stack spacing={1}>
+                <Typography variant="body2" component="span">
+                  Artificial intelligence
+                </Typography>
+                <Typography variant="body2" component="span">
+                  人工知能
+                </Typography>
+              </Stack>
             </Card>
 
             <Card sx={{ width: '100%', padding: 2, boxSizing: "border-box" }}>
-              <Typography variant="body2" component="span">
-                "Your community club is ready to provide services at its multiple branches and via its online portals."
-              </Typography>
+              <Stack spacing={1}>
+                <Typography variant="body2" component="span">
+                  Extinction
+                </Typography>
+                <Typography variant="body2" component="span">
+                  絶滅
+                </Typography>
+              </Stack>
             </Card>
           </Stack>
         }
