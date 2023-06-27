@@ -3,8 +3,8 @@ import { callTextToSpeechAPI } from "utils/client";
 import { Box, Card, CardActions, CardContent, Button, Stack, Grid, Typography, TextField } from "@mui/material";
 // import Image from "next/image";
 import { CardConvo } from "components/CardConvo";
-import { CardLoading } from "components/CardLoading";
 import { ScreenLearningMode } from "components/ScreenLearningMode";
+import { BiLinkExternal } from 'react-icons/bi'
 
 const apiUrl = '/api/metatag';
 
@@ -84,10 +84,12 @@ export default function Chat() {
 
   const localeTexts = ja
 
+  const url = "https://www.bbc.com/news/uk-65746524"
+
   useEffect(() => {
     async function fetchMetadata() {
       try {
-        const res = await getMetadata("https://www.bbc.com/news/uk-65746524")
+        const res = await getMetadata(url)
         if (res) {
           setNewsImageUrl(res.image)
           setNewsTitle(res.title)
@@ -118,7 +120,14 @@ export default function Chat() {
       }
     })
 
-    console.log("handleAsk", { res })
+  }
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      left: 0,
+      top: document.body.scrollHeight,
+      behavior: 'smooth',
+    });
   }
 
   const handleSubmit = async (e) => {
@@ -183,6 +192,7 @@ export default function Chat() {
       reader.releaseLock();
       setIncoming({ role: "ai", message: "" });
       setFinished(true)
+      scrollToBottom()
     }
   };
 
@@ -191,7 +201,7 @@ export default function Chat() {
       <Box sx={{ width: "100%" }}>
         <Grid container>
           <Grid item xs={4}>
-            <Box sx={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "center" }}>
+            <Box sx={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "center", position: "relative" }}>
               <img
                 src={newsImageUrl}
                 width="100%"
@@ -200,6 +210,14 @@ export default function Chat() {
                   objectFit: "cover",
                 }}
               />
+              <a href={url}>
+                <Box sx={{ position: "absolute", bottom: 2, right: 2, padding: 1, background: "rgba(0,0,0,0.4)", borderRadius: 4 }}>
+                  <BiLinkExternal fill="#fff" />
+                </Box>
+              </a>
+            </Box>
+            <Box>
+
             </Box>
           </Grid>
           <Grid item xs={8}>
@@ -218,7 +236,7 @@ export default function Chat() {
                   lang="ja"
                   onClick={() => setMode(mode === MODE.LEARNING ? MODE.CHAT : MODE.LEARNING)}
                 >
-                  {mode === MODE.LEARNING ? localeTexts.learningMode : localeTexts.chatMode}
+                  {mode === MODE.LEARNING ? localeTexts.learningMode : localeTexts.chatMode}に切り替え
                 </Button>
               </Stack>
             </Box>
