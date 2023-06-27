@@ -105,7 +105,8 @@ async function scrape(url: string) {
 // }
 
 const qaPrompt = `
-  You are an English teacher. Ask questions based on the context to provide conversational answer without any prior knowledge.
+  You are an English teacher. 
+  Conduct a conversation with me.
 `
 
 // "You are an English teacher. Ask questions based on the context to provide conversational answer without any prior knowledge."
@@ -143,8 +144,9 @@ export default async function handler(req, res) {
     // const docs = [new Document({ pageContent: text, metadata: { url: "" } })];
 
     const chatLLM = new ChatOpenAI({
+      verbose: true,
       openAIApiKey: OPENAI_API_KEY,
-      temperature: 0.9,
+      temperature: 0,
       streaming: true,
       callbackManager: CallbackManager.fromHandlers({
         handleLLMNewToken: async (token) => {
@@ -162,22 +164,23 @@ export default async function handler(req, res) {
       }),
     });
 
-    // const chatPrompt = ChatPromptTemplate.fromPromptMessages([
-    //   SystemMessagePromptTemplate.fromTemplate(
-    //     "You are an English teacher. Asking questions as many as possible one by one"
-    //   ),
-    //   HumanMessagePromptTemplate.fromTemplate("{input}"),
-    // ]);
+    const chatPrompt = ChatPromptTemplate.fromPromptMessages([
+      SystemMessagePromptTemplate.fromTemplate(
+        "You are an English teacher."
+      ),
+      HumanMessagePromptTemplate.fromTemplate("{input}"),
+    ]);
 
     const store = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings({ openAIApiKey: OPENAI_API_KEY }));
     // const model = new OpenAI({ openAIApiKey: env.OPENAI_API_KEY });
     // const chain = RetrievalQAChain.fromLLM(llm, store.asRetriever());
+    const retriever = store.asRetriever()
 
     let chain = ConversationalRetrievalQAChain.fromLLM(
       chatLLM,
-      store.asRetriever(),
+      retriever,
       {
-        questionGeneratorTemplate: qaPrompt,
+        // questionGeneratorTemplate: qaPrompt,
         qaTemplate: qaPrompt,
         returnSourceDocuments: true
       }
@@ -198,6 +201,9 @@ export default async function handler(req, res) {
 
     // We can also construct an LLMChain from a ChatPromptTemplate and a chat model.
 
+    console.log({
+      body
+    })
     chain
       .call({
         question: body.question,
