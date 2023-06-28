@@ -15,6 +15,7 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { RetrievalQAChain } from "langchain/chains";
 import { OpenAI } from "langchain/llms/openai";
+import { BufferMemory } from "langchain/memory";
 
 // import { PlaywrightWebBaseLoader } from "langchain/document_loaders/web/playwright";
 // import { PuppeteerWebBaseLoader } from "langchain/document_loaders/web/puppeteer";
@@ -166,9 +167,9 @@ export default async function handler(req, res) {
 
     const chatPrompt = ChatPromptTemplate.fromPromptMessages([
       SystemMessagePromptTemplate.fromTemplate(
-        "You are an English teacher."
+        "You are an English teacher. Ask me questions based on the context to provide conversational answer without any prior knowledge."
       ),
-      HumanMessagePromptTemplate.fromTemplate("{input}"),
+      HumanMessagePromptTemplate.fromTemplate("Hello"),
     ]);
 
     const store = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings({ openAIApiKey: OPENAI_API_KEY }));
@@ -180,11 +181,14 @@ export default async function handler(req, res) {
       chatLLM,
       retriever,
       {
+        memory: new BufferMemory({
+          memoryKey: "chat_history", // Must be set to "chat_history"
+        }),
         // questionGeneratorTemplate: qaPrompt,
         qaTemplate: qaPrompt,
         returnSourceDocuments: true
       }
-    );
+    )
 
     // const chain = new LLMChain({
     //   prompt: chatPrompt,
@@ -206,6 +210,7 @@ export default async function handler(req, res) {
     })
     chain
       .call({
+        prompt: chatPrompt,
         question: body.question,
         chat_history: body.history
       })
