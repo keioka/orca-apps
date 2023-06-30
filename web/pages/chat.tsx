@@ -99,14 +99,15 @@ export default function Chat() {
       }
     }
     fetchMetadata()
-    setNewMessage(incoming);
-  }, [incoming])
+  }, [])
+
 
   useEffect(() => {
-    if (newMessage.message) {
-      setMessages((prevMsgs) => [...prevMsgs, newMessage]);
+    if (finished && incoming.message !== "") {
+      setMessages((prev) => [...prev, { role: "ai", message: incoming.message }]);
+      setIncoming({ role: "ai", message: "" });
     }
-  }, [finished])
+  }, [incoming])
 
   const handleAsk = async (e) => {
 
@@ -138,13 +139,13 @@ export default function Chat() {
     setFinished(false);
     setMessages((prev) => [...prev, { role: "human", message: input }]);
 
-    const res = await fetch("/api/chatStream", {
+    const res = await fetch("/api/bot", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        question: input,
+        message: input,
         history: messages,
       }),
     });
@@ -167,7 +168,10 @@ export default function Chat() {
 
       while (true) {
         const { done, value } = await reader.read();
+        console.log({ done, value })
+
         if (done) {
+          setFinished(true)
           if (sentence !== "") {
             await enqueuePromise(callTextToSpeechAPI(sentence), (audio) => { audio.play() });
           }
@@ -190,11 +194,12 @@ export default function Chat() {
       console.error(error);
     } finally {
       reader.releaseLock();
-      setIncoming({ role: "ai", message: "" });
-      setFinished(true)
       scrollToBottom()
     }
+
   };
+
+  console.log({ messages })
 
   return (
     <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
@@ -251,7 +256,7 @@ export default function Chat() {
         }
         {
           mode === MODE.CHAT && <>
-            <Stack spacing={3} sx={{ overflowY: "scroll", paddingBottom: 32 }}>
+            <Stack spacing={3} sx={{ paddingBottom: 32 }}>
               {messages.map((message, index) => {
                 return (
                   <CardConvo key={index} message={message} loading={false} />
@@ -263,7 +268,7 @@ export default function Chat() {
             </Stack>
 
 
-            <Box sx={{ position: "fixed", bottom: 0, left: 0, width: "100%", padding: 3, paddingBottom: 8, background: "#fff", borderTop: "2px solid #f4f4f4", boxSizing: "border-box" }}>
+            <Box sx={{ position: "fixed", bottom: 0, left: 0, width: "100%", padding: 3, paddingBottom: 5, background: "#fff", borderTop: "2px solid #f4f4f4", boxSizing: "border-box" }}>
               <form onSubmit={handleSubmit}>
                 <Stack spacing={2}>
                   <TextField

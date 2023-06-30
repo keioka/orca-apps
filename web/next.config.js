@@ -16,6 +16,17 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  rewrites: () => {
+    return [
+      {
+        source: "/api/bot",
+        destination:
+          process.env.NODE_ENV === 'development'
+            ? 'http://127.0.0.1:5328/api/bot'
+            : '/api/bot',
+      },
+    ];
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.ttf$/,
