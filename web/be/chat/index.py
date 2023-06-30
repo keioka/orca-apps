@@ -18,7 +18,7 @@ import queue
 def chat(message):
 
   urls = [
-      "https://www.bbc.com/news/world-europe-66049705",
+    "https://www.bbc.com/news/world-europe-66049705",
   ]
 
   loader = PlaywrightURLLoader(urls=urls, remove_selectors=["header", "footer"])
