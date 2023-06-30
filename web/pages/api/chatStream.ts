@@ -181,12 +181,12 @@ export default async function handler(req, res) {
       chatLLM,
       retriever,
       {
+        verbose: true,
         memory: new BufferMemory({
           memoryKey: "chat_history", // Must be set to "chat_history"
         }),
         // questionGeneratorTemplate: qaPrompt,
         qaTemplate: qaPrompt,
-        returnSourceDocuments: true
       }
     )
 
@@ -211,7 +211,7 @@ export default async function handler(req, res) {
     chain
       .call({
         prompt: chatPrompt,
-        question: body.question,
+        question: body.message,
         chat_history: body.history
       })
       .catch(console.error);
