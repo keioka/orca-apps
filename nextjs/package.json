@@ -54,6 +54,7 @@
     "react-wavify": "^1.8.2",
     "redis": "^4.6.7",
     "reset-css": "^5.0.1",
+    "rss-parser": "^3.13.0",
     "tailwind-merge": "^1.10.0",
     "url-metadata": "^3.0.1",
     "utf-8-validate": "^6.0.3",
