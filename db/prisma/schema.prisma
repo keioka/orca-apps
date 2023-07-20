@@ -1,0 +1,162 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Auth {
+  id             String   @id @default(uuid())
+  thirdPartyName String   @map("third_party_name")
+  thirdPartyId   String   @unique @map("third_party_id")
+  providerName   String   @map("provider_name")
+  providerId     String   @unique @map("provider_id")
+  user           User?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("auth")
+}
+
+model User {
+  id       String   @id @default(uuid())
+  username String   @unique
+  authId   String   @unique @map("auth_id")
+  Lesson   Lesson[]
+  auth     Auth?    @relation(fields: [authId], references: [id], map: "auth")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Material {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String
+  category    String
+  url         String   @unique
+  imageUrl    String   @map("image_url")
+  publishedAt DateTime @map("published_at")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lessons      Lesson[]
+  summary      Summary[]
+  vocabularies Vocabulary[]
+  publisherId  Int          @map("publisher_id")
+  publisher    Publisher    @relation(fields: [publisherId], references: [id])
+
+  @@map("materials")
+}
+
+model Publisher {
+  id         Int        @id @default(autoincrement())
+  name       String
+  type       String // youtube & articles 
+  url        String // youtube channel url & article url
+  externalId String     @unique @map("external_id")
+  material   Material[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("publishers")
+}
+
+model Summary {
+  id         String   @id @default(uuid())
+  name       String
+  content    String
+  materialId Int      @map("material_id")
+  material   Material @relation(fields: [materialId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("summaries")
+}
+
+model Vocabulary {
+  id         String   @id @default(uuid())
+  name       String
+  word       String
+  meaning    String
+  materialId Int      @map("material_id")
+  material   Material @relation(fields: [materialId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("vocabularies")
+}
+
+model Lesson {
+  id         Int       @id @default(autoincrement())
+  userId     String    @map("user_id")
+  user       User      @relation(fields: [userId], references: [id])
+  materialId Int       @map("material_id")
+  material   Material  @relation(fields: [materialId], references: [id])
+  messages   Message[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([userId, materialId])
+  @@map("lessons")
+}
+
+model Message {
+  id        Int        @id @default(autoincrement())
+  name      String
+  type      String
+  lesson    Lesson?    @relation(fields: [lessonId], references: [id])
+  sentences Sentence[]
+  lessonId  Int?       @map("lesson_id")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("messages")
+}
+
+model Sentence {
+  id              Int              @id @default(autoincrement())
+  name            String
+  Message         Message?         @relation(fields: [messageId], references: [id])
+  messageId       Int?             @map("message_id")
+  paraphrases     Paraphrase[]
+  grammarMistakes GrammarMistake[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@map("sentences")
+}
+
+model Paraphrase {
+  id         Int       @id @default(autoincrement())
+  name       String
+  type       String
+  url        String
+  sentenceId Int?      @map("sentence_id")
+  sentence   Sentence? @relation(fields: [sentenceId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@map("paraphrases")
+}
+
+model GrammarMistake {
+  id         Int       @id @default(autoincrement())
+  name       String
+  type       String
+  url        String
+  sentenceId Int?      @map("sentence_id")
+  sentence   Sentence? @relation(fields: [sentenceId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@map("grammar_mistakes")
+}
