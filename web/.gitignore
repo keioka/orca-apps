@@ -1,7 +1,0 @@
-node_modules/
-.next/
-.swc/
-.*.env
-/test-results/
-/playwright-report/
-/playwright/.cache/

@@ -1,0 +1,59 @@
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Card, List, Title, Paragraph, Button, Text } from 'react-native-paper';
+
+interface CardSummaryProps {
+  content: string;
+}
+
+export const CardSummary = ({ points, content }: CardSummaryProps) => (
+  <Card style={styles.card} elevation={0}>
+    <Card.Content>
+      {points ? points.map((item, index) => (
+        <View style={styles.point} key={`point_${index}`}>
+          <View style={{ position: "absolute", backgroundColor: "#9FD1D5", padding: 8, width: 28, height: 28, borderRadius: 28, top: -10, left: -10, alignItems: "center" }}>
+            <Text style={{ fontSize: 11 }}>{index + 1}</Text>
+          </View>
+          <List.Item
+            title={item.content}
+            titleNumberOfLines={10}
+            titleStyle={{ fontSize: 16, padding: 0 }}
+            style={{ padding: 0 }}
+          />
+          <List.Item
+            title={item.trans}
+            titleNumberOfLines={10}
+            titleStyle={{ fontSize: 16, padding: 0 }}
+            style={{ padding: 0 }}
+          />
+        </View>
+      )) : null}
+      <Paragraph>{content}</Paragraph>
+    </Card.Content>
+  </Card>
+);
+
+const styles = StyleSheet.create({
+  card: {
+    margin: 10,
+    elevation: 5,
+    backgroundColor: '#fff',
+    width: '90%',
+  },
+  title: {
+    fontSize: 18,
+  },
+  btn: {
+    borderRadius: 20,
+    backgroundColor: '#9FD1D5',
+    borderWidth: 0,
+    color: "#fff",
+  },
+  point: {
+    borderBottomWidth: 1,
+    borderColor: "#f4f4f4",
+    paddingBottom: 12,
+    marginBottom: 12,
+  }
+});
+

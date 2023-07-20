@@ -1,5 +1,0 @@
-Flask==2.2.2
-langchain==0.0.176
-playwright==1.35.0
-unstructured==0.5.13
-chromadb==0.3.25
