@@ -1,4 +1,0 @@
-{
-  "buildCommand": "next build; ls -lah /vercel/output",
-  "installCommand": "npm install; ls -lah /vercel/output"
-}

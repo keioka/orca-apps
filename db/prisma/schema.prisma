@@ -125,8 +125,9 @@ model Message {
 model Sentence {
   id              Int              @id @default(autoincrement())
   name            String
-  Message         Message?         @relation(fields: [messageId], references: [id])
-  messageId       Int?             @map("message_id")
+  Message         Message          @relation(fields: [messageId], references: [id])
+  messageId       Int              @map("message_id")
+  sentenceIndex   Int              @map("sentence_index")
   paraphrases     Paraphrase[]
   grammarMistakes GrammarMistake[]
   createdAt       DateTime         @default(now())
