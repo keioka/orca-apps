@@ -34,6 +34,22 @@ export async function createUser({
   return user
 }
 
+
+export async function findUserById(id: string) {
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        id
+      },
+    });
+
+    return user;
+  } catch (error) {
+    console.error('Error finding user by provider ID:', error);
+    throw new Error('Failed to find user');
+  }
+}
+
 export async function findUserByProviderId(providerId: string) {
   try {
     const user = await prisma.user.findFirst({

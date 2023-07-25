@@ -1,0 +1,107 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import { PrismaClient } from "@prisma/client";
+import { createMessage, listMessages } from "@/models/message";
+import { validateToken } from '@/firebase';
+
+const prisma = new PrismaClient();
+
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method === "GET") {
+    await fetchMessagesHandler(req, res)
+  }
+
+  if (req.method === "POST") {
+    await createMessageHandler(req, res)
+  }
+}
+
+
+async function fetchMessagesHandler(req: NextApiRequest, res: NextApiResponse) {
+  const { lessonId } = req.query;
+  await validateToken(req, res)
+
+  // Validate body parameters
+  if (!lessonId) {
+    return res.status(400).json({ error: "fetchMessagesHandler: Missing required parameters" });
+  }
+
+  if (typeof lessonId !== "string") {
+    return res.status(400).json({ error: "fetchMessagesHandler: Invalid parameters" });
+  }
+
+  if (req.currentUser?.id === undefined) {
+    return res.status(401).json({ error: "fetchMessagesHandler: Unauthorized -> currentUser is empty" });
+  }
+
+  const lesson = await prisma.lesson.findUnique({
+    where: {
+      id: Number(lessonId),
+    },
+  });
+
+  if (!lesson) {
+    return res.status(404).json({ error: "fetchMessagesHandler: Lesson not found" });
+  }
+
+  if (lesson.userId !== req.currentUser?.id) {
+    return res.status(403).json({ error: "fetchMessagesHandler: Not allowed" });
+  }
+
+  const messages = await listMessages(lessonId as string);
+  return res.status(200).json(messages);
+}
+
+
+async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
+  const { lessonId } = req.query;
+  const { message } = req.body;
+  console.log({ req })
+  await validateToken(req, res)
+
+  // Validate body parameters
+  if (!lessonId) {
+    return res.status(400).json({ error: "createMessageHandler: Missing required parameters" });
+  }
+
+  if (typeof lessonId !== "string") {
+    return res.status(400).json({ error: "createMessageHandler: Invalid parameters" });
+  }
+
+  if (req.currentUser?.id === undefined) {
+    return res.status(401).json({ error: "createMessageHandler: Unauthorized" });
+  }
+
+  const lesson = await prisma.lesson.findUnique({
+    where: {
+      id: Number(lessonId),
+    },
+  });
+
+  if (!lesson) {
+    return res.status(404).json({ error: "createMessageHandler: Lesson not found" });
+  }
+
+  if (lesson.userId !== req.currentUser?.id) {
+    return res.status(403).json({ error: "createMessageHandler: Unauthorized" });
+  }
+
+  try {
+    if (!message) {
+      return res.status(400).json({ error: "createMessageHandler: Message cannot be empty" });
+    }
+
+    if (typeof message !== "string") {
+      return res.status(400).json({ error: "createMessageHandler: Invalid parameters" });
+    }
+
+    const newMessage = await createMessage({ message, lessonId, createdById: req.currentUser?.id as string });
+
+    return res.status(200).json(newMessage);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "createMessageHandler: An error occurred while creating the message" });
+  }
+}

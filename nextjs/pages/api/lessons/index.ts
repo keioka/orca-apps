@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import { validateToken } from '@/supabase';
-import { findUserByProviderId } from '@/models/user';
+import { validateToken } from '@/firebase';
+import { findUserById } from '@/models/user';
 import { createLesson, listLessons } from '@/models/lesson';
 
 const prisma = new PrismaClient();
@@ -10,24 +10,33 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { question, history } = req.body;
   await validateToken(req, res)
-  const supabaseUser = req.user
-  if (!supabaseUser) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  const { currentUser } = req
+  if (!currentUser) {
+    return res.status(401).json({ error: 'CurrentUser is empty' });
   }
 
-  const user = await findUserByProviderId(supabaseUser.id)
+  const user = await findUserById(currentUser.id)
   if (!user) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: 'User is not in DB' });
   }
 
   if (req.method === 'POST') {
-    const lesson = await createLesson({
-      userId: user.id as string,
-      materialId: 1,
-    })
-    return res.status(200).json(lesson);
+    const { materialId } = req.body;
+    if (!materialId) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    try {
+      const lesson = await createLesson({
+        userId: user.id as string,
+        materialId,
+      })
+      return res.status(200).json(lesson);
+    } catch (err) {
+      console.error(err)
+      return res.status(500).json({ error: 'Something went wrong' });
+    }
   }
 
   if (req.method === 'GET') {

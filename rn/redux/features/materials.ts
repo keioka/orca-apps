@@ -44,7 +44,11 @@ export const fetchMaterials = createAsyncThunk<Material[], void>(
 const materialsSlice = createSlice({
   name: 'materials',
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMaterials.pending, (state) => {
@@ -62,6 +66,8 @@ const materialsSlice = createSlice({
       });
   },
 });
+
+export const { clearError } = materialsSlice.actions;
 
 // Export the reducer
 export default materialsSlice.reducer;

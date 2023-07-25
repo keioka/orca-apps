@@ -1,44 +1,35 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, View, } from 'react-native'
 import { supabase } from '../supabase'
-import { Button, TextInput } from 'react-native-paper'
+import { Button, TextInput, Text } from 'react-native-paper'
 import { useAppSelector } from '../redux/hooks'
+import { useAppDispatch } from '../redux/hooks'
+import { signUpWithEmail, signInWithEmail } from '../redux/features/auth'
 
 export function AuthScreen({ navigation }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const session = useAppSelector((state) => state.auth.session)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (session) {
       navigation.navigate('Home')
     }
   })
-  async function signInWithEmail() {
-    setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
 
-    if (error) Alert.alert(error.message)
-    setLoading(false)
+  const handleSignup = async () => {
+    dispatch(signUpWithEmail({ email, password }))
   }
 
-  async function signUpWithEmail() {
-    setLoading(true)
-    const { error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    })
-
-    if (error) Alert.alert(error.message)
-    setLoading(false)
+  const handleSignin = async () => {
+    dispatch(signInWithEmail({ email, password }))
   }
 
   return (
     <View style={styles.container}>
+      <Text style={{ fontSize: 24 }}>Sign up</Text>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <TextInput
           label="Email"
@@ -47,6 +38,7 @@ export function AuthScreen({ navigation }) {
           value={email}
           placeholder="email@address.com"
           autoCapitalize={'none'}
+          style={{ backgroundColor: "#fff" }}
         />
       </View>
       <View style={styles.verticallySpaced}>
@@ -58,13 +50,14 @@ export function AuthScreen({ navigation }) {
           secureTextEntry={true}
           placeholder="Password"
           autoCapitalize={'none'}
+          style={{ backgroundColor: "#fff" }}
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button disabled={loading} onPress={() => signInWithEmail()} mode="contained">Sign in</Button>
+        <Button disabled={loading} onPress={handleSignin} mode="contained">Sign in</Button>
       </View>
       <View style={styles.verticallySpaced}>
-        <Button disabled={loading} onPress={() => signUpWithEmail()} mode="contained">Sign up</Button>
+        <Button disabled={loading} onPress={handleSignup} mode="contained">Sign up</Button>
       </View>
     </View>
   )
@@ -75,6 +68,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 40,
     padding: 12,
+    justifyContent: "center",
+    alignItems: "center",
   },
   verticallySpaced: {
     paddingTop: 4,

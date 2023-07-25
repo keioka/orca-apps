@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native';
-import { Text } from 'react-native-paper';
+import { StyleSheet, ScrollView, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Modal, Portal, Text, Snackbar } from 'react-native-paper';
 import { CardArticle } from '../components/CardArticle';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { fetchMaterials } from '../redux/features/materials';
+import { fetchMaterials, clearError } from '../redux/features/materials';
+import { createLesson, clearCreatedLessonId, clearError as clearErrorLesson } from '../redux/features/lessons';
+import { signOut } from '../redux/features/auth';
 
 const categories = [
   {
@@ -57,11 +59,10 @@ const categories = [
 
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
-
   const { feed, status, error } = useAppSelector((state) => state.feed);
-  const { items, } = useAppSelector((state) => state.materials);
+  const { creating, createdLessonId, error: errorLesson } = useAppSelector((state) => state.lessons);
 
-  console.log({ items })
+  const { items, } = useAppSelector((state) => state.materials);
   const session = useAppSelector((state) => state.auth.session)
   const [selectedCategory, setActiveCategory] = useState(categories[0].id)
 
@@ -69,21 +70,50 @@ export function FeedScreen({ navigation }) {
     dispatch(fetchMaterials())
   }, [])
 
-  const onPressStart = ({
-    url
-  }: {
-    url: string
-  }) => {
-    // create a lesson
-    // create a textbook
-    navigation.navigate('Lesson', {
-      url
-    })
+  useEffect(() => {
+    if (createdLessonId) {
+      navigation.navigate('Lesson', { lessonId: createdLessonId })
+      dispatch(clearCreatedLessonId())
+    }
+  }, [creating, createdLessonId])
+
+  const handleSignOut = async () => {
+    dispatch(signOut())
+    navigation.navigate('Auth')
+  }
+
+  const handlePress = () => {
+    session ? handleSignOut() : navigation.navigate('Auth')
+  }
+
+  const onPressStart = ({ materialId, url, lessonId }: { materialId: string, url: string, lessonId: string }) => {
+    if (!lessonId) {
+      dispatch(createLesson({ materialId }))
+    } else {
+      navigation.navigate('Lesson', { url, lessonId })
+    }
+  }
+
+  const handleClearAllErrors = () => {
+    clearErrorLesson()
+    clearError()
   }
 
   return (
     <View style={styles.container}>
-
+      <Portal>
+        <Modal visible={creating} dismissable={false}>
+          <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)'
+          }}>
+            <ActivityIndicator size="large" color="#fff" />
+            <Text style={{ color: "#fff" }}>Creating...</Text>
+          </View>
+        </Modal>
+      </Portal>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContainer}
@@ -91,7 +121,7 @@ export function FeedScreen({ navigation }) {
       >
         <View style={styles.header}>
           <Text style={styles.headerDateText}>July 19</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Auth')}>
+          <TouchableOpacity onPress={handlePress}>
             {session ? <View>
               {/* <Text style={styles.headerDateText}>s</Text> */}
               {/* login */}
@@ -127,7 +157,7 @@ export function FeedScreen({ navigation }) {
               type={item.type}
               title={item.title}
               imageSource={{ uri: item.imageUrl }}
-              onPressStart={() => onPressStart({ url: item.url })}
+              onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
             />
           ))
         }
@@ -137,11 +167,18 @@ export function FeedScreen({ navigation }) {
               type={item.type}
               title={item.name}
               imageSource={{ uri: item.url }}
-              onPressStart={() => onPressStart({ url: item.url })}
+              onPressStart={() => onPressStart({ url: item.url, lessonId: item.lessonId, materialId: item.id })}
+              lessonId={item.lessonId}
             />
           ))
         }
-      </ScrollView >
+      </ScrollView>
+      <Snackbar
+        visible={!!error || !!errorLesson}
+        onDismiss={handleClearAllErrors}
+      >
+        {error || errorLesson}
+      </Snackbar>
     </View >
   );
 }

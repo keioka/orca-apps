@@ -7,7 +7,7 @@ import {
 import { Dimensions } from "react-native";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useEffect } from 'react';
-import { fetchLessons } from '../redux/features/lessons';
+import { fetchLessons, createLesson } from '../redux/features/lessons';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -52,7 +52,10 @@ export function HistoryScreen({ navigation }) {
     dispatch(fetchLessons())
   }, []);
 
-  const onPressStart = ({ url, lessonId }: { url: string, lessonId: string }) => {
+  const onPressStart = ({ materialId, url, lessonId }: { materialId: string, url: string, lessonId: string }) => {
+    if (!lessonId) {
+      dispatch(createLesson({ materialId }))
+    }
     navigation.navigate('Lesson', { url, lessonId })
   }
 
@@ -64,10 +67,6 @@ export function HistoryScreen({ navigation }) {
       }
     ]
   };
-
-  console.log({
-    lessons
-  })
 
   return (
     <View style={styles.container}>
@@ -100,17 +99,18 @@ export function HistoryScreen({ navigation }) {
             type={item.type}
             title={item.title}
             imageSource={{ uri: item.imageUrl }}
-            onPressStart={() => onPressStart({ url: item.url })}
+            onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
           />
         ))}
         {lessons && lessons.map((item, index) => (
           <CardArticle
+            key={index}
             url={item.material.url}
             type={item.material.type}
             title={item.material.name}
             imageSource={{ uri: item.material.imageUrl }}
-            onPressStart={() => onPressStart({ url: item.material.url, lessonId: item.id })}
-            lesson={item}
+            onPressStart={() => onPressStart({ url: item.material.url, lessonId: item.lessonId, materialId: item.id })}
+            lessonId={item.id}
           />
         ))}
       </ScrollView>

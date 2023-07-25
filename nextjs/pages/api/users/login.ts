@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { validateToken } from '@/supabase';
+import { validateToken } from '@/firebase';
 import { findUserByProviderId } from '@/models/user';
 
 export default async function handler(

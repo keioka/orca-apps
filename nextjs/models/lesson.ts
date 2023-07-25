@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient, Material } from '@prisma/client';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 export async function createLesson(
   {
@@ -10,19 +10,15 @@ export async function createLesson(
     userId: string,
     materialId: number
   }) {
-  try {
-    // Create a new lesson using Prisma
-    const lesson = await prisma.lesson.create({
-      data: {
-        userId,
-        materialId,
-      },
-    });
+  // Create a new lesson using Prisma
+  const lesson = await prisma.lesson.create({
+    data: {
+      userId,
+      materialId,
+    },
+  });
 
-    return lesson;
-  } catch (err) {
-    console.error(err);
-  }
+  return lesson;
 }
 
 
@@ -45,11 +41,11 @@ export async function listLessons(userId: string) {
 }
 
 
-export async function getLesson(lessopnId: string) {
+export async function getLesson(lessonId: string) {
 
   const lesson = await prisma.lesson.findUnique({
     where: {
-      id: Number(lessopnId)
+      id: Number(lessonId)
     },
     include: {
       material: true, // Include material related to the lesson

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, Text, View, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { CardMessage } from '../components/CardMessage';
@@ -9,9 +9,10 @@ import { Button, TextInput, Card } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { vocab } from '../helpers/dummy';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { addMessage } from '../redux/features/messages';
 import { LoadingStatus } from '../redux/types';
 import { fetchLesson } from '../redux/features/lessons';
+import { fetchMessages, createMessage, addMessage } from '../redux/features/messages';
+import { messages as messageDummy } from '../helpers/dummy'
 
 enum LearningModeTab {
   Article = 'article',
@@ -106,7 +107,7 @@ function VocabularyTab() {
   )
 }
 
-function LearningMode({ onPressToggle, url }: { onPressToggle: () => void, url: string }) {
+function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, lesson: {} }) {
   const [tab, setTab] = useState(LearningModeTab.Article)
 
   return (
@@ -137,7 +138,7 @@ function LearningMode({ onPressToggle, url }: { onPressToggle: () => void, url: 
 
       {tab === LearningModeTab.Article && <WebView
         originWhitelist={['*']}
-        source={{ uri: url }}
+        source={{ uri: lesson.material.url }}
         style={styles.webview}
       />
       }
@@ -187,21 +188,33 @@ async function getMetadata(url: string) {
   }
 }
 
-function TalkMode({ onPressToggle, url }: { onPressToggle: () => void, url: string }) {
+function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void, lesson: {} }) {
   const [message, setMessage] = useState(null)
   const [helper, setHelper] = useState(null)
   const dispatch = useAppDispatch()
-  const messages = useAppSelector(state => { return state.message.messages })
-  const statusCreate = useAppSelector(state => { return state.message.statusCreate })
+  const messages = useAppSelector(state => { return state.messages.messageMap[lesson.id] })
+  const statusCreate = useAppSelector(state => { return state.messages.statusCreate })
   const [newsTitle, setNewsTitle] = useState("Artificial Intelligence");
   const [newsImageUrl, setNewsImageUrl] = useState("https://media.cnn.com/api/v1/images/stellar/prod/230413152030-kim-jong-un-0410.jpg?c=16x9&q=h_540,w_960,c_fill/f_webp");
   const [loadingMetadata, setLoadingMetadata] = useState(false)
+  const scrollViewRef = useRef(null);
+
+  const messageConvert = useMemo(() => {
+    return messages.map((item) => {
+      return {
+        message: item.fullContent,
+        role: item.type === "user" ? "user" : "ai",
+        createdAt: new Date(item.createdAt)
+      }
+    })
+  }, [messages.length])
+
 
   useEffect(() => {
     async function fetchMetadata() {
       setLoadingMetadata(true)
       try {
-        const res = await getMetadata(url)
+        const res = await getMetadata(lesson.material.url)
         if (res) {
           setNewsImageUrl(res.image)
           setNewsTitle(res.title)
@@ -216,16 +229,22 @@ function TalkMode({ onPressToggle, url }: { onPressToggle: () => void, url: stri
 
 
   const submitMessage = () => {
-    dispatch(addMessage({ message, url, history: [] }))
+    dispatch(addMessage({ message, lessonId: lesson.id }))
     setMessage(null)
     Keyboard.dismiss()
   }
 
+  const isTypeVideo = lesson.material.type === "video"
   return (
-    <View style={{ height: "100%" }}>
+    <View style={{ flex: 1, height: "100%" }}>
       <View style={styles.menuTalkMode}>
         <View style={{ flexDirection: "row", height: 108 }}>
-          <Image source={{ uri: newsImageUrl }} style={{ width: 108, height: 108 }} />
+          {isTypeVideo ? <WebView
+            // style={styles.youtubeView}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            source={{ uri: lesson.material.url }}
+          /> : <Image source={{ uri: newsImageUrl }} style={{ width: 108, height: 108 }} />}
           <View
             style={{
               flex: 1,
@@ -237,7 +256,7 @@ function TalkMode({ onPressToggle, url }: { onPressToggle: () => void, url: stri
               flexGrow: 1
             }}
           >
-            {loadingMetadata ? <Text style={styles.menuTalkModeTitle}>Loading...</Text> : <Text style={styles.menuTalkModeTitle}>{newsTitle}</Text>}
+            {loadingMetadata ? <Text style={styles.menuTalkModeTitle}>Loading...</Text> : <Text style={styles.menuTalkModeTitle}>{newsTitle || lesson.material.name}</Text>}
           </View>
         </View>
       </View>
@@ -248,23 +267,30 @@ function TalkMode({ onPressToggle, url }: { onPressToggle: () => void, url: stri
           <Text>Back to {Mode.Learning} mode</Text>
         </View>
       </TouchableOpacity>
-      <ScrollView
-        style={styles.messageContainer}
-        contentContainerStyle={{
-          flexGrow: 1,
-          height: 10000,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        {messages.map((item, index) => (
-          <CardMessage message={item} />
-        ))}
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.messageContainer}
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
+          onContentSizeChange={(contentWidth, contentHeight) => {
+            scrollViewRef.current.scrollToEnd({ animated: true })
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          {messageConvert.map((item, index) => (
+            <CardMessage message={item} />
+          ))}
 
-        {statusCreate === LoadingStatus.LOADING && <CardMessage loading message={{
-          message: "",
-          role: "ai",
-        }} />}
-      </ScrollView>
+          {
+            statusCreate === LoadingStatus.LOADING && <CardMessage loading message={{
+              message: "",
+              role: "ai",
+            }} />
+          }
+        </ScrollView>
+      </View>
       <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={90}>
         <>
           {helper && <View
@@ -391,20 +417,24 @@ enum Mode {
 export function LessonScreen({ route }) {
   const [mode, setMode] = useState(Mode.Learning)
   const dispatch = useAppDispatch()
-  const url = route.params.url
   const lessonId = route.params.lessonId
-  const lessons = useAppSelector(state => { return state.lessons.lessons })
   const lesson = useAppSelector(state => { return state.lessons.lessons.find((lesson) => lesson.id === lessonId) })
+
   const onPressToggle = () => setMode(mode === Mode.Learning ? Mode.Talk : Mode.Learning)
 
   useEffect(() => {
     dispatch(fetchLesson(lessonId))
+    dispatch(fetchMessages(lessonId))
   }, [])
+
+
+  if (!lesson || !lesson.material) {
+    return null
+  }
 
   return (
     <View style={styles.container}>
-      <Text>{lessonId}</Text>
-      {mode === Mode.Learning ? <LearningMode onPressToggle={onPressToggle} url={url} /> : <TalkMode onPressToggle={onPressToggle} url={url} />}
+      {mode === Mode.Learning ? <LearningMode onPressToggle={onPressToggle} lesson={lesson} /> : <TalkMode onPressToggle={onPressToggle} lesson={lesson} />}
     </View>
   );
 }

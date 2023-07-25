@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { LoadingStatus } from '../types';
-import { messages } from '../../helpers/dummy'
 
 const NAME = 'message'
 
@@ -15,30 +14,121 @@ interface MessageLesson {
 }
 
 interface MessageState {
-  messages: any[];
+  messageMap: MessageLesson;
   status: LoadingStatus;
   statusCreate: LoadingStatus;
   error: string | null;
 }
+const AI_ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:6666" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const initialState: MessageState = { messageMap: {}, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null };
 
-const API_HOST = 'http://localhost:3000'
+export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue }) => {
+  try {
+    const state = getState()
 
-const initialState: MessageState = { messages: messages, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null };
+    if (!state.auth.session) {
+      return rejectWithValue('fetchMessages: Session is not defined')
+    }
 
-export const fetchMessages = createAsyncThunk(`${NAME}/fetchLessons`, async () => {
-  const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
-  return response.data;
+    const token = state.auth.session.accessToken;
+    const response = await axios.get(`${ROOT_URL}/api/lessons/${lessonId}/messages`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    console.log({ messages: response.data });
+    return { [lessonId]: response.data };
+  } catch (error) {
+    console.error(error)
+    rejectWithValue('Failed to fetch lesson')
+  }
 });
 
-export const addMessage = createAsyncThunk(`${NAME}/message`, async (body: { message: string, url: string, history: { message: string }[] }) => {
-  const response = await axios.post(`${API_HOST}/api/bot`, body);
-  return { message: response.data };
+
+export const createMessage = createAsyncThunk(`${NAME}/create`, async ({
+  message,
+  lessonId
+}: {
+  lessonId: string,
+  message: string
+}, { getState, rejectWithValue }) => {
+  try {
+
+    console.log("========= createMessage ================")
+    const state = getState()
+
+    if (!state.auth.session) {
+      return rejectWithValue('fetchMessages: Session is not defined')
+    }
+
+    const token = state.auth.session.accessToken;
+
+    if (!token) {
+      rejectWithValue('No session found')
+    }
+
+    const response = await axios.post(`${ROOT_URL}/api/lessons/${lessonId}/messages`,
+      {
+        message,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+
+    console.log({ messages: response.data });
+    return { [lessonId]: [...state.messages.messageMap[lessonId], response.data] };
+  } catch (error) {
+    console.error(error)
+    rejectWithValue('Failed to fetch lesson')
+  }
+});
+
+export const addMessage = createAsyncThunk(`${NAME}/add`, async (body: { message: string, lessonId: string }, { getState, rejectWithValue }) => {
+  try {
+    console.log("========= addMessage ================")
+    const state = getState()
+
+    if (!state.auth.session) {
+      return rejectWithValue('fetchMessages: Session is not defined')
+    }
+
+    const token = state.auth.session.accessToken;
+
+    if (!token) {
+      rejectWithValue('No session found')
+    }
+
+    const response = await axios.post(
+      `${AI_ROOT_URL}/api/chat`,
+      body,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    console.log({ response })
+    return { message: response.data };
+  } catch (error) {
+    const errorMessage = error.response.data.error
+    console.error(error)
+    rejectWithValue(errorMessage)
+  }
 });
 
 const messageSlice = createSlice({
   name: NAME,
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMessages.pending, (state) => {
@@ -46,7 +136,11 @@ const messageSlice = createSlice({
       })
       .addCase(fetchMessages.fulfilled, (state, action: PayloadAction<any[]>) => {
         state.status = LoadingStatus.SUCCESS;
-        state.messages = action.payload;
+        state.messageMap = {
+          ...state.messages,
+          ...action.payload
+        };
+
       })
       .addCase(fetchMessages.rejected, (state, action: PayloadAction<string | null>) => {
         state.status = LoadingStatus.FAILED;
@@ -54,18 +148,43 @@ const messageSlice = createSlice({
       })
       .addCase(addMessage.pending, (state, action: PayloadAction<string | null>) => {
         state.statusCreate = LoadingStatus.LOADING;
-        state.messages = [...state.messages, { role: "user", message: action.meta.arg.message }];
+        const lessonId = action.meta.arg.lessonId;
+
+        state.messageMap = {
+          ...state.messageMap,
+          [lessonId]: [...state.messageMap[lessonId], { type: "user", fullContent: action.meta.arg.message }]
+        }
       })
       .addCase(addMessage.fulfilled, (state, action: PayloadAction<any[]>) => {
-        console.log({ action, state })
         state.statusCreate = LoadingStatus.SUCCESS;
-        state.messages = [...state.messages, { role: "ai", message: action.payload.message }];
+        const lessonId = action.meta.arg.lessonId;
+        state.messageMap = {
+          ...state.messageMap,
+          [action.meta.arg.lessonId]: [...state.messageMap[lessonId], { type: "ai", fullContent: action.payload.message }]
+        }
       })
       .addCase(addMessage.rejected, (state, action: PayloadAction<string | null>) => {
+        state.statusCreate = LoadingStatus.FAILED;
+        state.error = action.error.message;
+      })
+      .addCase(createMessage.pending, (state, action: PayloadAction<string | null>) => {
+        state.statusCreate = LoadingStatus.LOADING;
+      })
+      .addCase(createMessage.fulfilled, (state, action: PayloadAction<any[]>) => {
+        state.statusCreate = LoadingStatus.SUCCESS;
+        console.log({ action })
+        state.messageMap = {
+          ...state.messageMap,
+          ...action.payload
+        }
+      })
+      .addCase(createMessage.rejected, (state, action: PayloadAction<string | null>) => {
         state.statusCreate = LoadingStatus.FAILED;
         state.error = action.error.message;
       });
   },
 });
+
+export const { clearError } = messageSlice.actions;
 
 export default messageSlice.reducer;
