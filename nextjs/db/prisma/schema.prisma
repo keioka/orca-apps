@@ -17,8 +17,8 @@ model Auth {
   providerName   String   @map("provider_name")
   providerId     String   @unique @map("provider_id")
   user           User?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@map("auth")
 }
@@ -30,8 +30,9 @@ model User {
   Lesson   Lesson[]
   auth     Auth?    @relation(fields: [authId], references: [id], map: "auth")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  Message   Message[]
 
   @@map("users")
 }
@@ -45,8 +46,8 @@ model Material {
   imageUrl    String   @map("image_url")
   publishedAt DateTime @map("published_at")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   lessons      Lesson[]
   summary      Summary[]
@@ -64,8 +65,8 @@ model Publisher {
   url        String // youtube channel url & article url
   externalId String     @unique @map("external_id")
   material   Material[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
 
   @@map("publishers")
 }
@@ -76,8 +77,8 @@ model Summary {
   content    String
   materialId Int      @map("material_id")
   material   Material @relation(fields: [materialId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   @@map("summaries")
 }
@@ -89,8 +90,8 @@ model Vocabulary {
   meaning    String
   materialId Int      @map("material_id")
   material   Material @relation(fields: [materialId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   @@map("vocabularies")
 }
@@ -102,22 +103,24 @@ model Lesson {
   materialId Int       @map("material_id")
   material   Material  @relation(fields: [materialId], references: [id])
   messages   Message[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
 
   @@unique([userId, materialId])
   @@map("lessons")
 }
 
 model Message {
-  id        Int        @id @default(autoincrement())
-  name      String
-  type      String
-  lesson    Lesson?    @relation(fields: [lessonId], references: [id])
-  sentences Sentence[]
-  lessonId  Int?       @map("lesson_id")
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          Int        @id @default(autoincrement())
+  fullContent String     @map("full_content")
+  sentences   Sentence[]
+  lesson      Lesson?    @relation(fields: [lessonId], references: [id])
+  lessonId    Int?       @map("lesson_id")
+  type        String     @default("user")
+  createdById String?    @map("created_by_id")
+  createdBy   User?      @relation(fields: [createdById], references: [id])
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
 
   @@map("messages")
 }
@@ -130,8 +133,9 @@ model Sentence {
   sentenceIndex   Int              @map("sentence_index")
   paraphrases     Paraphrase[]
   grammarMistakes GrammarMistake[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("sentences")
 }
@@ -143,8 +147,9 @@ model Paraphrase {
   url        String
   sentenceId Int?      @map("sentence_id")
   sentence   Sentence? @relation(fields: [sentenceId], references: [id])
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("paraphrases")
 }
@@ -156,8 +161,9 @@ model GrammarMistake {
   url        String
   sentenceId Int?      @map("sentence_id")
   sentence   Sentence? @relation(fields: [sentenceId], references: [id])
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("grammar_mistakes")
 }

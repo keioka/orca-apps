@@ -1,0 +1,11 @@
+Flask[async]==2.0.1
+langchain==0.0.176
+playwright==1.35.0
+unstructured==0.5.13
+chromadb==0.3.25
+prisma==0.9.1
+openai==0.27.1
+tiktoken==0.3.3
+firebase_admin==5.4.0
+youtube-transcript-api==0.4.1
+pytube==11.0.1

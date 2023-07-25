@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { getLesson } from '@/models/lesson';
+import { validateToken } from '@/firebase';
 
 const prisma = new PrismaClient();
 
@@ -8,7 +9,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   if (req.method === 'GET') {
     const { lessonId } = req.query;
 
-    // TODO: permissionCheck()
+    await validateToken(req, res)
 
     if (!lessonId) {
       return res.status(400).json({ message: 'Lesson id required' });

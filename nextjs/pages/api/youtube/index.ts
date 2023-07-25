@@ -26,22 +26,54 @@ export default async function handler(
       // Store videos in the database as materials
       const materials = await Promise.all(
         videos.map((video) =>
-          prisma.material.create({
-            data: {
+          prisma.material.upsert({
+            where: {
+              url: video.url,
+            },
+            create: {
               name: video.title,
               type: 'video',
               category: video.category,
               url: video.url,
               imageUrl: video.imageUrl,
               publishedAt: video.publishedAt,
-              Publisher: {
-                create: {
-                  name: video.channelName,
-                  url: `https://www.youtube.com/channel/${video.channelId}`,
-                  type: 'youtube',
-                  externalId: video.channelId,
+              publisher: {
+                connectOrCreate: {
+                  where: {
+                    externalId: video.channelId,
+                  },
+                  create: {
+                    name: video.channelName,
+                    url: `https://www.youtube.com/channel/${video.channelId}`,
+                    type: 'youtube',
+                    externalId: video.channelId,
+                  }
                 }
               }
+            },
+            update: {
+              name: video.title,
+              type: 'video',
+              category: video.category,
+              url: video.url,
+              imageUrl: video.imageUrl,
+              publishedAt: video.publishedAt,
+              publisher: {
+                connectOrCreate: {
+                  where: {
+                    externalId: video.channelId,
+                  },
+                  create: {
+                    name: video.channelName,
+                    url: `https://www.youtube.com/channel/${video.channelId}`,
+                    type: 'youtube',
+                    externalId: video.channelId,
+                  }
+                }
+              }
+            },
+            include: {
+              publisher: true,
             },
           })
         )

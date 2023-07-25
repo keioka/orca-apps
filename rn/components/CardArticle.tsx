@@ -13,6 +13,7 @@ interface CardArticleProps {
   buttonTitle: string;
   onPressStart: () => void;
   hideSaveButton?: boolean;
+  lessonId?: string;
 }
 
 export const CardArticle = ({
@@ -23,7 +24,7 @@ export const CardArticle = ({
   buttonTitle,
   onPressStart,
   hideSaveButton,
-  lesson
+  lessonId
 }:
   CardArticleProps
 ) => (
@@ -42,7 +43,7 @@ export const CardArticle = ({
       <Paragraph>{content}</Paragraph>
     </Card.Content>
     <Card.Actions style={styles.cardAction}>
-      <Button onPress={onPressStart} style={styles.btn} textColor="#fff">{lesson ? "Resume" : "Start"}</Button>
+      <Button onPress={onPressStart} style={styles.btn} textColor="#fff">{lessonId ? "Resume" : "Start"}</Button>
       {!hideSaveButton &&
         <Button onPress={onPressStart} style={styles.btnSave} textColor="#242424" >
           <Ionicons name="bookmark" size={18} color="#c6c6c6" />
@@ -72,6 +73,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
+    lineHeight: 22,
     color: "#242424",
   },
   btn: {

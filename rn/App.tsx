@@ -14,10 +14,12 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { AuthScreen } from './screens/AuthScreen';
 import { useEffect } from 'react';
-import { supabase } from './supabase';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setSession } from './redux/features/auth'
-import { SessionContextProvider } from '@supabase/auth-helpers-react'
+import { firebase } from './firebase'
+import { getAuth } from "firebase/auth";
+import { Snackbar } from 'react-native-paper';
+import NetworkLogger from 'react-native-network-logger';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -73,6 +75,16 @@ const MainTab = () => (
         }
       }}
     />
+    <Tab.Screen
+      name="NetworkLogger"
+      component={NetworkLogger}
+      options={{
+        tabBarLabel: 'NetworkLogger',
+        headerStyle: {
+          shadowColor: 'transparent',
+        }
+      }}
+    />
     {/* <Tab.Screen name="Settings" component={SettingsScreen} /> */}
   </Tab.Navigator>
 )
@@ -114,19 +126,22 @@ const RootStack = () => (
   </Stack.Navigator>
 )
 
+const auth = getAuth(firebase);
+
 const Root = () => {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log({
-        session
-      })
-      dispatch(setSession(session))
-    })
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      dispatch(setSession(session))
+    auth.onAuthStateChanged((user) => {
+      console.log("=========== firebase state change =================", { user })
+      if (user) {
+        dispatch(setSession({
+          accessToken: user.accessToken,
+          uid: user.uid,
+        }))
+      } else {
+        dispatch(setSession(null))
+      }
     })
   }, [])
 
@@ -148,15 +163,13 @@ const theme = {
 export default function App() {
   return (
     <PaperProvider theme={theme}>
-      <SessionContextProvider supabaseClient={supabase}>
-        <Provider store={store}>
-          <View style={styles.container}>
-            <NavigationContainer>
-              <Root />
-            </NavigationContainer>
-          </View>
-        </Provider>
-      </SessionContextProvider>
+      <Provider store={store}>
+        <View style={styles.container}>
+          <NavigationContainer>
+            <Root />
+          </NavigationContainer>
+        </View>
+      </Provider>
     </PaperProvider >
   );
 }

@@ -1,10 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { Lesson } from "../../types/lesson";
+import axios from 'axios';
 
 // Define the lesson state
 interface LessonState {
   lessons: Lesson[];
   loading: boolean;
+  creating: boolean;
+  createdLessonId: string | null;
   error: string | null;
 }
 
@@ -12,6 +15,8 @@ interface LessonState {
 const initialState: LessonState = {
   lessons: [],
   loading: false,
+  creating: false,
+  createdLessonId: null,
   error: null,
 };
 
@@ -19,7 +24,14 @@ const initialState: LessonState = {
 const lessonSlice = createSlice({
   name: 'lesson',
   initialState,
-  reducers: {},
+  reducers: {
+    clearCreatedLessonId: (state) => {
+      state.createdLessonId = null;
+    },
+    clearError: (state) => {
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     // Define the async thunk to fetch the lesson
     builder.addCase(fetchLessons.fulfilled, (state, action) => {
@@ -42,8 +54,6 @@ const lessonSlice = createSlice({
     builder.addCase(fetchLesson.fulfilled, (state, action) => {
       const updatedLesson = action.payload;
       const index = state.lessons.findIndex((lesson) => lesson.id === updatedLesson.id);
-
-      console.log({ updatedLesson })
       if (index !== -1) {
         state.lessons[index] = updatedLesson;
       } else {
@@ -63,11 +73,29 @@ const lessonSlice = createSlice({
       state.loading = false;
       state.error = action.error.message || 'Failed to fetch lesson';
     });
+
+    builder.addCase(createLesson.pending, (state) => {
+      state.creating = true;
+      state.error = null;
+    });
+
+    builder.addCase(createLesson.fulfilled, (state, action) => {
+      state.lessons = [...state.lessons, action.payload];
+      state.createdLessonId = action.payload.id;
+      state.creating = false;
+      state.error = null;
+    });
+
+    builder.addCase(createLesson.rejected, (state, action) => {
+      state.creating = false;
+      state.error = action.error.message || 'Failed to fetch lesson';
+    });
   },
 });
 
-const ROOT_URL = 'http://localhost:3000';
+export const { clearCreatedLessonId } = lessonSlice.actions;
 
+const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
 
 export const fetchLesson = createAsyncThunk(
   'lesson/fetchLesson',
@@ -79,29 +107,32 @@ export const fetchLesson = createAsyncThunk(
         throw new Error('No session found')
       }
 
-      const token = session?.access_token
+      const token = session?.accessToken
       if (!token) {
         throw new Error('No session found')
       }
 
-      const response = await fetch(`${ROOT_URL}/api/lessons/${lessonId}`, {
+      const response = await axios.get(`${ROOT_URL}/api/lessons/${lessonId}`, {
         headers: {
-          Cookie: `orca=${token}`
-        }
-      }); // Replace with your API endpoint
-      if (!response.ok) {
-        throw new Error('Failed to fetch lesson');
-      }
-      const data = await response.json();
+          Authorization: `Bearer ${token}`
+        },
+      });
+
+      console.log({ response });
+
+      // data is the server's response
+      const data = response.data;
+
       return data;
+
     } catch (error) {
-      throw new Error('Failed to fetch lesson');
+      throw rejectWithValue(error.response.data.message);
     }
   }
 );
 
 // Define the async thunk to fetch the lesson
-export const fetchLessons = createAsyncThunk<Lesson[]>('lesson/fetch', async (args, thunkAPI) => {
+export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ materialId }, thunkAPI) => {
   try {
     const { getState } = thunkAPI
     const { auth } = getState()
@@ -117,11 +148,11 @@ export const fetchLessons = createAsyncThunk<Lesson[]>('lesson/fetch', async (ar
 
     const response = await fetch(`${ROOT_URL}/api/lessons`, {
       headers: {
-        Cookie: `orca=${token}`
+        Authorization: `Bearer ${token}`
       }
     }); // Replace with your API endpoint
 
-    console.log({ response })
+
     if (!response.ok) {
       throw new Error('Failed to fetch lesson');
     }
@@ -131,5 +162,47 @@ export const fetchLessons = createAsyncThunk<Lesson[]>('lesson/fetch', async (ar
     throw new Error('Failed to fetch lesson');
   }
 });
+
+
+// Define the async thunk to fetch the lesson
+export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({ materialId }, thunkAPI) => {
+  try {
+    const { getState } = thunkAPI
+    const { auth } = getState()
+    const { session } = auth
+    if (!session) {
+      throw new Error('No session found')
+    }
+
+    const token = session?.accessToken
+    if (!token) {
+      throw new Error('No session found')
+    }
+
+    const response = await axios.post(`${ROOT_URL}/api/lessons`,
+      {
+        materialId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    ); // Replace w
+
+    console.log({ response })
+
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch lesson');
+    }
+    const { data } = response;
+    return data;
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to fetch lesson');
+  }
+});
+
+export const { clearError } = lessonSlice.actions;
 
 export default lessonSlice.reducer;
