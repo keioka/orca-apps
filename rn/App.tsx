@@ -75,16 +75,19 @@ const MainTab = () => (
         }
       }}
     />
-    <Tab.Screen
-      name="NetworkLogger"
-      component={NetworkLogger}
-      options={{
-        tabBarLabel: 'NetworkLogger',
-        headerStyle: {
-          shadowColor: 'transparent',
-        }
-      }}
-    />
+    {
+      process.env.NODE_ENV === 'development' &&
+      <Tab.Screen
+        name="NetworkLogger"
+        component={NetworkLogger}
+        options={{
+          tabBarLabel: 'NetworkLogger',
+          headerStyle: {
+            shadowColor: 'transparent',
+          }
+        }}
+      />
+    }
     {/* <Tab.Screen name="Settings" component={SettingsScreen} /> */}
   </Tab.Navigator>
 )

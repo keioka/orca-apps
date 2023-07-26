@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
-
+import axios from 'axios';
 // Define the type for the material
 interface Material {
   id: number;
@@ -28,14 +28,15 @@ const initialState: MaterialsState = {
 // Define the fetchMaterials async thunk
 export const fetchMaterials = createAsyncThunk<Material[], void>(
   'materials/fetchMaterials',
-  async () => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch('http://localhost:3000/api/materials'); // Replace with your API endpoint
-      const data = await response.json();
+      const response = await axios('http://localhost:3000/api/materials'); // Replace with your API endpoint
+      const data = response.data;
       return data;
     } catch (error) {
       console.error('Error fetching materials:', error);
-      throw error;
+      const message = error.response.data.message;
+      return rejectWithValue(message)
     }
   }
 );
@@ -62,7 +63,7 @@ const materialsSlice = createSlice({
       })
       .addCase(fetchMaterials.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message as string;
+        state.error = action.payload as string;
       });
   },
 });

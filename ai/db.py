@@ -21,12 +21,19 @@ async def add_message(prisma, lesson_id, full_content, type="user", created_by_i
         lesson = await prisma.lesson.find_unique(where={"id": lesson_id})
         if not lesson:
             raise ValueError("Lesson with the given ID does not exist.")
-            
+      
+        sentences = full_content.split(".")
+               
         data = {
-          "fullContent": full_content,
-          "lesson": {"connect": {"id": lesson_id}},
-          "type": type,
+            "fullContent": full_content,
+            "lesson": {"connect": {"id": lesson_id}},
+            "type": type,
         }
+        
+        if (type == "user"):
+          data["sentences"] = {
+            "create": [{"name": sentence.strip(), "sentenceIndex": index} for index, sentence in enumerate(sentences)]
+          }
       
         if created_by_id:
           data['createdBy'] = {

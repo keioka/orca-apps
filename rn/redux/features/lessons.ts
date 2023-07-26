@@ -53,6 +53,7 @@ const lessonSlice = createSlice({
     // Define the async thunk to fetch the lesson
     builder.addCase(fetchLesson.fulfilled, (state, action) => {
       const updatedLesson = action.payload;
+      console.log({ a: action.payload })
       const index = state.lessons.findIndex((lesson) => lesson.id === updatedLesson.id);
       if (index !== -1) {
         state.lessons[index] = updatedLesson;
@@ -104,12 +105,12 @@ export const fetchLesson = createAsyncThunk(
       const { auth } = getState()
       const { session } = auth
       if (!session) {
-        throw new Error('No session found')
+        return rejectWithValue('No session found')
       }
 
       const token = session?.accessToken
       if (!token) {
-        throw new Error('No session found')
+        return rejectWithValue('No session found')
       }
 
       const response = await axios.get(`${ROOT_URL}/api/lessons/${lessonId}`, {
@@ -126,24 +127,24 @@ export const fetchLesson = createAsyncThunk(
       return data;
 
     } catch (error) {
-      throw rejectWithValue(error.response.data.message);
+      console.error(error)
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
 
 // Define the async thunk to fetch the lesson
-export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ materialId }, thunkAPI) => {
+export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ materialId }, { getState, rejectWithValue }) => {
   try {
-    const { getState } = thunkAPI
     const { auth } = getState()
     const { session } = auth
     if (!session) {
-      throw new Error('No session found')
+      rejectWithValue('No session found')
     }
 
     const token = session?.access_token
     if (!token) {
-      throw new Error('No session found')
+      rejectWithValue('No session found')
     }
 
     const response = await fetch(`${ROOT_URL}/api/lessons`, {
@@ -154,29 +155,28 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ ma
 
 
     if (!response.ok) {
-      throw new Error('Failed to fetch lesson');
+      rejectWithValue('Failed to fetch lesson');
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    throw new Error('Failed to fetch lesson');
+    rejectWithValue('Failed to fetch lesson');
   }
 });
 
 
 // Define the async thunk to fetch the lesson
-export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({ materialId }, thunkAPI) => {
+export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({ materialId }, { getState, rejectWithValue }) => {
   try {
-    const { getState } = thunkAPI
     const { auth } = getState()
     const { session } = auth
     if (!session) {
-      throw new Error('No session found')
+      rejectWithValue('No session found')
     }
 
     const token = session?.accessToken
     if (!token) {
-      throw new Error('No session found')
+      rejectWithValue('No session found')
     }
 
     const response = await axios.post(`${ROOT_URL}/api/lessons`,
@@ -193,13 +193,13 @@ export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({
     console.log({ response })
 
     if (response.status !== 200) {
-      throw new Error('Failed to fetch lesson');
+      rejectWithValue('Failed to fetch lesson');
     }
     const { data } = response;
     return data;
   } catch (error) {
     console.error(error)
-    throw new Error('Failed to fetch lesson');
+    rejectWithValue('Failed to fetch lesson');
   }
 });
 

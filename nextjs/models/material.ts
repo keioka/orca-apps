@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 
 interface MaterialWithLesson extends Material {
-  lessonId?: number
+  lessonId?: number | null
 }
 
 // Retrieve a material by ID
@@ -38,6 +38,8 @@ export async function getMaterials({ date, category, userId }: { date?: Date, ca
     },
   });
 
+
+  console.log({ materials })
   const lessons = await prisma.lesson.findMany({
     where: {
       materialId: {
@@ -49,7 +51,9 @@ export async function getMaterials({ date, category, userId }: { date?: Date, ca
   const materialsWithLessonId = materials.map((material) => {
     return {
       ...material,
-      lessonId: lessons.find((lesson) => lesson.materialId === material.id)?.id
+      lessonId: lessons.find((lesson) => {
+        return lesson.materialId === material.id
+      })?.id || null,
     }
   })
 
