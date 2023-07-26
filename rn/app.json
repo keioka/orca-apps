@@ -2,7 +2,7 @@
   "expo": {
     "name": "orca - AI English tutor",
     "slug": "orcatalk",
-    "version": "0.2.5",
+    "version": "0.3.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -32,6 +32,14 @@
       "eas": {
         "projectId": "8b85890b-bb8f-41ab-b32a-df79d5291cb8"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ]
+    ]
   }
 }

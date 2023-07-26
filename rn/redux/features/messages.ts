@@ -18,10 +18,11 @@ interface MessageState {
   status: LoadingStatus;
   statusCreate: LoadingStatus;
   error: string | null;
+  addingMessage: boolean;
 }
 const AI_ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:6666" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
 const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
-const initialState: MessageState = { messageMap: {}, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null };
+const initialState: MessageState = { messageMap: {}, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null, addingMessage: false };
 
 export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue }) => {
   try {
@@ -112,7 +113,7 @@ export const addMessage = createAsyncThunk(`${NAME}/add`, async (body: { message
         }
       }
     );
-    console.log({ response })
+
     return { message: response.data };
   } catch (error) {
     const errorMessage = error.response.data.error
@@ -154,6 +155,7 @@ const messageSlice = createSlice({
           ...state.messageMap,
           [lessonId]: [...state.messageMap[lessonId], { type: "user", fullContent: action.meta.arg.message }]
         }
+        state.addingMessage = true
       })
       .addCase(addMessage.fulfilled, (state, action: PayloadAction<any[]>) => {
         state.statusCreate = LoadingStatus.SUCCESS;
@@ -162,10 +164,12 @@ const messageSlice = createSlice({
           ...state.messageMap,
           [action.meta.arg.lessonId]: [...state.messageMap[lessonId], { type: "ai", fullContent: action.payload.message }]
         }
+        state.addingMessage = false
       })
       .addCase(addMessage.rejected, (state, action: PayloadAction<string | null>) => {
         state.statusCreate = LoadingStatus.FAILED;
         state.error = action.error.message;
+        state.addingMessage = false
       })
       .addCase(createMessage.pending, (state, action: PayloadAction<string | null>) => {
         state.statusCreate = LoadingStatus.LOADING;

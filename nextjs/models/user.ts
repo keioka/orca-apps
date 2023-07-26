@@ -46,7 +46,7 @@ export async function findUserById(id: string) {
     return user;
   } catch (error) {
     console.error('Error finding user by provider ID:', error);
-    throw new Error('Failed to find user');
+    return null
   }
 }
 
@@ -63,6 +63,6 @@ export async function findUserByProviderId(providerId: string) {
     return user;
   } catch (error) {
     console.error('Error finding user by provider ID:', error);
-    throw new Error('Failed to find user');
+    return null
   }
 }

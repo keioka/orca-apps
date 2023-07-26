@@ -72,7 +72,7 @@ export const ContentGrammar = ({
             <Text style={styles.text}>
               {text.substring(0, item.offset)}
             </Text>
-            <Text style={styles.textWrong}>
+            <Text style={[styles.text, styles.textWrong]}>
               {text.substring(item.offset, item.offset + item.length)}
             </Text>
             <Text style={styles.text}>
@@ -80,37 +80,49 @@ export const ContentGrammar = ({
             </Text>
           </View>
 
-          <Text style={styles.sectionReason}>
-            {item.type}
-          </Text>
+          <View style={styles.sectionReason}>
+            <Text style={styles.subtitle}>
+              Reason
+            </Text>
+            <Text>
+              {item.type}
+            </Text>
+          </View>
+
           <View style={styles.sectionSuggestion}>
             <Text style={styles.subtitle}>
               Suggestions
             </Text>
-            {
-              item.suggestions && item.suggestions.map((suggestion) =>
-                <View style={styles.rowSuggestion}>
-                  <Text>
-                    {suggestion.suggestion}
-                  </Text>
-                </View>
-              )
-            }
+            <View style={{ backgroundColor: "#f4f4f4", padding: 8, borderRadius: 8 }}>
+              {
+                item.suggestions && item.suggestions.map((suggestion) =>
+                  <View style={styles.rowSuggestion}>
+                    <Text>
+                      {suggestion.suggestion}
+                    </Text>
+                  </View>
+                )
+              }
+            </View>
           </View>
 
 
         </View>
-      ))}
+      ))
+      }
       <View style={styles.sectionContext}>
         <Text style={styles.subtitle}>
           Context
         </Text>
       </View>
-    </View>
+    </View >
   );
 };
 
 const styles = StyleSheet.create({
+  text: {
+    fontSize: 18,
+  },
   textSentence: {
     fontSize: 18,
     marginBottom: 16
@@ -132,7 +144,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   sectionReason: {
-    marginVertical: 8
+    marginTop: 8,
+    flexDirection: "column",
   },
   sectionContext: {
     marginVertical: 8
@@ -146,7 +159,7 @@ const styles = StyleSheet.create({
   },
   rowSuggestion: {
     marginBottom: 8,
-    paddingBottom: 4,
+    paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: "#d4d4d4",
   },
