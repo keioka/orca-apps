@@ -138,7 +138,8 @@ const Root = () => {
   useEffect(() => {
     try {
       const auth = getAuth(firebase);
-      onAuthStateChanged(auth, (user) => {
+      console.log("============ Init onAuthStateChanged ============")
+      auth.onAuthStateChanged((user) => {
         if (user) {
           dispatch(setSession({
             accessToken: user.accessToken,
