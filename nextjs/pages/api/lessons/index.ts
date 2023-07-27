@@ -13,18 +13,18 @@ export default async function handler(
   await validateToken(req, res)
   const { currentUser } = req
   if (!currentUser) {
-    return res.status(401).json({ error: 'CurrentUser is empty' });
+    return res.status(401).json({ message: 'CurrentUser is empty' });
   }
 
   const user = await findUserById(currentUser.id)
   if (!user) {
-    return res.status(401).json({ error: 'User is not in DB' });
+    return res.status(401).json({ message: 'User is not in DB' });
   }
 
   if (req.method === 'POST') {
     const { materialId } = req.body;
     if (!materialId) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ message: 'Missing required fields' });
     }
 
     try {
@@ -35,7 +35,7 @@ export default async function handler(
       return res.status(200).json(lesson);
     } catch (err) {
       console.error(err)
-      return res.status(500).json({ error: 'Something went wrong' });
+      return res.status(500).json({ message: 'Something went wrong' });
     }
   }
 
@@ -44,6 +44,5 @@ export default async function handler(
     return res.status(200).json(lessons);
   }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+  return res.status(405).json({ message: 'Method not allowed' });
 }
-

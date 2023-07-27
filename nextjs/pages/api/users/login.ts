@@ -10,7 +10,7 @@ export default async function handler(
 
   //only accept post requests
   if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ message: 'Method not allowed' });
     return;
   }
 
@@ -18,14 +18,14 @@ export default async function handler(
   const providerId = req.user?.id
 
   if (!providerId) {
-    res.status(401).json({ error: 'Unauthorized' });
+    res.status(401).json({ message: 'Unauthorized' });
     return;
   }
 
   const user = await findUserByProviderId(providerId)
 
   if (!user) {
-    res.status(404).json({ error: 'Not found' });
+    res.status(404).json({ message: 'Not found' });
     return;
   }
 

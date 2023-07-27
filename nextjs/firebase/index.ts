@@ -50,6 +50,7 @@ export const validateToken = async (req: NextApiRequest, res: NextApiResponse) =
 
     // Verify the token using the Firebase Admin SDK
     const decodedToken = await admin.auth().verifyIdToken(token);
+    console.log({ decodedToken })
     // Attach the decoded token to the request for further processing in your route handler
     req.decodedToken = decodedToken;
     req.currentUser = decodedToken.user

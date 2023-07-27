@@ -18,4 +18,3 @@ def validate_token(request):
     # If the token is valid, proceed with your protected API logic here
     # For example, you can extract the user ID from `decoded_token` and fetch user data
     # from your Firebase Realtime Database or Firestore
-    print(g.current_user)

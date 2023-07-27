@@ -144,7 +144,7 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ ma
 
     const token = session?.access_token
     if (!token) {
-      rejectWithValue('No session found')
+      return rejectWithValue('No session found')
     }
 
     const response = await fetch(`${ROOT_URL}/api/lessons`, {
@@ -155,12 +155,12 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ ma
 
 
     if (!response.ok) {
-      rejectWithValue('Failed to fetch lesson');
+      return rejectWithValue('Failed to fetch lesson');
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    rejectWithValue('Failed to fetch lesson');
+    return rejectWithValue('Failed to fetch lesson');
   }
 });
 
@@ -171,12 +171,12 @@ export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({
     const { auth } = getState()
     const { session } = auth
     if (!session) {
-      rejectWithValue('No session found')
+      return rejectWithValue('No session found')
     }
 
     const token = session?.accessToken
     if (!token) {
-      rejectWithValue('No session found')
+      return rejectWithValue('No session found')
     }
 
     const response = await axios.post(`${ROOT_URL}/api/lessons`,
@@ -193,13 +193,13 @@ export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({
     console.log({ response })
 
     if (response.status !== 200) {
-      rejectWithValue('Failed to fetch lesson');
+      return rejectWithValue('Failed to fetch lesson');
     }
     const { data } = response;
     return data;
   } catch (error) {
     console.error(error)
-    rejectWithValue('Failed to fetch lesson');
+    return rejectWithValue('Failed to fetch lesson');
   }
 });
 

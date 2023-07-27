@@ -81,20 +81,20 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
   });
 
   if (!lesson) {
-    return res.status(404).json({ error: "createMessageHandler: Lesson not found" });
+    return res.status(404).json({ message: "createMessageHandler: Lesson not found" });
   }
 
   if (lesson.userId !== req.currentUser?.id) {
-    return res.status(403).json({ error: "createMessageHandler: Unauthorized" });
+    return res.status(403).json({ message: "createMessageHandler: Unauthorized" });
   }
 
   try {
     if (!message) {
-      return res.status(400).json({ error: "createMessageHandler: Message cannot be empty" });
+      return res.status(400).json({ message: "createMessageHandler: Message cannot be empty" });
     }
 
     if (typeof message !== "string") {
-      return res.status(400).json({ error: "createMessageHandler: Invalid parameters" });
+      return res.status(400).json({ message: "createMessageHandler: Invalid parameters" });
     }
 
     const newMessage = await createMessage({ message, lessonId, createdById: req.currentUser?.id as string });
@@ -102,6 +102,6 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(200).json(newMessage);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "createMessageHandler: An error occurred while creating the message" });
+    return res.status(500).json({ message: "createMessageHandler: An error occurred while creating the message" });
   }
 }

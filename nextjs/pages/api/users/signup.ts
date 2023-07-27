@@ -10,11 +10,11 @@ export default async function handler(
 
   //only accept post requests
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   if (!providerId) {
-    return res.status(400).json({ error: 'Missing required fields' });
+    return res.status(400).json({ message: 'Missing required fields' });
   }
 
   try {
@@ -30,9 +30,11 @@ export default async function handler(
 
     await setCustomUserClaims(providerId, { user: newUser })
 
+    console.log({ newUser })
+
     return res.status(200).json(newUser);
   } catch (err) {
     console.error(err)
-    return res.status(500).json({ error: 'Something went wrong' });
+    return res.status(500).json({ message: 'Something went wrong' });
   }
 }

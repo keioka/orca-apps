@@ -91,6 +91,6 @@ export default async function handler(
     res.status(200).json(response);
   } catch (error: any) {
     console.log('error', error);
-    res.status(500).json({ error: error.message || 'Something went wrong' });
+    res.status(500).json({ message: error.message || 'Something went wrong' });
   }
 }
