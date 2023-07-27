@@ -19,17 +19,6 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-  rewrites: () => {
-    return [
-      {
-        source: "/api/py/bot",
-        destination:
-          process.env.NODE_ENV === 'development'
-            ? 'http://127.0.0.1:5328/api/py/bot'
-            : '/api/py/bot',
-      },
-    ];
-  },
   webpack(config) {
     config.module.rules.push({
       test: /\.ttf$/,
