@@ -1,4 +1,7 @@
 import * as firebaseApp from 'firebase/app';
+import { initializeAuth } from "firebase/auth"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { getReactNativePersistence } from "firebase/auth/react-native"
 
 const firebaseConfig = process.env.NODE_ENV === "production" ?
   {
@@ -27,6 +30,10 @@ function init() {
     }
 
     firebase = firebaseApp.initializeApp(firebaseConfig);
+    initializeAuth(firebase, {
+      persistence: getReactNativePersistence(AsyncStorage)
+    });
+
   } catch (error) {
     console.error(error)
   }
