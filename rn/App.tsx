@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, Text, View } from 'react-native';
 import { CardArticle } from './components/CardArticle';
@@ -17,9 +18,10 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setSession } from './redux/features/auth'
 import { firebase } from './firebase'
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Snackbar } from 'react-native-paper';
 import NetworkLogger from 'react-native-network-logger';
+import LogRocket from '@logrocket/react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -129,24 +131,36 @@ const RootStack = () => (
   </Stack.Navigator>
 )
 
-const auth = getAuth(firebase);
-
 const Root = () => {
   const dispatch = useAppDispatch()
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      console.log("=========== firebase state change =================", { user })
-      if (user) {
-        dispatch(setSession({
-          accessToken: user.accessToken,
-          uid: user.uid,
-        }))
-      } else {
-        dispatch(setSession(null))
-      }
-    })
+    try {
+      const auth = getAuth(firebase);
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          dispatch(setSession({
+            accessToken: user.accessToken,
+            uid: user.uid,
+          }))
+        } else {
+          dispatch(setSession(null))
+        }
+      })
+    } catch (error) {
+      console.error(error)
+      setError(error.message)
+    }
   }, [])
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text>{error}</Text>
+      </View>
+    )
+  }
 
   return (
     <RootStack />
@@ -164,6 +178,11 @@ const theme = {
 };
 
 export default function App() {
+
+  useEffect(() => {
+    LogRocket.init('pacifica-tech/orca-l3pnt');
+  }, [])
+
   return (
     <PaperProvider theme={theme}>
       <Provider store={store}>

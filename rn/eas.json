@@ -16,7 +16,8 @@
     "preview": {
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m1-medium"
+        "resourceClass": "m1-medium",
+        "simulator": true
       },
       "env": {
         "EXPO_PUBLIC_API_ROOT": "https://orca-fullstack.vercel.app"

@@ -2,7 +2,7 @@
   "expo": {
     "name": "orca - AI English tutor",
     "slug": "orcatalk",
-    "version": "0.3.1",
+    "version": "0.4.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -34,6 +34,7 @@
       }
     },
     "plugins": [
+      "@logrocket/react-native",
       [
         "expo-av",
         {

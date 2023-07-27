@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { currentUser } = req
 
     if (date && typeof date !== 'string') {
-      return res.status(400).json({ error: 'Date must be a string' });
+      return res.status(400).json({ message: 'Date must be a string' });
     }
 
     try {
@@ -19,19 +19,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         userId: currentUser?.id as string,
       });
       if (!material) {
-        return res.status(404).json({ error: 'Material not found' });
+        return res.status(404).json({ message: 'Material not found' });
       }
       return res.status(200).json(material);
     } catch (error) {
       console.error(error)
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ message: 'Internal server error' });
     }
   }
 
   if (req.method === 'POST') {
     const { name, type, category, publisher, url } = req.body;
     if (!name || !type || !category || !publisher || !url) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ message: 'Missing required fields' });
     }
 
     const materialData = { name, type, category, publisher, url };
@@ -40,9 +40,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const createdMaterial = await createMaterial(materialData);
       return res.status(201).json(createdMaterial);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ message: 'Internal server error' });
     }
   }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+  return res.status(405).json({ message: 'Method not allowed' });
 }

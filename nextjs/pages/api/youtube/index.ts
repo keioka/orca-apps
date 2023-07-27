@@ -24,7 +24,7 @@ export default async function handler(
       const videos = await fetchVideosByChannelIds(channelIdsFormatted);
 
       // Store videos in the database as materials
-      const materials = await Promise.all(
+      const materials = await prisma.$transaction(
         videos.map((video) =>
           prisma.material.upsert({
             where: {
@@ -92,7 +92,7 @@ export default async function handler(
 async function fetchVideosByChannelIds(channelIds: string[]): Promise<Video[]> {
   const apiKey = 'REDACTED_YOUTUBE_API_KEY';
 
-  const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&videoCaption=closedCaption&order=date&part=snippet&type=video&videoEmbeddable=true&eventType=completed&channelId=${channelIds.join(
+  const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&videoCaption=closedCaption&order=date&part=snippet&type=video&videoEmbeddable=true&channelId=${channelIds.join(
     ','
   )}`;
 
@@ -100,13 +100,11 @@ async function fetchVideosByChannelIds(channelIds: string[]): Promise<Video[]> {
     const response = await fetch(url);
     const data = await response.json();
 
+    console.log({ data })
     if (response.ok) {
       const videos = data.items
         // .filter((item: any) => item.snippet.embeddable) // Filter out videos not allowed to be embedded
         .map((item: any) => {
-          console.log({ item })
-          console.log(item.snippet.thumbnails)
-
           // const tags = item.snippet.tags[0]
           // const category = item.snippet.categoryId || tags.length ? tags[0] : "other"
 
@@ -123,10 +121,6 @@ async function fetchVideosByChannelIds(channelIds: string[]): Promise<Video[]> {
             publishedAt: item.snippet.publishedAt,
           }
         });
-
-      console.log({
-        videos
-      })
       return videos;
     } else {
       throw new Error(`Failed to fetch videos: ${data.error?.message}`);

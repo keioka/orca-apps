@@ -1,12 +1,4 @@
-import { initializeApp } from 'firebase/app';
-
-// Optionally import the services that you want to use
-// import {...} from "firebase/auth";
-// import {...} from "firebase/database";
-// import {...} from "firebase/firestore";
-// import {...} from "firebase/functions";
-// import {...} from "firebase/storage";
-console.log("process.env.NODE_ENV", process.env.NODE_ENV)
+import * as firebaseApp from 'firebase/app';
 
 const firebaseConfig = process.env.NODE_ENV === "production" ?
   {
@@ -28,9 +20,17 @@ const firebaseConfig = process.env.NODE_ENV === "production" ?
 
 export let firebase: any = null
 
-try {
-  firebase = initializeApp(firebaseConfig);
-} catch (error) {
-  console.error(error)
+function init() {
+  try {
+    if (!firebaseApp) {
+      console.error("Firebase error: firebaseApp is null")
+    }
+
+    firebase = firebaseApp.initializeApp(firebaseConfig);
+  } catch (error) {
+    console.error(error)
+  }
 }
+
+init()
 

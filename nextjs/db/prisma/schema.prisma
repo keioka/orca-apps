@@ -25,7 +25,7 @@ model Auth {
 
 model User {
   id       String   @id @default(uuid())
-  username String   @unique
+  username String
   authId   String   @unique @map("auth_id")
   Lesson   Lesson[]
   auth     Auth?    @relation(fields: [authId], references: [id], map: "auth")

@@ -13,13 +13,15 @@ const initialState: TranscribeState = {
   error: null,
 };
 
+const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+
 export const transcribeAudio = createAsyncThunk(
   'transcribe/fetchTranscript',
   async (file: File, { rejectWithValue }) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await axios.post('http://localhost:3000/transcribe', formData);
+    const response = await axios.post(`${ROOT_URL}/transcribe`, formData);
 
     if (response.status === 200) {
       return response.data;

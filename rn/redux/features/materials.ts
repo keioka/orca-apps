@@ -25,12 +25,15 @@ const initialState: MaterialsState = {
   error: null,
 };
 
+const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+
+
 // Define the fetchMaterials async thunk
 export const fetchMaterials = createAsyncThunk<Material[], void>(
   'materials/fetchMaterials',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios('http://localhost:3000/api/materials'); // Replace with your API endpoint
+      const response = await axios(`${ROOT_URL}/api/materials`); // Replace with your API endpoint
       const data = response.data;
       return data;
     } catch (error) {
