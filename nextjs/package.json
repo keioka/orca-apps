@@ -50,7 +50,8 @@
     "reset-css": "^5.0.1",
     "rss-parser": "^3.13.0",
     "url-metadata": "^3.0.1",
-    "utf-8-validate": "^6.0.3"
+    "utf-8-validate": "^6.0.3",
+    "youtube-transcript": "^1.0.6"
   },
   "devDependencies": {
     "@types/node": "^18.14.6",

@@ -23,7 +23,7 @@ import firebase_admin
 from firebase_admin import credentials
 from langchain.document_loaders import YoutubeLoader
 import time
-
+import os
 
 # Initialize the Prisma Client
 
@@ -135,10 +135,31 @@ async def chat(message, lesson_id, user_id=None):
   return answer
 
 
-def firebaseInit(): 
-  cred = credentials.Certificate("./serviceAccountKey.json")
-  firebase_admin.initialize_app(cred)
+# def firebaseInit(): 
+#   cred = credentials.Certificate("./serviceAccountKey.json")
+#   firebase_admin.initialize_app(cred)
   
+def firebaseInit():
+  # Fetch the environment variable
+  env = os.getenv('ENV', 'dev')  # Default to 'dev' if ENV is not set
+
+  # Map environment to respective JSON file
+  env_to_json = {
+      'dev': './devServiceAccountKey.json',
+      'prod': './prodServiceAccountKey.json'
+  }
+
+  # Throw error if environment is not recognized
+  if env not in env_to_json:
+    raise ValueError(f'Unrecognized environment {env}')
+
+  # Choose the JSON file based on environment
+  json_file = env_to_json[env]
+
+  # Initialize Firebase
+  cred = credentials.Certificate(json_file)
+  firebase_admin.initialize_app(cred)
+
 firebaseInit()
 app = Flask(__name__)
 

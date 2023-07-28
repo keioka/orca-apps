@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Card, Title, Paragraph, Button, Text } from 'react-native-paper';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Card, Title, Paragraph, Text } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { WebView } from 'react-native-webview';
+import { Button } from './Button';
 
 interface CardArticleProps {
   type: string;
@@ -43,11 +44,11 @@ export const CardArticle = ({
       <Paragraph>{content}</Paragraph>
     </Card.Content>
     <Card.Actions style={styles.cardAction}>
-      <Button onPress={onPressStart} style={styles.btn} textColor="#fff">{lessonId ? "Resume" : "Start"}</Button>
+      <Button onPress={onPressStart} style={styles.btn} textColor="#fff" isGradient={!!lessonId}>{lessonId ? "Resume" : "Start"}</Button>
       {!hideSaveButton &&
-        <Button onPress={onPressStart} style={styles.btnSave} textColor="#242424" >
+        <TouchableOpacity onPress={onPressStart} style={styles.btnSave} textColor="#242424" >
           <Ionicons name="bookmark" size={18} color="#c6c6c6" />
-        </Button>
+        </TouchableOpacity>
       }
     </Card.Actions>
   </Card>
@@ -85,6 +86,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: 'transparent',
     borderWidth: 0,
+    paddingHorizontal: 14,
     alignItems: 'center',
     justifyContent: 'center',
   }

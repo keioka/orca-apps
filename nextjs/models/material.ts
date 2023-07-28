@@ -2,9 +2,20 @@ import { Prisma, PrismaClient, Material } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-
 interface MaterialWithLesson extends Material {
   lessonId?: number | null
+}
+
+export async function getMaterialById(id: string): Promise<Material | null> {
+  const material = await prisma.material.findUnique({
+    where: {
+      id: Number(id),
+    },
+    include: {
+      publisher: true,
+    },
+  });
+  return material;
 }
 
 // Retrieve a material by ID
@@ -39,7 +50,6 @@ export async function getMaterials({ date, category, userId }: { date?: Date, ca
   });
 
 
-  console.log({ materials })
   const lessons = await prisma.lesson.findMany({
     where: {
       materialId: {
