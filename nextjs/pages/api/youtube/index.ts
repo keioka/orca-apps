@@ -23,6 +23,9 @@ export default async function handler(
       // Fetch videos from YouTube API based on channel IDs
       const videos = await fetchVideosByChannelIds(channelIdsFormatted);
 
+      console.log({
+        videos
+      })
       // Store videos in the database as materials
       const materials = await prisma.$transaction(
         videos.map((video) =>
@@ -37,6 +40,7 @@ export default async function handler(
               url: video.url,
               imageUrl: video.imageUrl,
               publishedAt: video.publishedAt,
+              externalId: video.id,
               publisher: {
                 connectOrCreate: {
                   where: {
@@ -58,6 +62,7 @@ export default async function handler(
               url: video.url,
               imageUrl: video.imageUrl,
               publishedAt: video.publishedAt,
+              externalId: video.id,
               publisher: {
                 connectOrCreate: {
                   where: {
@@ -105,10 +110,11 @@ async function fetchVideosByChannelIds(channelIds: string[]): Promise<Video[]> {
       const videos = data.items
         // .filter((item: any) => item.snippet.embeddable) // Filter out videos not allowed to be embedded
         .map((item: any) => {
+          console.log({ item })
           // const tags = item.snippet.tags[0]
           // const category = item.snippet.categoryId || tags.length ? tags[0] : "other"
-
           return {
+            id: item.id.videoId,
             //https://developers.google.com/youtube/v3/docs/videos?hl=ja#resource
             title: item.snippet.title,
             category: "other",

@@ -3,7 +3,7 @@ import { StyleSheet, ScrollView, Text, View, TouchableOpacity, Image, KeyboardAv
 import { CardMessage } from '../components/CardMessage';
 import { CardVocab, CardVocabXS } from '../components/CardVocab';
 import { WebView } from 'react-native-webview';
-import { Button, TextInput, Card, Modal, Portal, } from 'react-native-paper';
+import { TextInput, Card, Modal, Portal, } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { vocab } from '../helpers/dummy';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -14,7 +14,8 @@ import { messages as messageDummy } from '../helpers/dummy'
 import { Audio } from "expo-av";
 import { useAudio } from '../hooks/audio';
 import { transcribeAudio } from '../redux/features/transcribe'
-  ;
+import { Button } from './Button';
+
 enum TalkHelper {
   Vocab = 'vocab',
   Phrase = 'phrase',
@@ -162,13 +163,11 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
           </View>
         </View>
       </View>
-      <TouchableOpacity onPress={onPressToggle}>
-        <View
-          style={styles.switch}
-        >
-          <Text>Back to {Mode.Learning} mode</Text>
-        </View>
-      </TouchableOpacity>
+      <View
+        style={styles.switch}
+      >
+        <Button onPress={onPressToggle}>Back to learn mode</Button>
+      </View>
       <View style={{ flex: 1 }}>
         <ScrollView
           ref={scrollViewRef}
@@ -379,7 +378,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 64,
     // position: 'absolute',
-    backgroundColor: 'orange',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },

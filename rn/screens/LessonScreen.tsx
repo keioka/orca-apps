@@ -5,7 +5,7 @@ import { CardMessage } from '../components/CardMessage';
 import { CardSummary } from '../components/CardSummary';
 import { CardVocab, CardVocabXS } from '../components/CardVocab';
 import { WebView } from 'react-native-webview';
-import { Button, TextInput, Card } from 'react-native-paper';
+import { TextInput, Card } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { vocab } from '../helpers/dummy';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -15,6 +15,10 @@ import { fetchMessages, createMessage, addMessage } from '../redux/features/mess
 import { messages as messageDummy } from '../helpers/dummy'
 import { Audio } from "expo-av";
 import { TalkMode } from '../components/TalkMode';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Button } from '../components/Button';
+import { fetchCaptions } from '../redux/features/videoInfo';
+
 
 enum LearningModeTab {
   Article = 'article',
@@ -73,19 +77,21 @@ The Pentagon said the strikes targeted facilities used by Iranian-backed militia
         <View style={styles.section}>
           <Text style={styles.subtitleKeyPoints}>Key points</Text>
           <CardSummary
-            points={[
-              {
-                content: "The United States has carried out air strikes in eastern Syria on sites connected to Iran-backed groups.",
-                trans: "アメリカ合衆国は、イランを支援するグループに関連する東シリアのサイトで空爆を行った。",
-              },
-              {
-                content: "The Pentagon said the strikes targeted facilities used by Iranian-backed militia groups linked to recent attacks against US interests in Iraq.",
-                trans: "ペンタゴンは、空爆がイラクでの最近の米国の利益に対する攻撃に関連するイラン支援の民兵グループが使用した施設を標的としていると述べた。",
-              }, {
-                content: "The strikes mark the first military action undertaken by the Biden administration, which has been pledging to reduce the US's military footprint in the Middle East.",
-                trans: "空爆は、中東における米国の軍事的存在を削減することを誓ってきたバイデン政権が行った最初の軍事行動を示している。",
-              }
-            ]}
+            points={
+              [
+                {
+                  content: "The United States has carried out air strikes in eastern Syria on sites connected to Iran-backed groups.",
+                  trans: "アメリカ合衆国は、イランを支援するグループに関連する東シリアのサイトで空爆を行った。",
+                },
+                {
+                  content: "The Pentagon said the strikes targeted facilities used by Iranian-backed militia groups linked to recent attacks against US interests in Iraq.",
+                  trans: "ペンタゴンは、空爆がイラクでの最近の米国の利益に対する攻撃に関連するイラン支援の民兵グループが使用した施設を標的としていると述べた。",
+                }, {
+                  content: "The strikes mark the first military action undertaken by the Biden administration, which has been pledging to reduce the US's military footprint in the Middle East.",
+                  trans: "空爆は、中東における米国の軍事的存在を削減することを誓ってきたバイデン政権が行った最初の軍事行動を示している。",
+                }
+              ]
+            }
           />
         </View>
       </ScrollView >
@@ -109,8 +115,20 @@ function VocabularyTab() {
   )
 }
 
-function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, lesson: {} }) {
+function LearningMode({ onPressToggle, lesson, }: { onPressToggle: () => void, lesson: {} }) {
   const [tab, setTab] = useState(LearningModeTab.Article)
+  const dispatch = useAppDispatch()
+  const captions = useAppSelector(state => {
+    if (!lesson.material) return []
+    const materialId = lesson.material.id
+    if (!state.videoInfo.captions[materialId]) return []
+    return state.videoInfo.captions[materialId]
+  })
+
+  useEffect(() => {
+    if (!lesson.material) return
+    dispatch(fetchCaptions({ materialId: lesson.material.id }))
+  }, [lesson.id])
 
   return (
     <View style={{ width: "100%", height: "100%" }}>
@@ -138,11 +156,50 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
         </View>
       </View>
 
-      {tab === LearningModeTab.Article && <WebView
-        originWhitelist={['*']}
-        source={{ uri: lesson.material.url }}
-        style={styles.webview}
-      />
+      {tab === LearningModeTab.Article &&
+        <>
+          {lesson.material.type === "video" ? <View style={{ flexGrow: 1 }}>
+            <WebView
+              originWhitelist={['*']}
+              source={{ uri: lesson.material.url }}
+              style={styles.youtubeWebview}
+            />
+            <ScrollView
+              style={{
+                flex: 1,
+                height: "100%",
+                width: "100%",
+                padding: 16,
+              }}
+              contentContainerStyle={{
+                flexGrow: 1,
+                width: "100%",
+                paddingBottom: 32,
+              }}
+            >
+              {captions.map((caption) => (
+                <View style={{
+                  backgroundColor: "#fff",
+                  height: 64,
+                  marginVertical: 8,
+                  padding: 16,
+                  borderRadius: 12,
+                }}>
+                  <Text style={{
+                    width: "100%",
+                  }}>
+                    {caption.offset}: {caption.text}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View> : <WebView
+            originWhitelist={['*']}
+            source={{ uri: lesson.material.url }}
+            style={styles.webview}
+            menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
+          />}
+        </>
       }
       {
         tab === LearningModeTab.Summary && (
@@ -158,16 +215,18 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
         <View
           style={styles.switch}
         >
-          <Text>{Mode.Talk} mode</Text>
+          <Button onPress={onPressToggle}>
+            Go to {Mode.Talk} Mode
+          </Button>
         </View>
-      </TouchableOpacity>
-    </View>
+      </TouchableOpacity >
+    </View >
   )
 }
 
 enum Mode {
-  Learning = 'learning',
-  Talk = 'talk',
+  Learning = 'Learning',
+  Talk = 'Talk',
 }
 
 export function LessonScreen({ route }) {
@@ -264,13 +323,32 @@ const styles = StyleSheet.create({
     width: '100%',
     zIndex: 10,
   },
+  youtubeWebview: {
+    flex: 1,
+    flexGrow: 1,
+    width: "100%",
+    // height: 240,
+    maxHeight: 240,
+
+  },
   switch: {
     width: "100%",
+    flexGrow: 1,
     height: 64,
     // position: 'absolute',
-    backgroundColor: 'orange',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  switchButton: {
+    height: 48,
+    borderRadius: 48,
+    backgroundColor: '#9FD1D5',
+    borderWidth: 0,
+    color: "#fff",
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: "90%",
   },
   summaryView: {
     flexGrow: 1,

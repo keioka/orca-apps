@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { Lesson } from "../../types/lesson";
 import axios from 'axios';
+import { setLessonIdToMaterial } from './materials';
 
 // Define the lesson state
 interface LessonState {
@@ -85,6 +86,7 @@ const lessonSlice = createSlice({
       state.createdLessonId = action.payload.id;
       state.creating = false;
       state.error = null;
+
     });
 
     builder.addCase(createLesson.rejected, (state, action) => {
@@ -100,7 +102,7 @@ const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000
 
 export const fetchLesson = createAsyncThunk(
   'lesson/fetchLesson',
-  async (lessonId: string, { getState, rejectWithValue }) => {
+  async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
     try {
       const { auth } = getState()
       const { session } = auth
@@ -118,8 +120,6 @@ export const fetchLesson = createAsyncThunk(
           Authorization: `Bearer ${token}`
         },
       });
-
-      console.log({ response });
 
       // data is the server's response
       const data = response.data;
@@ -166,7 +166,7 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ ma
 
 
 // Define the async thunk to fetch the lesson
-export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({ materialId }, { getState, rejectWithValue }) => {
+export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({ materialId }, { getState, rejectWithValue, dispatch }) => {
   try {
     const { auth } = getState()
     const { session } = auth
@@ -190,12 +190,12 @@ export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({
       }
     ); // Replace w
 
-    console.log({ response })
-
     if (response.status !== 200) {
       return rejectWithValue('Failed to fetch lesson');
     }
     const { data } = response;
+
+    dispatch(setLessonIdToMaterial({ materialId, lessonId: data.id }))
     return data;
   } catch (error) {
     console.error(error)

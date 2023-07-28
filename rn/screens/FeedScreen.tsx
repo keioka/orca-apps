@@ -125,7 +125,7 @@ export function FeedScreen({ navigation }) {
             {session ? <View>
               {/* <Text style={styles.headerDateText}>s</Text> */}
               {/* login */}
-              <Ionicons name="person-circle-outline" size={32} color="blue" />
+              <Ionicons name="person-circle-outline" size={32} color="#4CB8C4" />
             </View> : <View>
               {/* <Text style={styles.headerDateText}>s</Text> */}
               {/* login */}
@@ -142,9 +142,9 @@ export function FeedScreen({ navigation }) {
           {categories.map((category) => {
             return (
               <TouchableOpacity onPress={() => setActiveCategory(category.id)}>
-                <View style={[{ justifyContent: "center", alignItems: "center", width: 96, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.id && { borderBottomColor: "#9FD1D5" }]}>
-                  <Ionicons name={category.icon} size={24} color={selectedCategory === category.id ? "#9FD1D5" : "#242424"} />
-                  <Text>{category.title}</Text>
+                <View style={[{ justifyContent: "center", alignItems: "center", width: 96, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.id && { borderBottomColor: "#4CB8C4" }]}>
+                  <Ionicons name={category.icon} size={24} color={selectedCategory === category.id ? "#4CB8C4" : "#242424"} />
+                  <Text style={{ marginTop: 8, }}>{category.title}</Text>
                 </View>
               </TouchableOpacity>
             )

@@ -37,8 +37,7 @@ export const fetchMaterials = createAsyncThunk<Material[], void>(
       const data = response.data;
       return data;
     } catch (error) {
-      console.error('Error fetching materials:', error);
-      const message = error.response.data.message;
+      const message = error.message;
       return rejectWithValue(message)
     }
   }
@@ -51,6 +50,16 @@ const materialsSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+    setLessonIdToMaterial: (state, action: PayloadAction<{ lessonId: string, materialId: string }>) => {
+      const { lessonId, materialId } = action.payload
+
+      state.items = state.items.map((material) => {
+        if (material.id === Number(materialId)) {
+          material.lessonId = lessonId
+        }
+        return material
+      })
     }
   },
   extraReducers: (builder) => {
@@ -71,7 +80,7 @@ const materialsSlice = createSlice({
   },
 });
 
-export const { clearError } = materialsSlice.actions;
+export const { clearError, setLessonIdToMaterial } = materialsSlice.actions;
 
 // Export the reducer
 export default materialsSlice.reducer;

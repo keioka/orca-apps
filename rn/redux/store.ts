@@ -5,6 +5,7 @@ import auth from './features/auth'
 import materials from './features/materials';
 import lessons from './features/lessons';
 import transcribe from './features/transcribe';
+import videoInfo from './features/videoInfo';
 
 const logger = (storeAPI: any) => (next: any) => (action: any) => {
   console.log(`dispatching: ${action.type}`, action)
@@ -21,6 +22,7 @@ export const store = configureStore({
     messages: messages,
     lessons: lessons,
     transcribe: transcribe,
+    videoInfo: videoInfo,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
