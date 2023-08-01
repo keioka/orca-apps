@@ -35,8 +35,38 @@ export default async function handler(
 
   try {
     const transcript = await YoutubeTranscript.fetchTranscript(videoId);
+
+    const response = await openai.createChatCompletion({
+      model: "gpt-4",
+      temperature: 0,
+      messages: [
+        {
+          role: "system",
+          content: `
+            As an English teacher, please create a list of 50 vocabularies, phrasal verbs, and phrases as many as possible from a given transcript. 
+            The format should be in an array of the object like below:
+            [
+              { "word": "word", "type": "vocab", "sentence": "sentence from the content", "meaning": "meaning of the word from content", offset: 0},
+            ]
+          `
+        },
+        { role: "user", content: JSON.stringify(transcript) }
+      ],
+    });
+
+
+    const result = response.data.choices[0].message
+
+    console.log({ result })
+
+    if (!result || !result.content) {
+      return res.status(500).json({ error: 'No response from OpenAI' });
+    }
+    const summaries = JSON.parse(result.content)
+
+
     res.status(200).json({
-      [materialId]: transcript,
+      [materialId]: summaries,
     });
   } catch (err) {
     console.log(err)
