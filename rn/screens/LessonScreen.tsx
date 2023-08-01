@@ -17,8 +17,9 @@ import { Audio } from "expo-av";
 import { TalkMode } from '../components/TalkMode';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from '../components/Button';
-import { fetchCaptions } from '../redux/features/videoInfo';
-
+import { fetchCaptions, fetchSummaries, fetchVocabs } from '../redux/features/videoInfo';
+import { utc } from 'moment';
+import { ActivityIndicator } from 'react-native';
 
 enum LearningModeTab {
   Article = 'article',
@@ -26,17 +27,42 @@ enum LearningModeTab {
   Vocabulary = 'vocabulary',
 }
 
-const levels = [
-  'Beginner (A1)',
-  'Elementary (A2)',
-  'Intermediate (B1)',
-  'Upper Intermediate (B2)',
-  'Advanced (C1)',
-  'Proficient (C2)'
-]
+const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+const levelsMap = {
+  A1: 'Beginner (A1)',
+  A2: 'Elementary (A2)',
+  B1: 'Intermediate (B1)',
+  B2: 'Upper Intermediate (B2)',
+  C1: 'Advanced (C1)',
+  C2: 'Proficient (C2)'
+}
 
-function SummaryTab() {
+function SummaryTab({ materialId }: { materialId: string }) {
+  const dispatch = useAppDispatch()
+  const summaries = useAppSelector(state => {
+    if (!materialId) return []
+    if (!state.videoInfo.summaries[materialId]) return []
+    return state.videoInfo.summaries[materialId]
+  })
+
+  const isLoadingSummary = useAppSelector(state => {
+    return state.videoInfo.loadingStatus === LoadingStatus.Loading
+  })
+
   const [tabLevel, setTabLevel] = useState(levels[0])
+
+  const summary = useMemo(() => {
+    return summaries.find((summary) => summary.level === tabLevel)
+  }, [tabLevel, summaries])
+
+  const handleOnPress = (level) => {
+    setTabLevel(level)
+
+    if (summaries.find((summary) => summary.level === level)) return
+
+    dispatch(fetchSummaries({ materialId, level }))
+  }
+
   return (
     <>
       <View style={{ height: 64, paddingHorizontal: 4, paddingTop: 24, width: "100%" }}>
@@ -48,9 +74,9 @@ function SummaryTab() {
         >
           {
             levels.map((level) =>
-              <TouchableOpacity style={{ marginHorizontal: 16, }} onPress={() => setTabLevel(level)}>
+              <TouchableOpacity style={{ marginHorizontal: 16, }} onPress={() => handleOnPress(level)}>
                 <View style={[{ borderRadius: 32, padding: 8, height: 32 }, level === tabLevel ? { backgroundColor: "#007991" } : null]}>
-                  <Text style={{ color: level === tabLevel ? "#fff" : null }}>{level}</Text>
+                  <Text style={{ color: level === tabLevel ? "#fff" : null }}>{levelsMap[level]}</Text>
                 </View>
               </TouchableOpacity>
             )
@@ -67,12 +93,16 @@ function SummaryTab() {
 
         <View style={styles.section}>
           <Text style={styles.subtitleKeyPoints}>Summary</Text>
-          <CardSummary
-            content={`
-The United States has carried out air strikes in eastern Syria on sites connected to Iran-backed groups. 
-The Pentagon said the strikes targeted facilities used by Iranian-backed militia groups linked to recent attacks against US interests in Iraq.
-          `}
-          />
+          {summary &&
+            <CardSummary
+              content={summary.content}
+            />
+          }
+          {isLoadingSummary &&
+            <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
+              <ActivityIndicator size="large" color="#007991" />
+            </View>
+          }
         </View>
         <View style={styles.section}>
           <Text style={styles.subtitleKeyPoints}>Key points</Text>
@@ -127,7 +157,11 @@ function LearningMode({ onPressToggle, lesson, }: { onPressToggle: () => void, l
 
   useEffect(() => {
     if (!lesson.material) return
+
     dispatch(fetchCaptions({ materialId: lesson.material.id }))
+    dispatch(fetchSummaries({ materialId: lesson.material.id }))
+    dispatch(fetchVocabs({ materialId: lesson.material.id }))
+
   }, [lesson.id])
 
   return (
@@ -158,52 +192,58 @@ function LearningMode({ onPressToggle, lesson, }: { onPressToggle: () => void, l
 
       {tab === LearningModeTab.Article &&
         <>
-          {lesson.material.type === "video" ? <View style={{ flexGrow: 1 }}>
-            <WebView
+          {lesson.material.type === "video" ?
+            <View style={{ flexGrow: 1 }}>
+              <WebView
+                originWhitelist={['*']}
+                source={{ uri: lesson.material.url }}
+                style={styles.youtubeWebview}
+                allowsFullscreenVideo={false}
+                allowFullScreen={false}
+                allowsInlineMediaPlayback
+              />
+              <ScrollView
+                style={{
+                  flex: 1,
+                  height: "100%",
+                  width: "100%",
+                  padding: 16,
+                }}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  width: "100%",
+                  paddingBottom: 32,
+                }}
+              >
+                {captions.map((caption) => (
+                  <View style={{
+                    backgroundColor: "#fff",
+                    height: 64,
+                    marginVertical: 8,
+                    padding: 16,
+                    borderRadius: 12,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                    <Text style={{
+                      width: "100%",
+                    }}>
+                      {utc(caption.offset).format('HH:mm:ss')}: {caption.text}
+                    </Text>
+                  </View>
+                ))}
+              </ScrollView>
+            </View> : <WebView
               originWhitelist={['*']}
               source={{ uri: lesson.material.url }}
-              style={styles.youtubeWebview}
-            />
-            <ScrollView
-              style={{
-                flex: 1,
-                height: "100%",
-                width: "100%",
-                padding: 16,
-              }}
-              contentContainerStyle={{
-                flexGrow: 1,
-                width: "100%",
-                paddingBottom: 32,
-              }}
-            >
-              {captions.map((caption) => (
-                <View style={{
-                  backgroundColor: "#fff",
-                  height: 64,
-                  marginVertical: 8,
-                  padding: 16,
-                  borderRadius: 12,
-                }}>
-                  <Text style={{
-                    width: "100%",
-                  }}>
-                    {caption.offset}: {caption.text}
-                  </Text>
-                </View>
-              ))}
-            </ScrollView>
-          </View> : <WebView
-            originWhitelist={['*']}
-            source={{ uri: lesson.material.url }}
-            style={styles.webview}
-            menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
-          />}
+              style={styles.webview}
+              menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
+            />}
         </>
       }
       {
         tab === LearningModeTab.Summary && (
-          <SummaryTab />
+          <SummaryTab materialId={lesson.material.id} />
         )
       }
       {

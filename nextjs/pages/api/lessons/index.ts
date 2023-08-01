@@ -4,13 +4,16 @@ import { validateToken } from '@/firebase';
 import { findUserById } from '@/models/user';
 import { createLesson, listLessons } from '@/models/lesson';
 
-const prisma = new PrismaClient();
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  await validateToken(req, res)
+  try {
+    await validateToken(req, res)
+  } catch {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
   const { currentUser } = req
   if (!currentUser) {
     return res.status(401).json({ message: 'CurrentUser is empty' });
@@ -20,6 +23,9 @@ export default async function handler(
   if (!user) {
     return res.status(401).json({ message: 'User is not in DB' });
   }
+
+
+  console.log({ method: req.method, body: req.body })
 
   if (req.method === 'POST') {
     const { materialId } = req.body;

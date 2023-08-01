@@ -30,109 +30,115 @@ import os
 API_KEY = "REDACTED_OPENAI_API_KEY"
 
 async def chat(message, lesson_id, user_id=None):
+  DATABASE_URL = os.getenv('DATABASE_URL')  # Default to 'dev' if ENV is not set  
   start_time = time.time()
-  
-  urls=[]
+    
   prisma = Client()
   await prisma.connect()
-  history = await get_messages_by_lesson_id(prisma, lesson_id)
-  lesson = await get_lesson_and_material_by_id(prisma, lesson_id)
-
-  loader_load_time = time.time()
-  print(f"Time to get all info': {loader_load_time - start_time} seconds")
-  await add_message(prisma, lesson_id, message, type="user", created_by_id=user_id)
   
-  add_message_time = time.time()
-  print(f"Time to add new message': {add_message_time - loader_load_time} seconds")
+  try: 
+    history = await get_messages_by_lesson_id(prisma, lesson_id)
+    lesson = await get_lesson_and_material_by_id(prisma, lesson_id)
 
-  if lesson.material.type != "video":
-    url = lesson.material.url.replace("watch?v=", "embed/")
-    loader = YoutubeLoader.from_youtube_url(url, add_video_info=True)
-    data = loader.load()
-  else:
-    url = lesson.material.url
-    loader = WebBaseLoader(url)
-    data = loader.load()
-  
-  text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-  documents = text_splitter.split_documents(data)
+    loader_load_time = time.time()
+    print(f"Time to get all info': {loader_load_time - start_time} seconds")
+    await add_message(prisma, lesson_id, message, type="user", created_by_id=user_id)
+    
+    add_message_time = time.time()
+    print(f"Time to add new message': {add_message_time - loader_load_time} seconds")
 
-  loader_doc_time = time.time()
-  print(f"Time to load doc': {loader_doc_time - add_message_time} seconds")
+    if lesson.material.type == "video":
+      print(">>>>>>>>>>> video <<<<<<<<<<<<<<<<")
+      url = lesson.material.url.replace("watch?v=", "embed/")
+      loader = YoutubeLoader.from_youtube_url(url, add_video_info=False)
+      data = loader.load()
+    else:
+      url = lesson.material.url
+      loader = WebBaseLoader(url)
+      data = loader.load()
+    
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    documents = text_splitter.split_documents(data)
 
-  q = queue.Queue()
+    print(documents)
+    loader_doc_time = time.time()
+    print(f"Time to load doc': {loader_doc_time - add_message_time} seconds")
 
-  chatLLM = ChatOpenAI(
-    temperature=0.1, 
-    openai_api_key=API_KEY, 
-    streaming=True,
-    # callbacks=[CallbackHandler(q)],
-  )
-  
-  memory = ConversationBufferMemory(return_messages=True, memory_key="chat_history")
+    # q = queue.Queue()
 
-  embeddings = OpenAIEmbeddings(
-    openai_api_key=API_KEY, 
-  )
+    chatLLM = ChatOpenAI(
+      temperature=0.1, 
+      openai_api_key=API_KEY, 
+      streaming=True,
+      # callbacks=[CallbackHandler(q)],
+    )
+    
+    memory = ConversationBufferMemory(return_messages=True, memory_key="chat_history")
 
-  vectorstore = Chroma.from_documents(documents, embeddings)
+    embeddings = OpenAIEmbeddings(
+      openai_api_key=API_KEY, 
+    )
 
-  vectorstore_time = time.time()
-  print(f"Time to store vector': {vectorstore_time - loader_doc_time} seconds")
 
-  history_all = ""
-  
-  for messageInfo in history:
-    role = "Human" if messageInfo.type == "user" else "AI"
-    history_all += f"""
-    {role}: {messageInfo.fullContent}
-  """
-  
-  prompt = ChatPromptTemplate.from_messages([
-      SystemMessagePromptTemplate.from_template(
+    vectorstore = Chroma.from_documents(documents, embeddings)
+
+    vectorstore_time = time.time()
+    print(f"Time to store vector': {vectorstore_time - loader_doc_time} seconds")
+
+    history_all = ""
+    
+    for messageInfo in history:
+      role = "Human" if messageInfo.type == "user" else "AI"
+      history_all += f"""
+      {role}: {messageInfo.fullContent}
+    """
+    
+    prompt = ChatPromptTemplate.from_messages([
+        SystemMessagePromptTemplate.from_template(
           """
-          You are an English teacher. Your name is Erika. You are talking to a student who is learning English. Don't say As an AI language model, I don't have a personal name.
+          You are playing the role of Erika, an English teacher, in a conversation with a student learning English. Use a brief and simple dialogue, answering the student's questions with no more than four sentences, and always including a question related to the provided news article context.
 
-          Use the following pieces of news article context to ask and answer the users question and chat history.
-          
-          Please answer user's question as a teacher or answer with some reaction in very short sentence and always ask a question about the following context at the end of what you say and let the student answer it.
-          
-          If the user asks you a question or comments related to the context, please answer it with reaction in simple way and ask a question about the following context at the end of what you say and let the student answer it.
-          
-          Please don't answer and reply with more than 4 sentences. Keep it short and simple.
-          
-          Don't talk too much
+          React to the student's questions and comments in a straightforward manner and encourage them to respond to your context-related inquiries.
+
+          Avoid excessive elaboration, and remember to keep the conversation focused on the news article context.
           ----------------
           {context}
-        
+          
           ----------------
-        """ + f"""
-        {history_all}
-        """
-      ),
-      HumanMessagePromptTemplate.from_template("{question}")
-  ])
+          """ + f"""
+          {history_all}
+          """
+        ),
+        HumanMessagePromptTemplate.from_template("{question}")
+    ])
+      
+      
+    print(prompt)
     
+    qa = ConversationalRetrievalChain.from_llm(
+      chatLLM, 
+      vectorstore.as_retriever(), 
+      memory=memory, 
+      verbose=True,
+      combine_docs_chain_kwargs={'prompt': prompt}
+    )
     
-  print(prompt)
+    response = qa({ "question": message })
+    
+    response_time = time.time()
+    print(f"Time to response': {response_time - vectorstore_time} seconds")
+    answer = response["answer"]
+    
+    await add_message(prisma, lesson_id, answer, type="ai")
+    
+    return answer
   
-  qa = ConversationalRetrievalChain.from_llm(
-    chatLLM, 
-    vectorstore.as_retriever(), 
-    memory=memory, 
-    verbose=True,
-    combine_docs_chain_kwargs={'prompt': prompt}
-  )
-  
-  response = qa({ "question": message })
-  
-  response_time = time.time()
-  print(f"Time to response': {response_time - vectorstore_time} seconds")
-  answer = response["answer"]
-  
-  await add_message(prisma, lesson_id, answer, type="ai")
-
-  return answer
+  except Exception as e:
+    print("------------------ Error ----------------")
+    print(e)    
+  finally:
+    await prisma.disconnect()
+    
 
 
 # def firebaseInit(): 
@@ -169,13 +175,12 @@ async def bot():
   message = data["message"]
   lesson_id = data["lessonId"]
   
+  print("hello")
+  
   try:
     validate_token(request)
   except Exception as error:
     print(f'Error validating Firebase token: {error}')
     return jsonify(error=f'Invalid Token: {error}'), 403
-      
-
-  print(g.current_user)
-  
+        
   return Response(await chat(message, lesson_id, g.current_user['id']), mimetype='text/event-stream')

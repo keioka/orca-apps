@@ -1,6 +1,6 @@
 generator py {
   provider             = "prisma-client-py"
-  recursive_type_depth = -1
+  recursive_type_depth = "-1"
 }
 
 datasource db {
@@ -23,16 +23,16 @@ model Auth {
 
 model User {
   id       String   @id @default(uuid())
-  username String   @unique
+  username String
   authId   String   @unique @map("auth_id")
   Lesson   Lesson[]
   auth     Auth?    @relation(fields: [authId], references: [id], map: "auth")
 
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @updatedAt @map("updated_at")
-  Message        Message[]
-  Paraphrase     Paraphrase[]
-  GrammarMistake GrammarMistake[]
+  createdAt           DateTime              @default(now()) @map("created_at")
+  updatedAt           DateTime              @updatedAt @map("updated_at")
+  Message             Message[]
+  SavedParaphrase     SavedParaphrase[]
+  SavedGrammarMistake SavedGrammarMistake[]
 
   @@map("users")
 }
@@ -45,6 +45,7 @@ model Material {
   url         String   @unique
   imageUrl    String   @map("image_url")
   publishedAt DateTime @map("published_at")
+  externalId  String   @unique @map("external_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -141,27 +142,55 @@ model Sentence {
 }
 
 model Paraphrase {
-  id          Int       @id @default(autoincrement())
-  content     String
-  sentenceId  Int?      @map("sentence_id")
-  sentence    Sentence? @relation(fields: [sentenceId], references: [id])
-  createdById String?   @map("created_by_id")
-  createdBy   User?     @relation(fields: [createdById], references: [id])
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id         Int       @id @default(autoincrement())
+  content    String
+  type       String
+  url        String
+  sentenceId Int?      @map("sentence_id")
+  sentence   Sentence? @relation(fields: [sentenceId], references: [id])
+
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  SavedParaphrase SavedParaphrase[]
 
   @@map("paraphrases")
 }
 
+model SavedParaphrase {
+  id           Int        @id @default(autoincrement())
+  paraphraseId Int        @map("paraphrase_id")
+  paraphrase   Paraphrase @relation(fields: [paraphraseId], references: [id])
+  userId       String     @map("user_id")
+  user         User       @relation(fields: [userId], references: [id])
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@map("saved_paraphrases")
+}
+
 model GrammarMistake {
-  id          Int       @id @default(autoincrement())
-  content     String
-  sentenceId  Int?      @map("sentence_id")
-  sentence    Sentence? @relation(fields: [sentenceId], references: [id])
-  createdById String?   @map("created_by_id")
-  createdBy   User?     @relation(fields: [createdById], references: [id])
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id         Int       @id @default(autoincrement())
+  content    Json
+  type       String
+  url        String
+  sentenceId Int?      @map("sentence_id")
+  sentence   Sentence? @relation(fields: [sentenceId], references: [id])
+
+  createdAt           DateTime              @default(now()) @map("created_at")
+  updatedAt           DateTime              @updatedAt @map("updated_at")
+  SavedGrammarMistake SavedGrammarMistake[]
 
   @@map("grammar_mistakes")
+}
+
+model SavedGrammarMistake {
+  id               Int            @id @default(autoincrement())
+  grammarMistakeId Int            @map("grammar_mistake_id")
+  grammarMistake   GrammarMistake @relation(fields: [grammarMistakeId], references: [id])
+  userId           String         @map("user_id")
+  user             User           @relation(fields: [userId], references: [id])
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@map("saved_grammar_mistakes")
 }

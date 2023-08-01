@@ -1,6 +1,5 @@
 from datetime import datetime
 
-
 async def get_lesson_and_material_by_id(prisma, lesson_id: str):
     try:
         print("lesson_id", lesson_id)
@@ -32,7 +31,13 @@ async def add_message(prisma, lesson_id, full_content, type="user", created_by_i
         
         if (type == "user"):
           data["sentences"] = {
-            "create": [{"name": sentence.strip(), "sentenceIndex": index} for index, sentence in enumerate(sentences)]
+            "create": [
+              {
+                "content": sentence, 
+                "sentenceIndex": index
+              } 
+              for index, sentence in enumerate(sentences)
+            ]
           }
       
         if created_by_id:

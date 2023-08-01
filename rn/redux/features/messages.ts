@@ -20,7 +20,7 @@ interface MessageState {
   error: string | null;
   addingMessage: boolean;
 }
-const AI_ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:6666" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const AI_ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:7777" : "https://orca-ai.fo65boa2oj892.us-west-2.cs.amazonlightsail.com"  // process.env.EXPO_PUBLIC_API_ROOT
 const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
 const initialState: MessageState = { messageMap: {}, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null, addingMessage: false };
 
@@ -85,7 +85,7 @@ export const createMessage = createAsyncThunk(`${NAME}/create`, async ({
     return { [lessonId]: [...state.messages.messageMap[lessonId], response.data] };
   } catch (error) {
     console.error(error)
-    rejectWithValue('Failed to fetch lesson')
+    rejectWithValue(error.response.data.message)
   }
 });
 
@@ -114,10 +114,12 @@ export const addMessage = createAsyncThunk(`${NAME}/add`, async (body: { message
       }
     );
 
+    console.log({ response });
+
     return { message: response.data };
   } catch (error) {
-    const errorMessage = error.response.data.error
     console.error(error)
+    const errorMessage = error.response.data.error
     rejectWithValue(errorMessage)
   }
 });
