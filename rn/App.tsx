@@ -140,6 +140,7 @@ const Root = () => {
       const auth = getAuth(firebase);
       console.log("============ Init onAuthStateChanged ============")
       auth.onAuthStateChanged((user) => {
+        console.log({ user })
         if (user) {
           dispatch(setSession({
             accessToken: user.accessToken,

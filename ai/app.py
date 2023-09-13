@@ -1,3 +1,6 @@
+import time
+import os
+import queue
 from flask import Flask, Response, request, g, jsonify
 from langchain.document_loaders import PlaywrightURLLoader
 from langchain.text_splitter import CharacterTextSplitter
@@ -13,23 +16,23 @@ from langchain.memory import ConversationBufferMemory
 from langchain.vectorstores import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-import queue
-from db import add_message, get_messages_by_lesson_id, get_lesson_and_material_by_id
-from validate import validate_token
+from langchain.chains import LLMChain
+from chat.callback import ThreadedGenerator, StreamingResponseCallbackHandler
 
+from langchain.chains.summarize import load_summarize_chain
+from db import add_message, get_messages_by_lesson_id, get_lesson_and_material_by_id
 from prisma import Client
-from langchain.document_loaders import WebBaseLoader
+from langchain.document_loaders import WebBaseLoader, YoutubeLoader
 import firebase_admin
 from firebase_admin import credentials
-from langchain.document_loaders import YoutubeLoader
-import time
-import os
+from validate import validate_token
 
 # Initialize the Prisma Client
 
 API_KEY = "REDACTED_OPENAI_API_KEY"
 
 async def chat(message, lesson_id, user_id=None):
+  print(">>>>>>>>>>> chat <<<<<<<<<<<<<<<<")
   DATABASE_URL = os.getenv('DATABASE_URL')  # Default to 'dev' if ENV is not set  
   start_time = time.time()
     
@@ -60,7 +63,6 @@ async def chat(message, lesson_id, user_id=None):
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     documents = text_splitter.split_documents(data)
 
-    print(documents)
     loader_doc_time = time.time()
     print(f"Time to load doc': {loader_doc_time - add_message_time} seconds")
 
@@ -70,9 +72,24 @@ async def chat(message, lesson_id, user_id=None):
       temperature=0.1, 
       openai_api_key=API_KEY, 
       streaming=True,
-      # callbacks=[CallbackHandler(q)],
+      # callbacks=[StreamingResponseCallbackHandler(q)],
     )
     
+    
+    chain = load_summarize_chain(chatLLM, chain_type="refine")
+    
+    # summary_chain = load_summarize_chain(chatLLM, chain_type="map_reduce")
+    # promptSubject = PromptTemplate(
+    #   input_variables=["text"], 
+    #   template="""
+    #     \"\"\"{text}\"\"\"\
+    #     上記のテーマのは以下の通り：\n\n* 
+    #   """
+    # )
+    # chainSubject = LLMChain(llm=llm, prompt=promptSubject)
+
+    # overall_chain_map_reduce = SimpleSequentialChain(chains=[summary_chain, chainSubject])
+
     memory = ConversationBufferMemory(return_messages=True, memory_key="chat_history")
 
     embeddings = OpenAIEmbeddings(
@@ -96,11 +113,17 @@ async def chat(message, lesson_id, user_id=None):
     prompt = ChatPromptTemplate.from_messages([
         SystemMessagePromptTemplate.from_template(
           """
-          You are playing the role of Erika, an English teacher, in a conversation with a student learning English. Use a brief and simple dialogue, answering the student's questions with no more than four sentences, and always including a question related to the provided news article context.
+          You are an English teacher, in a conversation with a student learning English. Use a brief and simple dialogue, answering the student's questions with no more than four sentences, and always including an open-ended like (why, how, what) question related to the provided news article context.
 
           React to the student's questions and comments in a straightforward manner and encourage them to respond to your context-related inquiries.
 
           Avoid excessive elaboration, and remember to keep the conversation focused on the news article context.
+          
+          Please always include an open-ended like (why, how, what) question related to the provided news article context.
+          
+          Please facilitate the conversation by asking questions and encouraging the student to respond to your context-related inquiries.
+          
+          Also add Japanese translation of your English sentence.
           ----------------
           {context}
           
@@ -111,17 +134,16 @@ async def chat(message, lesson_id, user_id=None):
         ),
         HumanMessagePromptTemplate.from_template("{question}")
     ])
-      
-      
-    print(prompt)
-    
+          
     qa = ConversationalRetrievalChain.from_llm(
       chatLLM, 
-      vectorstore.as_retriever(), 
+      vectorstore.as_retriever(),
       memory=memory, 
       verbose=True,
       combine_docs_chain_kwargs={'prompt': prompt}
     )
+    
+    print(qa)
     
     response = qa({ "question": message })
     
@@ -134,8 +156,9 @@ async def chat(message, lesson_id, user_id=None):
     return answer
   
   except Exception as e:
-    print("------------------ Error ----------------")
-    print(e)    
+    print("------------------ Error ---------------")
+    print(e)
+    raise e
   finally:
     await prisma.disconnect()
     
@@ -151,8 +174,8 @@ def firebaseInit():
 
   # Map environment to respective JSON file
   env_to_json = {
-      'dev': './devServiceAccountKey.json',
-      'prod': './prodServiceAccountKey.json'
+    'dev': './devServiceAccountKey.json',
+    'prod': './prodServiceAccountKey.json'
   }
 
   # Throw error if environment is not recognized
@@ -174,13 +197,18 @@ async def bot():
   data = request.get_json()
   message = data["message"]
   lesson_id = data["lessonId"]
-  
-  print("hello")
-  
+    
   try:
     validate_token(request)
   except Exception as error:
     print(f'Error validating Firebase token: {error}')
-    return jsonify(error=f'Invalid Token: {error}'), 403
-        
-  return Response(await chat(message, lesson_id, g.current_user['id']), mimetype='text/event-stream')
+    return jsonify(message=f'Firebase token error > {error}', status=401), 401
+  
+  try:
+    result = await chat(message, lesson_id, g.current_user['id'])
+    return Response(result, mimetype='text/event-stream')
+  except Exception as error:
+    print(f'Error chat: {error}')
+    print("dddddd")
+    return jsonify(message=f'Chat error > {error}', status=500), 500
+  

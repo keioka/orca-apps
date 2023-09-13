@@ -1,6 +1,6 @@
 {
   "flask": {
-      "image": ":orca-ai.orca-ai.2",
+      "image": ":orca-ai.orca-ai-prod.10",
       "ports": {
           "5000": "HTTP"
       }

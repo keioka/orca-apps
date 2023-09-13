@@ -93,6 +93,12 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
     fetchMetadata()
   }, [])
 
+  useEffect(() => {
+    console.log({ messages })
+    if (!scrollViewRef.current) return
+    scrollViewRef.current.scrollToEnd({ animated: true })
+  }, [messages.length])
+
   const onPressMic = () => {
     setOpenRecordingModal(true)
     startRecording()
@@ -174,9 +180,6 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
           style={styles.messageContainer}
           contentContainerStyle={{
             flexGrow: 1,
-          }}
-          onContentSizeChange={(contentWidth, contentHeight) => {
-            scrollViewRef.current.scrollToEnd({ animated: true })
           }}
           showsVerticalScrollIndicator={false}
         >
@@ -280,7 +283,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
                 }}
               >
                 <TouchableOpacity onPress={onPressMic}>
-                  <Ionicons name="mic" size={24} color="red" />
+                  <Ionicons name="mic" size={24} color="#FB4D3D" />
                 </TouchableOpacity>
                 <TextInput
                   style={styles.messageTextInput}
@@ -295,7 +298,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
                   }}
                 />
                 <TouchableOpacity onPress={submitMessage} disabled={!message || message === "" || isAddingMessage}>
-                  <Ionicons name="send" size={21} color="#0057D9" />
+                  <Ionicons name="send" size={21} color="#9FD1D5" />
                 </TouchableOpacity>
               </View>
             </View>

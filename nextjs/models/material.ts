@@ -18,8 +18,22 @@ export async function getMaterialById(id: string): Promise<Material | null> {
   return material;
 }
 
+
+export async function getMaterialByUrl(url: string): Promise<Material | null> {
+  console.log({ url })
+  const material = await prisma.material.findUnique({
+    where: {
+      url: url,
+    },
+    include: {
+      publisher: true,
+    },
+  });
+  return material;
+}
+
 // Retrieve a material by ID
-export async function getMaterials({ date, category, userId }: { date?: Date, category?: string, userId?: string }): Promise<MaterialWithLesson[]> {
+export async function getMaterials({ date, category }: { date?: Date, category?: string }): Promise<MaterialWithLesson[]> {
   const where: Prisma.MaterialWhereInput = {};
 
   if (date) {
@@ -34,12 +48,6 @@ export async function getMaterials({ date, category, userId }: { date?: Date, ca
 
   if (category) {
     where.category = { equals: category };
-  }
-
-  const lessonWhere = {
-    userId: {
-      is: userId
-    }
   }
 
   const materials = await prisma.material.findMany({
@@ -80,7 +88,7 @@ export async function createMaterial(materialData: Omit<Material, 'id'>): Promis
             externalId: materialData.publisher.externalId,
           },
           create: {
-            externalId: 'viola@prisma.io',
+            ...materialData.publisher,
           },
         },
       }
@@ -91,6 +99,48 @@ export async function createMaterial(materialData: Omit<Material, 'id'>): Promis
   });
   return material;
 }
+
+interface VocabParams {
+  word: string;
+  type: string;
+  sentence: string;
+  meaning: string;
+  translation: string;
+}
+
+interface Vocab {
+  id: string;
+  word: string;
+  type: string;
+  sentence: string;
+  meaning: string;
+  translation: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export async function createVocabs(materialId: number, vocabParams: VocabParams[]): Promise<Vocab> {
+  const vocabulariesToCreate = vocabParams.map(vocab => ({
+    name: vocab.word, // Assuming the name is the same as the word
+    word: vocab.word,
+    meaning: vocab.meaning,
+    materialId: materialId
+  }));
+
+  await prisma.vocabulary.createMany({
+    data: vocabulariesToCreate,
+    skipDuplicates: true,
+  });
+
+  const newVocabs = await prisma.vocabulary.findMany({
+    where: {
+      materialId: materialId
+    }
+  })
+
+  return newVocabs
+}
+
 
 export async function hadPreviousLesson(ids: string) {
   const lesson = await prisma.lesson.findMany({

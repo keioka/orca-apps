@@ -40,14 +40,14 @@ model User {
 }
 
 model Material {
-  id          Int      @id @default(autoincrement())
-  name        String
+  id          Int       @id @default(autoincrement())
+  title       String
   type        String
   category    String
-  url         String   @unique
-  imageUrl    String   @map("image_url")
-  publishedAt DateTime @map("published_at")
-  externalId  String   @unique @map("external_id")
+  url         String    @unique
+  imageUrl    String?   @map("image_url")
+  publishedAt DateTime? @map("published_at")
+  externalId  String    @unique @map("external_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -66,6 +66,7 @@ model Publisher {
   name       String
   type       String // youtube & articles 
   url        String // youtube channel url & article url
+  imageUrl   String?    @map("image_url")
   externalId String     @unique @map("external_id")
   material   Material[]
   createdAt  DateTime   @default(now()) @map("created_at")

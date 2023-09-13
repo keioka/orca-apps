@@ -1,6 +1,15 @@
 # Use an official Python runtime as a parent image
 FROM mcr.microsoft.com/playwright/python:latest-amd64
 
+ARG DATABASE_URL
+ARG ENV
+
+ENV DATABASE_URL=$DATABASE_URL
+ENV ENV=$ENV
+
+RUN echo "ENV: $ENV"
+RUN echo "DATABASE_URL: $DATABASE_URL"
+
 # Set the working directory in the container to /app
 WORKDIR /app
 
@@ -9,6 +18,8 @@ ADD . /app
 
 ENV HNSWLIB_NO_NATIVE=1  
 
+RUN apt-get autoclean
+RUN apt-get autoremove
 RUN apt-get update && apt-get install build-essential -y && apt-get install python3.10-dev -y
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
@@ -20,6 +31,4 @@ RUN playwright install
 
 RUN prisma generate --schema=./prisma/schema.prisma
 
-RUN echo $DATABASE_URL
-
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000", "--no-debugger", "--eager-loading"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]

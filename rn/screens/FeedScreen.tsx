@@ -99,6 +99,8 @@ export function FeedScreen({ navigation }) {
     clearError()
   }
 
+  console.log({ items })
+
   return (
     <View style={styles.container}>
       <Portal>
@@ -154,9 +156,7 @@ export function FeedScreen({ navigation }) {
         {
           feed.map((item, index) => (
             <CardArticle
-              type={item.type}
-              title={item.title}
-              imageSource={{ uri: item.imageUrl }}
+              item={item}
               onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
             />
           ))
@@ -164,9 +164,7 @@ export function FeedScreen({ navigation }) {
         {
           items.map((item, index) => (
             <CardArticle
-              type={item.type}
-              title={item.name}
-              imageSource={{ uri: item.url }}
+              item={item}
               onPressStart={() => onPressStart({ url: item.url, lessonId: item.lessonId, materialId: item.id })}
               lessonId={item.lessonId}
             />

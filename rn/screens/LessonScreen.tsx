@@ -46,12 +46,14 @@ function SummaryTab({ materialId }: { materialId: string }) {
   })
 
   const isLoadingSummary = useAppSelector(state => {
+    return false
     return state.videoInfo.loadingStatus === LoadingStatus.Loading
   })
 
   const [tabLevel, setTabLevel] = useState(levels[0])
 
   const summary = useMemo(() => {
+    return { content: "The article discusses the Seven Wonders of the Ancient World, as described by Philo of Byzantium. It mentions the history of Philo's manuscript and how it made its way to Europe. The text emphasizes the significance of Philo's work as the first known catalog of the Seven Wonders. It then provides detailed descriptions of each wonder, including the Hanging Gardens of Babylon, the Pyramids in Memphis, the Olympian Zeus, the Colossus at Rhodes, the Walls of Babylon, and the Temple of Artemis at Ephesus. The article praises the craftsmanship and grandeur of these wonders, and how they continue to capture the imagination of people throughout history." }
     return summaries.find((summary) => summary.level === tabLevel)
   }, [tabLevel, summaries])
 

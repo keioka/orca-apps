@@ -67,6 +67,7 @@ export const CardVocab = ({
         </View>
       </Card.Content>
       <Card.Actions style={styles.cardContent}>
+        <Button textColor='#545454' style={{ backgroundColor: "#f4f4f4", borderColor: "#d4d4d4" }}>Back to the original</Button>
       </Card.Actions>
     </Card>
   );

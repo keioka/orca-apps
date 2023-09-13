@@ -2,8 +2,8 @@
 
 # Variables
 SERVICE_NAME="orca-ai"
-LABEL="orca-ai"
-IMAGE="ai_web"
+LABEL="orca-ai-prod"
+IMAGE="orca-ai-prod"
 
 # AWS Lightsail Command
 aws lightsail push-container-image \

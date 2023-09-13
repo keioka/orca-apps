@@ -68,6 +68,8 @@ export function HistoryScreen({ navigation }) {
     ]
   };
 
+  console.log({ lessons })
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
@@ -95,22 +97,16 @@ export function HistoryScreen({ navigation }) {
         </View>
         {feed.map((item, index) => (
           <CardArticle
-            url={item.url}
-            type={item.type}
-            title={item.title}
-            imageSource={{ uri: item.imageUrl }}
+            item={item}
             onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
           />
         ))}
         {lessons && lessons.map((item, index) => (
           <CardArticle
             key={index}
-            url={item.material.url}
-            type={item.material.type}
-            title={item.material.name}
-            imageSource={{ uri: item.material.imageUrl }}
+            item={item.material}
             onPressStart={() => onPressStart({ url: item.material.url, lessonId: item.lessonId, materialId: item.id })}
-            lessonId={item.id}
+            lessonId={item.lessonId}
           />
         ))}
       </ScrollView>

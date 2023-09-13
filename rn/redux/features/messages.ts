@@ -22,6 +22,7 @@ interface MessageState {
 }
 const AI_ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:7777" : "https://orca-ai.fo65boa2oj892.us-west-2.cs.amazonlightsail.com"  // process.env.EXPO_PUBLIC_API_ROOT
 const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+
 const initialState: MessageState = { messageMap: {}, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null, addingMessage: false };
 
 export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue }) => {
@@ -114,13 +115,15 @@ export const addMessage = createAsyncThunk(`${NAME}/add`, async (body: { message
       }
     );
 
-    console.log({ response });
+    if (response.status !== 200) {
+      return rejectWithValue('Failed to create message')
+    }
 
     return { message: response.data };
   } catch (error) {
     console.error(error)
-    const errorMessage = error.response.data.error
-    rejectWithValue(errorMessage)
+    const errorMessage = error.response.data.message
+    return rejectWithValue(errorMessage)
   }
 });
 
