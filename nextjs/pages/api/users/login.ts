@@ -1,29 +1,32 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { validateToken } from '@/firebase';
 import { findUserByProviderId } from '@/models/user';
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { question, history } = req.body;
-
   //only accept post requests
   if (req.method !== 'POST') {
     res.status(405).json({ message: 'Method not allowed' });
     return;
   }
 
-  await validateToken(req, res)
-  const providerId = req.user?.id
+  try {
+    await validateToken(req, res)
+  } catch {
+    return res.status(401).json({ message: 'Failed to validate token' });
+  }
 
+  const providerId = req.user?.id
   if (!providerId) {
     res.status(401).json({ message: 'Unauthorized' });
     return;
   }
 
   const user = await findUserByProviderId(providerId)
-
   if (!user) {
     res.status(404).json({ message: 'Not found' });
     return;

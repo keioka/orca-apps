@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getMaterials, createMaterial } from '@/models/material'
+import { getMaterials, createMaterial, getMaterialByUrl } from '@/models/material'
 import { validateTokenWithoutError } from '@/firebase';
+import { fetchMetadata } from '@/common/fetchMetadata';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     const { category, date } = req.query;
-    await validateTokenWithoutError(req, res)
-    const { currentUser } = req
 
     if (date && typeof date !== 'string') {
       return res.status(400).json({ message: 'Date must be a string' });
@@ -16,7 +15,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const material = await getMaterials({
         category: category as string,
         date: date && new Date(date as string),
-        userId: currentUser?.id as string,
       });
       if (!material) {
         return res.status(404).json({ message: 'Material not found' });
@@ -29,17 +27,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'POST') {
-    const { name, type, category, publisher, url } = req.body;
-    if (!name || !type || !category || !publisher || !url) {
+    const { url } = req.body;
+
+    if (!url) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    const materialData = { name, type, category, publisher, url };
-
     try {
+      const cleanURL = new URL(url)
+      const material = await getMaterialByUrl(cleanURL.href as string)
+      console.log({ material, url })
+      if (material) {
+        return res.status(200).json(material);
+      }
+
+      const metadata = await fetchMetadata(url as string)
+
+      const materialData = {
+        url: url as string,
+        title: metadata.title,
+        imageUrl: metadata.image,
+        type: "article",
+        publishedAt: metadata.publishedAt,
+        externalId: metadata.externalId,
+        category: metadata.category,
+        publisher: metadata.publisher,
+      }
+
+      console.log({ materialData })
+
       const createdMaterial = await createMaterial(materialData);
       return res.status(201).json(createdMaterial);
     } catch (error) {
+      console.error(error)
       return res.status(500).json({ message: 'Internal server error' });
     }
   }
