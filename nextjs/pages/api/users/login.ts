@@ -1,9 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { validateToken } from '@/firebase';
-import { findUserByProviderId } from '@/models/user';
-import { PrismaClient } from "@prisma/client";
+import { findUserById } from '@/models/user';
 
-const prisma = new PrismaClient();
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -20,13 +18,20 @@ export default async function handler(
     return res.status(401).json({ message: 'Failed to validate token' });
   }
 
-  const providerId = req.user?.id
-  if (!providerId) {
+  if (!req.currentUser) {
     res.status(401).json({ message: 'Unauthorized' });
     return;
   }
 
-  const user = await findUserByProviderId(providerId)
+  const userId = req.currentUser!.id
+
+  console.log({ userId })
+  if (!userId) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+
+  const user = await findUserById(userId)
   if (!user) {
     res.status(404).json({ message: 'Not found' });
     return;

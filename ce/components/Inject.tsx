@@ -1,5 +1,3 @@
-import createCache from "@emotion/cache"
-import { CacheProvider } from "@emotion/react"
 import { useState, useEffect } from "react"
 import {
   Button,
@@ -16,164 +14,17 @@ import {
   Alert,
   Avatar
 } from "@mui/material"
-import { IoPlayCircle, IoCloseCircle, IoClose } from "react-icons/io5";
+import { IoPlayCircle, IoCloseCircle, IoMicOutline } from "react-icons/io5";
 import { useFirebase } from "../firebase/hooks"
 import { sendToBackground } from "@plasmohq/messaging"
-
-
-
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { fetchLesson } from '../redux/features/lessons';
+import { fetchMessages, createMessage, addMessage } from '../redux/features/messages';
+import { InputChat } from "./InputChat";
+import { ChatMode } from "./ChatMode";
+import { ChatModeProto } from "./ChatModeProto";
 
 const drawerWidth = 380
-const vocabs = [
-  {
-    id: "1",
-    name: "Gargantuan",
-    word: "gargantuan",
-    trans: {
-      ja: "巨大な",
-    },
-    meaning: "extremely large or massive",
-    example: "The elephant was truly gargantuan in size, towering over everything in its path.",
-    pronounce: "/ɡɑrˈɡæn.tju.ən/",
-    imageUrls: ["https://example.com/gargantuan-image.jpg"],
-    audioFile: "https://example.com/gargantuan-audio.mp3",
-    tags: [
-      "IELTS",
-      "TOEFL",
-    ]
-  },
-  {
-    id: "2",
-    name: "Serendipity",
-    word: "serendipity",
-    trans: {
-      ja: "偶然の幸運",
-    },
-    meaning: "the occurrence of fortunate events by chance",
-    example: "Their meeting was a serendipitous moment that changed their lives forever.",
-    pronounce: "/ˌser.ənˈdɪp.ɪ.ti/",
-    imageUrls: ["https://example.com/serendipity-image.jpg"],
-    audioFile: "https://example.com/serendipity-audio.mp3",
-    tags: [
-      "IELTS",
-      "TOEFL",
-    ]
-  },
-  {
-    id: "3",
-    name: "Ubiquitous",
-    word: "ubiquitous",
-    trans: {
-      ja: "至る所にある",
-    },
-    meaning: "present or found everywhere",
-    example: "In today's digital age, smartphones have become ubiquitous in our daily lives.",
-    pronounce: "/juːˈbɪk.wɪ.təs/",
-    imageUrls: ["https://example.com/ubiquitous-image.jpg"],
-    audioFile: "https://example.com/ubiquitous-audio.mp3",
-    tags: [
-      "TOEIC",
-    ]
-  },
-  {
-    id: "4",
-    name: "Ephemeral",
-    word: "ephemeral",
-    trans: {
-      ja: "つかの間の",
-    },
-    meaning: "lasting for a very short time",
-    example: "The beauty of the cherry blossoms is ephemeral, as they bloom for only a few weeks each spring.",
-    pronounce: "/ɪˈfɛmərəl/",
-    imageUrls: ["https://example.com/ephemeral-image.jpg"],
-    audioFile: "https://example.com/ephemeral-audio.mp3",
-    tags: [
-      "TOEIC",
-    ]
-  },
-  {
-    id: "5",
-    name: "Cacophony",
-    word: "cacophony",
-    trans: {
-      ja: "不協和音",
-    },
-    meaning: "a harsh, discordant mixture of sounds",
-    example: "The cacophony of car horns and sirens in the city can be overwhelming at times.",
-    pronounce: "/kəˈkɒfəni/",
-    imageUrls: ["https://example.com/cacophony-image.jpg"],
-    audioFile: "https://example.com/cacophony-audio.mp3",
-    tags: [
-      "GRE"
-    ]
-  },
-  {
-    id: "6",
-    name: "Esoteric",
-    word: "esoteric",
-    trans: {
-      ja: "難解な",
-    },
-    meaning: "intended for or understood by only a small group with specialized knowledge",
-    example: "Her research focused on such esoteric topics that few people could grasp its significance.",
-    pronounce: "/ˌɛsəˈtɛrɪk/",
-    imageUrls: ["https://example.com/esoteric-image.jpg"],
-    audioFile: "https://example.com/esoteric-audio.mp3",
-    tags: [
-      "Eiken 2",
-    ]
-  },
-  {
-    id: "7",
-    name: "Pernicious",
-    word: "pernicious",
-    trans: {
-      ja: "有害な",
-    },
-    meaning: "having a harmful effect, especially in a gradual or subtle way",
-    example: "The pernicious influence of social media on mental health is a growing concern.",
-    pronounce: "/pəˈnɪʃəs/",
-    imageUrls: ["https://example.com/pernicious-image.jpg"],
-    audioFile: "https://example.com/pernicious-audio.mp3",
-    tags: [
-      "Eiken 3",
-    ]
-  },
-  {
-    id: "8",
-    name: "Quixotic",
-    word: "quixotic",
-    trans: {
-      ja: "空想的な",
-    },
-    meaning: "exceedingly idealistic; unrealistic and impractical",
-    example: "His quixotic quest for world peace, while noble, seemed unlikely to succeed in the face of global conflicts.",
-    pronounce: "/kwɪkˈsɒtɪk/",
-    imageUrls: ["https://example.com/quixotic-image.jpg"],
-    audioFile: "https://example.com/quixotic-audio.mp3",
-    tags: [
-      "Eiken 3",
-    ]
-  },
-  {
-    id: "9",
-    name: "Verisimilitude",
-    word: "verisimilitude",
-    trans: {
-      ja: "逼真さ",
-    },
-    meaning: "the appearance of being true or real",
-    example: "The film's attention to detail and set design gave it a high degree of verisimilitude, making viewers feel as though they were in a different era.",
-    pronounce: "/ˌvɛrɪsɪˈmɪlɪˌtjuːd/",
-    imageUrls: ["https://example.com/verisimilitude-image.jpg"],
-    audioFile: "https://example.com/quixotic-audio.mp3",
-    tags: [
-      "Eiken 3",
-    ]
-  }
-]
-
-
 
 interface Vocab {
   id: string
@@ -186,55 +37,128 @@ interface Vocab {
   audioFile: string
 }
 
+function highlightSelectedText() {
+  console.log("orca", "highlightSelectedText")
+  // Get the selected text
+  const selectedText = window.getSelection().toString().trim();
+
+  // Check if any text is selected
+  if (selectedText !== "") {
+    // Create a span element to wrap the selected text
+    const wordEle = document.createElement("span");
+    wordEle.style.backgroundColor = "yellow"; // Set the highlight color
+
+    // Replace the selected text with the span element
+    const range = window.getSelection().getRangeAt(0);
+    range.surroundContents(wordEle);
+
+    console.log("orca", { rangeSentence: window.getSelection().getRangeAt(1) })
+
+    // // Scroll to the highlighted element for visibility
+    // spanElement.scrollIntoView();
+  }
+
+
+  if (selectedText !== "") {
+    // Find all occurrences of the selected word
+    const occurrences = document.body.innerText.split(/[.!?]/).filter(sentence => sentence.toLowerCase().includes(selectedText.toLowerCase()));
+
+    if (occurrences.length > 0) {
+      // Iterate through the occurrences and highlight them
+      occurrences.forEach(sentence => {
+        const spanElement = document.createElement("span");
+        spanElement.style.backgroundColor = "yellow";
+        spanElement.textContent = sentence;
+
+        const range = document.createRange();
+        range.selectNodeContents(document.body);
+        range.collapse(false);
+        const foundRange = document.createRange();
+        foundRange.selectNodeContents(spanElement);
+        range.setEndAfter(foundRange.endContainer, foundRange.endOffset);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        spanElement.scrollIntoView();
+      });
+    }
+  }
+}
+
 export function Inject() {
   const [hideExtention, setHideExtention] = useState(false)
   const [open, setOpen] = useState(false)
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
   const [isLoadingData, setIsLoadingData] = useState(false)
-
   const { user, isLoading, onLogin, onLogout } = useFirebase()
+  const [message, setMessage] = useState(null)
+  const dispatch = useAppDispatch()
+  const lessons = useAppSelector(state => { return state.lessons.lessons })
+  const lesson = useAppSelector(state => { return state.lessons.lessons.find((lesson) => lesson.id === lessonId) })
+
+  // const onPressToggle = () => setMode(mode === Mode.Learning ? Mode.Talk : Mode.Learning)
 
   useEffect(() => {
-    setError(null)
+    // dispatch(fetchLesson(lessonId))
+    // dispatch(fetchMessages(lessonId))
+  }, [])
 
-    if (!open || data) {
-      return
+  // useEffect(() => {
+  //   document.addEventListener("mouseup", highlightSelectedText);
+  //   return () => {
+  //     document.removeEventListener("mouseup", highlightSelectedText);
+  //   };
+  // }, [])
+
+  // useEffect(() => {
+  //   setError(null)
+
+  //   if (!open || data) {
+  //     return
+  //   }
+
+  //   async function init() {
+  //     setIsLoadingData(true)
+
+  //     try {
+  //       const resp = await sendToBackground({
+  //         name: "material",
+  //         body: {
+  //           url: window.location.href,
+  //         }
+  //       })
+  //       console.log("orca", { resp })
+
+  //       if (resp.error) {
+  //         setError(resp.error)
+  //       } else {
+  //         setData(resp.data)
+  //       }
+  //     } catch (e) {
+  //       console.error(e)
+  //     } finally {
+  //       setIsLoadingData(false)
+  //     }
+  //   }
+
+  //   init()
+
+  // }, [open])
+
+
+  useEffect(() => {
+    if (open) {
+      const newPixelWidth = window.innerWidth - drawerWidth
+      document.body.style.width = `${newPixelWidth}px`
+      console.log("orca", { newPixelWidth })
     }
-
-    async function init() {
-      setIsLoadingData(true)
-
-      try {
-        const resp = await sendToBackground({
-          name: "material",
-          body: {
-            url: window.location.href,
-          }
-        })
-        console.log("orca", { resp })
-
-        if (resp.error) {
-          setError(resp.error)
-        } else {
-          setData(resp.data)
-        }
-      } catch (e) {
-        console.error(e)
-      } finally {
-        setIsLoadingData(false)
-      }
-    }
-
-    init()
-
   }, [open])
 
   if (hideExtention) {
     return null
   }
-
-  console.log({ data, isLoadingData })
 
   return (
     <Box
@@ -248,185 +172,107 @@ export function Inject() {
         cursor: "pointer",
       }}
     >
-      <Drawer
-        variant="persistent"
-        anchor="right"
-        open={open}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          pointerEvents: "auto",
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-            background: "#fff",
-            padding: "16px",
-          }
-        }}
-      >
-        <Stack
-          direction="row"
-          justifyContent="space-between"
+      {open &&
+        <Drawer
+          variant="persistent"
+          anchor="right"
+          open={open}
           sx={{
-            paddingBottom: 1,
-            borderBottom: "1px solid #f2f2f2"
+            width: drawerWidth,
+            flexShrink: 0,
+            pointerEvents: "auto",
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              boxSizing: "border-box",
+              background: "#fff",
+            }
           }}
         >
           <Box
             sx={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
+              padding: "16px",
+              height: "100%",
             }}
-            onClick={() => setOpen(false)}
           >
-            <IoCloseCircle size={32} color="#2aa2e3" />
+            <Header setOpen={setOpen} onLogin={onLogin} />
+            {true ? <ChatModeProto /> : <ChatMode />}
           </Box>
-          <Box onClick={onLogin}>
-            <Avatar src="" />
-          </Box>
-        </Stack>
-        {isLoadingData && (
-          <Typography variant="body2" component="h6">
-            Loading...
-          </Typography>
-        )}
-        <Box my={2}>
-          {error &&
-            <Alert severity="error">{error}</Alert>
-          }
-          {data &&
-            <Card sx={{ width: "100%", height: "auto" }}>
-              <Stack direction="row">
-                <Box>
-                  <img src={data.imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: 'cover', borderRadius: "4px 0px 0px 4px" }} />
-                </Box>
-                <Stack spacing={1} sx={{ marginBottom: 1 }} p={2}>
-                  <Typography variant="body2" component="h5" sx={{ fontSize: 12 }}>
-                    {data.title}
-                  </Typography>
-                  <Typography variant="body2" component="h6" sx={{ fontSize: 10 }}>
-                    {data.description}
-                  </Typography>
-                  <Typography variant="body2" component="h6" sx={{ fontSize: 10 }}>
-                    {data.url}
-                  </Typography>
-                </Stack>
-              </Stack>
+        </Drawer>
+      }
 
-            </Card>
-          }
-        </Box>
-        {vocabs.map((vocab) => (
-          <Box key={vocab.word} sx={{ marginBottom: 1 }}>
-            <Card sx={{ width: "100%", height: "auto" }}>
-              <Stack p={3} spacing={1}>
+      <Opener setOpen={setOpen} setHideExtention={setHideExtention} />
+    </Box >
+  )
+}
 
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  sx={{
-                    paddingBottom: 1,
-                    borderBottom: "1px solid #f2f2f2"
-                  }}
-                >
-                  <Stack spacing={0.5} >
-                    <Typography variant="h6" component="h5">
-                      {vocab.word}
-                    </Typography>
-                    <Typography variant="body2" component="span">
-                      {vocab.pronounce}
-                    </Typography>
-                  </Stack>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <IoPlayCircle size={28} color="d4d4d4" />
-                  </Box>
-                </Stack>
-                <Typography variant="body2" component="h6">
-                  {vocab.meaning}
-                </Typography>
-                <Typography variant="body2" component="h6">
-                  {vocab.trans.ja}
-                </Typography>
-
-                <Typography variant="body2" component="h6">
-                  <q cite="https://google.com" >
-                    {vocab.example}
-                  </q>
-                </Typography>
-
-                <Box>
-                  {
-                    vocab.tags.map((tag) => (
-                      <Chip label={tag} sx={{ width: "auto", marginRight: 1 }} />
-                    ))
-                  }
-                </Box>
-                <CardActions sx={{ borderTop: "1px solid #f2f2f2", padding: 0, paddingTop: 1 }}>
-                  <Stack direction="row" spacing={1}>
-                    <Button variant="contained">Save</Button>
-                    <Button variant="outlined">Discard</Button>
-                    <Button variant="outlined">Source</Button>
-                  </Stack>
-                </CardActions>
-                {/* <Typography variant="body2" component="div">
-                  {vocab.audioFile}
-                </Typography> */}
-              </Stack>
-            </Card>
-          </Box>
-        ))}
-
-      </Drawer>
-
-      <Box
+function Opener({ setOpen, setHideExtention }: { setHideExtention: (hide: boolean) => void, setOpen }) {
+  return (
+    <Box
+      sx={{
+        position: "fixed",
+        right: "0px",
+        top: "140px",
+        zIndex: 2,
+        pointerEvents: "auto",
+      }}
+    >
+      <Button
+        onClick={() => setHideExtention(true)}
         sx={{
-          position: "fixed",
-          right: "0px",
-          top: "140px",
-          zIndex: 2,
-          pointerEvents: "auto",
+          backgroundColor: "#2aa2e3",
+          color: "#fff",
+          width: "64px",
+          height: "64px",
+          borderRadius: "64px 0px 0px 64px",
+          "&:hover": {
+            backgroundColor: "#2aa2e3",
+          }
         }}
       >
-        <Button
-          onClick={() => setHideExtention(true)}
-          sx={{
+        <IoCloseCircle size={24} color="#fff" />
+      </Button>
+      <Button
+        onClick={() => setOpen(true)}
+        sx={{
+          fontFamily: "Open Sans",
+          backgroundColor: "#2aa2e3",
+          color: "#fff",
+          width: "64px",
+          height: "64px",
+          borderRadius: "0px 0px 0px 0px",
+          "&:hover": {
             backgroundColor: "#2aa2e3",
-            color: "#fff",
-            width: "64px",
-            height: "64px",
-            borderRadius: "64px 0px 0px 64px",
-            "&:hover": {
-              backgroundColor: "#2aa2e3",
-            }
-          }}
-        >
-          <IoCloseCircle size={24} color="#fff" />
-        </Button>
-        <Button
-          onClick={() => setOpen(true)}
-          sx={{
-            fontFamily: "Open Sans",
-            backgroundColor: "#2aa2e3",
-            color: "#fff",
-            width: "64px",
-            height: "64px",
-            borderRadius: "0px 0px 0px 0px",
-            "&:hover": {
-              backgroundColor: "#2aa2e3",
-            }
-          }}
-        >
-          Open
-        </Button>
+          }
+        }}
+      >
+        Open
+      </Button>
+    </Box>
+  )
+}
+function Header({ setOpen, onLogin }) {
+  return (
+    <Stack
+      direction="row"
+      justifyContent="space-between"
+      sx={{
+        paddingBottom: 1,
+        borderBottom: "1px solid #f2f2f2"
+      }}
+    >
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+        }}
+        onClick={() => setOpen(false)}
+      >
+        <IoCloseCircle size={32} color="#dddddd" />
       </Box>
-    </Box >
+      <Box onClick={onLogin}>
+        <Avatar src="" />
+      </Box>
+    </Stack>
   )
 }

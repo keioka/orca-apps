@@ -1,57 +1,41 @@
-// import type { NextApiRequest, NextApiResponse } from 'next';
-// import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-// import { PineconeStore } from 'langchain/vectorstores/pinecone';
-// import { makeChain } from '@/utils/makechain';
-// import { pinecone } from '@/utils/pinecone-client';
-// import { PINECONE_INDEX_NAME, PINECONE_NAME_SPACE } from '@/config/pinecone';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import OpenAI from 'openai';
 
-// export default async function handler(
-//   req: NextApiRequest,
-//   res: NextApiResponse,
-// ) {
-//   const { question, history } = req.body;
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY, // defaults to process.env["OPENAI_API_KEY"]
+});
 
-//   console.log('question', question);
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  const { url, history, message } = req.body;
 
-//   //only accept post requests
-//   if (req.method !== 'POST') {
-//     res.status(405).json({ error: 'Method not allowed' });
-//     return;
-//   }
-
-//   if (!question) {
-//     return res.status(400).json({ message: 'No question in the request' });
-//   }
-//   // OpenAI recommends replacing newlines with spaces for best results
-//   const sanitizedQuestion = question.trim().replaceAll('\n', ' ');
-
-//   try {
-//     const index = pinecone.Index(PINECONE_INDEX_NAME);
-
-//     /* create vectorstore*/
-//     const vectorStore = await PineconeStore.fromExistingIndex(
-//       new OpenAIEmbeddings({}),
-//       {
-//         pineconeIndex: index,
-//         textKey: 'text',
-//         namespace: PINECONE_NAME_SPACE, //namespace comes from your config folder
-//       },
-//     );
-
-//     //create chain
-//     const chain = makeChain(vectorStore);
-//     //Ask a question using chat history
-//     const response = await chain.call({
-//       question: sanitizedQuestion,
-//       chat_history: history || [],
-//     });
+  const params: OpenAI.Chat.ChatCompletionCreateParams = {
+    temperature: 0,
+    messages: [
+      {
+        role: 'system', content: `
+          [Text from: ${url}]
+          
+          You are an English teacher, in a conversation with a student learning English. Use a brief and simple dialogue, answering the student's questions with no more than four sentences, and always including an open-ended like (why, how, what) question related to the provided news article context.
+          
+          React to the student's questions and comments in a straightforward manner and encourage them to respond to your context-related inquiries.
+          
+          Avoid excessive elaboration, and remember to keep the conversation focused on the news article context.
+          
+          Please always include an open-ended like (why, how, what) question related to the provided news article context.
+          
+          Please facilitate the conversation by asking questions and encouraging the student to respond to your context-related inquiries.
+        `
+      },
+      { role: 'user', content: message }
+    ],
+    model: 'gpt-4',
+  };
+  const completion: OpenAI.Chat.ChatCompletion = await openai.chat.completions.create(params);
 
 
-//     console.log({ history })
-//     console.log('response', response);
-//     res.status(200).json(response);
-//   } catch (error: any) {
-//     console.log('error', error);
-//     res.status(500).json({ error: error.message || 'Something went wrong' });
-//   }
-// }
+  return res.status(200).json({ completion });
+
+}
