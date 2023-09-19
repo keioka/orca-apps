@@ -24,9 +24,6 @@ export default async function handler(
     return res.status(401).json({ message: 'User is not in DB' });
   }
 
-
-  console.log({ method: req.method, body: req.body })
-
   if (req.method === 'POST') {
     const { materialId } = req.body;
     if (!materialId) {

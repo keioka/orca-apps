@@ -1,6 +1,5 @@
 import admin from 'firebase-admin';
 
-
 const serviceAccount = process.env.NODE_ENV === "production" ? {
   "type": "service_account",
   "project_id": "orca-app-prod",
@@ -34,6 +33,7 @@ export function init() {
   return admin.initializeApp({
     // Add your Firebase Admin SDK configuration here
     credential: admin.credential.cert(serviceAccount),
+    // TODO: Change
     databaseURL: 'https://your-project-id.firebaseio.com', // Your Firebase Realtime Database URL
   });
 }
@@ -90,9 +90,7 @@ export const validateTokenWithoutError = async (req: NextApiRequest, res: NextAp
 }
 
 export const setCustomUserClaims = async (userUid: string, values: { [attributeName: string]: any }) => {
-  try {
-    await admin.auth().setCustomUserClaims(userUid, values);
-  } catch (error) {
-    console.error('Error setting custom claims:', error);
-  }
+  console.log("=== setCustomUserClaims ===")
+  console.log({ userUid, values })
+  await admin.auth().setCustomUserClaims(userUid, values);
 }
