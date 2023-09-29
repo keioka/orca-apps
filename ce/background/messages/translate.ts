@@ -1,17 +1,10 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import axios from "axios"
 
-
-let loading = false;
-
 async function translate({ text, lang = 'ja' }: { text: string, lang: string }): { error?: string, result?: string } {
-  if (loading) {
-    return;
-  }
-  loading = true;
 
   try {
-    const result = await fetch("http://localhost:3000/api/translate", {
+    const result = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/translate`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
@@ -33,8 +26,6 @@ async function translate({ text, lang = 'ja' }: { text: string, lang: string }):
   } catch (error) {
     console.error("There was a problem with the request:", error);
     return { error: error.message };
-  } finally {
-    loading = false;
   }
 }
 

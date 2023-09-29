@@ -22,11 +22,27 @@ export function useSentence(content: string) {
     return messageSentences.length
   }, [messageSentences])
 
+  const selectNextSentence = () => {
+    console.log("selectNextSentence")
+    if (currentSentenceIndex < numSentences - 1) {
+      setCurrentSentenceIndex(currentSentenceIndex + 1)
+    }
+  }
+
+  const selectPreviousSentence = () => {
+    console.log("selectPreviousSentence")
+    if (currentSentenceIndex > 0) {
+      setCurrentSentenceIndex(currentSentenceIndex - 1)
+    }
+  }
+
   return {
     currentSentence,
     numSentences,
     setCurrentSentenceIndex,
     currentSentenceIndex,
-    messageSentences
+    messageSentences,
+    selectNextSentence,
+    selectPreviousSentence
   }
 }

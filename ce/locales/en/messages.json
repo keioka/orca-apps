@@ -1,0 +1,58 @@
+{
+  "opener_label": {
+    "message": "Talk",
+    "description": "Label used to initiate a conversation or chat session."
+  },
+  "chat_talk_button": {
+    "message": "Speak",
+    "description": "Button label to activate voice or speech input in the chat."
+  },
+  "chat_talk_input_placeholder": {
+    "message": "Type your message here",
+    "description": "Placeholder text in the chat input box prompting the user to type their message."
+  },
+  "chat_card_button_translate": {
+    "message": "Translate",
+    "description": "Button label for translating the content of a chat message to another language."
+  },
+  "chat_card_button_paraphrase": {
+    "message": "Paraphrase",
+    "description": "Button label for rephrasing the content of a chat message to convey the same meaning in different words."
+  },
+  "chat_card_button_gm_check": {
+    "message": "Grammar Check",
+    "description": "Button label to initiate a grammar check on the content of a chat message."
+  },
+  "chat_toggle_autoplay": {
+    "message": "Autoplay",
+    "description": "Toggle switch label for automatically playing voice messages or media in the chat."
+  },
+  "chat_talk_clear_button": {
+    "message": "Clear",
+    "description": "Button label to clear the content of the chat input box."
+  },
+  "chat_card_paraphrase_loading":{
+    "message": "Loading paraphrase...",
+    "description": "Loading message for the paraphrase feature."
+  },
+  "chat_card_gmcheck_loading":{
+    "message": "Loading grammar check...",
+    "description": "Loading message for the grammar check feature."
+  },
+  "card_vocab_sentence_label": {
+    "message": "Sentence",
+    "description": "Label for the sentence in a vocabulary card."
+  },
+  "card_vocab_example_label": {
+    "message": "Example",
+    "description": "Label for the example sentence in a vocabulary card."
+  },
+  "card_vocab_button_save": {
+    "message": "Save",
+    "description": "Save button label for saving a vocabulary card."
+  },
+  "card_vocab_button_discard": {
+    "message": "Discard",
+    "description": "Discard button label for discarding a vocabulary card."
+  }
+}

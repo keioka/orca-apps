@@ -4,7 +4,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
   const data = async function fetchMetadata(url: string) {
 
-    return fetch("http://localhost:3000/api/materials",
+    return fetch(`${process.env.API_ROOT}/api/materials`,
       {
         method: "POST",
         body: {

@@ -15,14 +15,14 @@ import {
 } from "@mui/material"
 import { CardChat } from "./CardChat";
 
-export function ListChat({ messages, loadingAIResp }) {
+export function ListChat({ messages, loadingAIResp, isAutoPlay }) {
   return (
     <Stack spacing={1} sx={{ marginTop: 2 }}>
       {
         messages.map((message) => {
           return (
             <Box mb={2} key={message.message}>
-              <CardChat type={message.type} content={message.message} />
+              <CardChat type={message.type} content={message.message} isAutoPlay={isAutoPlay} />
             </Box>
           )
         })

@@ -5,7 +5,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const url = req.body.url;
   console.log("material message received", url);
   try {
-    const result = await fetch("http://localhost:3000/api/materials", {
+    const result = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/materials`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'

@@ -1,0 +1,58 @@
+{
+  "opener_label": {
+    "message": "トーク",
+    "description": "会話やチャットセッションを開始するためのラベル。"
+  },
+  "chat_talk_button": {
+    "message": "話す",
+    "description": "チャットで音声または音声入力をアクティブにするためのボタンラベル。"
+  },
+  "chat_talk_input_placeholder": {
+    "message": "こちらにメッセージを入力してください",
+    "description": "ユーザーにメッセージを入力するよう促すチャット入力ボックスのプレースホルダーテキスト。"
+  },
+  "chat_card_button_translate": {
+    "message": "翻訳",
+    "description": "チャットメッセージの内容を別の言語に翻訳するためのボタンラベル。"
+  },
+  "chat_card_button_paraphrase": {
+    "message": "言い換え",
+    "description": "チャットメッセージの内容を異なる言葉で同じ意味を伝えるために言い換えるボタンラベル。"
+  },
+  "chat_card_button_gm_check": {
+    "message": "文法チェック",
+    "description": "チャットメッセージの内容に文法チェックを開始するためのボタンラベル。"
+  },
+  "chat_toggle_autoplay": {
+    "message": "自動再生",
+    "description": "チャットの音声メッセージやメディアを自動的に再生するためのトグルスイッチラベル。"
+  },
+  "chat_talk_clear_button": {
+    "message": "入力クリア",
+    "description": "チャットの音声メッセージやメディアをクリアするためのボタンラベル。"
+  },
+  "chat_card_paraphrase_loading":{
+    "message": "言い換え中...",
+    "description": "チャットメッセージの内容を言い換えるためのローディングラベル。"
+  },
+  "chat_card_gmcheck_loading":{
+    "message": "文法チェック中...",
+    "description": "チャットメッセージの内容に文法チェックを行うためのローディングラベル。"
+  },
+  "card_vocab_sentence_label": {
+    "message": "例",
+    "description": "単語の例文を表示するためのラベル。"
+  },
+  "card_vocab_example_label": {
+    "message": "他",
+    "description": "単語の例を表示するためのラベル。"
+  },
+  "card_vocab_button_save": {
+    "message": "保存",
+    "description": "保存ボタンのラベル。"
+  },
+  "card_vocab_button_discard": {
+    "message": "非表示",
+    "description": "非表示ボタンのラベル。"
+  }
+}

@@ -5,7 +5,8 @@ import ScopedCssBaseline from '@mui/material/ScopedCssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import cssText from "data-text:~/global.css"
 import { Provider } from "react-redux";
-import { store } from './redux/store';
+import { PersistGate } from "@plasmohq/redux-persist/integration/react"
+import { persistor, store } from './redux/store';
 
 const styleElement = document.createElement("style")
 styleElement.textContent = styleElement + "" + cssText
@@ -60,17 +61,19 @@ function Root() {
     <CacheProvider value={styleCache}>
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <ScopedCssBaseline
-            sx={{
-              backgroundColor: "transparent",
-              pointerEvents: "none",
-            }}
-          >
-            <Inject />
-          </ScopedCssBaseline>
+          <PersistGate loading={null} persistor={persistor}>
+            <ScopedCssBaseline
+              sx={{
+                backgroundColor: "transparent",
+                pointerEvents: "none",
+              }}
+            >
+              <Inject />
+            </ScopedCssBaseline>
+          </PersistGate>
         </Provider>
       </ThemeProvider>
-    </CacheProvider>
+    </CacheProvider >
   )
 }
 

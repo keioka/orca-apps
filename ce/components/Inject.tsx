@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react"
 import {
   Button,
-  Input,
-  Link,
   Stack,
   Typography,
   Box,
   Drawer,
-  Card,
-  CardActions,
-  Chip,
-  Grid,
-  Alert,
-  Avatar
+  Avatar,
+  Switch,
+  FormControlLabel,
+  ButtonGroup,
 } from "@mui/material"
 import { IoPlayCircle, IoCloseCircle, IoMicOutline } from "react-icons/io5";
 import { useFirebase } from "../firebase/hooks"
@@ -23,6 +19,10 @@ import { fetchMessages, createMessage, addMessage } from '../redux/features/mess
 import { InputChat } from "./InputChat";
 import { ChatMode } from "./ChatMode";
 import { ChatModeProto } from "./ChatModeProto";
+import { RiSpeakLine } from "react-icons/ri";
+import { TbVocabulary } from "react-icons/tb";
+import { ListVocab } from "./ListVocab";
+import { saveVocabulary } from "../redux/features/save";
 
 const drawerWidth = 380
 
@@ -86,24 +86,47 @@ function highlightSelectedText() {
   }
 }
 
+enum Mode {
+  Talk,
+  Vocab
+}
+
 export function Inject() {
   const [hideExtention, setHideExtention] = useState(false)
   const [open, setOpen] = useState(false)
   const [data, setData] = useState(null)
+  const [isAutoPlay, setIsAutoPlay] = useState(false)
+  const [mode, setMode] = useState(Mode.Talk)
+  const [vocabs, setVocabs] = useState<Vocab[]>([])
+  const [isLoadingVocabs, setIsLoadingVocabs] = useState(false)
+  const [originalWidth, setOriginalWidth] = useState(0)
   const [error, setError] = useState(null)
   const [isLoadingData, setIsLoadingData] = useState(false)
   const { user, isLoading, onLogin, onLogout } = useFirebase()
   const [message, setMessage] = useState(null)
+  const [isFullLoaded, setIsFullLoaded] = useState(false)
   const dispatch = useAppDispatch()
   const lessons = useAppSelector(state => { return state.lessons.lessons })
   const lesson = useAppSelector(state => { return state.lessons.lessons.find((lesson) => lesson.id === lessonId) })
-
+  const state = useAppSelector(state => { return state })
   // const onPressToggle = () => setMode(mode === Mode.Learning ? Mode.Talk : Mode.Learning)
 
   useEffect(() => {
     // dispatch(fetchLesson(lessonId))
     // dispatch(fetchMessages(lessonId))
   }, [])
+
+  function handleChangeAutoPlay() {
+    setIsAutoPlay(!isAutoPlay)
+  }
+
+
+  function handleSaveVocab(vocab) {
+    dispatch(saveVocabulary({
+      url: window.location.href,
+      data: vocab
+    }))
+  }
 
   // useEffect(() => {
   //   document.addEventListener("mouseup", highlightSelectedText);
@@ -149,11 +172,19 @@ export function Inject() {
 
 
   useEffect(() => {
+
+    window.addEventListener('load', function () {
+      setIsFullLoaded(true)
+    })
+
     if (open) {
+      setOriginalWidth(window.innerWidth)
       const newPixelWidth = window.innerWidth - drawerWidth
       document.body.style.width = `${newPixelWidth}px`
-      console.log("orca", { newPixelWidth })
+    } else if (!open && isFullLoaded) {
+      document.body.style.width = `${originalWidth}px`
     }
+
   }, [open])
 
   if (hideExtention) {
@@ -195,7 +226,42 @@ export function Inject() {
             }}
           >
             <Header setOpen={setOpen} onLogin={onLogin} />
-            {true ? <ChatModeProto /> : <ChatMode />}
+            <Box mt={2}>
+              <Menu onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
+            </Box>
+
+            {mode === Mode.Talk && (
+              <>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end"
+                  }}
+                  mt={0} mb={2}
+                >
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={isAutoPlay}
+                        onChange={handleChangeAutoPlay}
+                      />
+                    }
+                    label={chrome.i18n.getMessage("chat_toggle_autoplay")}
+                  />
+                </Box>
+                <ChatModeProto isAutoPlay={isAutoPlay} />
+              </>
+            )}
+            {mode === Mode.Vocab &&
+              <VocabMode
+                vocabs={vocabs}
+                setVocabs={setVocabs}
+                setIsLoadingVocabs={setIsLoadingVocabs}
+                isLoadingVocabs={isLoadingVocabs}
+                setError={setError}
+                onSaveVocab={handleSaveVocab}
+              />
+            }
           </Box>
         </Drawer>
       }
@@ -204,6 +270,64 @@ export function Inject() {
     </Box >
   )
 }
+
+function VocabMode({
+  vocabs,
+  setVocabs,
+  setIsLoadingVocabs,
+  isLoadingVocabs,
+  setError,
+  onSaveVocab
+}) {
+
+  useEffect(() => {
+    if (vocabs.length > 0) {
+      return
+    }
+
+    async function init() {
+      setIsLoadingVocabs(true);
+
+      try {
+        // Select all paragraphs in the DOM
+        const paragraphs = Array.from(document.querySelectorAll('p'));
+
+        // Loop over each paragraph
+        for (const paragraph of paragraphs) {
+          // Send the text content of the paragraph to the background
+          const resp = await sendToBackground({
+            name: "vocabsFromText",
+            body: {
+              text: paragraph.textContent || paragraph.innerText,
+            },
+          });
+
+          if (resp.error) {
+            // Handle error
+            setError(resp.error);
+          } else {
+            setIsLoadingVocabs(false);
+            // Update the vocabs state with the returned vocabs
+            setVocabs(prevVocabs => [...prevVocabs, ...resp.vocabs]);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    init()
+  }, [])
+
+
+  return (
+    <Box mt={2}>
+      <ListVocab vocabs={vocabs} isLoading={isLoadingVocabs} onSaveVocab={onSaveVocab} />
+    </Box>
+  )
+}
+
+const OpenerSize = 32
 
 function Opener({ setOpen, setHideExtention }: { setHideExtention: (hide: boolean) => void, setOpen }) {
   return (
@@ -221,9 +345,11 @@ function Opener({ setOpen, setHideExtention }: { setHideExtention: (hide: boolea
         sx={{
           backgroundColor: "#2aa2e3",
           color: "#fff",
-          width: "64px",
-          height: "64px",
-          borderRadius: "64px 0px 0px 64px",
+          width: `${OpenerSize}px`,
+          height: `${OpenerSize}px`,
+          minWidth: "0px",
+          padding: 0,
+          borderRadius: "50% 0px 0px 50%",
           "&:hover": {
             backgroundColor: "#2aa2e3",
           }
@@ -237,19 +363,20 @@ function Opener({ setOpen, setHideExtention }: { setHideExtention: (hide: boolea
           fontFamily: "Open Sans",
           backgroundColor: "#2aa2e3",
           color: "#fff",
-          width: "64px",
-          height: "64px",
+          width: `${OpenerSize}px`,
+          height: `${OpenerSize}px`,
           borderRadius: "0px 0px 0px 0px",
           "&:hover": {
             backgroundColor: "#2aa2e3",
           }
         }}
       >
-        Open
+        <Typography sx={{ fontSize: 8, fontWeight: 700 }}>{chrome.i18n.getMessage("opener_label")}</Typography>
       </Button>
     </Box>
   )
 }
+
 function Header({ setOpen, onLogin }) {
   return (
     <Stack
@@ -274,5 +401,74 @@ function Header({ setOpen, onLogin }) {
         <Avatar src="" />
       </Box>
     </Stack>
+  )
+}
+
+function Menu({
+  onClickButton,
+  selectedMode
+}) {
+  return (
+    <ButtonGroup
+      variant="outlined"
+      sx={{
+        backgroundColor: "#f8f8f8",
+        width: "100%",
+      }}
+    >
+      <Button
+        sx={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "none",
+          backgroundColor: selectedMode === Mode.Talk ? "#3c223c" : "transparent",
+          borderRight: "1px solid #dddddd",
+          "&:hover": {
+            backgroundColor: "#614461",
+            border: "none",
+            borderRight: "1px solid #dddddd",
+          },
+        }}
+        onClick={() => onClickButton(Mode.Talk)}
+      >
+        <RiSpeakLine size={24} color={selectedMode === Mode.Talk ? "#fff" : "#bbbbbb"} />
+      </Button>
+      <Button
+        sx={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "none",
+          borderRight: "1px solid #dddddd",
+          backgroundColor: selectedMode === Mode.Vocab ? "#3c223c" : "transparent",
+          "&:hover": {
+            backgroundColor: "#614461",
+            border: "none",
+            borderRight: "1px solid #dddddd",
+          },
+        }}
+        onClick={() => onClickButton(Mode.Vocab)}
+      >
+        <TbVocabulary size={24} color={selectedMode === Mode.Vocab ? "#fff" : "#bbbbbb"} />
+      </Button>
+      <Button
+        sx={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "none",
+          "&:hover": {
+            backgroundColor: "#f8f8f8",
+            border: "none",
+          },
+        }}
+      >
+        <IoCloseCircle size={24} color="#dddddd" />
+      </Button>
+    </ButtonGroup>
   )
 }

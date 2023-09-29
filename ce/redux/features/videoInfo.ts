@@ -25,7 +25,7 @@ interface FetchCaptionsArgs {
   videoId: string;
 }
 
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.API_ROOT
 
 export const fetchCaptions = createAsyncThunk(
   'videoInfo/fetchCaptions',
