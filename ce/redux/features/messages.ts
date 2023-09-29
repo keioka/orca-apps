@@ -21,7 +21,7 @@ interface MessageState {
   addingMessage: boolean;
 }
 const AI_ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:7777" : "https://orca-ai.fo65boa2oj892.us-west-2.cs.amazonlightsail.com"  // process.env.EXPO_PUBLIC_API_ROOT
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.API_ROOT
 
 const initialState: MessageState = { messageMap: {}, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null, addingMessage: false };
 

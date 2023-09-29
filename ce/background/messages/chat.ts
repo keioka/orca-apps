@@ -8,9 +8,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     history
   } = req.body;
 
-  console.log("chat message received", url);
   try {
-    const result = await fetch("http://localhost:3000/api/chat", {
+    const result = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/chat`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'

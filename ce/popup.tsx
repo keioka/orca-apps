@@ -1,28 +1,44 @@
 import { useState } from "react"
+import { Box, Button, Typography, TextField, Stack, Card } from "@mui/material"
+import { sendToBackground } from "@plasmohq/messaging"
+import { useFirebase } from "./firebase/hooks"
+// import { CheckoutForm } from "./components/CheckoutForm"
 
 function IndexPopup() {
-  const [data, setData] = useState("")
-
+  const { onLogin, user } = useFirebase()
   return (
-    <div
-      style={{
+    <Box
+      sx={{
+        width: 480,
         display: "flex",
         flexDirection: "column",
-        padding: 16
-      }}>
-      <h2>
-        Welcome to your
-        <a href="https://www.plasmo.com" target="_blank">
-          {" "}
-          Plasmo
-        </a>{" "}
-        Extension!
-      </h2>
-      <input onChange={(e) => setData(e.target.value)} value={data} />
-      <a href="https://docs.plasmo.com" target="_blank">
-        View Docs
-      </a>
-    </div>
+      }}
+    >
+
+      <Stack spacing={1} sx={{ width: "100%" }}>
+        <Typography variant="h6" component="h6">
+          {new Date().toLocaleDateString()}
+        </Typography>
+        <Card>
+          <Stack spacing={1} sx={{ width: "100%" }}>
+            <Typography variant="h6" component="h6">
+              Today
+            </Typography>
+          </Stack>
+        </Card>
+        <Button variant="contained" onClick={() => {
+          chrome.tabs.create({
+            url: "./tabs/index.html"
+          })
+        }}>
+          Open News Feed
+        </Button>
+        {/* <Button variant="contained" onClick={onLogin}>
+          Login
+        </Button> */}
+        {/* <CheckoutForm /> */}
+      </Stack>
+    </Box>
   )
 }
 

@@ -7,7 +7,13 @@ import {
 } from "@mui/material"
 import { IoMicOutline, IoSquare } from "react-icons/io5";
 
-export function InputChat({ onSubmit, onChange, onSpeechResult, value }) {
+export function InputChat({
+  onSubmit,
+  onChange,
+  onChangeInputByVoice,
+  onClearInput,
+  value
+}) {
   const [isSpeeching, setIsSpeeching] = useState(false)
   const micObjectRef = useRef(null)
 
@@ -15,10 +21,10 @@ export function InputChat({ onSubmit, onChange, onSpeechResult, value }) {
     console.log("orca", "handleEventSpeech")
     const result = event.results
     isSpeeching && setIsSpeeching(false)
-    console.log("orca", { result })
     const message = result[0][0].transcript
-    onSpeechResult(message)
+    onChangeInputByVoice(message)
     setIsSpeeching(false)
+    micObjectRef.current && micObjectRef.current.stop()
   }
 
   function handleClickMic() {
@@ -57,8 +63,8 @@ export function InputChat({ onSubmit, onChange, onSpeechResult, value }) {
         <Input
           multiline
           disableUnderline={true}
-          placeholder="Type a message"
-          value={value}
+          placeholder={chrome.i18n.getMessage("chat_talk_input_placeholder")}
+          value={value ? value : ""}
           onChange={onChange}
           sx={{
             paddingY: 2,
@@ -69,6 +75,7 @@ export function InputChat({ onSubmit, onChange, onSpeechResult, value }) {
           inputProps={{
             style: {
               borderBottom: "none",
+              fontSize: 16,
             }
           }}
         />
@@ -77,30 +84,50 @@ export function InputChat({ onSubmit, onChange, onSpeechResult, value }) {
             sx={{
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
               padding: 1,
               backgroundColor: "#e36464",
               borderRadius: 1,
-              width: "32px",
-              height: "32px",
+              width: 36,
+              height: 36,
             }}
             onClick={isSpeeching ? handleClickStop : handleClickMic}
           >
-            {isSpeeching ? <IoSquare color="#fff" /> : <IoMicOutline color="#fff" />}
+            {isSpeeching ? <IoSquare color="#fff" size={24} /> : <IoMicOutline color="#fff" size={24} />}
           </Box>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#3c223c",
-              color: "#fff",
-              boxShadow: "none",
-              "&:hover": {
+          <Stack direction="row" spacing={1} sx={{ marginTop: 1, justifyContent: "space-between" }}>
+            <Button
+              variant="outlined"
+              sx={{
+                borderColor: "#3c223c",
+                color: "#3c223c",
+                fontSize: 16,
+                boxShadow: "none",
+                "&:hover": {
+                  borderColor: "#3c223c",
+                }
+              }}
+              onClick={onClearInput}
+            >
+              {chrome.i18n.getMessage("chat_talk_clear_button")}
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
                 backgroundColor: "#3c223c",
-              }
-            }}
-            onClick={onSubmit}
-          >
-            Speak
-          </Button>
+                color: "#fff",
+                fontSize: 16,
+                boxShadow: "none",
+                "&:hover": {
+                  backgroundColor: "#3c223c",
+                }
+              }}
+              onClick={onSubmit}
+            >
+              {chrome.i18n.getMessage("chat_talk_button")}
+            </Button>
+          </Stack>
+
         </Stack>
       </Stack>
     </Box >

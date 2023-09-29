@@ -8,6 +8,7 @@ import {
   Box,
   Drawer,
   Card,
+  CardContent,
   CardActions,
   Chip,
   Grid,
@@ -15,10 +16,17 @@ import {
   Avatar,
   LinearProgress
 } from "@mui/material"
+import { CardSmParaphrase } from "./CardSmParaphrase"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useSentence } from "../hooks/card"
 import { IoPlay } from "react-icons/io5"
 import { LoaderBounce } from "./LoaderBounce"
+import Avator from "~assets/images/ai_avatar.png"
+import { BsFillCaretLeftFill } from "react-icons/bs"
+import { BsFillCaretRightFill } from "react-icons/bs"
+import { RxCrossCircled } from "react-icons/rx"
+import { RxCheckCircled } from "react-icons/rx"
+
 enum Tab {
   Paraphrase = "paraphrase",
   GMCheck = "gmcheck"
@@ -26,24 +34,34 @@ enum Tab {
 
 const synth = window.speechSynthesis;
 
-export function CardChat({ content, type = "ai", loading }) {
+export function CardChat({ content, type = "ai", loading, isAutoPlay }) {
   const [error, setError] = useState(null)
-  const { currentSentence, currentSentenceIndex } = useSentence(content)
-  const [currentTab, setCurrentTab] = useState<Tab.Paraphrase>(null)
+  const { currentSentence, currentSentenceIndex, numSentences, messageSentences, selectNextSentence, selectPreviousSentence } = useSentence(content)
+  const [currentTab, setCurrentTab] = useState<Tab>(null)
 
   const [isLoadingParaphrase, setIsLoadingParaphrase] = useState(false)
   const [isLoadingGMCheck, setIsLoadingGMCheck] = useState(false)
   const [isLoadingTranlate, setIsLoadingTranslate] = useState(false)
 
   const [paraphrase, setParaphrase] = useState({})
+  const [gmCheck, setGMCheck] = useState({})
+
   const [translate, setTranslate] = useState(null)
 
-  console.log("orca", { currentSentence, currentSentenceIndex })
-
   useEffect(() => {
-    if (type === "human" || loading) return
+    if (type === "human" || loading || !isAutoPlay) return
     handlePlayAudio()
   }, [])
+
+  useEffect(() => {
+    if (currentTab === Tab.Paraphrase && !paraphrase[currentSentenceIndex]) {
+      handleClickParaphrase()
+    }
+
+    if (currentTab === Tab.GMCheck && !gmCheck[currentSentenceIndex]) {
+      handleClickGMCheck()
+    }
+  }, [currentSentenceIndex])
 
   async function handleClickTranslate(sentence: string) {
     if (translate) return
@@ -56,8 +74,6 @@ export function CardChat({ content, type = "ai", loading }) {
       }
     })
 
-    console.log("orca", { resp })
-
     if (resp.error) {
       setError(resp.error)
       return
@@ -67,7 +83,7 @@ export function CardChat({ content, type = "ai", loading }) {
     setIsLoadingTranslate(false)
   }
 
-  async function handleClickParaphrase(sentence: string) {
+  async function handleClickParaphrase() {
     setIsLoadingParaphrase(true)
     setCurrentTab(Tab.Paraphrase)
     const resp = await sendToBackground({
@@ -88,28 +104,44 @@ export function CardChat({ content, type = "ai", loading }) {
     setIsLoadingParaphrase(false)
   }
 
-  function handleClickGMCheck() { }
+  async function handleClickGMCheck() {
+    setIsLoadingGMCheck(true)
+    setCurrentTab(Tab.GMCheck)
+    const resp = await sendToBackground({
+      name: "gmCheck",
+      body: {
+        sentence: currentSentence
+      }
+    })
+
+    console.log({ resp })
+
+    if (resp.error) {
+      setError(resp.error)
+      return
+    }
+
+
+    setGMCheck({ ...gmCheck, [currentSentenceIndex]: resp.gmCheck })
+    setIsLoadingGMCheck(false)
+  }
 
   function handlePlayAudio() {
     const voices = synth.getVoices();
     const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
+    console.log(englishVoices)
 
-    console.log("orca", {
-      englishVoices
-    })
-
-    const utterance = new SpeechSynthesisUtterance(
-      content
-    );
-
+    const utterance = new SpeechSynthesisUtterance(content);
     utterance.lang = "en-US";
-    console.log({ utterance })
+
     if (englishVoices.length) {
-      utterance.voice = englishVoices[41];
+      utterance.voice = englishVoices.find(voice => voice.name === 'Google US English');
     }
 
     synth.speak(utterance);
   }
+
+  const isOpenPanel = type === "human" && currentTab !== null
 
   return (
     <Stack
@@ -128,7 +160,7 @@ export function CardChat({ content, type = "ai", loading }) {
         }}
         mb={1}
       >
-        <Avatar src="" sx={{ width: 24, height: 24 }} />
+        <Avatar src={type === "ai" ? Avator : ""} sx={{ width: 24, height: 24 }} />
       </Box>
       <Card
         sx={{
@@ -140,59 +172,129 @@ export function CardChat({ content, type = "ai", loading }) {
           backgroundColor: type === "ai" ? "#f0f8ff" : "#f4f4f4",
         }}
       >
-        <Typography>
-          {content}
+        <CardContent sx={{ padding: 0, paddingTop: 1 }}>
+          {!isOpenPanel && (
+            <Typography component="span" sx={{ fontSize: 16 }}>{messageSentences.join(" ")}</Typography>
+          )}
+          {isOpenPanel && messageSentences.map((sentence, index) => {
+            if (index === currentSentenceIndex) {
+              return (
+                <>
+                  <Typography component="span" sx={{ fontSize: 16, background: "rgba(234,234,168,0.7)" }}>
+                    {sentence}
+                  </Typography>
+                  {" "}
+                </>
+              )
+            }
+            return (
+              <>
+                <Typography component="span" sx={{ fontSize: 16 }}>
+                  {sentence}
+                </Typography>
+                {" "}
+              </>
+            )
+          })}
           {loading && <LoaderBounce />}
-        </Typography>
-
+        </CardContent>
         <CardActions sx={{ padding: 0, paddingTop: 2, width: "100%" }}>
           {type === "human" && (
             <Stack sx={{ width: "100%" }}>
               <Stack direction="row" spacing={1}>
-                <Button sx={{
-                  background: "rgba(0,0,0,0.3)",
-                  borderRadius: "64px",
-                  padding: "6px 12px",
-                  backgroundColor: currentTab === Tab.GMCheck ? "#2aa2e3" : "rgba(0,0,0,0.3)",
-                  "&:hover": {
-                    backgroundColor: currentTab === Tab.GMCheck ? "#2aa2e3" : "rgba(0,0,0,0.3)",
-                  }
-                }}>
-                  <Typography variant="caption" component="h6" sx={{ fontSize: 10, color: "#fff" }}>
-                    Grammar Check
+                <Button
+                  sx={{
+                    background: "rgba(0,0,0,0.1)",
+                    borderRadius: "64px",
+                    padding: "6px 12px",
+                    backgroundColor: currentTab === Tab.GMCheck ? "#3c223c" : "rgba(0,0,0,0.1)",
+                    "&:hover": {
+                      backgroundColor: currentTab === Tab.GMCheck ? "#3c223c" : "rgba(0,0,0,0.1)",
+                    }
+                  }}
+                  onClick={handleClickGMCheck}
+                >
+                  <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.GMCheck ? "#fff" : "#787c80", fontWeight: 700 }}>
+                    {chrome.i18n.getMessage("chat_card_button_gm_check")}
                   </Typography>
                 </Button>
                 <Button
                   sx={{
-                    background: "rgba(0,0,0,0.3)",
+                    background: "rgba(0,0,0,0.1)",
                     borderRadius: "64px",
                     padding: "6px 12px",
-                    backgroundColor: currentTab === Tab.Paraphrase ? "#2aa2e3" : "rgba(0,0,0,0.3)",
+                    backgroundColor: currentTab === Tab.Paraphrase ? "#3c223c" : "rgba(0,0,0,0.1)",
                     "&:hover": {
-                      backgroundColor: currentTab === Tab.Paraphrase ? "#2aa2e3" : "rgba(0,0,0,0.3)",
+                      backgroundColor: currentTab === Tab.Paraphrase ? "#3c223c" : "rgba(0,0,0,0.1)",
                     }
                   }}
                   onClick={handleClickParaphrase}
                 >
-                  <Typography variant="caption" component="h6" sx={{ fontSize: 10, color: "#fff" }}>
-                    Paraphrase
+                  <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.Paraphrase ? "#fff" : "#787c80", fontWeight: 700 }}>
+                    {chrome.i18n.getMessage("chat_card_button_paraphrase")}
                   </Typography>
                 </Button>
               </Stack>
-              <Box mt={1}>
-                {isLoadingParaphrase && <LinearProgress />}
+              <Box>
+                {isLoadingParaphrase &&
+                  <Box sx={{ marginTop: 1 }}>
+                    <LinearProgress />
+                    <Typography>
+                      {chrome.i18n.getMessage("chat_card_paraphrase_loading")}
+                    </Typography>
+                  </Box>
+                }
+                {isLoadingGMCheck &&
+                  <Box sx={{ marginTop: 1 }}>
+                    <LinearProgress />
+                    <Typography>
+                      {chrome.i18n.getMessage("chat_card_gmcheck_loading")}
+                    </Typography>
+                  </Box>
+                }
                 {
-                  paraphrase[currentSentenceIndex] && paraphrase[currentSentenceIndex].map((item) => {
+                  currentTab === Tab.Paraphrase && paraphrase[currentSentenceIndex] && paraphrase[currentSentenceIndex].map((item) => {
                     return (
-                      <Box sx={{ border: "1px solid #e8e8e8", background: "#fff", borderRadius: 1, padding: 1, marginY: 0.5 }}>
-                        <Typography variant="caption" component="h6">
-                          {item.sentence}
-                        </Typography>
+                      <Box my={2}>
+                        <CardSmParaphrase item={item} />
                       </Box>
                     )
                   })
                 }
+                {
+                  currentTab === Tab.GMCheck && gmCheck[currentSentenceIndex] && gmCheck[currentSentenceIndex].map((item) => {
+                    return (
+                      <Stack sx={{ border: "1px solid #e8e8e8", background: "#fff", borderRadius: 1, padding: 1, marginY: 1 }} spacing={1}>
+                        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                          <RxCrossCircled color="#ff0000" />
+                          <Typography>
+                            {item.text}
+                          </Typography>
+                        </Stack>
+                        {item.suggestions && item.suggestions.map((suggestionItem) => {
+                          return (
+                            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                              <RxCheckCircled color="#00b600" />
+                              <Typography>
+                                {suggestionItem.suggestion}
+                              </Typography>
+                            </Stack>
+                          )
+                        })}
+                      </Stack>
+                    )
+                  })
+                }
               </Box>
+              <Stack direction="row" mt={1} sx={{ alignItems: "center", justifyContent: "center" }}>
+                <Box onClick={selectPreviousSentence} sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginRight: 1 }}>
+                  <BsFillCaretLeftFill color="#787c80" />
+                </Box>
+                <Typography color="787c80">{currentSentenceIndex + 1} / {numSentences}</Typography>
+                <Box onClick={selectNextSentence} sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginLeft: 1 }}>
+                  <BsFillCaretRightFill color="#787c80" />
+                </Box>
+              </Stack>
             </Stack>
           )}
 
@@ -201,35 +303,47 @@ export function CardChat({ content, type = "ai", loading }) {
               <Stack direction="row" spacing={1}>
                 <Button
                   sx={{
-                    background: "rgba(0,0,0,0.3)",
+                    background: "rgba(0,0,0,0.1)",
                     borderRadius: "64px",
                     padding: "6px 12px",
-                    backgroundColor: currentTab === Tab.GMCheck ? "#2aa2e3" : "rgba(0,0,0,0.3)",
+                    backgroundColor: "rgba(0,0,0,0.1)",
                     "&:hover": {
-                      backgroundColor: currentTab === Tab.GMCheck ? "#2aa2e3" : "rgba(0,0,0,0.3)",
+                      backgroundColor: "rgba(0,0,0,0.1)",
                     }
                   }}
                   onClick={handleClickTranslate}
                 >
-                  <Typography variant="caption" component="h6" sx={{ fontSize: 10, color: "#fff" }}>
-                    Translate
+                  <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: "#787c80", fontWeight: 700 }}>
+                    {chrome.i18n.getMessage("chat_card_button_translate")}
                   </Typography>
                 </Button>
-                <Button onClick={handlePlayAudio}>
-                  <IoPlay />
-                  <Typography variant="caption" component="h6" sx={{ fontSize: 10, color: "#fff" }}>
-                    Replay
-                  </Typography>
+                <Button
+                  onClick={handlePlayAudio}
+                  sx={{
+                    borderRadius: '50%', // Makes it circular
+                    width: 36,       // Example width
+                    height: 36,      // Example height
+                    padding: 0,          // Removes internal padding
+                    minWidth: 0,         // Overriding MUI's min width
+                    background: "rgba(0,0,0,0.1)",
+                    "&:hover": {
+                      backgroundColor: "rgba(0,0,0,0.1)",
+                    }
+                  }}
+                >
+                  <IoPlay color="#787c80" size={12} />
                 </Button>
               </Stack>
               <Box mt={1}>
-                {translate && (translate)}
+                <Typography sx={{ fontSize: 16 }}>
+                  {translate && (translate)}
+                </Typography>
               </Box>
             </Stack>
           )}
 
         </CardActions>
       </Card>
-    </Stack>
+    </Stack >
   )
 }

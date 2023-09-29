@@ -11,7 +11,7 @@ async function paraphrase(sentence: string): { error?: string, result?: string }
   loading = true;
 
   try {
-    const result = await fetch("http://localhost:3000/api/paraphrase", {
+    const result = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/paraphrase`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'

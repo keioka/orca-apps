@@ -25,7 +25,7 @@ const initialState: MaterialsState = {
   error: null,
 };
 
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.API_ROOT
 
 
 // Define the fetchMaterials async thunk

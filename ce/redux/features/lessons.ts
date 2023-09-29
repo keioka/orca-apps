@@ -98,7 +98,7 @@ const lessonSlice = createSlice({
 
 export const { clearCreatedLessonId } = lessonSlice.actions;
 
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.API_ROOT
 
 export const fetchLesson = createAsyncThunk(
   'lesson/fetchLesson',
