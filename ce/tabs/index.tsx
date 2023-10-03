@@ -6,6 +6,7 @@ import {
   Stack,
   TextField
 } from "@mui/material"
+import type { PlasmoCSConfig } from "plasmo"
 import { ExpandableMenu } from "~components/ExpandableMenu"
 import Parser from 'rss-parser';
 import {
@@ -30,6 +31,13 @@ import { NoteScreen } from "../tabScreens/NoteScreen"
 import { Provider } from "react-redux";
 import { PersistGate } from "@plasmohq/redux-persist/integration/react"
 import { persistor, store } from '../redux/store';
+import { getTheme } from "../theme";
+import { ThemeProvider } from '@mui/material/styles';
+
+export const config: PlasmoCSConfig = {
+  matches: ["https://*/*", "http://*/"],
+  css: ["../font.css"]
+}
 
 const WIDTH_SIDEBAR = 280
 const ROOT_PATH = "/tabs/index.html"
@@ -48,28 +56,28 @@ const feeds = [
     category: "Tech",
     items: [
       {
-        "name": "TechCrunch",
-        "url": "https://techcrunch.com/feed"
+        name: "TechCrunch",
+        url: "https://techcrunch.com/feed"
       },
       {
         name: "Google AI Blog",
         url: "http://googleresearch.blogspot.com/atom.xml"
       },
       {
-        "name": "CNET",
-        "url": "https://cnet.com/rss/all"
+        name: "CNET",
+        url: "https://cnet.com/rss/all"
       },
       {
-        "name": "Digital Trends",
-        "url": "https://digitaltrends.com/feed"
+        name: "Digital Trends",
+        url: "https://digitaltrends.com/feed"
       },
       {
-        "name": "Engadget",
-        "url": "https://engadget.com/rss.xml"
+        name: "Engadget",
+        url: "https://engadget.com/rss.xml"
       },
       {
-        "name": "The Verge",
-        "url": "https://theverge.com/rss/index.xml"
+        name: "The Verge",
+        url: "https://theverge.com/rss/index.xml"
       },
     ]
   },
@@ -110,13 +118,12 @@ const feeds = [
 function fetchFavicon(url) {
   // Try fetching favicon.ico from the root domain first
   const domain = new URL(url).origin;
-  let faviconUrl = `${domain}/favicon.ico`;
+  const faviconUrl = `${domain}/favicon.ico`;
 
   return faviconUrl
 }
 
 function Main() {
-  console.log("Main")
   return (
     <Routes>
       <Route path={`${ROOT_PATH}`} element={<Layout />}>
@@ -309,7 +316,6 @@ function FeedPage() {
 
       const parser = new Parser();
       const feed = await parser.parseURL(selectedFeed.url);
-      console.log(feed);
 
       setArticles(feed.items);
     };
@@ -369,15 +375,20 @@ function NoMatch() {
 }
 
 function App() {
+  const lang = chrome.i18n.getUILanguage()
+  const langCode = lang.split("-")[0]
+  const theme = getTheme(langCode)
   return (
     <React.StrictMode>
-      <Provider store={store}>
-        <PersistGate persistor={persistor}>
-          <BrowserRouter>
-            <Main />
-          </BrowserRouter>
-        </PersistGate>
-      </Provider>
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
+          <PersistGate persistor={persistor}>
+            <BrowserRouter>
+              <Main />
+            </BrowserRouter>
+          </PersistGate>
+        </Provider>
+      </ThemeProvider>
     </React.StrictMode>
   )
 }

@@ -22,8 +22,9 @@ export function ChatModeProto({ isAutoPlay }) {
   const [error, setError] = useState(null)
   const [data, setData] = useState(null)
 
-  useEffect(() => {
+  const url = window.location.href
 
+  useEffect(() => {
     async function init() {
       const message = { message: "Hello!", type: "ai" }
       setMessages([message])
@@ -98,12 +99,10 @@ export function ChatModeProto({ isAutoPlay }) {
     }
   };
 
-  console.log({ message })
-
   return (
     <>
       {error && <Alert severity="error">{error}</Alert>}
-      <ListChat messages={messages} loadingAIResp={initializing} isAutoPlay={isAutoPlay} />
+      <ListChat messages={messages} loadingAIResp={initializing} isAutoPlay={isAutoPlay} url={url} />
       <Box
         sx={{
           paddingY: 2

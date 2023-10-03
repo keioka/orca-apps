@@ -1,8 +1,8 @@
 {
   "name": "Orca",
-  "displayName": "Orca",
-  "version": "0.0.1",
-  "description": "Orca - Practice English based on your interests",
+  "displayName": "__MSG_extensionName__",
+  "version": "0.0.2",
+  "description": "__MSG_extensionDescription__",
   "author": "Orca",
   "scripts": {
     "dev": "plasmo dev",
@@ -62,6 +62,7 @@
     }
   },
   "manifest": {
+    "name": "__MSG_extensionName__",
     "default_locale": "ja",
     "key": "$CRX_PUBLIC_KEY",
     "host_permissions": [

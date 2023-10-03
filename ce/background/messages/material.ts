@@ -1,5 +1,4 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
-import axios from "axios"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const url = req.body.url;
@@ -16,8 +15,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     });
 
     const data = await result.json();
-
-    console.log({ data, result })
 
     if (!result.ok) {
       console.log({ data })

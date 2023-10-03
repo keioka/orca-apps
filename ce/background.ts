@@ -1,23 +1,19 @@
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log({ request, i: chrome.identity })
-  if (request.type === "login") {
-    try {
-      chrome.identity.getAuthToken({ interactive: true }, async function (token) {
-        if (chrome.runtime.lastError || !token) {
-          console.error(chrome.runtime.lastError.message)
-          sendResponse({ error: chrome.runtime.lastError })
-          return
-        }
-        if (token) {
-          console.log({ token })
-          sendResponse({ token })
-        }
-      })
-    } catch (e) {
-      console.error(e)
-    }
-  }
-});
+// chrome.webRequest.onBeforeRequest.addListener(
+//   function (details) {
+//     console.log({ details })
+//     console.log(chrome.runtime.getURL("tabs/index.html"))
+//     // chrome.scripting.executeScript(
+//     //   {
+//     //     target: { tabId: details.tabId },
+//     //     function: () => { console.log('XXX') },
+//     //     args: [details.url],
+//     //   },
+//     //   () => { console.log('ZZZ') });
 
-
-
+//     return { redirectUrl: chrome.runtime.getURL("tabs/index.html") };
+//   },
+//   {
+//     urls: ["chrome-extension://" + chrome.runtime.id + "/tabs/index.html/*"]
+//   }, [
+//   "blocking"
+// ]);

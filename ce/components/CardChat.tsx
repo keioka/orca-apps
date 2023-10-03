@@ -16,25 +16,67 @@ import {
   Avatar,
   LinearProgress
 } from "@mui/material"
-import { CardSmParaphrase } from "./CardSmParaphrase"
 import { sendToBackground } from "@plasmohq/messaging"
-import { useSentence } from "../hooks/card"
 import { IoPlay } from "react-icons/io5"
-import { LoaderBounce } from "./LoaderBounce"
-import Avator from "~assets/images/ai_avatar.png"
 import { BsFillCaretLeftFill } from "react-icons/bs"
 import { BsFillCaretRightFill } from "react-icons/bs"
-import { RxCrossCircled } from "react-icons/rx"
-import { RxCheckCircled } from "react-icons/rx"
+
+import { LoaderBounce } from "./LoaderBounce"
+import { useSentence } from "../hooks/card"
+// import Avator from "~assets/images/ai_avatar.png"
+import { CardSmGMCheck } from "./CardSmGMCheck"
+import { CardSmParaphrase } from "./CardSmParaphrase"
+import { saveParaphrases, saveGrammarMistakes } from "~redux/features/save"
+import { useAppDispatch } from "~redux/hooks"
+import type { ParaphraseItem, GMCheckItem } from "~types"
+import styled from "@emotion/styled"
+
+const TypoEn = styled(Typography)`
+  font-family: "Open Sans";
+  font-size: 14px;
+  font-weight: 600;
+  color: #00232f;
+  letter-spacing: 0px;
+`
 
 enum Tab {
   Paraphrase = "paraphrase",
   GMCheck = "gmcheck"
 }
 
+interface CardChatProps {
+  content: string;
+  type?: "ai" | "human";
+  loading?: boolean;
+  isAutoPlay?: boolean;
+  url: string;
+}
+
+interface CardChatPureProps {
+  type?: "ai" | "human";
+  loading?: boolean;
+  handleClickGMCheck: () => void;
+  handleClickParaphrase: () => void;
+  handleClickTranslate: (sentence: string) => void;
+  handlePlayAudio: () => void;
+  handleSaveGMCheck: (suggestions: string[]) => void;
+  handleSaveParaphrase: (suggestionSentence: string) => void;
+  translate: string | null;
+  isLoadingGMCheck: boolean;
+  isLoadingParaphrase: boolean;
+  currentTab: Tab | null;
+  paraphrase: Record<number, ParaphraseItem[]>;
+  gmCheck: Record<number, GMCheckItem[]>;
+  currentSentenceIndex: number;
+  numSentences: number;
+  messageSentences: string[];
+  selectNextSentence: () => void;
+  selectPreviousSentence: () => void;
+}
+
 const synth = window.speechSynthesis;
 
-export function CardChat({ content, type = "ai", loading, isAutoPlay }) {
+export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: CardChatProps) {
   const [error, setError] = useState(null)
   const { currentSentence, currentSentenceIndex, numSentences, messageSentences, selectNextSentence, selectPreviousSentence } = useSentence(content)
   const [currentTab, setCurrentTab] = useState<Tab>(null)
@@ -47,6 +89,9 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay }) {
   const [gmCheck, setGMCheck] = useState({})
 
   const [translate, setTranslate] = useState(null)
+
+  const dispatch = useAppDispatch()
+
 
   useEffect(() => {
     if (type === "human" || loading || !isAutoPlay) return
@@ -93,8 +138,6 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay }) {
       }
     })
 
-    console.log("orca", { resp })
-
     if (resp.error) {
       setError(resp.error)
       return
@@ -129,7 +172,6 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay }) {
   function handlePlayAudio() {
     const voices = synth.getVoices();
     const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
-    console.log(englishVoices)
 
     const utterance = new SpeechSynthesisUtterance(content);
     utterance.lang = "en-US";
@@ -140,6 +182,77 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay }) {
 
     synth.speak(utterance);
   }
+
+  function handleSaveParaphrase(suggestionSentence: string) {
+    dispatch(
+      saveParaphrases({
+        url,
+        data: {
+          suggestion: suggestionSentence,
+          sentence: currentSentence
+        }
+      })
+    )
+  }
+  function handleSaveGMCheck(suggestions) {
+    dispatch(
+      saveGrammarMistakes({
+        url,
+        data: {
+          suggestions: suggestions,
+          sentence: currentSentence
+        }
+      })
+    )
+  }
+
+  return (
+    <CardChatPure
+      type={type}
+      loading={loading}
+      handleClickGMCheck={handleClickGMCheck}
+      handleClickParaphrase={handleClickParaphrase}
+      handleClickTranslate={handleClickTranslate}
+      handlePlayAudio={handlePlayAudio}
+      handleSaveGMCheck={handleSaveGMCheck}
+      handleSaveParaphrase={handleSaveParaphrase}
+      translate={translate}
+      isLoadingGMCheck={isLoadingGMCheck}
+      isLoadingParaphrase={isLoadingParaphrase}
+      currentTab={currentTab}
+      paraphrase={paraphrase}
+      gmCheck={gmCheck}
+      currentSentenceIndex={currentSentenceIndex}
+      numSentences={numSentences}
+      messageSentences={messageSentences}
+      selectNextSentence={selectNextSentence}
+      selectPreviousSentence={selectPreviousSentence}
+    />
+  )
+}
+
+export function CardChatPure({
+  type = "ai",
+  loading,
+  handleClickGMCheck,
+  handleClickParaphrase,
+  handleClickTranslate,
+  handlePlayAudio,
+  handleSaveGMCheck,
+  handleSaveParaphrase,
+  translate,
+  isLoadingGMCheck,
+  isLoadingParaphrase,
+  currentTab,
+  paraphrase,
+  gmCheck,
+  currentSentenceIndex,
+  numSentences,
+  messageSentences,
+  selectNextSentence,
+  selectPreviousSentence
+}: CardChatPureProps) {
+  const [error, setError] = useState(null)
 
   const isOpenPanel = type === "human" && currentTab !== null
 
@@ -160,38 +273,38 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay }) {
         }}
         mb={1}
       >
-        <Avatar src={type === "ai" ? Avator : ""} sx={{ width: 24, height: 24 }} />
+        <Avatar src={type === "ai" ? "" : ""} sx={{ width: 24, height: 24 }} />
       </Box>
       <Card
-        sx={{
+        sx={(theme) => ({
           width: "100%",
           height: "auto",
           padding: 2,
           borderRadius: type === "ai" ? "16px 16px 16px 0px" : "16px 16px 0px 16px",
           boxShadow: "none",
-          backgroundColor: type === "ai" ? "#f0f8ff" : "#f4f4f4",
-        }}
+          backgroundColor: type === "ai" ? theme.palette.customPalette.lightBlue : "#f4f4f4",
+        })}
       >
         <CardContent sx={{ padding: 0, paddingTop: 1 }}>
           {!isOpenPanel && (
-            <Typography component="span" sx={{ fontSize: 16 }}>{messageSentences.join(" ")}</Typography>
+            <TypoEn component="span" sx={{ fontSize: 16, fontFamily: "Open Sans" }}>{messageSentences.join(" ")}</TypoEn>
           )}
           {isOpenPanel && messageSentences.map((sentence, index) => {
             if (index === currentSentenceIndex) {
               return (
                 <>
-                  <Typography component="span" sx={{ fontSize: 16, background: "rgba(234,234,168,0.7)" }}>
+                  <TypoEn component="span" sx={{ fontSize: 16, fontFamily: "Open Sans", background: "rgba(234,234,168,0.7)", fontWeight: 600 }}>
                     {sentence}
-                  </Typography>
+                  </TypoEn >
                   {" "}
                 </>
               )
             }
             return (
               <>
-                <Typography component="span" sx={{ fontSize: 16 }}>
+                <TypoEn component="span" sx={{ fontSize: 16, fontFamily: "Open Sans" }}>
                   {sentence}
-                </Typography>
+                </TypoEn>
                 {" "}
               </>
             )
@@ -253,46 +366,35 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay }) {
                   </Box>
                 }
                 {
-                  currentTab === Tab.Paraphrase && paraphrase[currentSentenceIndex] && paraphrase[currentSentenceIndex].map((item) => {
+                  currentTab === Tab.Paraphrase &&
+                  paraphrase[currentSentenceIndex] &&
+                  paraphrase[currentSentenceIndex].map((item) => {
                     return (
                       <Box my={2}>
-                        <CardSmParaphrase item={item} />
+                        <CardSmParaphrase item={item} onSave={() => handleSaveParaphrase(item.suggestion)} />
                       </Box>
                     )
                   })
                 }
                 {
-                  currentTab === Tab.GMCheck && gmCheck[currentSentenceIndex] && gmCheck[currentSentenceIndex].map((item) => {
+                  currentTab === Tab.GMCheck &&
+                  gmCheck[currentSentenceIndex] &&
+                  gmCheck[currentSentenceIndex].map((item) => {
                     return (
-                      <Stack sx={{ border: "1px solid #e8e8e8", background: "#fff", borderRadius: 1, padding: 1, marginY: 1 }} spacing={1}>
-                        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                          <RxCrossCircled color="#ff0000" />
-                          <Typography>
-                            {item.text}
-                          </Typography>
-                        </Stack>
-                        {item.suggestions && item.suggestions.map((suggestionItem) => {
-                          return (
-                            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                              <RxCheckCircled color="#00b600" />
-                              <Typography>
-                                {suggestionItem.suggestion}
-                              </Typography>
-                            </Stack>
-                          )
-                        })}
-                      </Stack>
+                      <Box my={2}>
+                        <CardSmGMCheck item={item} onSave={() => handleSaveGMCheck(item.suggestions)} />
+                      </Box>
                     )
                   })
                 }
               </Box>
               <Stack direction="row" mt={1} sx={{ alignItems: "center", justifyContent: "center" }}>
                 <Box onClick={selectPreviousSentence} sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginRight: 1 }}>
-                  <BsFillCaretLeftFill color="#787c80" />
+                  <BsFillCaretLeftFill color="#787c80" size={16} />
                 </Box>
-                <Typography color="787c80">{currentSentenceIndex + 1} / {numSentences}</Typography>
+                <Typography color="787c80" sx={{ fontSize: 16 }} > {currentSentenceIndex + 1} / {numSentences}</Typography>
                 <Box onClick={selectNextSentence} sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginLeft: 1 }}>
-                  <BsFillCaretRightFill color="#787c80" />
+                  <BsFillCaretRightFill color="#787c80" size={16} />
                 </Box>
               </Stack>
             </Stack>
