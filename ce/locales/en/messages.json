@@ -1,4 +1,12 @@
 {
+  "extensionName": {
+    "message": "Orca",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Orca - Practice English based on your interests",
+    "description": "Description of the extension."
+  },
   "opener_label": {
     "message": "Talk",
     "description": "Label used to initiate a conversation or chat session."
@@ -54,5 +62,33 @@
   "card_vocab_button_discard": {
     "message": "Discard",
     "description": "Discard button label for discarding a vocabulary card."
+  },
+  "note_screen_title": {
+    "message": "Note",
+    "description": "Title for the notes screen."
+  },
+  "note_subtitle_article_label": {
+    "message": "Article",
+    "description": "Label for the article section in a note."
+  },
+  "note_subtitle_vocab_label": {
+    "message": "Vocabulary",
+    "description": "Label for the vocabulary section in a note."
+  },
+  "note_subtitle_paraphrase_label": {
+    "message": "Paraphrase",
+    "description": "Label for the paraphrase section in a note."
+  },
+  "note_subtitle_gmcheck_label": {
+    "message": "Grammar Check",
+    "description": "Label for the grammar check section in a note."
+  },
+  "note_subtitle_paraphrase_empty_label": {
+    "message": "No paraphrase saved",
+    "description": "Label for the paraphrase section in a note when no paraphrase is available."
+  },
+  "note_subtitle_gmcheck_empty_label": {
+    "message": "No grammar check saved",
+    "description": "Label for the grammar check section in a note when no grammar check is available."
   }
 }

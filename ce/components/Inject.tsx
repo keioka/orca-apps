@@ -16,8 +16,7 @@ import { sendToBackground } from "@plasmohq/messaging"
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchLesson } from '../redux/features/lessons';
 import { fetchMessages, createMessage, addMessage } from '../redux/features/messages';
-import { InputChat } from "./InputChat";
-import { ChatMode } from "./ChatMode";
+import { Opener } from "./Opener";
 import { ChatModeProto } from "./ChatModeProto";
 import { RiSpeakLine } from "react-icons/ri";
 import { TbVocabulary } from "react-icons/tb";
@@ -327,56 +326,6 @@ function VocabMode({
   )
 }
 
-const OpenerSize = 32
-
-function Opener({ setOpen, setHideExtention }: { setHideExtention: (hide: boolean) => void, setOpen }) {
-  return (
-    <Box
-      sx={{
-        position: "fixed",
-        right: "0px",
-        top: "140px",
-        zIndex: 2,
-        pointerEvents: "auto",
-      }}
-    >
-      <Button
-        onClick={() => setHideExtention(true)}
-        sx={{
-          backgroundColor: "#2aa2e3",
-          color: "#fff",
-          width: `${OpenerSize}px`,
-          height: `${OpenerSize}px`,
-          minWidth: "0px",
-          padding: 0,
-          borderRadius: "50% 0px 0px 50%",
-          "&:hover": {
-            backgroundColor: "#2aa2e3",
-          }
-        }}
-      >
-        <IoCloseCircle size={24} color="#fff" />
-      </Button>
-      <Button
-        onClick={() => setOpen(true)}
-        sx={{
-          fontFamily: "Open Sans",
-          backgroundColor: "#2aa2e3",
-          color: "#fff",
-          width: `${OpenerSize}px`,
-          height: `${OpenerSize}px`,
-          borderRadius: "0px 0px 0px 0px",
-          "&:hover": {
-            backgroundColor: "#2aa2e3",
-          }
-        }}
-      >
-        <Typography sx={{ fontSize: 8, fontWeight: 700 }}>{chrome.i18n.getMessage("opener_label")}</Typography>
-      </Button>
-    </Box>
-  )
-}
-
 function Header({ setOpen, onLogin }) {
   return (
     <Stack
@@ -397,9 +346,9 @@ function Header({ setOpen, onLogin }) {
       >
         <IoCloseCircle size={32} color="#dddddd" />
       </Box>
-      <Box onClick={onLogin}>
+      {/* <Box onClick={onLogin}>
         <Avatar src="" />
-      </Box>
+      </Box> */}
     </Stack>
   )
 }
@@ -417,39 +366,39 @@ function Menu({
       }}
     >
       <Button
-        sx={{
+        sx={(theme) => ({
           width: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           border: "none",
-          backgroundColor: selectedMode === Mode.Talk ? "#3c223c" : "transparent",
+          backgroundColor: selectedMode === Mode.Talk ? theme.palette.primary.main : "transparent",
           borderRight: "1px solid #dddddd",
           "&:hover": {
-            backgroundColor: "#614461",
+            backgroundColor: theme.palette.primary.main,  // Adjust this if you also want to use a theme color on hover
             border: "none",
             borderRight: "1px solid #dddddd",
           },
-        }}
+        })}
         onClick={() => onClickButton(Mode.Talk)}
       >
         <RiSpeakLine size={24} color={selectedMode === Mode.Talk ? "#fff" : "#bbbbbb"} />
       </Button>
       <Button
-        sx={{
+        sx={(theme) => ({
           width: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           border: "none",
+          backgroundColor: selectedMode === Mode.Vocab ? theme.palette.primary.main : "transparent",
           borderRight: "1px solid #dddddd",
-          backgroundColor: selectedMode === Mode.Vocab ? "#3c223c" : "transparent",
           "&:hover": {
-            backgroundColor: "#614461",
+            backgroundColor: "#614461",  // Adjust this if you also want to use a theme color on hover
             border: "none",
             borderRight: "1px solid #dddddd",
           },
-        }}
+        })}
         onClick={() => onClickButton(Mode.Vocab)}
       >
         <TbVocabulary size={24} color={selectedMode === Mode.Vocab ? "#fff" : "#bbbbbb"} />

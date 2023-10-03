@@ -25,23 +25,22 @@ export function CardVocab({
   shouldHideDiscard,
 }: { vocab: any, onSaveVocab: any, shouldHideSave?: boolean, shouldHideDiscard?: boolean }) {
 
+
   function handlePlayAudio() {
     const voices = synth.getVoices();
     const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
-    const utterance = new SpeechSynthesisUtterance(
-      vocab.word
-    );
 
+    const utterance = new SpeechSynthesisUtterance(vocab.word);
     utterance.lang = "en-US";
+
     if (englishVoices.length) {
-      utterance.voice = englishVoices[41];
+      utterance.voice = englishVoices.find(voice => voice.name === 'Google US English');
     }
 
     synth.speak(utterance);
   }
 
   function handleClickSave() {
-    console.log("click")
     onSaveVocab(vocab)
   }
 

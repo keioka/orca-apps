@@ -1,4 +1,12 @@
 {
+  "extensionName": {
+    "message": "英カベ",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "スキマ時間に興味のある英文記事,YouTubeを読んでAIと会話しながらスピーキング力アップ!",
+    "description": "Description of the extension."
+  },
   "opener_label": {
     "message": "トーク",
     "description": "会話やチャットセッションを開始するためのラベル。"
@@ -54,5 +62,33 @@
   "card_vocab_button_discard": {
     "message": "非表示",
     "description": "非表示ボタンのラベル。"
+  },
+  "note_screen_title": {
+    "message": "ノート",
+    "description": "ノート画面のタイトル。"
+  },
+  "note_subtitle_article_label": {
+    "message": "記事",
+    "description": "記事のサブタイトルラベル。"
+  },
+  "note_subtitle_vocab_label": {
+    "message": "単語",
+    "description": "単語のサブタイトルラベル。"
+  },
+  "note_subtitle_paraphrase_label": {
+    "message": "言い換え",
+    "description": "言い換えのサブタイトルラベル。"
+  },
+  "note_subtitle_gmcheck_label": {
+    "message": "文法チェック",
+    "description": "文法チェックのサブタイトルラベル。"
+  },
+  "note_subtitle_paraphrase_empty_label": {
+    "message": "言い換えがありません",
+    "description": "言い換えがない場合のサブタイトルラベル。"
+  },
+  "note_subtitle_gmcheck_empty_label": {
+    "message": "文法チェックがありません",
+    "description": "文法チェックがない場合のサブタイトルラベル。"
   }
 }

@@ -1,3 +1,4 @@
+import type { PlasmoCSConfig } from "plasmo"
 import createCache from "@emotion/cache"
 import { CacheProvider } from "@emotion/react"
 import { Inject } from "components/Inject"
@@ -7,6 +8,12 @@ import cssText from "data-text:~/global.css"
 import { Provider } from "react-redux";
 import { PersistGate } from "@plasmohq/redux-persist/integration/react"
 import { persistor, store } from './redux/store';
+import { getTheme } from "./theme";
+
+export const config: PlasmoCSConfig = {
+  matches: ["https://*/*", "http://*/"],
+  css: ["font.css"]
+}
 
 const styleElement = document.createElement("style")
 styleElement.textContent = styleElement + "" + cssText
@@ -21,42 +28,11 @@ export const getStyle = () => {
   return styleElement
 }
 
-const theme = createTheme({
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: (themeParam) => ({
-        root: {
-          backgroundColor: "transparent",
-          pointerEvents: "none",
-        }
-      }),
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-          boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.1)",
-        }
-      }
-    },
-    MuiInputBase: {
-      styleOverrides: {
-        root: {
-          border: "none",
-          borderImage: "none",
-          "&:hover:not(.Mui-disabled, .Mui-error):before": {
-            borderBottom: "none",
-          },
-        },
-        input: {
-          border: "none"
-        },
-      }
-    },
-  },
-});
-
 function Root() {
+  const lang = chrome.i18n.getUILanguage()
+  const langCode = lang.split("-")[0]
+  const theme = getTheme(langCode)
+
   return (
     <CacheProvider value={styleCache}>
       <ThemeProvider theme={theme}>

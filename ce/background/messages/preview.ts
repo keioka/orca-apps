@@ -27,8 +27,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   console.log("preview message received", url);
   try {
     const { result } = await getPreview({ url })
-
-    console.log({ result })
     res.send({ result });
   } catch (error) {
     console.error(error);

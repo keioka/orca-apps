@@ -6,6 +6,7 @@ import {
   Stack,
 } from "@mui/material"
 import { IoMicOutline, IoSquare } from "react-icons/io5";
+import { useTheme } from '@mui/material/styles';
 
 export function InputChat({
   onSubmit,
@@ -14,40 +15,47 @@ export function InputChat({
   onClearInput,
   value
 }) {
+  const theme = useTheme();
   const [isSpeeching, setIsSpeeching] = useState(false)
   const micObjectRef = useRef(null)
 
   function handleEventSpeech(event) {
-    console.log("orca", "handleEventSpeech")
     const result = event.results
-    isSpeeching && setIsSpeeching(false)
     const message = result[0][0].transcript
     onChangeInputByVoice(message)
-    setIsSpeeching(false)
-    micObjectRef.current && micObjectRef.current.stop()
+    handleStop()
   }
 
-  function handleClickMic() {
+  function handleStart() {
     setIsSpeeching(true)
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Your browser does not support speech recognition. Please try Chrome.');
+      return;
+    }
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
     recognition.continuous = true;
 
     recognition.start();
     recognition.onresult = handleEventSpeech
-    recognition.onerror = (err) => {
-      console.log("orca", { err })
-      recognition.stop()
-    }
+    recognition.onerror = handleError
 
     micObjectRef.current = recognition
   }
 
-  function handleClickStop() {
-    micObjectRef.current && micObjectRef.current.stop()
+  function handleStop() {
+    if (micObjectRef.current) {
+      micObjectRef.current.stop()
+      micObjectRef.current = null;
+    }
     setIsSpeeching(false)
+  }
+
+  function handleError(err) {
+    alert("An error occurred while trying to use the microphone: " + err.error);
+    handleStop();
   }
 
   return (
@@ -58,7 +66,6 @@ export function InputChat({
         padding: 1,
       }}
     >
-      {/* create a record button */}
       <Stack>
         <Input
           multiline
@@ -70,7 +77,6 @@ export function InputChat({
             paddingY: 2,
             paddingX: 1,
             boxShadow: "none",
-
           }}
           inputProps={{
             style: {
@@ -91,36 +97,29 @@ export function InputChat({
               width: 36,
               height: 36,
             }}
-            onClick={isSpeeching ? handleClickStop : handleClickMic}
+            onClick={isSpeeching ? handleStop : handleStart}
           >
-            {isSpeeching ? <IoSquare color="#fff" size={24} /> : <IoMicOutline color="#fff" size={24} />}
+            {isSpeeching ? <IoSquare color={theme.palette.customPalette.red} size={24} /> : <IoMicOutline color="#fff" size={24} />}
           </Box>
           <Stack direction="row" spacing={1} sx={{ marginTop: 1, justifyContent: "space-between" }}>
             <Button
+              color="primary"
               variant="outlined"
               sx={{
-                borderColor: "#3c223c",
                 color: "#3c223c",
-                fontSize: 16,
                 boxShadow: "none",
-                "&:hover": {
-                  borderColor: "#3c223c",
-                }
+                backgroundColor: "#fff",
               }}
               onClick={onClearInput}
             >
               {chrome.i18n.getMessage("chat_talk_clear_button")}
             </Button>
             <Button
+              color="primary"
               variant="contained"
               sx={{
-                backgroundColor: "#3c223c",
                 color: "#fff",
-                fontSize: 16,
                 boxShadow: "none",
-                "&:hover": {
-                  backgroundColor: "#3c223c",
-                }
               }}
               onClick={onSubmit}
             >
