@@ -30,6 +30,7 @@ import { saveParaphrases, saveGrammarMistakes } from "~redux/features/save"
 import { useAppDispatch } from "~redux/hooks"
 import type { ParaphraseItem, GMCheckItem } from "~types"
 import styled from "@emotion/styled"
+import { GMCheckItem } from "~types"
 
 const TypoEn = styled(Typography)`
   font-family: "Open Sans";
@@ -183,25 +184,24 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
     synth.speak(utterance);
   }
 
-  function handleSaveParaphrase(suggestionSentence: string) {
+  function handleSaveParaphrase({ sentence }: { sentence: string }) {
     dispatch(
       saveParaphrases({
         url,
         data: {
-          suggestion: suggestionSentence,
-          sentence: currentSentence
-        }
+          paraphrase: sentence,
+          originalSentence: currentSentence
+        },
       })
     )
   }
-  function handleSaveGMCheck(suggestions) {
+
+  function handleSaveGMCheck(gmCheck: GMCheckItem) {
     dispatch(
       saveGrammarMistakes({
         url,
-        data: {
-          suggestions: suggestions,
-          sentence: currentSentence
-        }
+        data: gmCheck,
+        originalSentence: currentSentence
       })
     )
   }
@@ -371,7 +371,7 @@ export function CardChatPure({
                   paraphrase[currentSentenceIndex].map((item) => {
                     return (
                       <Box my={2}>
-                        <CardSmParaphrase item={item} onSave={() => handleSaveParaphrase(item.suggestion)} />
+                        <CardSmParaphrase item={item} onSave={() => handleSaveParaphrase(item)} />
                       </Box>
                     )
                   })
@@ -382,7 +382,7 @@ export function CardChatPure({
                   gmCheck[currentSentenceIndex].map((item) => {
                     return (
                       <Box my={2}>
-                        <CardSmGMCheck item={item} onSave={() => handleSaveGMCheck(item.suggestions)} />
+                        <CardSmGMCheck item={item} onSave={() => handleSaveGMCheck(item)} />
                       </Box>
                     )
                   })

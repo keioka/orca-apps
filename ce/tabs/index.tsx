@@ -127,7 +127,7 @@ function Main() {
   return (
     <Routes>
       <Route path={`${ROOT_PATH}`} element={<Layout />}>
-        <Route index element={<Home />} />
+        <Route index element={<NoteScreen />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="note" element={<NoteScreen />} />
         <Route path="feed" element={<FeedPage />} />
@@ -207,7 +207,11 @@ function Layout() {
           />
         </Box> */}
 
-        <Box>
+        {/**
+         * RSS Feed
+         */}
+
+        {/* <Box>
           <Box sx={{ paddingX: 2, marginTop: 2 }}>
             <Typography variant="caption">RSS Feed</Typography>
           </Box>
@@ -218,13 +222,13 @@ function Layout() {
               title="Search"
             />
           </Box>
-          {/* <Box sx={{ display: "flex", height: 32, alignItems: "center" }}>
+          <Box sx={{ display: "flex", height: 32, alignItems: "center" }}>
             <Menu
               icon={<SlFeed size={12} />}
               path={`${ROOT_PATH}/feed`}
               title="For you"
             />
-          </Box> */}
+          </Box>
 
           {
             feeds.map((feed) => (
@@ -259,7 +263,7 @@ function Layout() {
               </ExpandableMenu>
             ))
           }
-        </Box>
+        </Box> */}
       </Drawer>
       <Box
         sx={{

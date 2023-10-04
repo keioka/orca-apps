@@ -15,6 +15,7 @@ import {
 } from "@mui/material"
 import { ButtonRound } from "./ButtonRound";
 import { TbArrowBigDownLinesFilled } from "react-icons/tb";
+import type { ParaphraseItem } from "~types"
 
 const synth = window.speechSynthesis;
 
@@ -22,7 +23,11 @@ export function CardParaphrase({
   paraphrase,
   shouldHideSave,
   shouldHideDiscard,
-}: { vocab: any, onSaveVocab: any, shouldHideSave?: boolean, shouldHideDiscard?: boolean }) {
+}: {
+  paraphrase: ParaphraseItem,
+  shouldHideSave?: boolean,
+  shouldHideDiscard?: boolean
+}) {
 
   return (
     <Card sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee" }}>
@@ -38,7 +43,7 @@ export function CardParaphrase({
               fontSize: 18,
             }}
           >
-            {paraphrase.original}
+            {paraphrase.originalSentence}
           </Typography>
         </Stack>
         <TbArrowBigDownLinesFilled size={18} color="#a4a4a4" />
@@ -53,7 +58,7 @@ export function CardParaphrase({
               fontSize: 18,
             }}
           >
-            {paraphrase.suggestion}
+            {paraphrase.paraphrase}
           </Typography>
         </Stack>
       </Stack>

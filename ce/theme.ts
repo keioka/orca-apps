@@ -50,7 +50,7 @@ const themeBase = {
     MuiButton: {
       styleOverrides: {
         root: {
-          fontSize: 14,
+          fontSize: 12,
           fontWeight: 600,
         },
       },

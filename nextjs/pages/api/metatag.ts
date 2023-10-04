@@ -23,7 +23,7 @@ export default async function handler(
     const sitedata = {
       title: data.title || data['og:title'],
       description: data.description || data['og:description'],
-      image: data.image || data['og:image'],
+      imageUrl: data.image || data['og:image'],
       url: data.url || data['og:url'],
       name: data['og:site_name'],
       locale: data['og:locale'],

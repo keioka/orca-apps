@@ -90,5 +90,9 @@
   "note_subtitle_gmcheck_empty_label": {
     "message": "文法チェックがありません",
     "description": "文法チェックがない場合のサブタイトルラベル。"
+  },
+  "popup_button_open_note": {
+    "message": "ノートを開く",
+    "description": "ノートを開くボタンのラベル。"
   }
 }

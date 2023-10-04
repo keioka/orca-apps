@@ -80,6 +80,9 @@ dependencies:
   rss-parser:
     specifier: ^3.13.0
     version: 3.13.0
+  ulid:
+    specifier: ^2.3.0
+    version: 2.3.0
 
 devDependencies:
   '@ianvs/prettier-plugin-sort-imports':
@@ -12988,6 +12991,11 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /ulid@2.3.0:
+    resolution: {integrity: sha512-keqHubrlpvT6G2wH0OEfSW4mquYRcbe/J8NMmveoQOjUqmo+hXtO+ORCpWhdbZ7k72UtY61BL7haGxW6enBnjw==}
+    hasBin: true
+    dev: false
 
   /unicode-canonical-property-names-ecmascript@2.0.0:
     resolution: {integrity: sha512-yY5PpDlfVIU5+y/BSCxAJRBIS1Zc2dDG3Ujq+sR0U+JjUevW2JhocOF+soROYDSaAezOzOKuyyixhD6mBknSmQ==}

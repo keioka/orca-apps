@@ -9,8 +9,8 @@ import { sendToBackground } from "@plasmohq/messaging";
 import type { NoteData } from "~types";
 
 const VOCAB_KEY = "vocabulary"
-const PARAPHRASE_KEY = "paraphrase"
-const GM_CHECK_KEY = "gmCheck"
+const PARAPHRASE_KEY = "paraphrases"
+const GM_CHECK_KEY = "grammarMistakes"
 
 interface NoteProps { note: NoteData, url: string }
 
@@ -93,7 +93,7 @@ export function Note({ note, url }: NoteProps) {
             {paraphrases && paraphrases.map((paraphraseInfo) => {
               return (
                 <Box sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
-                  <CardParaphrase paraphrase={paraphraseInfo} />
+                  <CardParaphrase paraphrase={paraphraseInfo.data} />
                 </Box>
               )
             })}
@@ -113,9 +113,10 @@ export function Note({ note, url }: NoteProps) {
           <Stack direction="row" spacing={2} sx={{ overflowX: "scroll", width: "100%" }}>
             {
               gmChecks && gmChecks.map((gmCheckInfo) => {
+                console.log({ gmCheckInfo })
                 return (
                   <Box sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
-                    <CardGMCheck gmCheck={gmCheckInfo} />
+                    <CardGMCheck gmCheck={gmCheckInfo.data} />
                   </Box>
                 )
               })
