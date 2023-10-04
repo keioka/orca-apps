@@ -1,0 +1,1 @@
+export const urlPath = `${window.location.origin}${window.location.pathname}`

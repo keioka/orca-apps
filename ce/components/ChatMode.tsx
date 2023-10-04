@@ -16,6 +16,7 @@ import { ListChat } from "./ListChat";
 import { Preview } from "./Preview";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchMessages, createMessage, addMessage } from '../redux/features/messages';
+import { urlPath } from "~helpers/path";
 
 const messages = [
   {
@@ -53,7 +54,7 @@ export function ChatMode() {
         const resp = await sendToBackground({
           name: "material",
           body: {
-            url: window.location.href,
+            url: urlPath,
           }
         })
         console.log("orca", { resp })

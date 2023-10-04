@@ -4,22 +4,21 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // defaults to process.env["OPENAI_API_KEY"]
 });
 
-interface GetVocabByWordSentenceParams { sentence: string }
+interface GetVocabByWordSentenceParams { url: string }
 
-async function getParaphrase(params: GetVocabByWordSentenceParams) {
+async function getVocabs(params: GetVocabByWordSentenceParams) {
   console.time('openai');
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: 'gpt-3.5-turbo-16k',
     temperature: 0,
     messages: [
       {
         role: "system",
         content: `
-          As an English teacher, Can you give me 5 paraphrases of this sentence
-
-          """
-          sentence: ${params.sentence}
-          """
+          [Text from: ${params.url}]
+          
+          As an English teacher, can you give me vocabulary for an English learner including phrasal verbs and phrases as many as possible from a given url. 
+          At least 25 words.
         `
       }
     ],
@@ -28,14 +27,30 @@ async function getParaphrase(params: GetVocabByWordSentenceParams) {
       parameters: {
         type: "object",
         properties: {
-          phrases: {
+          vocabs: {
             type: "array",
             items: {
               type: 'object',
               properties: {
-                sentence: {
+                word: {
                   type: "string",
                   description: "sentence from the content"
+                },
+                pronounce: {
+                  type: "string",
+                  description: "Pronounce of the word or phrase"
+                },
+                meaning: {
+                  type: "string",
+                  description: "Meaning of the word or phrase"
+                },
+                example: {
+                  type: "string",
+                  description: "sentence from the content"
+                },
+                transJa: {
+                  type: "string",
+                  description: "translation of the word or phrase to Japanese"
                 },
               }
             }
@@ -50,12 +65,12 @@ async function getParaphrase(params: GetVocabByWordSentenceParams) {
   const generatedText = response.choices[0].message.function_call.arguments;
   const result = JSON.parse(generatedText)
 
-  if (!result || !result.phrases) {
+  if (!result || !result.vocabs) {
     return { err: 'No response from OpenAI' }
   }
 
   return {
-    phrases: result.phrases
+    vocabs: result.vocabs
   }
 
 }
@@ -64,22 +79,22 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { sentence } = req.body;
+  const { url } = req.body;
 
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  if (!sentence) {
+  if (!url) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
   try {
-    const { phrases } = await getParaphrase({
-      sentence: sentence as string
+    const { vocabs } = await getVocabs({
+      url
     })
 
-    return res.status(200).json({ phrases });
+    return res.status(200).json({ vocabs });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

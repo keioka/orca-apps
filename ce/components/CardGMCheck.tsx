@@ -17,12 +17,10 @@ import { ButtonRound } from "./ButtonRound";
 import { TbArrowBigDownLinesFilled } from "react-icons/tb";
 import { RxCrossCircled } from "react-icons/rx"
 import { RxCheckCircled } from "react-icons/rx"
+import type { GMCheckItem } from "~types";
 
 interface CardGMCheckProps {
-  gmCheck: {
-    original: string
-    suggestion: string
-  },
+  gmCheck: GMCheckItem,
   shouldHideSave?: boolean,
   shouldHideDiscard?: boolean
 }
@@ -32,6 +30,8 @@ export function CardGMCheck({
   shouldHideSave,
   shouldHideDiscard,
 }: CardGMCheckProps) {
+
+  console.log({ gmCheck })
   return (
     <Card sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee" }}>
       <Stack p={3} spacing={0.5}>
@@ -48,7 +48,7 @@ export function CardGMCheck({
                 fontSize: 18,
               }}
             >
-              {gmCheck.original}
+              {gmCheck.text}
             </Typography>
           </Stack>
         </Stack>
@@ -57,18 +57,22 @@ export function CardGMCheck({
           <Typography variant="caption" color="#b4b4b4">
             Suggestion
           </Typography>
-          <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
-            <RxCheckCircled size={18} color="#00b600" />
-            <Typography
-              variant="h6"
-              component="h6"
-              sx={{
-                fontSize: 18,
-              }}
-            >
-              {gmCheck.suggestion}
-            </Typography>
-          </Stack>
+          {gmCheck.suggestions && gmCheck.suggestions.map((suggestion) => {
+            return (
+              <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
+                <RxCheckCircled size={18} color="#00b600" />
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{
+                    fontSize: 18,
+                  }}
+                >
+                  {suggestion.suggestion}
+                </Typography>
+              </Stack>
+            )
+          })}
         </Stack>
       </Stack>
     </Card>

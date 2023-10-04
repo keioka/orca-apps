@@ -3,7 +3,6 @@ const DEEPL_API_ENDPOINT = 'https://api-free.deepl.com/v2/translate';
 const USER_AGENT = 'YourApp/1.2.3';  // Replace with your application's user agent
 
 async function translateText(text: string, targetLang: string): Promise<string> {
-  console.log("key", process.env.DEEPL_AUTH_KEY)
   try {
     const response = await axios.post(
       DEEPL_API_ENDPOINT,
@@ -20,7 +19,6 @@ async function translateText(text: string, targetLang: string): Promise<string> 
       }
     );
 
-    console.log({ response })
     const translations = response.data.translations;
     if (translations && translations.length > 0) {
       return translations[0].text;
@@ -41,7 +39,6 @@ export default async function handler(
 ) {
   const { text, lang } = req.body;
 
-  console.log({ body: req.body })
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }

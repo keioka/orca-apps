@@ -90,5 +90,9 @@
   "note_subtitle_gmcheck_empty_label": {
     "message": "No grammar check saved",
     "description": "Label for the grammar check section in a note when no grammar check is available."
+  },
+  "popup_button_open_note": {
+    "message": "Open Note",
+    "description": "Button label for opening the note screen."
   }
 }

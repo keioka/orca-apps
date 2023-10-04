@@ -1,17 +1,36 @@
-export interface ParaphraseItem {
+export interface Lesson { }
+
+export interface Message {
+  id: string,
+  message: string,
+  type: "ai" | "human"
+}
+
+export interface VocabularyItem {
+  word: string;
+  pronounce: string;
+  meaning: string;
   sentence: string;
-  // Add other properties if required.
+  transJaByContext: string;
+  example: string;
+}
+
+export interface ParaphraseItem {
+  paraphrase: string;
+  originalSentence: string;
 }
 
 export interface GMCheckItem {
   text: string;
+  type: null | string; // Assuming the type is either null or a string
+  offset: number;
+  length: number;
   suggestions: GMCheckSuggestion[];
-  // Add other properties if required.
 }
 
 export interface GMCheckSuggestion {
   suggestion: string;
-  // Add other properties if required.
+  score: null | number; // Assuming the score is a number or null based on the example
 }
 
 export type NoteData = {
@@ -35,24 +54,12 @@ export type VocabularyEntry = {
 };
 
 export type Paraphrase = {
-  data: {
-    sentence: string;
-  };
+  data: ParaphraseItem;
   archived: boolean;
 };
 
-export type Suggestion = {
-  suggestion: string;
-  score: null; // If score can have different types in the future, replace 'null' with the possible export types
-};
-
-export type GrammarMistakeData = {
-  suggestions: Suggestion[];
-  sentence: string;
-};
-
 export type GrammarMistake = {
-  data: GrammarMistakeData;
+  data: GMCheckItem;
   archived: boolean;
 };
 

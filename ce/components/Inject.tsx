@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import {
   Button,
   Stack,
@@ -22,6 +22,9 @@ import { RiSpeakLine } from "react-icons/ri";
 import { TbVocabulary } from "react-icons/tb";
 import { ListVocab } from "./ListVocab";
 import { saveVocabulary } from "../redux/features/save";
+import { createNewLesson, addMessageToLesson } from "../redux/features/lessonsLocal";
+import type { VocabularyItem, Message } from "~types";
+import { urlPath } from "~helpers/path";
 
 const drawerWidth = 380
 
@@ -90,6 +93,15 @@ enum Mode {
   Vocab
 }
 
+const blaklist = [
+  "github.com",
+  "facebook.com",
+  "twitter.com",
+  "google.com",
+  "amazon.com",
+  "amazon.co.jp",
+]
+
 export function Inject() {
   const [hideExtention, setHideExtention] = useState(false)
   const [open, setOpen] = useState(false)
@@ -106,24 +118,44 @@ export function Inject() {
   const [isFullLoaded, setIsFullLoaded] = useState(false)
   const dispatch = useAppDispatch()
   const lessons = useAppSelector(state => { return state.lessons.lessons })
-  const lesson = useAppSelector(state => { return state.lessons.lessons.find((lesson) => lesson.id === lessonId) })
+  const lesson = useAppSelector(state => { return state.lessonsLocal.lessons[urlPath] })
   const state = useAppSelector(state => { return state })
+  const note = useAppSelector(state => { return state.saveData[urlPath] })
+
   // const onPressToggle = () => setMode(mode === Mode.Learning ? Mode.Talk : Mode.Learning)
 
+  console.log({ state, note, lesson, urlPath })
   useEffect(() => {
     // dispatch(fetchLesson(lessonId))
     // dispatch(fetchMessages(lessonId))
   }, [])
 
+  const chatHistory = useMemo(() => {
+    return lesson?.chatHistory || []
+  }, [lesson])
+
+  useEffect(() => {
+    // Create a new lesson using redux
+    if (open) {
+      dispatch(createNewLesson({ url: urlPath, }))
+    }
+  }, [open])
+
   function handleChangeAutoPlay() {
     setIsAutoPlay(!isAutoPlay)
   }
 
-
-  function handleSaveVocab(vocab) {
+  function handleSaveVocab(vocab: VocabularyItem) {
     dispatch(saveVocabulary({
-      url: window.location.href,
+      url: urlPath,
       data: vocab
+    }))
+  }
+
+  function handleAddMessage(message: Message) {
+    dispatch(addMessageToLesson({
+      url: urlPath,
+      data: message
     }))
   }
 
@@ -186,7 +218,7 @@ export function Inject() {
 
   }, [open])
 
-  if (hideExtention) {
+  if (hideExtention || blaklist.some((url) => window.location.href.includes(url))) {
     return null
   }
 
@@ -248,7 +280,7 @@ export function Inject() {
                     label={chrome.i18n.getMessage("chat_toggle_autoplay")}
                   />
                 </Box>
-                <ChatModeProto isAutoPlay={isAutoPlay} />
+                <ChatModeProto isAutoPlay={isAutoPlay} handleAddMessage={handleAddMessage} chatHistory={chatHistory} />
               </>
             )}
             {mode === Mode.Vocab &&

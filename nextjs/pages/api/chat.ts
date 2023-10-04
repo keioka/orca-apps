@@ -9,13 +9,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { url, history, message } = req.body;
+  const { url, history = [], message } = req.body;
 
   const params: OpenAI.Chat.ChatCompletionCreateParams = {
     temperature: 0,
     messages: [
       {
-        role: 'system', content: `
+        role: 'system',
+        content: `
           [Text from: ${url}]
           
           You are an English teacher, in a conversation with a student learning English. Use a brief and simple dialogue, answering the student's questions with no more than four sentences, and always including an open-ended like (why, how, what) question related to the provided news article context.
@@ -27,11 +28,17 @@ export default async function handler(
           Please always include an open-ended like (why, how, what) question related to the provided news article context.
           
           Please facilitate the conversation by asking questions and encouraging the student to respond to your context-related inquiries.
+
+          """
+          Conversation History: 
+            ${history.map((item) => {
+          return `- ${item.type}: ${item.message}`
+        }).join('\n')}
         `
       },
       { role: 'user', content: message }
     ],
-    model: 'gpt-4',
+    model: 'gpt-3.5-turbo-16k'
   };
   const completion: OpenAI.Chat.ChatCompletion = await openai.chat.completions.create(params);
 
