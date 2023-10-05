@@ -124,7 +124,7 @@ export function Inject() {
 
   // const onPressToggle = () => setMode(mode === Mode.Learning ? Mode.Talk : Mode.Learning)
 
-  console.log({ state, note, lesson, urlPath })
+  console.log({ user })
   useEffect(() => {
     // dispatch(fetchLesson(lessonId))
     // dispatch(fetchMessages(lessonId))
@@ -426,7 +426,7 @@ function Menu({
           backgroundColor: selectedMode === Mode.Vocab ? theme.palette.primary.main : "transparent",
           borderRight: "1px solid #dddddd",
           "&:hover": {
-            backgroundColor: "#614461",  // Adjust this if you also want to use a theme color on hover
+            backgroundColor: theme.palette.primary.main,  // Adjust this if you also want to use a theme color on hover
             border: "none",
             borderRight: "1px solid #dddddd",
           },
@@ -435,7 +435,7 @@ function Menu({
       >
         <TbVocabulary size={24} color={selectedMode === Mode.Vocab ? "#fff" : "#bbbbbb"} />
       </Button>
-      <Button
+      {/* <Button
         sx={{
           width: "100%",
           display: "flex",
@@ -449,7 +449,7 @@ function Menu({
         }}
       >
         <IoCloseCircle size={24} color="#dddddd" />
-      </Button>
+      </Button> */}
     </ButtonGroup>
   )
 }

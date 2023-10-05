@@ -14,7 +14,7 @@
   font-style: normal;
   font-weight: 600; /* semi-bold */
   font-display: swap;
-  src: url('data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-Medium.ttf') format('truetype');
+  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-Medium.ttf) format('truetype');
   /* your unicode-range here... */
 }
 
@@ -23,7 +23,7 @@
   font-style: italic;
   font-weight: 400; /* medium */
   font-display: swap;
-  src: url('data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-MediumItalic.ttf') format('truetype');
+  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-MediumItalic.ttf) format('truetype');
 }
 
 @font-face {
@@ -31,7 +31,7 @@
   font-style: normal;
   font-weight: 400; /* regular */
   font-display: swap;
-  src: url('data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-Regular.ttf') format('truetype');
+  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-Regular.ttf) format('truetype');
 }
 
 @font-face {
@@ -39,7 +39,7 @@
   font-style: normal;
   font-weight: 600; /* semi-bold */
   font-display: swap;
-  src: url('data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-SemiBold.ttf') format('truetype');
+  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-SemiBold.ttf) format('truetype');
 }
 
 @font-face {
@@ -47,7 +47,7 @@
   font-style: italic;
   font-weight: 600; /* semi-bold italic */
   font-display: swap;
-  src: url('data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-SemiBoldItalic.ttf') format('truetype');
+  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-SemiBoldItalic.ttf) format('truetype');
 }
 
 /* ZenMaruGothic font rules */

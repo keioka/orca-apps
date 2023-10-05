@@ -30,10 +30,8 @@ import { saveParaphrases, saveGrammarMistakes } from "~redux/features/save"
 import { useAppDispatch } from "~redux/hooks"
 import type { ParaphraseItem, GMCheckItem } from "~types"
 import styled from "@emotion/styled"
-import { GMCheckItem } from "~types"
 
 const TypoEn = styled(Typography)`
-  font-family: "Open Sans";
   font-size: 14px;
   font-weight: 600;
   color: #00232f;
@@ -287,13 +285,13 @@ export function CardChatPure({
       >
         <CardContent sx={{ padding: 0, paddingTop: 1 }}>
           {!isOpenPanel && (
-            <TypoEn component="span" sx={{ fontSize: 16, fontFamily: "Open Sans" }}>{messageSentences.join(" ")}</TypoEn>
+            <TypoEn component="span" sx={{ fontSize: 14 }}>{messageSentences.join(" ")}</TypoEn>
           )}
           {isOpenPanel && messageSentences.map((sentence, index) => {
             if (index === currentSentenceIndex) {
               return (
                 <>
-                  <TypoEn component="span" sx={{ fontSize: 16, fontFamily: "Open Sans", background: "rgba(234,234,168,0.7)", fontWeight: 600 }}>
+                  <TypoEn component="span" sx={{ fontSize: 14, background: "rgba(234,234,168,0.7)", fontWeight: 600 }}>
                     {sentence}
                   </TypoEn >
                   {" "}
@@ -302,7 +300,7 @@ export function CardChatPure({
             }
             return (
               <>
-                <TypoEn component="span" sx={{ fontSize: 16, fontFamily: "Open Sans" }}>
+                <TypoEn component="span" sx={{ fontSize: 14 }}>
                   {sentence}
                 </TypoEn>
                 {" "}
@@ -388,15 +386,15 @@ export function CardChatPure({
                   })
                 }
               </Box>
-              <Stack direction="row" mt={1} sx={{ alignItems: "center", justifyContent: "center" }}>
+              {currentTab && <Stack direction="row" mt={1} sx={{ alignItems: "center", justifyContent: "center" }}>
                 <Box onClick={selectPreviousSentence} sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginRight: 1 }}>
                   <BsFillCaretLeftFill color="#787c80" size={16} />
                 </Box>
-                <Typography color="787c80" sx={{ fontSize: 16 }} > {currentSentenceIndex + 1} / {numSentences}</Typography>
+                <Typography color="787c80" sx={{ fontSize: 12, fontWeight: "600" }} > {currentSentenceIndex + 1} / {numSentences}</Typography>
                 <Box onClick={selectNextSentence} sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginLeft: 1 }}>
                   <BsFillCaretRightFill color="#787c80" size={16} />
                 </Box>
-              </Stack>
+              </Stack>}
             </Stack>
           )}
 
