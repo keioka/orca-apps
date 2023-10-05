@@ -33,6 +33,7 @@ import { PersistGate } from "@plasmohq/redux-persist/integration/react"
 import { persistor, store } from '../redux/store';
 import { getTheme } from "../theme";
 import { ThemeProvider } from '@mui/material/styles';
+import { PiNotebookDuotone } from "react-icons/pi"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -180,23 +181,23 @@ function Layout() {
         }}
       >
         <Box
-          sx={{
-            backgroundColor: "#f4f4f4",
+          sx={(theme) => ({
+            backgroundColor: theme.palette.primary.main,
             padding: 2,
             width: "100%",
             height: 32,
-          }}
+          })}
         >
 
         </Box>
         <Box sx={{ paddingX: 2, marginTop: 2 }}>
-          <Typography variant="caption">Dashboard</Typography>
+          <Typography variant="caption">{chrome.i18n.getMessage("menu_caption_dashboard")}</Typography>
         </Box>
         <Box sx={{ display: "flex", height: 32, alignItems: "center" }}>
           <Menu
-            icon={<SlFeed size={12} />}
+            icon={<PiNotebookDuotone size={24} />}
             path={`${ROOT_PATH}/note`}
-            title="Note"
+            title={chrome.i18n.getMessage("menu_note")}
           />
         </Box>
         {/* <Box sx={{ display: "flex", height: 32, alignItems: "center" }}>
@@ -264,7 +265,7 @@ function Layout() {
             ))
           }
         </Box> */}
-      </Drawer>
+      </Drawer >
       <Box
         sx={{
           paddingLeft: `${WIDTH_SIDEBAR}px`
@@ -272,7 +273,7 @@ function Layout() {
       >
         <Outlet />
       </Box>
-    </Box>
+    </Box >
   );
 }
 

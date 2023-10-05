@@ -94,5 +94,25 @@
   "popup_button_open_note": {
     "message": "Open Note",
     "description": "Button label for opening the note screen."
+  },
+  "menu_note": {
+    "message": "Note",
+    "description": "Menu item label for opening the note screen."
+  },
+  "menu_caption_dashboard": {
+    "message": "Dashboard",
+    "description": "Menu item label for opening the dashboard screen."
+  },
+  "popup_title_feedback": {
+    "message": "Feedback",
+    "description": "Title for the feedback popup."
+  },
+  "popup_greeting_start":{
+    "message": "Hi,",
+    "description": "Greeting message for the popup."
+  },
+  "popup_greeting_end":{
+    "message": "!",
+    "description": "Greeting message for the popup."
   }
 }

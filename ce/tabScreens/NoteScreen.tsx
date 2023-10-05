@@ -17,7 +17,7 @@ export function NoteScreen() {
     <Box>
       <Box sx={{ marginBottom: 2 }}>
         <Typography variant="h5" component="h6">
-          Note
+          {chrome.i18n.getMessage("menu_note")}
         </Typography>
       </Box>
       {!data || Object.keys(data).length === 0 && (

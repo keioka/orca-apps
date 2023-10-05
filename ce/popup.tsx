@@ -22,11 +22,11 @@ function RootPopup() {
 }
 
 function IndexPopup() {
-  const { onLogin, user } = useFirebase()
+  const { onLogin, onLogout, user, isLoading } = useFirebase()
   return (
     <Box
       sx={{
-        width: 480,
+        width: 320,
         display: "flex",
         flexDirection: "column",
       }}
@@ -36,6 +36,15 @@ function IndexPopup() {
         <Typography variant="h6" component="h6">
           {new Date().toLocaleDateString()}
         </Typography>
+        {isLoading &&
+          <Typography variant="body2" component="span">
+            Loading
+          </Typography>
+        }
+
+        {!isLoading && user && <Typography variant="body2" component="span">
+          {chrome.i18n.getMessage("popup_greeting_start")}{user.displayName}{chrome.i18n.getMessage("popup_greeting_end")}
+        </Typography>}
         {/* <Card>
           <Stack spacing={1} sx={{ width: "100%" }}>
             <Typography variant="h6" component="h6">
@@ -43,7 +52,15 @@ function IndexPopup() {
             </Typography>
           </Stack>
         </Card> */}
-        <Button
+        {!isLoading && !user && <Button
+          variant="contained"
+          onClick={onLogin}
+          sx={{ color: "#fff" }}
+        >
+          {chrome.i18n.getMessage("button_login")}
+        </Button>}
+
+        {!isLoading && user && <Button
           variant="contained"
           onClick={() => {
             chrome.tabs.create({
@@ -53,11 +70,43 @@ function IndexPopup() {
           sx={{ color: "#fff" }}
         >
           {chrome.i18n.getMessage("popup_button_open_note")}
-        </Button>
+        </Button>}
         {/* <Button variant="contained" onClick={onLogin}>
           Login
         </Button> */}
         {/* <CheckoutForm /> */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            background: "#f4f4f4",
+            width: "100%",
+            boxSizing: "border-box"
+          }}
+        >
+          <Stack sx={{ width: "100%", padding: 2, display: "flex", alignItems: "center" }} spacing={1}>
+            <Typography sx={{ fontSize: 16 }}>
+              {chrome.i18n.getMessage("popup_title_feedback")}
+            </Typography>
+            <Typography sx={{ fontSize: 12 }}>
+              {chrome.i18n.getMessage("popup_subtitle_feedback")}
+            </Typography>
+            <Box sx={{ width: 120 }}>
+              <img src="https://qr-official.line.me/gs/M_048rhxeo_GW.png?oat_content=qr" width="120" />
+            </Box>
+          </Stack>
+        </Box>
+        {!isLoading && user &&
+          <Button
+            variant="outlined"
+            sx={(theme) => ({
+              color: theme.palette.primary.main
+            })}
+            onClick={onLogout}
+          >
+            {chrome.i18n.getMessage("button_logout")}
+          </Button>
+        }
       </Stack>
     </Box>
   )

@@ -70,7 +70,7 @@ export function CardVocab({
               justifyContent: "center",
               alignItems: "center",
               cursor: "pointer",
-              backgroundColor: "#dddddd",
+              backgroundColor: "#cbcbcb",
               width: 36,
               height: 36,
               borderRadius: "50%",

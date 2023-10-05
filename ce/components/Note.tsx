@@ -51,8 +51,7 @@ export function Note({ note, url }: NoteProps) {
   return (
     <Card
       sx={{
-        backgroundColor: "#eeeeee",
-        borderBottom: "1px solid #eeeeee",
+        backgroundColor: "#f3f3f3",
         boxShadow: "none",
         padding: 3,
         marginBottom: 8
