@@ -19,6 +19,7 @@ import transcribe from './features/transcribe';
 import videoInfo from './features/videoInfo';
 import saveData from './features/save';
 import lessonsLocal from './features/lessonsLocal';
+import ui from './features/ui';
 
 const rootReducer = combineReducers({
   auth: auth,
@@ -29,7 +30,8 @@ const rootReducer = combineReducers({
   transcribe: transcribe,
   videoInfo: videoInfo,
   saveData,
-  lessonsLocal
+  lessonsLocal,
+  ui
 })
 
 const persistConfig = {
