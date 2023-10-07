@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Box, Button, Typography, TextField, Stack, Card } from "@mui/material"
+import { Box, Button, Typography, TextField, Stack, Card, FormControlLabel, Switch } from "@mui/material"
 import { sendToBackground } from "@plasmohq/messaging"
 import { ThemeProvider } from '@mui/material/styles';
 import { useFirebase } from "./firebase/hooks"
@@ -11,6 +11,7 @@ import { PersistGate } from "@plasmohq/redux-persist/integration/react"
 import { persistor, store } from './redux/store';
 import { MdWorkspacePremium } from "react-icons/md"
 import { fetchPayments } from "~redux/features/payment";
+import { toggleDisable } from "~redux/features/ui";
 import { useAppDispatch, useAppSelector } from "~redux/hooks";
 // https://stripe.com/docs/testing?testing-method=card-numbers#cards
 
@@ -38,6 +39,7 @@ function IndexPopup() {
   const { onLogin, onLogout, user, isLoading } = useFirebase()
   const payment = useAppSelector(state => state.payment)
   const state = useAppSelector(state => state)
+  const uiDisabled = useAppSelector(state => { return state.ui.disabled })
 
   const dispatch = useAppDispatch()
 
@@ -49,6 +51,10 @@ function IndexPopup() {
       dispatch(fetchPayments({ email: user.email }))
     }
   }, [user])
+
+  function handleToggleDisable() {
+    dispatch(toggleDisable())
+  }
 
   return (
     <Box
@@ -63,9 +69,26 @@ function IndexPopup() {
 
         <Stack spacing={1} sx={{ width: "100%", borderBottom: "1px solid #f4f4f4", paddingBottom: 2 }}>
 
-          <Typography variant="h6" component="h6">
-            {new Date().toLocaleDateString()}
-          </Typography>
+          <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between" }}>
+            <Typography variant="h6" component="h6">
+              {new Date().toLocaleDateString()}
+            </Typography>
+            <FormControlLabel
+              sx={{
+                fontSize: 12,
+                fontWeight: 600
+              }}
+              control={
+                <Switch
+                  size="small"
+                  checked={uiDisabled}
+                  onChange={handleToggleDisable}
+                />
+              }
+              label={chrome.i18n.getMessage("toggle_disable")}
+            />
+
+          </Stack>
           {isLoading &&
             <Typography variant="body2" component="span">
               Loading
@@ -79,6 +102,7 @@ function IndexPopup() {
               </Typography>
             )
           }
+
         </Stack>
         {/* <Card>
           <Stack spacing={1} sx={{ width: "100%" }}>
@@ -94,11 +118,6 @@ function IndexPopup() {
         >
           {chrome.i18n.getMessage("button_login")}
         </Button>}
-
-
-        {/* <CheckoutForm />
-         */}
-
 
 
         {!isLoading && user && <Button
@@ -139,8 +158,7 @@ function IndexPopup() {
           )}
           {!isLoading && user && !isLoadingSubsc && isValidSubscription &&
             <Stack spacing={1} sx={{ width: "100%" }}>
-              <Typography>
-                {status}
+              <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#a4a4a4" }}>
                 {status === "trialing" && chrome.i18n.getMessage("popup_payment_status_trialing")}
               </Typography>
               <a href={`https://billing.stripe.com/p/login/cN2eWH68NbAF22Y144`} target="_blank" style={{ width: "100%" }}>
@@ -196,7 +214,7 @@ function IndexPopup() {
           </Button>
         }
       </Stack>
-    </Box>
+    </Box >
   )
 }
 

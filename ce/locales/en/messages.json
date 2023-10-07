@@ -126,5 +126,9 @@
   "popup_payment_status_trialing": {
     "message": "Free trial",
     "description": "Message for the popup when the user is on a free trial."
+  },
+  "toggle_disable": {
+    "message": "Disable",
+    "description": "Toggle switch label for disabling a feature."
   }
 }
