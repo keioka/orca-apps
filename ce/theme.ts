@@ -32,6 +32,14 @@ const themeBase = {
         }
       }
     },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: 12,
+          fontWeight: 600,
+        },
+      }
+    },
     MuiInputBase: {
       styleOverrides: {
         root: {

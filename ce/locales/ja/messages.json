@@ -138,5 +138,9 @@
   "popup_payment_status_trialing": {
     "message": "無料トライアル中",
     "description": "無料トライアル中のステータスラベル。"
+  },
+  "toggle_disable": {
+    "message": "非表示",
+    "description": "Toggle switch label for disabling a feature."
   }
 }

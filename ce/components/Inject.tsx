@@ -22,6 +22,7 @@ import { RiSpeakLine } from "react-icons/ri";
 import { TbVocabulary } from "react-icons/tb";
 import { ListVocab } from "./ListVocab";
 import { saveVocabulary } from "../redux/features/save";
+import { toggleDisable } from "~redux/features/ui";
 import { createNewLesson, addMessageToLesson } from "../redux/features/lessonsLocal";
 import type { VocabularyItem, Message } from "~types";
 import { urlPath } from "~helpers/path";
@@ -121,10 +122,9 @@ export function Inject() {
   const lesson = useAppSelector(state => { return state.lessonsLocal.lessons[urlPath] })
   const state = useAppSelector(state => { return state })
   const note = useAppSelector(state => { return state.saveData[urlPath] })
-
+  const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   // const onPressToggle = () => setMode(mode === Mode.Learning ? Mode.Talk : Mode.Learning)
 
-  console.log({ user })
   useEffect(() => {
     // dispatch(fetchLesson(lessonId))
     // dispatch(fetchMessages(lessonId))
@@ -140,6 +140,10 @@ export function Inject() {
       dispatch(createNewLesson({ url: urlPath, }))
     }
   }, [open])
+
+  function handleToggleDisable() {
+    dispatch(toggleDisable())
+  }
 
   function handleChangeAutoPlay() {
     setIsAutoPlay(!isAutoPlay)
@@ -159,66 +163,29 @@ export function Inject() {
     }))
   }
 
-  // useEffect(() => {
-  //   document.addEventListener("mouseup", highlightSelectedText);
-  //   return () => {
-  //     document.removeEventListener("mouseup", highlightSelectedText);
-  //   };
-  // }, [])
-
-  // useEffect(() => {
-  //   setError(null)
-
-  //   if (!open || data) {
-  //     return
-  //   }
-
-  //   async function init() {
-  //     setIsLoadingData(true)
-
-  //     try {
-  //       const resp = await sendToBackground({
-  //         name: "material",
-  //         body: {
-  //           url: window.location.href,
-  //         }
-  //       })
-  //       console.log("orca", { resp })
-
-  //       if (resp.error) {
-  //         setError(resp.error)
-  //       } else {
-  //         setData(resp.data)
-  //       }
-  //     } catch (e) {
-  //       console.error(e)
-  //     } finally {
-  //       setIsLoadingData(false)
-  //     }
-  //   }
-
-  //   init()
-
-  // }, [open])
-
-
   useEffect(() => {
 
     window.addEventListener('load', function () {
+      setOriginalWidth(window.innerWidth)
       setIsFullLoaded(true)
     })
 
-    if (open) {
-      setOriginalWidth(window.innerWidth)
+    if (open && isFullLoaded) {
       const newPixelWidth = window.innerWidth - drawerWidth
       document.body.style.width = `${newPixelWidth}px`
     } else if (!open && isFullLoaded) {
       document.body.style.width = `${originalWidth}px`
     }
 
-  }, [open])
+    if (open && uiDisabled) {
+      document.body.style.width = `${originalWidth}px`
+    }
 
-  if (hideExtention || blaklist.some((url) => window.location.href.includes(url))) {
+  }, [open, uiDisabled])
+
+  console.log({ uiDisabled })
+
+  if (uiDisabled || hideExtention || blaklist.some((url) => window.location.href.includes(url))) {
     return null
   }
 
@@ -256,7 +223,7 @@ export function Inject() {
               height: "100%",
             }}
           >
-            <Header setOpen={setOpen} onLogin={onLogin} />
+            <Header setOpen={setOpen} onLogin={onLogin} handleToggleDisable={handleToggleDisable} uiDisabled={uiDisabled} />
             <Box mt={2}>
               <Menu onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
             </Box>
@@ -358,7 +325,7 @@ function VocabMode({
   )
 }
 
-function Header({ setOpen, onLogin }) {
+function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
   return (
     <Stack
       direction="row"
@@ -381,6 +348,22 @@ function Header({ setOpen, onLogin }) {
       {/* <Box onClick={onLogin}>
         <Avatar src="" />
       </Box> */}
+      <FormControlLabel
+        sx={{
+          width: "100%",
+          justifyContent: "flex-end",
+          fontSize: 12,
+          fontWeight: 600
+        }}
+        control={
+          <Switch
+            size="small"
+            checked={uiDisabled}
+            onChange={handleToggleDisable}
+          />
+        }
+        label={chrome.i18n.getMessage("toggle_disable")}
+      />
     </Stack>
   )
 }

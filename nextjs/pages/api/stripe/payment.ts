@@ -17,6 +17,10 @@ export default async function handler(
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
+  console.log({
+    s: process.env.STRIPE_SECRET_KEY,
+    e: process.env.STRIPE_ENDPOINT_SECRET
+  })
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {});
 

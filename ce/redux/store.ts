@@ -20,6 +20,7 @@ import videoInfo from './features/videoInfo';
 import saveData from './features/save';
 import lessonsLocal from './features/lessonsLocal';
 import payment from './features/payment';
+import ui from './features/ui';
 
 const rootReducer = combineReducers({
   auth: auth,
@@ -31,7 +32,8 @@ const rootReducer = combineReducers({
   videoInfo: videoInfo,
   saveData,
   lessonsLocal,
-  payment
+  payment,
+  ui
 })
 
 const persistConfig = {
