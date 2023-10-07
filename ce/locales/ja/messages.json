@@ -126,5 +126,17 @@
   "button_logout":{
     "message": "ログアウト",
     "description": "ログアウトボタンのラベル。"
+  },
+  "button_payment_link": {
+    "message": "有料プランにアップグレード",
+    "description": "有料プランにアップグレードボタンのラベル。"
+  },
+  "button_payment_manage_link": {
+    "message": "有料プランを管理",
+    "description": "有料プランを管理ボタンのラベル。"
+  },
+  "popup_payment_status_trialing": {
+    "message": "無料トライアル中",
+    "description": "無料トライアル中のステータスラベル。"
   }
 }

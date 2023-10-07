@@ -1,10 +1,18 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Box, Button, Typography, TextField, Stack, Card } from "@mui/material"
 import { sendToBackground } from "@plasmohq/messaging"
 import { ThemeProvider } from '@mui/material/styles';
 import { useFirebase } from "./firebase/hooks"
 // import { CheckoutForm } from "./components/CheckoutForm"
 import { getTheme } from "./theme";
+import { CheckoutForm } from "~components/CheckoutForm"
+import { Provider } from "react-redux";
+import { PersistGate } from "@plasmohq/redux-persist/integration/react"
+import { persistor, store } from './redux/store';
+import { MdWorkspacePremium } from "react-icons/md"
+import { fetchPayments } from "~redux/features/payment";
+import { useAppDispatch, useAppSelector } from "~redux/hooks";
+// https://stripe.com/docs/testing?testing-method=card-numbers#cards
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -16,13 +24,32 @@ function RootPopup() {
   const theme = getTheme(langCode)
   return (
     <ThemeProvider theme={theme}>
-      <IndexPopup />
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <IndexPopup />
+        </PersistGate>
+      </Provider>
+
     </ThemeProvider>
   )
 }
 
 function IndexPopup() {
   const { onLogin, onLogout, user, isLoading } = useFirebase()
+  const payment = useAppSelector(state => state.payment)
+  const state = useAppSelector(state => state)
+
+  const dispatch = useAppDispatch()
+
+  const { isValidSubscription, isLoading: isLoadingSubsc, status } = payment
+
+  useEffect(() => {
+    if (user) {
+      console.log("dispatch fetch payments")
+      dispatch(fetchPayments({ email: user.email }))
+    }
+  }, [user])
+
   return (
     <Box
       sx={{
@@ -33,18 +60,26 @@ function IndexPopup() {
     >
 
       <Stack spacing={1} sx={{ width: "100%" }}>
-        <Typography variant="h6" component="h6">
-          {new Date().toLocaleDateString()}
-        </Typography>
-        {isLoading &&
-          <Typography variant="body2" component="span">
-            Loading
-          </Typography>
-        }
 
-        {!isLoading && user && <Typography variant="body2" component="span">
-          {chrome.i18n.getMessage("popup_greeting_start")}{user.displayName}{chrome.i18n.getMessage("popup_greeting_end")}
-        </Typography>}
+        <Stack spacing={1} sx={{ width: "100%", borderBottom: "1px solid #f4f4f4", paddingBottom: 2 }}>
+
+          <Typography variant="h6" component="h6">
+            {new Date().toLocaleDateString()}
+          </Typography>
+          {isLoading &&
+            <Typography variant="body2" component="span">
+              Loading
+            </Typography>
+          }
+
+          {
+            !isLoading && user && (
+              <Typography variant="body2" component="span">
+                {chrome.i18n.getMessage("popup_greeting_start")}{user.displayName}{chrome.i18n.getMessage("popup_greeting_end")}
+              </Typography>
+            )
+          }
+        </Stack>
         {/* <Card>
           <Stack spacing={1} sx={{ width: "100%" }}>
             <Typography variant="h6" component="h6">
@@ -60,6 +95,12 @@ function IndexPopup() {
           {chrome.i18n.getMessage("button_login")}
         </Button>}
 
+
+        {/* <CheckoutForm />
+         */}
+
+
+
         {!isLoading && user && <Button
           variant="contained"
           onClick={() => {
@@ -71,6 +112,53 @@ function IndexPopup() {
         >
           {chrome.i18n.getMessage("popup_button_open_note")}
         </Button>}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            background: "#f4f4f4",
+            width: "100%",
+            boxSizing: "border-box"
+          }}
+          p={2}
+        >
+          {!isLoading && user && !isLoadingSubsc && !isValidSubscription && (
+            <a href={`REDACTED_SECRET?prefilled_email=${user.email}&client_reference_id=${user.uid}`} target="_blank" style={{ width: "100%" }}>
+              <Button
+                color="primary"
+                variant="contained"
+                sx={{
+                  color: "#fff",
+                  width: "100%"
+                }}
+              >
+                <MdWorkspacePremium size={18} style={{ marginRight: 4 }} />
+                {chrome.i18n.getMessage("button_payment_link")}
+              </Button>
+            </a>
+          )}
+          {!isLoading && user && !isLoadingSubsc && isValidSubscription &&
+            <Stack spacing={1} sx={{ width: "100%" }}>
+              <Typography>
+                {status}
+                {status === "trialing" && chrome.i18n.getMessage("popup_payment_status_trialing")}
+              </Typography>
+              <a href={`https://billing.stripe.com/p/login/cN2eWH68NbAF22Y144`} target="_blank" style={{ width: "100%" }}>
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                    background: "#fff",
+                  }}
+                >
+                  <MdWorkspacePremium size={18} style={{ marginRight: 4 }} />
+                  {chrome.i18n.getMessage("button_payment_manage_link")}
+                </Button>
+              </a>
+            </Stack>
+          }
+        </Box>
         {/* <Button variant="contained" onClick={onLogin}>
           Login
         </Button> */}

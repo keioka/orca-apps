@@ -52,6 +52,7 @@ const themeBase = {
         root: {
           fontSize: 12,
           fontWeight: 600,
+          boxShadow: "none",
         },
       },
     },

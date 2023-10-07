@@ -114,5 +114,17 @@
   "popup_greeting_end":{
     "message": "!",
     "description": "Greeting message for the popup."
+  },
+  "button_payment_link": {
+    "message": "Upgrade",
+    "description": "Button label for upgrading to a paid plan."
+  },
+  "button_payment_manage_link": {
+    "message": "Manage Plan",
+    "description": "Button label for managing the subscription."
+  },
+  "popup_payment_status_trialing": {
+    "message": "Free trial",
+    "description": "Message for the popup when the user is on a free trial."
   }
 }
