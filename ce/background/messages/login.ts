@@ -30,7 +30,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       return
     }
     if (token) {
-      console.log({ token })
       res.send({ token })
     }
   })

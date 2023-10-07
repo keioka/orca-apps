@@ -1,21 +1,22 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
-async function paraphrase(sentence: string): { error?: string, result?: string } {
+async function fetchPaymentHistory(email: string): { error?: string, result?: string } {
   try {
-    const result = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/paraphrase`, {
+    const result = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/stripe/payment`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        sentence
+        email
       })
     });
 
     const data = await result.json();
 
     if (!result.ok) {
-      console.error("Error fetching paraphrase");
+      console.log({ result })
+      console.error("Error fetching payment history");
     }
 
     return { result: data }
@@ -27,12 +28,12 @@ async function paraphrase(sentence: string): { error?: string, result?: string }
 
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  const { sentence } = req.body;
-  console.log("paraphrase message received", sentence);
+  const { email } = req.body;
+  console.log("payment history message received", email);
   try {
-    const { result } = await paraphrase(sentence)
+    const data = await fetchPaymentHistory(email)
 
-    res.send(result);
+    res.send(data);
   } catch (error) {
     console.error(error);
     res.send({

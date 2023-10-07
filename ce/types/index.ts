@@ -66,3 +66,15 @@ export type GrammarMistake = {
 export type Notes = {
   [key: string]: NoteData;
 };
+
+export interface Payment {
+  id: string;
+  amount: number;
+  createdAt: number;
+  currency: string;
+  status: string;
+  trialInfo: {
+    start: number;
+    end: number;
+  }
+}

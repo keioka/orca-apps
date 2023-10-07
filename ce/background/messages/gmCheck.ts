@@ -14,10 +14,8 @@ async function getGMCheck(params: { sentence: string }) {
   )
 
   const result = await response.json()
-  console.log({ result })
 
   if (!response.ok) {
-    console.log({ result })
     console.error("Error fetching Vocab");
     throw new Error("Error fetching Vocab");
   }
