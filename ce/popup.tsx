@@ -161,7 +161,7 @@ function IndexPopup() {
               <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#a4a4a4" }}>
                 {status === "trialing" && chrome.i18n.getMessage("popup_payment_status_trialing")}
               </Typography>
-              <a href={`https://billing.stripe.com/p/login/cN2eWH68NbAF22Y144`} target="_blank" style={{ width: "100%" }}>
+              <a href={process.env.PLASMO_PUBLIC_STRIPE_BILLING_LINK} target="_blank" style={{ width: "100%" }}>
                 <Button
                   color="primary"
                   variant="outlined"

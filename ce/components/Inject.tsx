@@ -20,12 +20,14 @@ import { Opener } from "./Opener";
 import { ChatModeProto } from "./ChatModeProto";
 import { RiSpeakLine } from "react-icons/ri";
 import { TbVocabulary } from "react-icons/tb";
+import { FaFileWord } from "react-icons/fa";
 import { ListVocab } from "./ListVocab";
 import { saveVocabulary } from "../redux/features/save";
 import { toggleDisable } from "~redux/features/ui";
 import { createNewLesson, addMessageToLesson } from "../redux/features/lessonsLocal";
 import type { VocabularyItem, Message } from "~types";
 import { urlPath } from "~helpers/path";
+import { SummaryMode } from "./SummaryMode";
 
 const drawerWidth = 380
 
@@ -91,7 +93,8 @@ function highlightSelectedText() {
 
 enum Mode {
   Talk,
-  Vocab
+  Vocab,
+  Summary
 }
 
 const blaklist = [
@@ -103,6 +106,11 @@ const blaklist = [
   "amazon.co.jp",
 ]
 
+interface Summary {
+  level: string,
+  summary: string,
+}
+
 export function Inject() {
   const [hideExtention, setHideExtention] = useState(false)
   const [open, setOpen] = useState(false)
@@ -111,6 +119,10 @@ export function Inject() {
   const [mode, setMode] = useState(Mode.Talk)
   const [vocabs, setVocabs] = useState<Vocab[]>([])
   const [isLoadingVocabs, setIsLoadingVocabs] = useState(false)
+  const [summaries, setSummaries] = useState<Summary[]>([])
+  const [isLoadingSummaries, setIsLoadingSummaries] = useState(false)
+
+
   const [originalWidth, setOriginalWidth] = useState(0)
   const [error, setError] = useState(null)
   const [isLoadingData, setIsLoadingData] = useState(false)
@@ -260,6 +272,16 @@ export function Inject() {
                 onSaveVocab={handleSaveVocab}
               />
             }
+            {mode === Mode.Summary &&
+              <SummaryMode
+                url={urlPath}
+                summaries={summaries}
+                setSummaries={setSummaries}
+                setIsLoadingSummaries={setIsLoadingSummaries}
+                isLoadingSummaries={isLoadingSummaries}
+                setError={setError}
+              />
+            }
           </Box>
         </Drawer>
       }
@@ -293,10 +315,12 @@ function VocabMode({
         // Loop over each paragraph
         for (const paragraph of paragraphs) {
           // Send the text content of the paragraph to the background
+          const text = paragraph.textContent || paragraph.innerText
+          const trimmedText = text.trim()
           const resp = await sendToBackground({
             name: "vocabsFromText",
             body: {
-              text: paragraph.textContent || paragraph.innerText,
+              text: trimmedText,
             },
           });
 
@@ -389,15 +413,21 @@ function Menu({
           border: "none",
           backgroundColor: selectedMode === Mode.Talk ? theme.palette.primary.main : "transparent",
           borderRight: "1px solid #dddddd",
+          height: 48,
+          color: selectedMode === Mode.Talk ? "#fff" : "#b4b4b4",
           "&:hover": {
             backgroundColor: theme.palette.primary.main,  // Adjust this if you also want to use a theme color on hover
             border: "none",
             borderRight: "1px solid #dddddd",
+            color: "#fff",
           },
         })}
         onClick={() => onClickButton(Mode.Talk)}
       >
-        <RiSpeakLine size={24} color={selectedMode === Mode.Talk ? "#fff" : "#bbbbbb"} />
+        <RiSpeakLine size={16} />
+        <Typography variant="body2" component="span" sx={{ marginLeft: 0.5, fontWeight: 600 }}>
+          {chrome.i18n.getMessage("menu_chat")}
+        </Typography>
       </Button>
       <Button
         sx={(theme) => ({
@@ -408,31 +438,45 @@ function Menu({
           border: "none",
           backgroundColor: selectedMode === Mode.Vocab ? theme.palette.primary.main : "transparent",
           borderRight: "1px solid #dddddd",
+          height: 48,
+          color: selectedMode === Mode.Vocab ? "#fff" : "#b4b4b4",
           "&:hover": {
             backgroundColor: theme.palette.primary.main,  // Adjust this if you also want to use a theme color on hover
             border: "none",
             borderRight: "1px solid #dddddd",
+            color: "#fff"
           },
         })}
         onClick={() => onClickButton(Mode.Vocab)}
       >
-        <TbVocabulary size={24} color={selectedMode === Mode.Vocab ? "#fff" : "#bbbbbb"} />
+        <FaFileWord size={16} />
+        <Typography variant="body2" component="span" sx={{ marginLeft: 0.5, fontWeight: 600 }}>
+          {chrome.i18n.getMessage("menu_vocab")}
+        </Typography>
       </Button>
-      {/* <Button
-        sx={{
+      <Button
+        sx={(theme) => ({
           width: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           border: "none",
+          backgroundColor: selectedMode === Mode.Summary ? theme.palette.primary.main : "transparent",
+          height: 48,
+          color: selectedMode === Mode.Summary ? "#fff" : "#b4b4b4",
           "&:hover": {
-            backgroundColor: "#f8f8f8",
+            backgroundColor: theme.palette.primary.main,  // Adjust this if you also want to use a theme color on hover
             border: "none",
+            color: "#fff",
           },
-        }}
+        })}
+        onClick={() => onClickButton(Mode.Summary)}
       >
-        <IoCloseCircle size={24} color="#dddddd" />
-      </Button> */}
+        <TbVocabulary size={16} />
+        <Typography variant="body2" component="span" sx={{ marginLeft: 0.5, fontWeight: 600 }}>
+          {chrome.i18n.getMessage("menu_summary")}
+        </Typography>
+      </Button>
     </ButtonGroup>
   )
 }
