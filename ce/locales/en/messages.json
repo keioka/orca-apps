@@ -19,7 +19,7 @@
     "message": "Type your message here",
     "description": "Placeholder text in the chat input box prompting the user to type their message."
   },
-  "chat_card_button_translate": {
+  "translate": {
     "message": "Translate",
     "description": "Button label for translating the content of a chat message to another language."
   },
@@ -130,5 +130,17 @@
   "toggle_disable": {
     "message": "Disable",
     "description": "Toggle switch label for disabling a feature."
+  },
+  "menu_summary": {
+    "message": "Summary",
+    "description": "Menu label for summary page."
+  },
+  "menu_vocab": {
+    "message": "Vocab",
+    "description": "Menu label for vocab page."
+  },
+  "menu_chat": {
+    "message": "Chat",
+    "description": "Menu label for chat page."
   }
 }

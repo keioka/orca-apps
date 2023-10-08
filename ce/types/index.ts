@@ -78,3 +78,8 @@ export interface Payment {
     end: number;
   }
 }
+
+export interface Summary {
+  level: string;
+  summary: string;
+}

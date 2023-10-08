@@ -414,7 +414,7 @@ export function CardChatPure({
                   onClick={handleClickTranslate}
                 >
                   <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: "#787c80", fontWeight: 700 }}>
-                    {chrome.i18n.getMessage("chat_card_button_translate")}
+                    {chrome.i18n.getMessage("translate")}
                   </Typography>
                 </Button>
                 <Button

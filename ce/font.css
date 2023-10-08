@@ -1,3 +1,45 @@
+
+/* ZenMaruGothic font rules */
+@font-face {
+  font-family: "ZenMaruGothic";
+  font-style: normal;
+  font-weight: 900; /* Black */
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Black.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "ZenMaruGothic";
+  font-style: normal;
+  font-weight: 700; /* Bold */
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Bold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "ZenMaruGothic";
+  font-style: normal;
+  font-weight: 300; /* Light */
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Light.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "ZenMaruGothic";
+  font-style: normal;
+  font-weight: 500; /* Medium */
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Medium.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "ZenMaruGothic";
+  font-style: normal;
+  font-weight: 400; /* Regular */
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Regular.ttf) format('truetype');
+}
+
 @font-face {
   font-family: "Open Sans";
   font-style: "semi-bold";
@@ -48,45 +90,4 @@
   font-weight: 600; /* semi-bold italic */
   font-display: swap;
   src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-SemiBoldItalic.ttf) format('truetype');
-}
-
-/* ZenMaruGothic font rules */
-@font-face {
-  font-family: "ZenMaruGothic";
-  font-style: normal;
-  font-weight: 900; /* Black */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Black.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "ZenMaruGothic";
-  font-style: normal;
-  font-weight: 700; /* Bold */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Bold.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "ZenMaruGothic";
-  font-style: normal;
-  font-weight: 300; /* Light */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Light.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "ZenMaruGothic";
-  font-style: normal;
-  font-weight: 500; /* Medium */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Medium.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "ZenMaruGothic";
-  font-style: normal;
-  font-weight: 400; /* Regular */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Regular.ttf) format('truetype');
 }

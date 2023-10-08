@@ -19,7 +19,7 @@
     "message": "こちらにメッセージを入力してください",
     "description": "ユーザーにメッセージを入力するよう促すチャット入力ボックスのプレースホルダーテキスト。"
   },
-  "chat_card_button_translate": {
+  "translate": {
     "message": "翻訳",
     "description": "チャットメッセージの内容を別の言語に翻訳するためのボタンラベル。"
   },
@@ -142,5 +142,21 @@
   "toggle_disable": {
     "message": "非表示",
     "description": "Toggle switch label for disabling a feature."
+  },
+  "toggle_disable": {
+    "message": "非表示",
+    "description": "Toggle switch label for disabling a feature."
+  },
+  "menu_summary": {
+    "message": "要約",
+    "description": "Menu label for summary page."
+  },
+  "menu_vocab": {
+    "message": "単語",
+    "description": "Menu label for vocab page."
+  },
+  "menu_chat": {
+    "message": "トーク",
+    "description": "Menu label for chat page."
   }
 }
