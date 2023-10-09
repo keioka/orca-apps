@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 
 export const config = {
   runtime: 'edge', //This specifies the runtime environment that the middleware function will be executed in.
+  maxDuration: 60,
 };
 
 const openai = new OpenAI({
@@ -98,13 +99,16 @@ async function getSummary(params: GetVocabByWordSentenceParams) {
 
 
 export default async function handler(req, res) {
-  const { url, levels } = req.body;
+  const body = await req.json();
+  const { url, levels } = body;
 
   if (req.method !== 'POST') {
+    console.error("Method not allowed");
     return resJSON(405, { message: 'Method not allowed' });
   }
 
   if (!url) {
+    console.error("Missing required fields");
     return resJSON(400, { message: 'Missing required fields' });
   }
 

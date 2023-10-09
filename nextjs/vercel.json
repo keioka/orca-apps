@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/vocabFromText.ts": {
+      "maxDuration": 60
+    },
+    "api/summaryByLevel.ts": {
+      "maxDuration": 60
+    }
+  }
+}
