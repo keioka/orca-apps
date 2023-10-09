@@ -1,5 +1,9 @@
 import OpenAI from 'openai';
 
+export const config = {
+  runtime: 'edge', //This specifies the runtime environment that the middleware function will be executed in.
+};
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // defaults to process.env["OPENAI_API_KEY"]
 });
@@ -93,11 +97,11 @@ export default async function handler(
   const { text } = req.body;
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    return resJSON(400, { message: 'Method not allowed' });
   }
 
   if (!text) {
-    return res.status(400).json({ message: 'Missing required fields' });
+    return resJSON(400, { message: 'Missing required fields' });
   }
 
   try {
@@ -105,8 +109,21 @@ export default async function handler(
       text
     })
 
-    return res.status(200).json({ vocabs });
+    return resJSON(200, { vocabs });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return resJSON(404, { message: error.message });
   }
+}
+
+
+function resJSON(status: number, data: any) {
+  return new NextResponse(
+    JSON.stringify(data),
+    {
+      status,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  )
 }
