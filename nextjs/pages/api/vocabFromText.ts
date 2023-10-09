@@ -2,6 +2,7 @@ import OpenAI from 'openai';
 
 export const config = {
   runtime: 'edge', //This specifies the runtime environment that the middleware function will be executed in.
+  maxDuration: 60,
 };
 
 const openai = new OpenAI({
@@ -94,13 +95,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { text } = req.body;
+  const body = await req.json();
+  const { text } = body;
 
   if (req.method !== 'POST') {
+    console.error("Method not allowed");
     return resJSON(400, { message: 'Method not allowed' });
   }
 
   if (!text) {
+    console.error("Missing required fields");
     return resJSON(400, { message: 'Missing required fields' });
   }
 
@@ -111,7 +115,8 @@ export default async function handler(
 
     return resJSON(200, { vocabs });
   } catch (error) {
-    return resJSON(404, { message: error.message });
+    console.error(error.message);
+    return resJSON(500, { message: error.message });
   }
 }
 
