@@ -1,5 +1,10 @@
 import axios from "axios";
 import OpenAI from 'openai';
+import { NextResponse } from 'next/server'
+
+export const config = {
+  runtime: 'edge', //This specifies the runtime environment that the middleware function will be executed in.
+};
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // defaults to process.env["OPENAI_API_KEY"]
@@ -96,21 +101,34 @@ export default async function handler(req, res) {
   const { url, levels } = req.body;
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    return resJSON(405, { message: 'Method not allowed' });
   }
 
   if (!url) {
-    return res.status(400).json({ message: 'Missing required fields' });
+    return resJSON(400, { message: 'Missing required fields' });
   }
 
   try {
     const { summaries } = await getSummary({ url, levels });
 
-    return res.status(200).json({ summaries });
+    return resJSON(200, { summaries });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return resJSON(500, { message: error.message });
   }
 }
 
 
 // https://platform.openai.com/account/rate-limits
+
+
+function resJSON(status: number, data: any) {
+  return new NextResponse(
+    JSON.stringify(data),
+    {
+      status,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  )
+}
