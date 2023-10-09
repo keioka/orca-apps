@@ -1,9 +1,9 @@
 {
   "functions": {
-    "api/vocabFromText.ts": {
+    "pages/api/vocabFromText.ts": {
       "maxDuration": 60
     },
-    "api/summaryByLevel.ts": {
+    "pages/api/summaryByLevel.ts": {
       "maxDuration": 60
     }
   }
