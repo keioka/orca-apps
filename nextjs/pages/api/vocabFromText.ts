@@ -1,8 +1,7 @@
 import OpenAI from 'openai';
 
 export const config = {
-  runtime: 'edge', //This specifies the runtime environment that the middleware function will be executed in.
-  maxDuration: 60,
+  maxDuration: 300,
 };
 
 const openai = new OpenAI({
@@ -95,17 +94,20 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const body = await req.json();
-  const { text } = body;
+  // const body = await req.json();
+  // const { text } = body;
+  const { text } = req.body;
 
   if (req.method !== 'POST') {
     console.error("Method not allowed");
-    return resJSON(400, { message: 'Method not allowed' });
+    // return resJSON(400, { message: 'Method not allowed' });
+    res.status(405).json({ message: 'Method not allowed' });
   }
 
   if (!text) {
     console.error("Missing required fields");
-    return resJSON(400, { message: 'Missing required fields' });
+    // return resJSON(400, { message: 'Missing required fields' });
+    res.status(400).json({ message: 'Missing required fields' });
   }
 
   try {
@@ -113,22 +115,24 @@ export default async function handler(
       text
     })
 
-    return resJSON(200, { vocabs });
+    return res.status(200).json({ vocabs });
+    // return resJSON(200, { vocabs });
   } catch (error) {
     console.error(error.message);
-    return resJSON(500, { message: error.message });
+    res.status(500).json({ message: error.message });
+    // return resJSON(500, { message: error.message });
   }
 }
 
 
-function resJSON(status: number, data: any) {
-  return new NextResponse(
-    JSON.stringify(data),
-    {
-      status,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-  )
-}
+// function resJSON(status: number, data: any) {
+//   return new NextResponse(
+//     JSON.stringify(data),
+//     {
+//       status,
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     }
+//   )
+// }

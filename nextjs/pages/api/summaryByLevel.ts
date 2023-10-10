@@ -3,8 +3,8 @@ import OpenAI from 'openai';
 import { NextResponse } from 'next/server'
 
 export const config = {
-  runtime: 'edge', //This specifies the runtime environment that the middleware function will be executed in.
-  maxDuration: 60,
+  // runtime: 'edge', //This specifies the runtime environment that the middleware function will be executed in.
+  maxDuration: 300,
 };
 
 const openai = new OpenAI({
@@ -99,25 +99,32 @@ async function getSummary(params: GetVocabByWordSentenceParams) {
 
 
 export default async function handler(req, res) {
-  const body = await req.json();
-  const { url, levels } = body;
+  // const body = await req.json();
+  // const { url, levels } = body;
+
+  const { url, levels } = req.body;
 
   if (req.method !== 'POST') {
     console.error("Method not allowed");
-    return resJSON(405, { message: 'Method not allowed' });
+    return res.status(405).json({ message: 'Method not allowed' });
+    // return resJSON(405, { message: 'Method not allowed' });
   }
 
   if (!url) {
     console.error("Missing required fields");
-    return resJSON(400, { message: 'Missing required fields' });
+    // return resJSON(400, { message: 'Missing required fields' });
+    return res.status(400).json({ message: 'Missing required fields' });
   }
 
   try {
     const { summaries } = await getSummary({ url, levels });
 
-    return resJSON(200, { summaries });
+    // return resJSON(200, { summaries });
+    return res.status(200).json({ summaries });
   } catch (error) {
-    return resJSON(500, { message: error.message });
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+    // return resJSON(500, { message: error.message });
   }
 }
 
@@ -125,14 +132,14 @@ export default async function handler(req, res) {
 // https://platform.openai.com/account/rate-limits
 
 
-function resJSON(status: number, data: any) {
-  return new NextResponse(
-    JSON.stringify(data),
-    {
-      status,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-  )
-}
+// function resJSON(status: number, data: any) {
+//   return new NextResponse(
+//     JSON.stringify(data),
+//     {
+//       status,
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     }
+//   )
+// }
