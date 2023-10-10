@@ -142,7 +142,7 @@ function IndexPopup() {
           p={2}
         >
           {!isLoading && user && !isLoadingSubsc && !isValidSubscription && (
-            <a href={`REDACTED_SECRET?prefilled_email=${user.email}&client_reference_id=${user.uid}`} target="_blank" style={{ width: "100%" }}>
+            <a href={`${process.env.PLASMO_PUBLIC_STRIPE_BILLING_LINK}?prefilled_email=${user.email}&client_reference_id=${user.uid}`} target="_blank" style={{ width: "100%" }}>
               <Button
                 color="primary"
                 variant="contained"

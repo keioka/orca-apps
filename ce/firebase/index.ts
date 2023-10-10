@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app"
 import { getAuth } from "firebase/auth"
 
 const firebaseConfig = {
-  apiKey: "REDACTED_FIREBASE_API_KEY",
-  authDomain: "orca-398204.firebaseapp.com",
-  projectId: "orca-398204",
-  storageBucket: "orca-398204.appspot.com",
-  messagingSenderId: "119738105912",
-  appId: "1:119738105912:web:bcd2b83f14e575e57b66cd"
+  apiKey: process.env.PLASMO_PUBLIC_FIREBASE_PUBLIC_API_KEY,
+  authDomain: process.env.PLASMO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.PLASMO_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.PLASMO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.PLASMO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.PLASMO_PUBLIC_FIREBASE_APP_ID,
 };
 
 export const app = initializeApp(firebaseConfig)

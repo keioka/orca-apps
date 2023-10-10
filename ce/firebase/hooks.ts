@@ -64,6 +64,8 @@ export const useFirebase = () => {
       if (token) {
         console.log({ token })
         const credential = GoogleAuthProvider.credential(null, token)
+        console.log({ credential })
+
         try {
           await signInWithCredential(auth, credential)
         } catch (e) {
