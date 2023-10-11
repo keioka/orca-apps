@@ -10,10 +10,11 @@ import { Provider } from "react-redux";
 import { PersistGate } from "@plasmohq/redux-persist/integration/react"
 import { persistor, store } from './redux/store';
 import { MdWorkspacePremium } from "react-icons/md"
-import { fetchPayments } from "~redux/features/payment";
+import { fetchPayments, initState as initStatePayment } from "~redux/features/payment";
 import { toggleDisable } from "~redux/features/ui";
 import { useAppDispatch, useAppSelector } from "~redux/hooks";
 // https://stripe.com/docs/testing?testing-method=card-numbers#cards
+import { ButtonGoogleLogin } from "~/components/ButtonGoogleLogin";
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -56,16 +57,30 @@ function IndexPopup() {
     dispatch(toggleDisable())
   }
 
+  function handleSignout() {
+    onLogout()
+    console.log("dispatch initStatePayment")
+    dispatch(initStatePayment())
+  }
+
   return (
     <Box
       sx={{
-        width: 320,
+        width: "100%",
+        minWidth: 320,
+        maxWidth: 640,
         display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         flexDirection: "column",
       }}
     >
 
-      <Stack spacing={1} sx={{ width: "100%" }}>
+      <Stack spacing={1} sx={{
+        width: "100%",
+        minWidth: 320,
+        maxWidth: 640,
+      }}>
 
         <Stack spacing={1} sx={{ width: "100%", borderBottom: "1px solid #f4f4f4", paddingBottom: 2 }}>
 
@@ -111,13 +126,7 @@ function IndexPopup() {
             </Typography>
           </Stack>
         </Card> */}
-        {!isLoading && !user && <Button
-          variant="contained"
-          onClick={onLogin}
-          sx={{ color: "#fff" }}
-        >
-          {chrome.i18n.getMessage("button_login")}
-        </Button>}
+        {!isLoading && !user && <ButtonGoogleLogin onLogin={onLogin} />}
 
 
         {!isLoading && user && <Button
@@ -131,52 +140,55 @@ function IndexPopup() {
         >
           {chrome.i18n.getMessage("popup_button_open_note")}
         </Button>}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            background: "#f4f4f4",
-            width: "100%",
-            boxSizing: "border-box"
-          }}
-          p={2}
-        >
-          {!isLoading && user && !isLoadingSubsc && !isValidSubscription && (
-            <a href={`${process.env.PLASMO_PUBLIC_STRIPE_BILLING_LINK}?prefilled_email=${user.email}&client_reference_id=${user.uid}`} target="_blank" style={{ width: "100%" }}>
-              <Button
-                color="primary"
-                variant="contained"
-                sx={{
-                  color: "#fff",
-                  width: "100%"
-                }}
-              >
-                <MdWorkspacePremium size={18} style={{ marginRight: 4 }} />
-                {chrome.i18n.getMessage("button_payment_link")}
-              </Button>
-            </a>
-          )}
-          {!isLoading && user && !isLoadingSubsc && isValidSubscription &&
-            <Stack spacing={1} sx={{ width: "100%" }}>
-              <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#a4a4a4" }}>
-                {status === "trialing" && chrome.i18n.getMessage("popup_payment_status_trialing")}
-              </Typography>
-              <a href={process.env.PLASMO_PUBLIC_STRIPE_BILLING_LINK} target="_blank" style={{ width: "100%" }}>
+
+        {!isLoading && user && !isLoadingSubsc && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              background: "#f4f4f4",
+              width: "100%",
+              boxSizing: "border-box"
+            }}
+            p={2}
+          >
+            {!isValidSubscription && (
+              <a href={`${process.env.PLASMO_PUBLIC_STRIPE_PAYMENT_LINK}?prefilled_email=${user.email}&client_reference_id=${user.uid}`} target="_blank" style={{ width: "100%" }}>
                 <Button
                   color="primary"
-                  variant="outlined"
+                  variant="contained"
                   sx={{
-                    width: "100%",
-                    background: "#fff",
+                    color: "#fff",
+                    width: "100%"
                   }}
                 >
                   <MdWorkspacePremium size={18} style={{ marginRight: 4 }} />
-                  {chrome.i18n.getMessage("button_payment_manage_link")}
+                  {chrome.i18n.getMessage("button_payment_link")}
                 </Button>
               </a>
-            </Stack>
-          }
-        </Box>
+            )}
+            {isValidSubscription &&
+              <Stack spacing={1} sx={{ width: "100%" }}>
+                <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#a4a4a4" }}>
+                  {status === "trialing" && chrome.i18n.getMessage("popup_payment_status_trialing")}
+                </Typography>
+                <a href={process.env.PLASMO_PUBLIC_STRIPE_BILLING_LINK} target="_blank" style={{ width: "100%" }}>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    sx={{
+                      width: "100%",
+                      background: "#fff",
+                    }}
+                  >
+                    <MdWorkspacePremium size={18} style={{ marginRight: 4 }} />
+                    {chrome.i18n.getMessage("button_payment_manage_link")}
+                  </Button>
+                </a>
+              </Stack>
+            }
+          </Box>
+        )}
         {/* <Button variant="contained" onClick={onLogin}>
           Login
         </Button> */}
@@ -208,7 +220,7 @@ function IndexPopup() {
             sx={(theme) => ({
               color: theme.palette.primary.main
             })}
-            onClick={onLogout}
+            onClick={handleSignout}
           >
             {chrome.i18n.getMessage("button_logout")}
           </Button>

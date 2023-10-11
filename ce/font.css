@@ -41,53 +41,73 @@
 }
 
 @font-face {
-  font-family: "Open Sans";
-  font-style: "semi-bold";
-  font-weight: 400;
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-Medium.ttf) format("ttf");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
-    U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "Open Sans";
+  font-family: "NotoSansJP";
   font-style: normal;
-  font-weight: 600; /* semi-bold */
+  font-weight: 900; /* Black */
   font-display: swap;
-  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-Medium.ttf) format('truetype');
-  /* your unicode-range here... */
+  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Black.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: "Open Sans";
-  font-style: italic;
-  font-weight: 400; /* medium */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-MediumItalic.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "Open Sans";
+  font-family: "NotoSansJP";
   font-style: normal;
-  font-weight: 400; /* regular */
+  font-weight: 700; /* Bold */
   font-display: swap;
-  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-Regular.ttf) format('truetype');
+  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Bold.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: "Open Sans";
+  font-family: "NotoSansJP";
   font-style: normal;
-  font-weight: 600; /* semi-bold */
+  font-weight: 800; /* ExtraBold */
   font-display: swap;
-  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-SemiBold.ttf) format('truetype');
+  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-ExtraBold.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: "Open Sans";
-  font-style: italic;
-  font-weight: 600; /* semi-bold italic */
+  font-family: "NotoSansJP";
+  font-style: normal;
+  font-weight: 200; /* ExtraLight */
   font-display: swap;
-  src: url(data-base64:~assets/fonts/OpenSans/OpenSans_SemiCondensed-SemiBoldItalic.ttf) format('truetype');
+  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-ExtraLight.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "NotoSansJP";
+  font-style: normal;
+  font-weight: 300; /* Light */
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Light.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "NotoSansJP";
+  font-style: normal;
+  font-weight: 500; /* Medium */
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Medium.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "NotoSansJP";
+  font-style: normal;
+  font-weight: 400; /* Regular */
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "NotoSansJP";
+  font-style: normal;
+  font-weight: 600; /* SemiBold */
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-SemiBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "NotoSansJP";
+  font-style: normal;
+  font-weight: 100; /* Thin */
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Thin.ttf) format('truetype');
 }

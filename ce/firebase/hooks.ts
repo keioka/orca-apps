@@ -22,36 +22,37 @@ export const useFirebase = () => {
     }
   }
 
-  // const onLogin = async () => {
-  //   console.log({ isLoading, user })
-  //   if (isLoading) return
-  //   if (user) return
+  const onLoginBackground = async () => {
+    console.log({ isLoading, user })
+    if (isLoading) return
+    if (user) return
 
-  //   console.log("onLogin")
-  //   setIsLoading(true)
+    console.log("onLogin")
+    setIsLoading(true)
 
-  //   try {
-  //     const { token, error } = await sendToBackground({
-  //       name: "login",
-  //     })
+    try {
+      const { token, error } = await sendToBackground({
+        name: "login",
+      })
 
-  //     console.log({ token, error })
+      console.log({ token, error })
 
-  //     if (error) {
-  //       return
-  //     }
+      if (error) {
+        return
+      }
 
-  //     if (!token) {
-  //       return
-  //     }
+      if (!token) {
+        return
+      }
 
-  //     const credential = GoogleAuthProvider.credential(null, token)
-  //     console.log({ credential })
-  //     await signInWithCredential(auth, credential)
-  //   } catch (e) {
-  //     console.error("Could not log in. ", e)
-  //   }
-  // }
+      const credential = GoogleAuthProvider.credential(null, token)
+      console.log({ credential })
+      await signInWithCredential(auth, credential)
+    } catch (e) {
+      console.error("Could not log in. ", e)
+    }
+  }
+
   const onLogin = () => {
     console.log("Login")
     setIsLoading(true)
@@ -89,6 +90,7 @@ export const useFirebase = () => {
     isLoading,
     user,
     onLogin,
+    onLoginBackground,
     onLogout
   }
 }

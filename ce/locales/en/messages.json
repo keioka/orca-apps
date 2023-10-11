@@ -39,11 +39,11 @@
     "message": "Clear",
     "description": "Button label to clear the content of the chat input box."
   },
-  "chat_card_paraphrase_loading":{
+  "chat_card_paraphrase_loading": {
     "message": "Loading paraphrase...",
     "description": "Loading message for the paraphrase feature."
   },
-  "chat_card_gmcheck_loading":{
+  "chat_card_gmcheck_loading": {
     "message": "Loading grammar check...",
     "description": "Loading message for the grammar check feature."
   },
@@ -107,11 +107,11 @@
     "message": "Feedback",
     "description": "Title for the feedback popup."
   },
-  "popup_greeting_start":{
+  "popup_greeting_start": {
     "message": "Hi,",
     "description": "Greeting message for the popup."
   },
-  "popup_greeting_end":{
+  "popup_greeting_end": {
     "message": "!",
     "description": "Greeting message for the popup."
   },
@@ -142,5 +142,9 @@
   "menu_chat": {
     "message": "Chat",
     "description": "Menu label for chat page."
+  },
+  "subscription_form_title": {
+    "message": "Subscribe to Orca",
+    "description": "Subscription form title."
   }
 }

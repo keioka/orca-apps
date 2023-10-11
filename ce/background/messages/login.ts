@@ -21,9 +21,11 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 
+setPersistence(auth, browserLocalPersistence)
+
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   console.log("login message received")
-  chrome.identity.getAuthToken({ interactive: true }, async function (token) {
+  chrome.identity.getAuthToken({ interactive: false }, async function (token) {
     if (chrome.runtime.lastError || !token) {
       console.error(chrome.runtime.lastError.message)
       res.send({ error: chrome.runtime.lastError })
