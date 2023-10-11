@@ -27,7 +27,8 @@ import { useSentence } from "../hooks/card"
 import { CardSmGMCheck } from "./CardSmGMCheck"
 import { CardSmParaphrase } from "./CardSmParaphrase"
 import { saveParaphrases, saveGrammarMistakes } from "~redux/features/save"
-import { useAppDispatch } from "~redux/hooks"
+import { useAppDispatch, useAppSelector } from "~redux/hooks"
+import { toggleSubscriptionForm } from "~redux/features/ui"
 import type { ParaphraseItem, GMCheckItem } from "~types"
 import styled from "@emotion/styled"
 
@@ -73,7 +74,6 @@ interface CardChatPureProps {
   selectPreviousSentence: () => void;
 }
 
-const synth = window.speechSynthesis;
 
 export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: CardChatProps) {
   const [error, setError] = useState(null)
@@ -90,6 +90,7 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
   const [translate, setTranslate] = useState(null)
 
   const dispatch = useAppDispatch()
+  const { isValidSubscription } = useAppSelector((state) => state.payment)
 
 
   useEffect(() => {
@@ -106,6 +107,10 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
       handleClickGMCheck()
     }
   }, [currentSentenceIndex])
+
+  function handleToggleSubscriptionForm() {
+    dispatch(toggleSubscriptionForm())
+  }
 
   async function handleClickTranslate(sentence: string) {
     if (translate) return
@@ -128,6 +133,10 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
   }
 
   async function handleClickParaphrase() {
+    if (!isValidSubscription) {
+      handleToggleSubscriptionForm()
+      return
+    }
     setIsLoadingParaphrase(true)
     setCurrentTab(Tab.Paraphrase)
     const resp = await sendToBackground({
@@ -147,6 +156,10 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
   }
 
   async function handleClickGMCheck() {
+    if (!isValidSubscription) {
+      handleToggleSubscriptionForm()
+      return
+    }
     setIsLoadingGMCheck(true)
     setCurrentTab(Tab.GMCheck)
     const resp = await sendToBackground({
@@ -155,8 +168,6 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
         sentence: currentSentence
       }
     })
-
-    console.log({ resp })
 
     if (resp.error) {
       setError(resp.error)
@@ -169,17 +180,23 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
   }
 
   function handlePlayAudio() {
-    const voices = synth.getVoices();
-    const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
+    try {
+      const synth = window.speechSynthesis;
+      const voices = synth.getVoices();
+      const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
 
-    const utterance = new SpeechSynthesisUtterance(content);
-    utterance.lang = "en-US";
+      const utterance = new SpeechSynthesisUtterance(content);
+      utterance.lang = "en-US";
 
-    if (englishVoices.length) {
-      utterance.voice = englishVoices.find(voice => voice.name === 'Google US English');
+      console.log({ englishVoices })
+      if (englishVoices.length) {
+        utterance.voice = englishVoices.find(voice => voice.name === 'Google US English');
+      }
+
+      synth.speak(utterance);
+    } catch (err) {
+      console.error(err)
     }
-
-    synth.speak(utterance);
   }
 
   function handleSaveParaphrase({ sentence }: { sentence: string }) {

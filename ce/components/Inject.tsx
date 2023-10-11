@@ -23,11 +23,12 @@ import { TbVocabulary } from "react-icons/tb";
 import { FaFileWord } from "react-icons/fa";
 import { ListVocab } from "./ListVocab";
 import { saveVocabulary } from "../redux/features/save";
-import { toggleDisable } from "~redux/features/ui";
+import { toggleDisable, clearSubscriptionForm } from "~redux/features/ui";
 import { createNewLesson, addMessageToLesson } from "../redux/features/lessonsLocal";
 import type { VocabularyItem, Message } from "~types";
 import { urlPath } from "~helpers/path";
 import { SummaryMode } from "./SummaryMode";
+import { FormSubscription } from "./FormSubscription";
 
 const drawerWidth = 380
 
@@ -126,20 +127,18 @@ export function Inject() {
   const [originalWidth, setOriginalWidth] = useState(0)
   const [error, setError] = useState(null)
   const [isLoadingData, setIsLoadingData] = useState(false)
-  const { user, isLoading, onLogin, onLogout } = useFirebase()
+  const { user, isLoading, onLoginBackground, onLogout } = useFirebase()
   const [message, setMessage] = useState(null)
   const [isFullLoaded, setIsFullLoaded] = useState(false)
   const dispatch = useAppDispatch()
-  const lessons = useAppSelector(state => { return state.lessons.lessons })
   const lesson = useAppSelector(state => { return state.lessonsLocal.lessons[urlPath] })
   const state = useAppSelector(state => { return state })
   const note = useAppSelector(state => { return state.saveData[urlPath] })
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
-  // const onPressToggle = () => setMode(mode === Mode.Learning ? Mode.Talk : Mode.Learning)
+  const shouldShowSubscriptionForm = useAppSelector(state => { return !state.payment.isValidSubscription && state.ui.shouldShowSubscriptionForm })
 
   useEffect(() => {
-    // dispatch(fetchLesson(lessonId))
-    // dispatch(fetchMessages(lessonId))
+    dispatch(clearSubscriptionForm())
   }, [])
 
   const chatHistory = useMemo(() => {
@@ -195,8 +194,6 @@ export function Inject() {
 
   }, [open, uiDisabled])
 
-  console.log({ uiDisabled })
-
   if (uiDisabled || hideExtention || blaklist.some((url) => window.location.href.includes(url))) {
     return null
   }
@@ -229,59 +226,84 @@ export function Inject() {
             }
           }}
         >
+
+
           <Box
             sx={{
               padding: "16px",
               height: "100%",
+              position: "relative",
             }}
           >
-            <Header setOpen={setOpen} onLogin={onLogin} handleToggleDisable={handleToggleDisable} uiDisabled={uiDisabled} />
-            <Box mt={2}>
-              <Menu onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
-            </Box>
-
-            {mode === Mode.Talk && (
-              <>
+            <Header setOpen={setOpen} onLogin={onLoginBackground} handleToggleDisable={handleToggleDisable} uiDisabled={uiDisabled} />
+            {
+              shouldShowSubscriptionForm && (
                 <Box
                   sx={{
+                    position: "fixed",
+                    background: "rgba(0,0,0,0.5)",
+                    height: "100%",
+                    width: drawerWidth,
+                    top: 0,
+                    right: 0,
+                    zIndex: 1,
+                    padding: "32px",
                     display: "flex",
-                    justifyContent: "flex-end"
                   }}
-                  mt={0} mb={2}
                 >
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={isAutoPlay}
-                        onChange={handleChangeAutoPlay}
-                      />
-                    }
-                    label={chrome.i18n.getMessage("chat_toggle_autoplay")}
-                  />
+                  <FormSubscription user={user} onLogin={onLoginBackground} />
                 </Box>
-                <ChatModeProto isAutoPlay={isAutoPlay} handleAddMessage={handleAddMessage} chatHistory={chatHistory} />
-              </>
-            )}
-            {mode === Mode.Vocab &&
-              <VocabMode
-                vocabs={vocabs}
-                setVocabs={setVocabs}
-                setIsLoadingVocabs={setIsLoadingVocabs}
-                isLoadingVocabs={isLoadingVocabs}
-                setError={setError}
-                onSaveVocab={handleSaveVocab}
-              />
+              )
             }
-            {mode === Mode.Summary &&
-              <SummaryMode
-                url={urlPath}
-                summaries={summaries}
-                setSummaries={setSummaries}
-                setIsLoadingSummaries={setIsLoadingSummaries}
-                isLoadingSummaries={isLoadingSummaries}
-                setError={setError}
-              />
-            }
+
+            <>
+              <Box mt={2}>
+                <Menu onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
+              </Box>
+
+              {mode === Mode.Talk && (
+                <>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end"
+                    }}
+                    mt={0} mb={2}
+                  >
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={isAutoPlay}
+                          onChange={handleChangeAutoPlay}
+                        />
+                      }
+                      label={chrome.i18n.getMessage("chat_toggle_autoplay")}
+                    />
+                  </Box>
+                  <ChatModeProto isAutoPlay={isAutoPlay} handleAddMessage={handleAddMessage} chatHistory={chatHistory} />
+                </>
+              )}
+              {mode === Mode.Vocab &&
+                <VocabMode
+                  vocabs={vocabs}
+                  setVocabs={setVocabs}
+                  setIsLoadingVocabs={setIsLoadingVocabs}
+                  isLoadingVocabs={isLoadingVocabs}
+                  setError={setError}
+                  onSaveVocab={handleSaveVocab}
+                />
+              }
+              {mode === Mode.Summary &&
+                <SummaryMode
+                  url={urlPath}
+                  summaries={summaries}
+                  setSummaries={setSummaries}
+                  setIsLoadingSummaries={setIsLoadingSummaries}
+                  isLoadingSummaries={isLoadingSummaries}
+                  setError={setError}
+                />
+              }
+            </>
           </Box>
         </Drawer>
       }

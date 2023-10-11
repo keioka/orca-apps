@@ -17,10 +17,6 @@ export default async function handler(
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
-  console.log({
-    s: process.env.STRIPE_SECRET_KEY,
-    e: process.env.STRIPE_ENDPOINT_SECRET
-  })
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {});
 
@@ -61,7 +57,7 @@ export default async function handler(
 
   } catch (err) {
     console.error(err)
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Error: ${err.message}`);
   }
 
 }

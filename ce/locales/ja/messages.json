@@ -39,11 +39,11 @@
     "message": "入力クリア",
     "description": "チャットの音声メッセージやメディアをクリアするためのボタンラベル。"
   },
-  "chat_card_paraphrase_loading":{
+  "chat_card_paraphrase_loading": {
     "message": "言い換え中...",
     "description": "チャットメッセージの内容を言い換えるためのローディングラベル。"
   },
-  "chat_card_gmcheck_loading":{
+  "chat_card_gmcheck_loading": {
     "message": "文法チェック中...",
     "description": "チャットメッセージの内容に文法チェックを行うためのローディングラベル。"
   },
@@ -111,19 +111,19 @@
     "message": "バグの報告、機能の要望などのフィードバックをお聞かせください！",
     "description": "フィードバックポップアップのタイトル。"
   },
-  "popup_greeting_start":{
+  "popup_greeting_start": {
     "message": "こんにちは、",
     "description": "英カベを初めて利用した際の挨拶文。"
   },
-  "popup_greeting_end":{
+  "popup_greeting_end": {
     "message": "さん！",
     "description": "英カベを初めて利用した際の挨拶文。"
   },
-  "button_login":{
+  "button_login": {
     "message": "ログイン",
     "description": "ログインボタンのラベル。"
   },
-  "button_logout":{
+  "button_logout": {
     "message": "ログアウト",
     "description": "ログアウトボタンのラベル。"
   },
@@ -158,5 +158,41 @@
   "menu_chat": {
     "message": "トーク",
     "description": "Menu label for chat page."
+  },
+  "subscription_form_title": {
+    "message": "有料プランにアップグレード",
+    "description": "Subscription form title."
+  },
+  "subscription_form_subtitle": {
+    "message": "有料プランにより多くの機能を利用できます。",
+    "description": "Subscription form subtitle."
+  },
+  "subscription_form_price": {
+    "message": "月額9ドル",
+    "description": "Subscription form price."
+  },
+  "close": {
+    "message": "閉じる",
+    "description": "Close"
+  },
+  "subscription_form_price_rate": {
+    "message": "約1305円 (1ドル = 約145円換算)",
+    "description": "Subscription form price."
+  },
+  "subscription_feature_unlimited_chat": {
+    "message": "無制限チャット",
+    "description": "Subscription form price."
+  },
+  "subscription_feature_vocab": {
+    "message": "単語帳機能",
+    "description": "Subscription form price."
+  },
+  "subscription_feature_paraphrase": {
+    "message": "言い換え表現",
+    "description": "Subscription form price."
+  },
+  "subscription_feature_gmCheck": {
+    "message": "文法チェック",
+    "description": "Subscription form price."
   }
 }
