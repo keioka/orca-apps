@@ -15,36 +15,42 @@ function validateFile(filePath, code = UNWANTED_CODE) {
 
   if (fileContent.includes(code)) {
     console.error(`❌ Error: Unwanted code found in the file \n ${filePath}. \n`);
-    return false
+    return false;
   }
 
-  return true
+  return true;
 }
 
 function validateAllFiles(directoryPath) {
   const files = fs.readdirSync(directoryPath);
   let validationPassed = true;
+
   for (const file of files) {
     const filePath = path.join(directoryPath, file);
     const stat = fs.statSync(filePath);
 
-    if (stat.isFile() && filePath.endsWith('.js')) {
+    if (stat.isDirectory()) {
+      if (!validateAllFiles(filePath)) { // Recursive call
+        validationPassed = false;
+      }
+    } else if (stat.isFile() && filePath.endsWith('.js')) {
       if (!validateFile(filePath)) {
         validationPassed = false;
       }
     }
   }
 
-  if (!validationPassed) {
-    console.log(`❌❌❌ Validation failed for ${env} environment: Unwanted code found in the files. ❌❌❌`);
-  } else {
-    console.log(`✅ Validation passed for ${env} environment: No unwanted code found in the files.`);
-  }
+  return validationPassed;
 }
 
 if (DIRECTORY_PATHS[env]) {
   console.log(`Validating files in the directory ${DIRECTORY_PATHS[env]}...`);
-  validateAllFiles(DIRECTORY_PATHS[env]);
+  const result = validateAllFiles(DIRECTORY_PATHS[env]);
+  if (!result) {
+    console.log(`❌❌❌ Validation failed for ${env} environment: Unwanted code found in the files. ❌❌❌`);
+  } else {
+    console.log(`✅ Validation passed for ${env} environment: No unwanted code found in the files.`);
+  }
 } else {
   console.log(`Unknown environment: ${env}. Skipping validation.`);
 }
