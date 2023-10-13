@@ -1,0 +1,94 @@
+[
+  {
+    "name": "Reuters",
+    "url": "https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best"
+  },
+  {
+    "name": "LiveMint",
+    "url": "https://livemint.com/rss/homepage"
+  },
+  {
+    "name": "The Financial Express",
+    "url": "https://financialexpress.com/feed"
+  },
+  {
+    "name": "CNBC | World Business News Leader",
+    "url": "https://cnbc.com/id/19746125/device/"
+  },
+  {
+    "name": "Mckinsey",
+    "url": "https://www.mckinsey.com/insights/rss.aspx"
+  },
+  {
+    "name": "Fortune",
+    "url": "https://fortune.com/feed"
+  },
+  {
+    "name": "Financial Times",
+    "url": "https://ft.com/?format=rss"
+  },
+  {
+    "name": "Investing.com | Stock Market Quotes & Financial News",
+    "url": "https://investing.com/rss/news.rss"
+  },
+  {
+    "name": "Seeking Alpha » News",
+    "url": "https://seekingalpha.com/market_currents.xml"
+  },
+  {
+    "name": "Music Business Worldwide",
+    "url": "https://musicbusinessworldwide.com/feed"
+  },
+  {
+    "name": "The Economic Times",
+    "url": "https://https://economictimes.indiatimes.com/rssfeedsdefault.cms"
+  },
+  {
+    "name": "Yahoo News » Finance",
+    "url": "https://finance.yahoo.com/news/rssindex"
+  },
+  {
+    "name": "Zee Business",
+    "url": "https://zeebiz.com/latest.xml/feed"
+  },
+  {
+    "name": "Financial Post | Canada Business News",
+    "url": "https://business.financialpost.com/feed"
+  },
+  {
+    "name": "Business Matters",
+    "url": "https://bmmagazine.co.uk/feed"
+  },
+  {
+    "name": "Business World",
+    "url": "https://bworldonline.com/feed"
+  },
+  {
+    "name": "Insights success",
+    "url": "https://insightssuccess.com/feed"
+  },
+  {
+    "name": "Modest Money",
+    "url": "https://feeds.feedburner.com/ModestM.."
+  },
+  {
+    "name": "Talking Biz News",
+    "url": "https://talkingbiznews.com/feed"
+  },
+  {
+    "name": "IoT Business News",
+    "url": "https://iotbusinessnews.com/feed"
+  },
+  {
+    "name": "Long Island Business News",
+    "url": "https://libn.com/feed"
+  },
+  {
+    "name": "International Business Times AU",
+    "url": "https://ibtimes.com.au/rss"
+  },
+  {
+    "name": "BusinessMole",
+    "url": "https://businessmole.com/feed"
+  }
+]

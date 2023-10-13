@@ -22,11 +22,11 @@ import { ListVocab } from "~components/ListVocab";
 import { SlFeed } from "react-icons/sl"
 import { BsGraphUpArrow } from "react-icons/bs"
 import vcRSS from "~data/rss/vc.json"
+import businessRSS from "~data/rss/business.json"
 import { CardCategory } from "~components/CardCategory"
 import { CardNewsFeed } from "~components/CardNewsFeed"
 import businessImage from "data-base64:~assets/images/business.png"
 import { BsSearch } from "react-icons/bs"
-import { vc } from "~data/rss/vc"
 import { NoteScreen } from "../tabScreens/NoteScreen"
 import { Provider } from "react-redux";
 import { PersistGate } from "@plasmohq/redux-persist/integration/react"
@@ -46,12 +46,7 @@ const ROOT_PATH = "/tabs/index.html"
 const feeds = [
   {
     category: "Business",
-    items: [
-      {
-        name: "Mckinsey",
-        url: "https://www.mckinsey.com/insights/rss.aspx"
-      },
-    ]
+    items: businessRSS
   },
   {
     category: "Tech",
@@ -118,10 +113,15 @@ const feeds = [
 
 function fetchFavicon(url) {
   // Try fetching favicon.ico from the root domain first
-  const domain = new URL(url).origin;
-  const faviconUrl = `${domain}/favicon.ico`;
-
-  return faviconUrl
+  try {
+    const domain = new URL(url).origin;
+    const size = 24
+    // const faviconUrl = `${domain}/favicon.ico`;
+    const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`
+    return faviconUrl
+  } catch (err) {
+    return ""
+  }
 }
 
 function Main() {
@@ -129,6 +129,7 @@ function Main() {
     <Routes>
       <Route path={`${ROOT_PATH}`} element={<Layout />}>
         <Route index element={<NoteScreen />} />
+        <Route path="search" element={<Search />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="note" element={<NoteScreen />} />
         <Route path="feed" element={<FeedPage />} />
@@ -143,7 +144,7 @@ function Menu({ path, state, icon, title }) {
   const navigate = useNavigate();
 
   return (
-    <Stack direction="row" spacing={1} alignItems="center" sx={{ paddingLeft: "20px", cursor: "pointer" }}>
+    <Stack direction="row" spacing={1} alignItems="center" sx={{ cursor: "pointer" }}>
       {icon}
       <Typography
         sx={{
@@ -160,7 +161,6 @@ function Menu({ path, state, icon, title }) {
 }
 
 function Layout() {
-
   return (
     <Box
       sx={{
@@ -193,7 +193,7 @@ function Layout() {
         <Box sx={{ paddingX: 2, marginTop: 2 }}>
           <Typography variant="caption">{chrome.i18n.getMessage("menu_caption_dashboard")}</Typography>
         </Box>
-        <Box sx={{ display: "flex", height: 32, alignItems: "center" }}>
+        <Box sx={{ display: "flex", height: 32, alignItems: "center", paddingLeft: "20px" }}>
           <Menu
             icon={<PiNotebookDuotone size={24} />}
             path={`${ROOT_PATH}/note`}
@@ -208,28 +208,28 @@ function Layout() {
           />
         </Box> */}
 
-        {/**
+        {/* *
          * RSS Feed
          */}
 
-        {/* <Box>
+        <Box>
           <Box sx={{ paddingX: 2, marginTop: 2 }}>
             <Typography variant="caption">RSS Feed</Typography>
           </Box>
-          <Box sx={{ display: "flex", height: 32, alignItems: "center" }}>
+          <Box sx={{ display: "flex", height: 32, alignItems: "center", paddingLeft: "20px" }}>
             <Menu
               icon={<BsSearch size={12} />}
-              path={`${ROOT_PATH}/feed`}
+              path={`${ROOT_PATH}/search`}
               title="Search"
             />
           </Box>
-          <Box sx={{ display: "flex", height: 32, alignItems: "center" }}>
+          {/* <Box sx={{ display: "flex", height: 32, alignItems: "center", paddingLeft: "20px" }}>
             <Menu
               icon={<SlFeed size={12} />}
               path={`${ROOT_PATH}/feed`}
               title="For you"
             />
-          </Box>
+          </Box> */}
 
           {
             feeds.map((feed) => (
@@ -238,8 +238,7 @@ function Layout() {
                   {
                     feed.items.map((item) => (
                       <Menu
-                        icon={<img src={fetchFavicon(item.url)} style={{ width: 16, height: 16 }} />
-                        }
+                        icon={<img src={fetchFavicon(item.url)} style={{ width: 16, height: 16 }} />}
                         path={`${ROOT_PATH}/feed`}
                         state={{ item: item }}
                         title={item.name}
@@ -264,7 +263,7 @@ function Layout() {
               </ExpandableMenu>
             ))
           }
-        </Box> */}
+        </Box>
       </Drawer >
       <Box
         sx={{
@@ -277,7 +276,7 @@ function Layout() {
   );
 }
 
-function Home() {
+function Search() {
   return (
     <Stack spacing={6}>
       <Stack sx={{ background: "#f4f4f4", justifyContent: "center", alignItems: "center", padding: 2, borderRadius: 1 }} spacing={1}>

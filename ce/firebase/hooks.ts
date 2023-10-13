@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from "react"
 import { app, auth } from "firebase"
 import { sendToBackground } from "@plasmohq/messaging"
 
-setPersistence(auth, browserLocalPersistence)
+// setPersistence(auth, browserLocalPersistence)
 
 export const useFirebase = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -63,9 +63,7 @@ export const useFirebase = () => {
         return
       }
       if (token) {
-        console.log({ token })
         const credential = GoogleAuthProvider.credential(null, token)
-        console.log({ credential })
 
         try {
           await signInWithCredential(auth, credential)
@@ -80,7 +78,6 @@ export const useFirebase = () => {
     setIsLoading(true)
     console.log("onAuthStateChanged")
     onAuthStateChanged(auth, (user) => {
-      console.log("orca", { user })
       setIsLoading(false)
       setUser(user)
     })
