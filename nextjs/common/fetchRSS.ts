@@ -37,10 +37,10 @@ interface RSS {
   channel: RSSChannel[];
 }
 
-export async function fetchAndStoreRSS() {
+export async function fetchAndStoreRSS({ url }: { url: string }) {
   try {
 
-    const feed = await parser.parseURL('https://www.worldhistory.org/rss2');
+    const feed = await parser.parseURL(url);
 
     console.log(feed);
 
@@ -59,7 +59,7 @@ export async function fetchAndStoreRSS() {
         data: {
           title: item.title,
           type: 'Article', // You can modify this based on your needs
-          category: item.category ? item.category[0] : '',
+          category: item.categories ? item.categories[0] : '',
           url: item.link,
           imageUrl: item.image,
           publishedAt: new Date(item.pubDate),
