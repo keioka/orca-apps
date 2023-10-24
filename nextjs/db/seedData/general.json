@@ -1,0 +1,113 @@
+[
+  {
+    "url": "http://feeds.abcnews.com/abcnews/usheadlines"
+  },
+  {
+    "url": "http://rss.cnn.com/rss/cnn_topstories.rss"
+  },
+  {
+    "url": "http://www.cbsnews.com/latest/rss/main"
+  },
+  {
+    "url": "http://www.nytimes.com/services/xml/rss/nyt/National.xml"
+  },
+  {
+    "url": "http://online.wsj.com/xml/rss/3_7085.xml"
+  },
+  {
+    "url": "http://content.usatoday.com/marketing/rss/rsstrans.aspx?feedId=news2"
+  },
+  {
+    "url": "http://rss.csmonitor.com/feeds/usa"
+  },
+  {
+    "url": "http://feeds.nbcnews.com/feeds/topstories"
+  },
+  {
+    "url": "http://feeds.nbcnews.com/feeds/worldnews"
+  },
+  {
+    "url": "http://hosted.ap.org/lineups/USHEADS.rss"
+  },
+  {
+    "url": "http://hosted.ap.org/lineups/WORLDHEADS.rss"
+  },
+  {
+    "url": "http://www.huffingtonpost.com/feeds/verticals/world/index.xml"
+  },
+  {
+    "url": "http://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml"
+  },
+  {
+    "url": "http://news.yahoo.com/rss/us"
+  },
+  {
+    "url": "http://rss.news.yahoo.com/rss/world"
+  },
+  {
+    "url": "http://www.newsweek.com/rss"
+  },
+  {
+    "url": "http://feeds.feedburner.com/thedailybeast/articles"
+  },
+  {
+    "url": "http://qz.com/feed"
+  },
+  {
+    "url": "http://www.theguardian.com/world/usa/rss"
+  },
+  {
+    "url": "http://www.politico.com/rss/politicopicks.xml"
+  },
+  {
+    "url": "http://www.newyorker.com/feed/news"
+  },
+  {
+    "url": "http://feeds.feedburner.com/NationPBSNewsHour"
+  },
+  {
+    "url": "http://feeds.feedburner.com/NewshourWorld"
+  },
+  {
+    "url": "http://www.usnews.com/rss/news"
+  },
+  {
+    "url": "http://www.npr.org/rss/rss.php?id=1003"
+  },
+  {
+    "url": "http://www.npr.org/rss/rss.php?id=1004"
+  },
+  {
+    "url": "http://feeds.feedburner.com/AtlanticNational"
+  },
+  {
+    "url": "http://feeds.feedburner.com/TheAtlanticWire"
+  },
+  {
+    "url": "http://www.latimes.com/nation/rss2.0.xml"
+  },
+  {
+    "url": "http://www.latimes.com/world/rss2.0.xml"
+  },
+  {
+    "url": "http://api.breakingnews.com/api/v1/item/?format=rss"
+  },
+  {
+    "url": "https://news.vice.com/rss"
+  },
+  {
+    "url": "http://talkingpointsmemo.com/feed/livewire"
+  },
+  {
+    "url": "http://www.salon.com/category/news/feed/rss/"
+  },
+  {
+    "url": "http://time.com/newsfeed/feed/"
+  },
+  {
+    "url": "http://feeds.foxnews.com/foxnews/latest?format=xml"
+  },
+  {
+    "url": "http://mashable.com/us-world/rss/"
+  }
+]

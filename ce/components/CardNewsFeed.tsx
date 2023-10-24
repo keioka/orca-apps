@@ -1,6 +1,16 @@
-import { Card, CardContent, CardMedia, Typography, Button, Link } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Button, Stack, Box } from '@mui/material';
 
-export function CardNewsFeed({ feed }) {
+interface Feed {
+  name: string;
+  category: string;
+  imageUrl: string;
+}
+
+interface CardNewsFeedProps {
+  feed: Feed
+}
+
+export function CardNewsFeed({ feed }: CardNewsFeedProps) {
   // const [feed, setFeed] = useState(null);
 
   // useEffect(() => {
@@ -12,32 +22,38 @@ export function CardNewsFeed({ feed }) {
   //   });
   // }, [feedUrl]);
 
-  // if (!feed) return <div>Loading...</div>;
+  if (!feed) return <div>Loading...</div>;
 
+  console.log({ feed })
   return (
     <Card sx={{ padding: 2, boxShadow: "none", border: "1px solid #f2f2f2" }}>
-      {feed.enclosure && feed.enclosure.type.startsWith('image/') && (
-        <CardMedia
-          component="img"
-          alt={feed.title}
-          height="140"
-          image={feed.enclosure.url}
-        />
-      )}
-      <CardContent sx={{ paddingX: 0, paddingY: 2 }}>
-        <Typography variant="body1">
-          {feed.name}
-        </Typography>
-        <Typography variant="subtitle1" color="textSecondary">
-          {feed.creator || feed.author}
-        </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
-          {feed.contentSnippet}
-        </Typography>
-      </CardContent>
+      <Stack direction="row" sx={{ alignItems: "center", paddingBottom: 1 }} spacing={2}>
+        <Box>
+          {feed.imageUrl && (
+            <CardMedia
+              component="img"
+              alt={feed.name}
+              height="16"
+              image={feed.imageUrl}
+            />
+          )}
+        </Box>
+        <CardContent
+          sx={{
+            padding: 0,
+            "&:last-child": {
+              paddingBottom: 0
+            }
+          }}
+        >
+          <Typography variant="body1">
+            {feed.name}
+          </Typography>
+        </CardContent>
+      </Stack>
       <Button variant="outlined" color="secondary" size="small">
         Follow
       </Button>
-    </Card>
+    </Card >
   );
 }

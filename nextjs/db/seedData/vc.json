@@ -1,0 +1,58 @@
+[
+  {
+    "name": "VentureBeat",
+    "url": "http://venturebeat.com/feed/"
+  },
+  {
+    "name": "Crunchbase News",
+    "url": "https://news.crunchbase.com/feed/"
+  },
+  {
+    "name": "Y Combinator",
+    "url": "http://blog.ycombinator.com/feed/"
+  },
+  {
+    "name": "Greylock Perspectives",
+    "url": "http://news.greylock.com/feed/"
+  },
+  {
+    "name": "Union Square Ventures",
+    "url": "http://www.usv.com/rss"
+  },
+  {
+    "name": "a16z | Andreessen Horowitz",
+    "url": "http://a16z.com/feed/"
+  },
+  {
+    "name": "Both Sides of the Table",
+    "url": "http://feeds.feedburner.com/BothSidesOfTheTable"
+  },
+  {
+    "name": "Enterprising Investor",
+    "url": "https://blogs.cfainstitute.org/investor/feed/"
+  },
+  {
+    "name": "FinMasters",
+    "url": "https://finmasters.com/feed/"
+  },
+  {
+    "name": "Matt Turck",
+    "url": "http://mattturck.com/feed/"
+  },
+  {
+    "name": "John Gannon Blog",
+    "url": "https://johngannonblog.com/feed/"
+  },
+  {
+    "name": "David Teten",
+    "url": "https://teten.com/feed"
+  },
+  {
+    "name": "_Underscore.VC",
+    "url": "https://underscore.vc/feed/"
+  },
+  {
+    "name": "LifeSciVC",
+    "url": "https://lifescivc.com/feed/"
+  }
+]

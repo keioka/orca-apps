@@ -35,19 +35,20 @@ model User {
   Message             Message[]
   SavedParaphrase     SavedParaphrase[]
   SavedGrammarMistake SavedGrammarMistake[]
+  FollowRss           FollowRss[]
 
   @@map("users")
 }
 
 model Material {
-  id          String    @id @default(uuid())
-  title       String    @db.VarChar(255)
-  type        String    @db.VarChar(255)
-  category    String?   @db.VarChar(255)
-  url         String    @unique
-  imageUrl    String?   @map("image_url")
-  publishedAt DateTime? @map("published_at")
-  externalId  String    @unique @map("external_id")
+  id               String    @id @default(uuid())
+  title            String    @db.VarChar(255)
+  type             String    @db.VarChar(255)
+  category         String?   @db.VarChar(100)
+  categoryExternal String?   @map("category_external") @db.VarChar(255)
+  url              String    @unique
+  imageUrl         String?   @map("image_url")
+  publishedAt      DateTime? @map("published_at")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -62,15 +63,19 @@ model Material {
 }
 
 model Publisher {
-  id         String     @id @default(uuid())
-  name       String     @db.VarChar(100)
-  type       String     @db.VarChar(100)
-  url        String     @db.VarChar(255)
-  imageUrl   String?    @map("image_url")
-  externalId String     @unique @map("external_id")
-  material   Material[]
-  createdAt  DateTime   @default(now()) @map("created_at")
-  updatedAt  DateTime   @updatedAt @map("updated_at")
+  id               String      @id @default(uuid())
+  name             String      @db.VarChar(100)
+  contentType      String      @map("content_type") @db.VarChar(32)
+  publisherType    String      @map("publisher_type") @db.VarChar(32)
+  rssUrl           String?     @unique @map("rss_url") @db.VarChar(255)
+  domain           String?     @unique @map("domain") @db.VarChar(255)
+  category         String?     @db.VarChar(100)
+  categoryExternal String?     @map("category_external") @db.VarChar(255)
+  imageUrl         String?     @map("image_url")
+  material         Material[]
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+  FollowRss        FollowRss[]
 
   @@map("publishers")
 }
@@ -226,4 +231,17 @@ model Translation {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("translations")
+}
+
+model FollowRss {
+  id          Int       @id @default(autoincrement())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id])
+  publisherId String    @map("publisher_id")
+  publisher   Publisher @relation(fields: [publisherId], references: [id])
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@unique([userId, publisherId])
+  @@map("follow_rss")
 }

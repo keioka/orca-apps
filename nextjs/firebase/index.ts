@@ -1,40 +1,26 @@
 import admin from 'firebase-admin';
+import camelcaseKeys from 'camelcase-keys';
 
-const serviceAccount = process.env.NODE_ENV === "production" ? {
+const serviceAccount = {
   "type": "service_account",
-  "project_id": "orca-app-prod",
-  "private_key_id": "REDACTED_PRIVATE_KEY_ID",
-  "private_key": "REDACTED_PRIVATE_KEY",
-  "client_email": "firebase-adminsdk-1znz1@orca-app-prod.iam.gserviceaccount.com",
-  "client_id": "109675224456330449053",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1znz1%40orca-app-prod.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
-} : {
-  "type": "service_account",
-  "project_id": "orca-app-stg",
-  "private_key_id": "REDACTED_PRIVATE_KEY_ID",
-  "private_key": "REDACTED_PRIVATE_KEY",
-  "client_email": "firebase-adminsdk-oxopy@orca-app-stg.iam.gserviceaccount.com",
-  "client_id": "117964680977205155062",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-oxopy%40orca-app-stg.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
+  "project_id": process.env.FIREBASE_PROJECT_ID,
+  "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID,
+  "private_key": process.env.FIREBASE_PRIVATE_KEY,
+  "client_email": process.env.FIREBASE_CLIENT_EMAIL,
+  "client_id": process.env.FIREBASE_CLIENT_ID,
+  "auth_uri": process.env.FIREBASE_AUTH_URI,
+  "token_uri": process.env.FIREBASE_TOKEN_URI,
+  "auth_provider_x509_cert_url": process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+  "client_x509_cert_url": process.env.FIREBASE_CLIENT_X509_CERT_URL,
+  "universe_domain": process.env.FIREBASE_UNIVERSE_DOMAIN
 }
 
 
 export function init() {
   if (admin.apps.length > 0) return
-
   return admin.initializeApp({
     // Add your Firebase Admin SDK configuration here
     credential: admin.credential.cert(serviceAccount),
-    // TODO: Change
-    databaseURL: 'https://your-project-id.firebaseio.com', // Your Firebase Realtime Database URL
   });
 }
 
@@ -45,24 +31,22 @@ export const validateToken = async (req: NextApiRequest, res: NextApiResponse) =
     // Extract the token from the request headers
     const token = req.headers.authorization?.split('Bearer ')[1];
     if (!token) {
-      return res.status(401).json({ error: 'validateToken: No token provided' });
+      throw new Error('Invalid')
     }
 
     // Verify the token using the Firebase Admin SDK
     const decodedToken = await admin.auth().verifyIdToken(token);
-    console.log({ decodedToken })
-    // Attach the decoded token to the request for further processing in your route handler
-    req.decodedToken = decodedToken;
-    req.currentUser = decodedToken.user
-    // If the token is valid, proceed with your protected API logic here
-    // For example, you can extract the user ID from `decodedToken` and fetch user data
-    // from your Firebase Realtime Database or Firestore
+    const authInfo = camelcaseKeys(decodedToken, { deep: true });
+    req.auth = authInfo
+    req.fbUid = authInfo.userId
 
   } catch (error) {
     console.error('Error validating Firebase token:', error);
-    return res.status(403).json({ error: 'Invalid Token: Unauthorized' });
+    // return res.status(403).json({ error: 'Invalid Token: Unauthorized' });
   }
 }
+
+
 
 
 export const validateTokenWithoutError = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -87,10 +71,4 @@ export const validateTokenWithoutError = async (req: NextApiRequest, res: NextAp
     console.error('Error validating Firebase token:', error);
     return res.status(403).json({ error: 'Invalid Token: Unauthorized' });
   }
-}
-
-export const setCustomUserClaims = async (userUid: string, values: { [attributeName: string]: any }) => {
-  console.log("=== setCustomUserClaims ===")
-  console.log({ userUid, values })
-  await admin.auth().setCustomUserClaims(userUid, values);
 }

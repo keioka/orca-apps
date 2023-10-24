@@ -1,0 +1,32 @@
+[
+  {
+    "url": "http://rss.nytimes.com/services/xml/rss/nyt/Sports.xml"
+  },
+  {
+    "url": "http://www.buzzfeed.com/sports.xml"
+  },
+  {
+    "url": "http://feeds.sbnation.com/rss/streams"
+  },
+  {
+    "url": "http://sports.espn.go.com/espn/rss/news"
+  },
+  {
+    "url": "http://www.latimes.com/sports/rss2.0.xml"
+  },
+  {
+    "url": "http://www.cbssports.com/partners/feeds/rss/home_news"
+  },
+  {
+    "url": "http://www.si.com/rss/si_topstories.rss"
+  },
+  {
+    "url": "https://sports.yahoo.com/top/rss.xml"
+  },
+  {
+    "url": "http://www.theguardian.com/sport/us-sport/rss"
+  },
+  {
+    "url": "http://hosted.ap.org/lineups/SPORTSHEADS.rss?SITE=AP&SECTION=HOME"
+  }
+]

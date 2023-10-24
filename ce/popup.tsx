@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Box, Button, Typography, TextField, Stack, Card, FormControlLabel, Switch } from "@mui/material"
+import { Alert, Box, Snackbar, Button, Typography, TextField, Stack, Card, FormControlLabel, Switch } from "@mui/material"
 import { sendToBackground } from "@plasmohq/messaging"
 import { ThemeProvider } from '@mui/material/styles';
 import { useFirebase } from "./firebase/hooks"
@@ -15,6 +15,7 @@ import { toggleDisable } from "~redux/features/ui";
 import { useAppDispatch, useAppSelector } from "~redux/hooks";
 // https://stripe.com/docs/testing?testing-method=card-numbers#cards
 import { ButtonGoogleLogin } from "~/components/ButtonGoogleLogin";
+import { login, signupGoogle, checkAuthStatus, clearError, logout } from "~redux/features/auth";
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -37,30 +38,47 @@ function RootPopup() {
 }
 
 function IndexPopup() {
-  const { onLogin, onLogout, user, isLoading } = useFirebase()
+  // const { onLogin, onLogout, currentUser, loadingCurrentUser } = useFirebase()
   const payment = useAppSelector(state => state.payment)
-  const state = useAppSelector(state => state)
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
+  const { currentUser, loadingCurrentUser, error } = useAppSelector(state => state.auth)
 
   const dispatch = useAppDispatch()
 
-  const { isValidSubscription, isLoading: isLoadingSubsc, status } = payment
+  const { isValidSubscription, loadingCurrentUser: loadingCurrentUserSubsc, status } = payment
 
   useEffect(() => {
-    if (user) {
+    dispatch(checkAuthStatus())
+  }, [])
+
+  useEffect(() => {
+    if (currentUser) {
       console.log("dispatch fetch payments")
-      dispatch(fetchPayments({ email: user.email }))
+      dispatch(fetchPayments({ email: currentUser.email }))
     }
-  }, [user])
+  }, [currentUser])
 
   function handleToggleDisable() {
     dispatch(toggleDisable())
   }
 
   function handleSignout() {
-    onLogout()
     console.log("dispatch initStatePayment")
+    dispatch(logout())
     dispatch(initStatePayment())
+  }
+
+
+  function handleSignup() {
+    dispatch(signupGoogle())
+  }
+
+  function handleSignin() {
+    dispatch(login())
+  }
+
+  function handleCloseError() {
+    dispatch(clearError())
   }
 
   return (
@@ -104,16 +122,16 @@ function IndexPopup() {
             />
 
           </Stack>
-          {isLoading &&
+          {loadingCurrentUser &&
             <Typography variant="body2" component="span">
               Loading
             </Typography>
           }
 
           {
-            !isLoading && user && (
+            !loadingCurrentUser && currentUser && (
               <Typography variant="body2" component="span">
-                {chrome.i18n.getMessage("popup_greeting_start")}{user.displayName}{chrome.i18n.getMessage("popup_greeting_end")}
+                {chrome.i18n.getMessage("popup_greeting_start")}{currentUser.username}{chrome.i18n.getMessage("popup_greeting_end")}
               </Typography>
             )
           }
@@ -126,22 +144,40 @@ function IndexPopup() {
             </Typography>
           </Stack>
         </Card> */}
-        {!isLoading && !user && <ButtonGoogleLogin onLogin={onLogin} />}
+        {!loadingCurrentUser && !currentUser && <ButtonGoogleLogin onLogin={handleSignin} />}
+        {!loadingCurrentUser && !currentUser && <ButtonGoogleLogin onLogin={handleSignup} />}
 
-
-        {!isLoading && user && <Button
-          variant="contained"
-          onClick={() => {
-            chrome.tabs.create({
-              url: "./tabs/index.html"
-            })
+        <Snackbar
+          open={error}
+          autoHideDuration={3000}
+          onClose={handleCloseError}
+          sx={{
+            position: "relative"
           }}
-          sx={{ color: "#fff" }}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center'
+          }}
         >
-          {chrome.i18n.getMessage("popup_button_open_note")}
-        </Button>}
+          <Alert severity="error" sx={{ width: '100%' }}>{error}</Alert>
+        </Snackbar>
 
-        {!isLoading && user && !isLoadingSubsc && (
+
+        {!loadingCurrentUser && currentUser && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              chrome.tabs.create({
+                url: "./tabs/index.html"
+              })
+            }}
+            sx={{ color: "#fff" }}
+          >
+            {chrome.i18n.getMessage("popup_button_open_note")}
+          </Button>
+        )}
+
+        {!loadingCurrentUser && currentUser && !loadingCurrentUserSubsc && (
           <Box
             sx={{
               display: "flex",
@@ -153,7 +189,7 @@ function IndexPopup() {
             p={2}
           >
             {!isValidSubscription && (
-              <a href={`${process.env.PLASMO_PUBLIC_STRIPE_PAYMENT_LINK}?prefilled_email=${user.email}&client_reference_id=${user.uid}`} target="_blank" style={{ width: "100%" }}>
+              <a href={`${process.env.PLASMO_PUBLIC_STRIPE_PAYMENT_LINK}?prefilled_email=${currentUser.email}&client_reference_id=${currentUser.uid}`} target="_blank" style={{ width: "100%" }}>
                 <Button
                   color="primary"
                   variant="contained"
@@ -214,7 +250,7 @@ function IndexPopup() {
             </Box>
           </Stack>
         </Box>
-        {!isLoading && user &&
+        {!loadingCurrentUser && currentUser &&
           <Button
             variant="outlined"
             sx={(theme) => ({

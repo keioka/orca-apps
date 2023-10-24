@@ -20,7 +20,6 @@ export async function getMaterialById(id: string): Promise<Material | null> {
 
 
 export async function getMaterialByUrl(url: string): Promise<Material | null> {
-  console.log({ url })
   const material = await prisma.material.findUnique({
     where: {
       url: url,
@@ -32,66 +31,82 @@ export async function getMaterialByUrl(url: string): Promise<Material | null> {
   return material;
 }
 
-// Retrieve a material by ID
-export async function getMaterials({ date, category }: { date?: Date, category?: string }): Promise<MaterialWithLesson[]> {
+interface GetMaterialsParams {
+  date?: Date;
+  category?: string;
+  offset?: number; // Offset for pagination
+  limit?: number; // Maximum number of records to retrieve for pagination
+}
+
+interface PaginationResult<T> {
+  items: T[];
+  totalItems: number;
+  currentPage: number;
+  totalPages: number;
+}
+
+export async function getMaterials(params: GetMaterialsParams): Promise<PaginationResult<MaterialWithLesson[]>> {
   const where: Prisma.MaterialWhereInput = {};
 
-  if (date) {
-    const startDate = new Date(date);
+  if (params.date) {
+    const startDate = new Date(params.date);
     startDate.setUTCHours(0, 0, 0, 0);
 
-    const endDate = new Date(date);
+    const endDate = new Date(params.date);
     endDate.setUTCHours(23, 59, 59, 999);
 
     where.publishedAt = { gte: startDate, lte: endDate };
   }
 
-  if (category) {
-    where.category = { equals: category };
+  if (params.category) {
+    where.category = { equals: params.category };
   }
 
-  const materials = await prisma.material.findMany({
+  // Retrieve the materials for the current page
+  const items = await prisma.material.findMany({
     where,
+    skip: parseInt(params.offset),
+    take: parseInt(params.limit), // 'take' in Prisma acts like 'limit' in many SQL databases
     include: {
       publisher: true,
     },
   });
 
+  // Count the total number of materials that match the query
+  const totalItems = await prisma.material.count({ where });
 
-  const lessons = await prisma.lesson.findMany({
-    where: {
-      materialId: {
-        in: materials.map((material) => material.id),
-      }
-    },
-  });
+  // Calculate current page and total pages
+  const currentPage = params.offset ? (params.offset / params.limit!) + 1 : 1;
+  const totalPages = Math.ceil(totalItems / (params.limit || totalItems));
 
-  const materialsWithLessonId = materials.map((material) => {
-    return {
-      ...material,
-      lessonId: lessons.find((lesson) => {
-        return lesson.materialId === material.id
-      })?.id || null,
-    }
-  })
-
-  return materialsWithLessonId;
+  return {
+    items,
+    totalItems,
+    currentPage,
+    totalPages,
+  };
 }
+
 // Create a new material
 export async function createMaterial(materialData: Omit<Material, 'id'>): Promise<Material> {
+  const publisherData = materialData.publisher;
+
+  let existingPublisher;
+  if (publisherData && publisherData.domain) {
+    existingPublisher = await prisma.publisher.findUnique({
+      where: { domain: publisherData.domain }
+    });
+  }
+
+  const publisherAction = existingPublisher
+    ? { connect: { id: existingPublisher.id } }
+    : { create: publisherData };
+
+
   const material = await prisma.material.create({
     data: {
       ...materialData,
-      publisher: {
-        connectOrCreate: {
-          where: {
-            externalId: materialData.publisher.externalId,
-          },
-          create: {
-            ...materialData.publisher,
-          },
-        },
-      }
+      publisher: publisherAction
     },
     include: {
       publisher: true,

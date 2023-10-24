@@ -98,7 +98,7 @@ const lessonSlice = createSlice({
 
 export const { clearCreatedLessonId } = lessonSlice.actions;
 
-const ROOT_URL = process.env.API_ROOT
+const ROOT_URL = process.env.PLASMO_PUBLIC_API_ROOT
 
 export const fetchLesson = createAsyncThunk(
   'lesson/fetchLesson',
@@ -166,7 +166,7 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ ma
 
 
 // Define the async thunk to fetch the lesson
-export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({ materialId }, { getState, rejectWithValue, dispatch }) => {
+export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({ materialId, url }, { getState, rejectWithValue, dispatch }) => {
   try {
     const { auth } = getState()
     const { session } = auth
@@ -179,16 +179,7 @@ export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({
       return rejectWithValue('No session found')
     }
 
-    const response = await axios.post(`${ROOT_URL}/api/lessons`,
-      {
-        materialId,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    ); // Replace w
+    const response = await createLessonAPI({ materialId, url, token });
 
     if (response.status !== 200) {
       return rejectWithValue('Failed to fetch lesson');
@@ -202,6 +193,22 @@ export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({
     return rejectWithValue('Failed to fetch lesson');
   }
 });
+
+async function createLessonAPI({ materialId, url, token }: { materialId: string, url, token: string }) {
+
+  const response = await axios.post(`${ROOT_URL}/api/lessons`,
+    {
+      materialId,
+      url,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  ); // Replace w
+
+}
 
 export const { clearError } = lessonSlice.actions;
 

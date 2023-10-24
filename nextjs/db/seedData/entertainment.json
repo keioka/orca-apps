@@ -1,0 +1,130 @@
+[
+  {
+    "name": "WSJ Speakeasy",
+    "url": "http://blogs.wsj.com/speakeasy/feed/"
+  },
+  {
+    "name": "MTV News",
+    "url": "http://www.mtv.com/rss/news/news_full.jhtml"
+  },
+  {
+    "name": "Hollywood Reporter Live Feed",
+    "url": "http://www.hollywoodreporter.com/blogs/live-feed/rss"
+  },
+  {
+    "name": "Variety",
+    "url": "http://variety.com/feed/"
+  },
+  {
+    "name": "Rolling Stone News",
+    "url": "http://www.rollingstone.com/news.rss"
+  },
+  {
+    "name": "Grantland Hollywood Prospectus",
+    "url": "http://grantland.com/hollywood-prospectus/feed/"
+  },
+  {
+    "name": "LA Times Entertainment",
+    "url": "http://www.latimes.com/entertainment/rss2.0.xml"
+  },
+  {
+    "name": "Vulture",
+    "url": "http://feeds.feedburner.com/nymag/vulture"
+  },
+  {
+    "name": "New Yorker Culture",
+    "url": "http://www.newyorker.com/feed/culture"
+  },
+  {
+    "name": "Buzzfeed TV and Movies",
+    "url": "http://www.buzzfeed.com/tvandmovies.xml"
+  },
+  {
+    "name": "USAToday Life",
+    "url": "http://rssfeeds.usatoday.com/usatoday-LifeTopStories"
+  },
+  {
+    "name": "Access Hollywood",
+    "url": "http://feeds.accesshollywood.com/AccessHollywood/LatestNews"
+  },
+  {
+    "name": "Fuse Latest",
+    "url": "http://feeds.feedburner.com/fuse/latest"
+  },
+  {
+    "name": "TMZ",
+    "url": "http://www.tmz.com/rss.xml"
+  },
+  {
+    "name": "CBS News Entertainment",
+    "url": "http://www.cbsnews.com/latest/rss/entertainment"
+  },
+  {
+    "name": "ABC News Entertainment",
+    "url": "http://feeds.abcnews.com/abcnews/entertainmentheadlines"
+  },
+  {
+    "name": "Huffington Post Entertainment",
+    "url": "http://www.huffingtonpost.com/feeds/verticals/entertainment/index.xml"
+  },
+  {
+    "name": "Vice Music",
+    "url": "http://www.vice.com/music/rss"
+  },
+  {
+    "name": "Deadline",
+    "url": "http://deadline.com/feed/"
+  },
+  {
+    "name": "ET Breaking News",
+    "url": "http://feeds.feedburner.com/EtsBreakingNews"
+  },
+  {
+    "name": "NBC News Entertainment",
+    "url": "http://feeds.nbcnews.com/feeds/todayentertainment"
+  },
+  {
+    "name": "CNN Showbiz",
+    "url": "http://rss.cnn.com/rss/cnn_showbiz.rss"
+  },
+  {
+    "name": "BET",
+    "url": "http://feeds.bet.com/AllBetcom"
+  },
+  {
+    "name": "PopSugar",
+    "url": "http://www.popsugar.com/feed"
+  },
+  {
+    "name": "Hollywood",
+    "url": "http://feed2.hollywood.com/hollywood/RhHn"
+  },
+  {
+    "name": "HitFix Headlines",
+    "url": "http://www.hitfix.com/headlines.rss"
+  },
+  {
+    "name": "People Top Headlines",
+    "url": "http://rss.people.com/web/people/rss/topheadlines/index.xml"
+  },
+  {
+    "name": "Esquire Culture",
+    "url": "http://www.esquire.com/blogs/culture/culture-rss"
+  },
+  {
+    "name": "US Magazine",
+    "url": "http://www.usmagazine.com/feeds/movies_tv_music/atom"
+  },
+  {
+    "name": "NME News",
+    "url": "http://feeds2.feedburner.com/nmecom/rss/newsxml"
+  },
+  {
+    "name": "Yahoo Entertainment",
+    "url": "http://news.yahoo.com/rss/entertainment"
+  },
+  {
+    "name": "Washington Post Entertainment",
+    "url": "http://www.washingtonpost.com/rss/entertainment"
+  }
+]

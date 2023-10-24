@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { validateToken } from '@/firebase';
 import { findUserById } from '@/models/user';
+import { setCurrentUser } from '@/middleware/setCurrentUser';
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,28 +15,22 @@ export default async function handler(
 
   try {
     await validateToken(req, res)
-  } catch {
+  } catch (err) {
+    console.error(err)
     return res.status(401).json({ message: 'Failed to validate token' });
   }
 
-  if (!req.currentUser) {
-    res.status(401).json({ message: 'Unauthorized' });
-    return;
+  try {
+    await setCurrentUser(req)
+  } catch (err) {
+    console.error(err)
+    return res.status(401).json({ message: 'Failed to validate token' });
   }
 
-  const userId = req.currentUser!.id
-
-  console.log({ userId })
-  if (!userId) {
-    res.status(401).json({ message: 'Unauthorized' });
-    return;
+  try {
+    return res.status(200).json(req.currentUser);
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ message: 'Something went wrong' });
   }
-
-  const user = await findUserById(userId)
-  if (!user) {
-    res.status(404).json({ message: 'Not found' });
-    return;
-  }
-
-  return res.status(200).json(user);
 }

@@ -36,18 +36,13 @@ export async function createUser({
 
 
 export async function findUserById(id: string) {
-  try {
-    const user = await prisma.user.findFirst({
-      where: {
-        id
-      },
-    });
+  const user = await prisma.user.findFirst({
+    where: {
+      id
+    },
+  });
 
-    return user;
-  } catch (error) {
-    console.error('Error finding user by provider ID:', error);
-    return null
-  }
+  return user;
 }
 
 export async function findUserByProviderId(providerId: string) {
