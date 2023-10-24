@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import {
   Box,
   Typography,
@@ -25,7 +25,12 @@ import vcRSS from "~data/rss/vc.json"
 import businessRSS from "~data/rss/business.json"
 import { CardCategory } from "~components/CardCategory"
 import { CardNewsFeed } from "~components/CardNewsFeed"
-import businessImage from "data-base64:~assets/images/business.png"
+import businessImage from "data-base64:~assets/images/business.jpg"
+import vcImage from "data-base64:~assets/images/vc.jpg"
+import financeImage from "data-base64:~assets/images/finance.jpg"
+import worldNewsImage from "data-base64:~assets/images/world_news.jpg"
+import scienceImage from "data-base64:~assets/images/science.jpg"
+
 import { BsSearch } from "react-icons/bs"
 import { NoteScreen } from "../tabScreens/NoteScreen"
 import { Provider } from "react-redux";
@@ -34,6 +39,8 @@ import { persistor, store } from '../redux/store';
 import { getTheme } from "../theme";
 import { ThemeProvider } from '@mui/material/styles';
 import { PiNotebookDuotone } from "react-icons/pi"
+import { useAppDispatch, useAppSelector } from "~redux/hooks";
+import { fetchPublishers } from "~redux/features/publisher"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -276,7 +283,49 @@ function Layout() {
   );
 }
 
+enum Category {
+  BUSINESS = "business",
+  TECH = "tech",
+  MARKETING = "marketing",
+  MACHINE_LEARNING = "machine_learning",
+  VENTURE_CAPITAL = "venture_capital",
+  SCIENCE = "science",
+  WORLD_NEWS = "world_news"
+}
+
 function Search() {
+  const dispatch = useAppDispatch();
+  const publishers = useAppSelector((state) => state.publisher.publishers);
+  const [selectedCategory, setSelectedCategory] = useState<Category>(Category.BUSINESS)
+
+  useEffect(() => {
+    dispatch(fetchPublishers())
+  }, []);
+
+  const publishersFiltered = useMemo(() => {
+    if (!publishers) {
+      return []
+    }
+
+    console.log({ selectedCategory })
+    return publishers
+      .filter((publisher) => publisher.category === selectedCategory)
+      .map((publisher) => {
+        return {
+          category: publisher.category,
+          name: publisher.name,
+          imageUrl: fetchFavicon(publisher.rssUrl),
+          rssUrl: publisher.rssUrl
+        }
+      })
+  }, [publishers, selectedCategory])
+
+  function handleSelectCategory(category: Category) {
+    setSelectedCategory(category)
+  }
+
+  console.log({ publishersFiltered })
+
   return (
     <Stack spacing={6}>
       <Stack sx={{ background: "#f4f4f4", justifyContent: "center", alignItems: "center", padding: 2, borderRadius: 1 }} spacing={1}>
@@ -287,20 +336,16 @@ function Search() {
       <Box>
         <Typography variant="h6">By Category</Typography>
         <Stack direction="row" spacing={1} sx={{ overflowX: "scroll", padding: 1 }}>
-          <CardCategory imgUrl={businessImage} title={"business"} />
-          <CardCategory imgUrl={businessImage} title={"World News"} />
-          <CardCategory imgUrl={businessImage} title={"VC"} />
-          <CardCategory imgUrl={businessImage} title={"Science"} />
+          <CardCategory imgUrl={businessImage} title={"business"} isSelected={selectedCategory === Category.BUSINESS} onClick={() => handleSelectCategory(Category.BUSINESS)} />
+          <CardCategory imgUrl={worldNewsImage} title={"World News"} isSelected={selectedCategory === Category.WORLD_NEWS} onClick={() => handleSelectCategory(Category.WORLD_NEWS)} />
+          <CardCategory imgUrl={vcImage} title={"VC"} isSelected={selectedCategory === Category.VENTURE_CAPITAL} onClick={() => handleSelectCategory(Category.VENTURE_CAPITAL)} />
+          <CardCategory imgUrl={scienceImage} title={"Science"} isSelected={selectedCategory === Category.SCIENCE} onClick={() => handleSelectCategory(Category.SCIENCE)} />
         </Stack>
       </Box>
       <Stack spacing={1}>
-        <CardNewsFeed feed={{
-          name: "TechCrunch",
-        }} />
-        <CardNewsFeed feed={{}} />
-        <CardNewsFeed feed={{}} />
-        <CardNewsFeed feed={{}} />
-        <CardNewsFeed feed={{}} />
+        {publishersFiltered.map((publisher) => (
+          <CardNewsFeed feed={publisher} />
+        ))}
       </Stack>
     </Stack>
   );

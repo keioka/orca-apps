@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { Payment } from '~types';
 import { sendToBackground } from '@plasmohq/messaging';
+import { fetchPaymentHistory } from '~api/payment';
 
 interface PaymentHistoryState {
   subscriptions: Payment[];
@@ -18,17 +19,39 @@ const initialState: PaymentHistoryState = {
   status: 'no_subscription'
 };
 
+// export const fetchPayments = createAsyncThunk<Payment[], void>(
+//   'payment/fetchPayments',
+//   async ({ email }, {
+//     rejectWithValue
+//   }) => {
+//     const { result, error } = await sendToBackground({
+//       name: "paymentHistory",
+//       body: {
+//         email
+//       }
+//     })
+
+//     if (error) {
+//       rejectWithValue(error)
+//     }
+
+//     console.log({ result })
+
+//     return result;
+//   }
+// );
+
 export const fetchPayments = createAsyncThunk<Payment[], void>(
   'payment/fetchPayments',
-  async ({ email }, {
+  async (_, {
+    getState,
     rejectWithValue
   }) => {
-    const { result, error } = await sendToBackground({
-      name: "paymentHistory",
-      body: {
-        email
-      }
-    })
+
+    const state = getState()
+    const token = state.auth.session?.accessToken
+
+    const { result, error } = await fetchPaymentHistory(null, token)
 
     if (error) {
       rejectWithValue(error)

@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from 'stripe';
+import { validateToken } from '@/firebase';
 
 // Return a 200 response to acknowledge receipt of the event
 
@@ -12,12 +13,17 @@ export default async function handler(
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { email } = req.body;
-  if (!email) {
-    return res.status(400).json({ message: 'Missing required fields' });
+  await validateToken(req, res)
+
+  const auth = req.auth
+  if (!auth) {
+    return res.status(401).json({ message: 'Failed to validate token' });
   }
 
   try {
+
+    const email = auth.email;
+
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {});
 
     const customers = await stripe.customers.list({ email: email });
@@ -35,6 +41,14 @@ export default async function handler(
 
     // 2. Retrieve list of charges for the customer
     const subscriptions = await stripe.subscriptions.list({ customer: customerId });
+
+    if (subscriptions.data.length === 0) {
+      return res.status(200).json({
+        subscriptions: [],
+        status: "no_subscription",
+        isValidSubscription: false
+      });
+    }
 
     const mapSubscriptions = subscriptions.data.map(subscription => ({
       id: subscription.id,
@@ -57,7 +71,7 @@ export default async function handler(
 
   } catch (err) {
     console.error(err)
-    return res.status(400).send(`Error: ${err.message}`);
+    return res.status(400).json({ error: err.message });
   }
 
 }

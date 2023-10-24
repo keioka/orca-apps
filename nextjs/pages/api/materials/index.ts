@@ -5,7 +5,7 @@ import { fetchMetadata } from '@/common/fetchMetadata';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { category, date } = req.query;
+    const { category, date, offset, limit } = req.query;
 
     if (date && typeof date !== 'string') {
       return res.status(400).json({ message: 'Date must be a string' });
@@ -15,6 +15,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const material = await getMaterials({
         category: category as string,
         date: date && new Date(date as string),
+        offset,
+        limit
       });
       if (!material) {
         return res.status(404).json({ message: 'Material not found' });

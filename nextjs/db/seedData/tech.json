@@ -1,0 +1,218 @@
+[
+  {
+    "name": "Huffington Post Tech",
+    "url": "http://www.huffingtonpost.com/feeds/verticals/technology/news.xml"
+  },
+  {
+    "name": "CNN Tech",
+    "url": "http://rss.cnn.com/rss/cnn_tech.rss"
+  },
+  {
+    "name": "NY Times Technology",
+    "url": "http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml"
+  },
+  {
+    "name": "Fox News Tech",
+    "url": "http://feeds.foxnews.com/foxnews/tech"
+  },
+  {
+    "name": "The Verge Features",
+    "url": "http://www.theverge.com/rss/group/features/index.xml"
+  },
+  {
+    "name": "TechCrunch",
+    "url": "http://feeds.feedburner.com/TechCrunch/"
+  },
+  {
+    "name": "Wired",
+    "url": "http://feeds.wired.com/wired/index"
+  },
+  {
+    "name": "Mashable",
+    "url": "http://mashable.com/category/rss/"
+  },
+  {
+    "name": "CNET News",
+    "url": "http://www.cnet.com/rss/news/"
+  },
+  {
+    "name": "CNET iPhone Update",
+    "url": "http://www.cnet.com/rss/iphone-update/"
+  },
+  {
+    "name": "CNET Android Update",
+    "url": "http://www.cnet.com/rss/android-update/"
+  },
+  {
+    "name": "WSJ Tech",
+    "url": "http://online.wsj.com/xml/rss/3_7455.xml"
+  },
+  {
+    "name": "NPR Tech",
+    "url": "http://www.npr.org/rss/rss.php?id=1019"
+  },
+  {
+    "name": "Macworld",
+    "url": "http://www.macworld.com/index.rss"
+  },
+  {
+    "name": "PCWorld",
+    "url": "http://www.pcworld.com/index.rss"
+  },
+  {
+    "name": "Recode General",
+    "url": "http://recode.net/category/general/feed/"
+  },
+  {
+    "name": "Recode Mobile",
+    "url": "http://recode.net/category/mobile/feed/"
+  },
+  {
+    "name": "Recode Security",
+    "url": "http://recode.net/category/security/feed/"
+  },
+  {
+    "name": "Recode Enterprise",
+    "url": "http://recode.net/category/enterprise/feed/"
+  },
+  {
+    "name": "Engadget",
+    "url": "http://www.engadget.com/rss.xml"
+  },
+  {
+    "name": "TechCrunch Gaming",
+    "url": "http://feeds.feedburner.com/TechCrunch/Gaming?format=xml"
+  },
+  {
+    "name": "LA Times Tech",
+    "url": "http://www.latimes.com/business/technology/rss2.0.xml"
+  },
+  {
+    "name": "Bizjournals Tech",
+    "url": "http://feeds.bizjournals.com/industry_7"
+  },
+  {
+    "name": "ABC News Tech",
+    "url": "http://feeds.abcnews.com/abcnews/technologyheadlines"
+  },
+  {
+    "name": "Buzzfeed Tech",
+    "url": "http://www.buzzfeed.com/tech.xml"
+  },
+  {
+    "name": "TechRadar",
+    "url": "http://feeds.webservice.techradar.com/us/rss/new"
+  },
+  {
+    "name": "Gigaom",
+    "url": "http://gigaom.com/feed/"
+  },
+  {
+    "name": "Ars Technica Gadgets",
+    "url": "http://feeds.arstechnica.com/arstechnica/gadgets"
+  },
+  {
+    "name": "Geek",
+    "url": "http://www.geek.com/feed/"
+  },
+  {
+    "name": "Computer Weekly",
+    "url": "http://www.computerweekly.com/rss/All-Computer-Weekly-content.xml"
+  },
+  {
+    "name": "Forbes Tech",
+    "url": "http://www.forbes.com/technology/feed/"
+  },
+  {
+    "name": "Time Tech",
+    "url": "http://time.com/tech/feed/"
+  },
+  {
+    "name": "USAToday Tech",
+    "url": "http://rssfeeds.usatoday.com/usatoday-TechTopStories"
+  },
+  {
+    "name": "BBC Tech",
+    "url": "http://feeds.bbci.co.uk/news/technology/rss.xml"
+  },
+  {
+    "name": "The Inquirer",
+    "url": "http://www.theinquirer.net/feeds/rss"
+  },
+  {
+    "name": "TechReport",
+    "url": "http://techreport.com/news.rss"
+  },
+  {
+    "name": "TechSpot",
+    "url": "http://www.techspot.com/backend.xml"
+  },
+  {
+    "name": "TechTarget",
+    "url": "http://www.techtarget.com/html/pr/tt_pr.xml"
+  },
+  {
+    "name": "DailyTech",
+    "url": "http://www.dailytech.com/rss.aspx"
+  },
+  {
+    "name": "Digital Trends",
+    "url": "http://www.digitaltrends.com/feed/"
+  },
+  {
+    "name": "Bit-Tech",
+    "url": "http://feeds2.feedburner.com/bit-tech/all"
+  },
+  {
+    "name": "WSJ Tech",
+    "url": "http://www.wsj.com/xml/rss/3_7455.xml"
+  },
+  {
+    "name": "Ars Technica Tech Lab",
+    "url": "http://feeds.arstechnica.com/arstechnica/technology-lab"
+  },
+  {
+    "name": "Ars Technica Gadgets",
+    "url": "http://feeds.arstechnica.com/arstechnica/gadgets"
+  },
+  {
+    "name": "Ars Technica Business",
+    "url": "http://feeds.arstechnica.com/arstechnica/business"
+  },
+  {
+    "name": "New Scientist Tech",
+    "url": "http://feeds.newscientist.com/tech"
+  },
+  {
+    "name": "Nature Tech",
+    "url": "http://feeds.nature.com/news/rss/news_s16"
+  },
+  {
+    "name": "Technology Review",
+    "url": "http://www.technologyreview.com/stream/rss/"
+  },
+  {
+    "name": "AP Tech",
+    "url": "http://hosted2.ap.org/atom/APDEFAULT/495d344a0d10421e9baa8ee77029cfbd"
+  },
+  {
+    "name": "Washington Post Tech",
+    "url": "http://feeds.washingtonpost.com/rss/business/technology"
+  },
+  {
+    "name": "TechInsider",
+    "url": "http://www.techinsider.io/rss"
+  },
+  {
+    "name": "IEEE Spectrum Robotics",
+    "url": "http://feeds.feedburner.com/IeeeSpectrumRoboticsChannel"
+  },
+  {
+    "name": "The Verge Tech",
+    "url": "http://www.theverge.com/tech/rss/index.xml"
+  },
+  {
+    "name": "Recode",
+    "url": "http://recode.net/feed/"
+  }
+]

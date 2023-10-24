@@ -5,15 +5,7 @@
   },
   {
     "name": "LiveMint",
-    "url": "https://livemint.com/rss/homepage"
-  },
-  {
-    "name": "The Financial Express",
-    "url": "https://financialexpress.com/feed"
-  },
-  {
-    "name": "CNBC | World Business News Leader",
-    "url": "https://cnbc.com/id/19746125/device/"
+    "url": "https://www.livemint.com/rss/companies"
   },
   {
     "name": "Mckinsey",
@@ -82,13 +74,5 @@
   {
     "name": "Long Island Business News",
     "url": "https://libn.com/feed"
-  },
-  {
-    "name": "International Business Times AU",
-    "url": "https://ibtimes.com.au/rss"
-  },
-  {
-    "name": "BusinessMole",
-    "url": "https://businessmole.com/feed"
   }
 ]

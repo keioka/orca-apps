@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import urlMetadata from 'url-metadata'
+import { fetchAndParseWebsite } from '@/utils/webParser';
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,16 +18,7 @@ export default async function handler(
   }
 
   try {
-    const data = await urlMetadata(url)
-
-    const sitedata = {
-      title: data.title || data['og:title'],
-      description: data.description || data['og:description'],
-      imageUrl: data.image || data['og:image'],
-      url: data.url || data['og:url'],
-      name: data['og:site_name'],
-      locale: data['og:locale'],
-    }
+    const sitedata = await fetchAndParseWebsite(url)
     res.status(200).json(sitedata);
   } catch (error: any) {
     console.log('error', error);

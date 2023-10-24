@@ -115,7 +115,6 @@ interface Summary {
 export function Inject() {
   const [hideExtention, setHideExtention] = useState(false)
   const [open, setOpen] = useState(false)
-  const [data, setData] = useState(null)
   const [isAutoPlay, setIsAutoPlay] = useState(false)
   const [mode, setMode] = useState(Mode.Talk)
   const [vocabs, setVocabs] = useState<Vocab[]>([])
@@ -132,7 +131,6 @@ export function Inject() {
   const [isFullLoaded, setIsFullLoaded] = useState(false)
   const dispatch = useAppDispatch()
   const lesson = useAppSelector(state => { return state.lessonsLocal.lessons[urlPath] })
-  const state = useAppSelector(state => { return state })
   const note = useAppSelector(state => { return state.saveData[urlPath] })
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   const shouldShowSubscriptionForm = useAppSelector(state => { return !state.payment.isValidSubscription && state.ui.shouldShowSubscriptionForm })
@@ -148,7 +146,7 @@ export function Inject() {
   useEffect(() => {
     // Create a new lesson using redux
     if (open) {
-      dispatch(createNewLesson({ url: urlPath, }))
+      dispatch(createNewLesson({ url: urlPath }))
     }
   }, [open])
 

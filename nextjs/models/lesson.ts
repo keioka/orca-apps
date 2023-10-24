@@ -56,5 +56,15 @@ export async function getLesson(lessonId: string) {
   return lesson
 }
 
-
-
+export async function findLessonByUserAndMaterial(params: { userId: string, materialId: string }): Promise<Lesson | null> {
+  return prisma.lesson.findUnique({
+    where: {
+      userId_materialId: params
+    },
+    include: {
+      material: true,
+      user: true,
+      messages: true
+    }
+  });
+}

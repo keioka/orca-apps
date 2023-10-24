@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Reuters",
+    "url": "https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best"
+  },
+  {
+    "name": "LiveMint",
+    "url": "https://www.livemint.com/rss/companies"
+  },
+  {
+    "name": "Mckinsey",
+    "url": "https://www.mckinsey.com/insights/rss.aspx"
+  },
+  {
+    "name": "Fortune",
+    "url": "https://fortune.com/feed"
+  },
+  {
+    "name": "Financial Times",
+    "url": "https://ft.com/?format=rss"
+  },
+  {
+    "name": "Investing.com | Stock Market Quotes & Financial News",
+    "url": "https://investing.com/rss/news.rss"
+  },
+  {
+    "name": "Seeking Alpha » News",
+    "url": "https://seekingalpha.com/market_currents.xml"
+  },
+  {
+    "name": "Music Business Worldwide",
+    "url": "https://musicbusinessworldwide.com/feed"
+  },
+  {
+    "name": "The Economic Times",
+    "url": "https://www.economist.com/business/rss.xml"
+  },
+  {
+    "name": "Yahoo News » Finance",
+    "url": "https://finance.yahoo.com/news/rssindex"
+  },
+  {
+    "name": "Zee Business",
+    "url": "https://zeebiz.com/latest.xml/feed"
+  },
+  {
+    "name": "Financial Post | Canada Business News",
+    "url": "https://business.financialpost.com/feed"
+  },
+  {
+    "name": "Business Matters",
+    "url": "https://bmmagazine.co.uk/feed"
+  },
+  {
+    "name": "Insights success",
+    "url": "https://insightssuccess.com/feed"
+  },
+  {
+    "name": "Talking Biz News",
+    "url": "https://talkingbiznews.com/feed"
+  },
+  {
+    "name": "IoT Business News",
+    "url": "https://iotbusinessnews.com/feed"
+  },
+  {
+    "name": "Long Island Business News",
+    "url": "https://libn.com/feed"
+  },
+  {
+    "name": null,
+    "url": "http://feeds.harvardbusiness.org/harvardbusiness?format=xml"
+  },
+  {
+    "name": null,
+    "url": "http://www.huffingtonpost.com/feeds/verticals/business/news.xml"
+  },
+  {
+    "name": null,
+    "url": "http://rss.cnn.com/rss/edition_business.rss"
+  }
+]

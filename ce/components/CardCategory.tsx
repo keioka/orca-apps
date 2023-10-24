@@ -17,9 +17,17 @@ const StyledCard = styled(Card)`
   box-shadow: none;
 `;
 
-export const CardCategory = ({ title, imgUrl }) => {
+export const CardCategory = ({ title, imgUrl, isSelected, onClick }) => {
   return (
-    <StyledCard style={{ backgroundImage: `url(${imgUrl})` }}>
+    <StyledCard
+      style={{ backgroundImage: `url(${imgUrl})` }}
+      sx={(theme) => ({
+        border: `4px solid ${isSelected ? theme.palette.primary.main : "#f2f2f2"}`,
+      })}
+      onClick={onClick}
+    >
+      {/* <StyledCard sx={(theme) => ({ background: theme.palette.primary.main })}> */}
+
       <CardContent
         sx={{
           position: "relative",

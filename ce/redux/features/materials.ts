@@ -1,7 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from './store';
-import axios from 'axios';
+import { RootState } from '../store';
+// import axios from 'axios';
 // Define the type for the material
+import { sendToBackground } from '@plasmohq/messaging';
+
+
 interface Material {
   id: number;
   name: string;
@@ -29,11 +32,29 @@ const ROOT_URL = process.env.API_ROOT
 
 
 // Define the fetchMaterials async thunk
+// export const fetchMaterials = createAsyncThunk<Material[], void>(
+//   'materials/fetchMaterials',
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await axios(`${ROOT_URL}/api/materials`); // Replace with your API endpoint
+//       const data = response.data;
+//       return data;
+//     } catch (error) {
+//       const message = error.message;
+//       return rejectWithValue(message)
+//     }
+//   }
+// );
+
+
+// Define the fetchMaterials async thunk
 export const fetchMaterials = createAsyncThunk<Material[], void>(
   'materials/fetchMaterials',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios(`${ROOT_URL}/api/materials`); // Replace with your API endpoint
+      const response = await sendToBackground({
+        name: 'fetchMaterials',
+      }); // Replace with your API endpoint
       const data = response.data;
       return data;
     } catch (error) {

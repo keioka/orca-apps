@@ -6,31 +6,29 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { providerId } = req.body;
 
   //only accept post requests
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  if (!providerId) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
   try {
     await validateToken(req, res)
 
+    const auth = req.auth
+    if (!auth) {
+      return res.status(401).json({ message: 'Failed to validate token' });
+    }
+
+    console.log({ auth })
+
     const newUser = await createUser({
-      providerId: providerId,
-      providerName: "email",
-      username: "Anonymous",
-      thirdPartyId: providerId,
+      providerId: auth.uid,
+      providerName: auth.firebase.signInProvider,
+      username: auth.name,
+      thirdPartyId: auth.uid,
       thirdPartyName: "firebase",
     })
-
-    await setCustomUserClaims(providerId, { user: newUser })
-
-    console.log({ newUser })
 
     return res.status(200).json(newUser);
   } catch (err) {

@@ -10,7 +10,7 @@ import {
   REGISTER,
 } from "@plasmohq/redux-persist";
 import { Storage } from "@plasmohq/storage";
-import feed from './features/feed';
+import publisher from './features/publisher';
 import messages from './features/messages';
 import auth from './features/auth';
 import materials from './features/materials';
@@ -24,7 +24,7 @@ import ui from './features/ui';
 
 const rootReducer = combineReducers({
   auth: auth,
-  feed: feed,
+  publisher: publisher,
   materials: materials,
   messages: messages,
   lessons: lessons,
@@ -47,6 +47,13 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+const logger = (storeAPI: any) => (next: any) => (action: any) => {
+  console.log(`🔶[Redux]:Dispatching: ${action.type}`, action)
+  let result = next(action)
+  console.log('🔶[Redux]:Next state', storeAPI.getState())
+  return result
+}
+
 export const store = configureStore({
   reducer: persistedReducer,
   devTools: process.env.NODE_ENV !== 'production',
@@ -56,7 +63,8 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
       // serializableCheck: false,
-    }),
+    })
+      .concat(logger),
 });
 
 export const persistor = persistStore(store);
@@ -81,7 +89,7 @@ storage.watch({
       }
     }
     if (updatedKeys.length > 0) {
-      persistor.resync();
+      // persistor.resync();
     }
   },
 });
