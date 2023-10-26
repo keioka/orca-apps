@@ -25,7 +25,7 @@ export default async function handler(
     const newUser = await createUser({
       providerId: auth.uid,
       providerName: auth.firebase.signInProvider,
-      username: auth.name,
+      username: auth.name || auth.uid,
       thirdPartyId: auth.uid,
       thirdPartyName: "firebase",
     })

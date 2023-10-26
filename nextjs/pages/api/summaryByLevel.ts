@@ -1,6 +1,7 @@
 import axios from "axios";
 import OpenAI from 'openai';
 import { NextResponse } from 'next/server'
+import { getMaterialById } from '@/models/material';
 
 export const config = {
   // runtime: 'edge', //This specifies the runtime environment that the middleware function will be executed in.
@@ -102,7 +103,7 @@ export default async function handler(req, res) {
   // const body = await req.json();
   // const { url, levels } = body;
 
-  const { url, levels } = req.body;
+  const { url, levels, materialId } = req.body;
 
   if (req.method !== 'POST') {
     console.error("Method not allowed");
@@ -110,10 +111,24 @@ export default async function handler(req, res) {
     // return resJSON(405, { message: 'Method not allowed' });
   }
 
-  if (!url) {
+  if (!url && !materialId) {
     console.error("Missing required fields");
     // return resJSON(400, { message: 'Missing required fields' });
     return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  let urlToUse = url;
+
+  if (materialId) {
+    const material = await getMaterialById(materialId)
+    if (!material) {
+      return res.status(404).json({ message: 'Material not found' });
+    }
+    urlToUse = material.url
+  }
+
+  if (!urlToUse) {
+    return res.status(400).json({ message: 'Missing urlToUse' });
   }
 
   try {

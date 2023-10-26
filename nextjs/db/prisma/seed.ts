@@ -15,7 +15,11 @@ console.log("Seeding the database...");
 const main = async () => {
   // Customize this object with the proper values for your database
 
-  await addInitialPublisherAndMaterials()
+  try {
+    await addInitialPublisherAndMaterials()
+  } catch (error) {
+    console.error(error)
+  }
   // const createMaterials = materials.map(material =>
   //   prisma.material.upsert({
   //     where: { url: material.url },
@@ -25,6 +29,12 @@ const main = async () => {
   // );
   // await prisma.$transaction(createMaterials);
   // await prisma.$disconnect();
+  try {
+    await addLanguages()
+  } catch (error) {
+    console.error(error)
+  }
+
   console.log("Seeding successful!")
   process.exit(0);
 };
@@ -82,4 +92,68 @@ async function addInitialPublisherAndMaterials() {
     return await fetchAndStoreRSS({ url, name, category: "general" })
   }))
 
+}
+
+async function addLanguages() {
+  const prisma = new PrismaClient();
+  try {
+    const languages = [
+      { code: 'en', name: 'English' },
+      { code: 'fr', name: 'French' },
+      { code: 'es', name: 'Spanish' },
+      { code: 'de', name: 'German' },
+      { code: 'it', name: 'Italian' },
+      { code: 'pt', name: 'Portuguese' },
+      { code: 'ru', name: 'Russian' },
+      { code: 'zh', name: 'Chinese' },
+      { code: 'ja', name: 'Japanese' },
+      { code: 'ko', name: 'Korean' },
+      { code: 'ar', name: 'Arabic' },
+      { code: 'hi', name: 'Hindi' },
+      { code: 'ur', name: 'Urdu' },
+      { code: 'bn', name: 'Bengali' },
+      { code: 'sw', name: 'Swahili' },
+      { code: 'nl', name: 'Dutch' },
+      { code: 'el', name: 'Greek' },
+      { code: 'tr', name: 'Turkish' },
+      { code: 'sv', name: 'Swedish' },
+      { code: 'pl', name: 'Polish' },
+      { code: 'fi', name: 'Finnish' },
+      { code: 'he', name: 'Hebrew' },
+      { code: 'id', name: 'Indonesian' },
+      { code: 'ta', name: 'Tamil' },
+      { code: 'te', name: 'Telugu' },
+      { code: 'th', name: 'Thai' },
+      { code: 'fa', name: 'Persian' },
+      { code: 'gu', name: 'Gujarati' },
+      { code: 'kn', name: 'Kannada' },
+      { code: 'ml', name: 'Malayalam' },
+      { code: 'or', name: 'Odia' },
+      { code: 'pa', name: 'Punjabi' },
+      { code: 'mr', name: 'Marathi' },
+      { code: 'ne', name: 'Nepali' },
+      { code: 'uk', name: 'Ukrainian' },
+      { code: 'vi', name: 'Vietnamese' },
+      { code: 'ro', name: 'Romanian' },
+      { code: 'hu', name: 'Hungarian' },
+      { code: 'cs', name: 'Czech' },
+      { code: 'sr', name: 'Serbian' },
+      { code: 'hr', name: 'Croatian' },
+      { code: 'bg', name: 'Bulgarian' },
+      { code: 'da', name: 'Danish' },
+      { code: 'no', name: 'Norwegian' },
+      { code: 'sk', name: 'Slovak' },
+    ];
+
+    // for (const language of languages) {
+    await prisma.language.createMany({
+      data: languages,
+      skipDuplicates: true
+    });
+    // }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await prisma.$disconnect();
+  }
 }

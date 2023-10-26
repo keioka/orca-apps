@@ -7,6 +7,7 @@ import { setCurrentUser } from '@/middleware/setCurrentUser';
 import * as Material from '@/models/material';
 import { fetchAndParseWebsite } from '@/utils/webParser';
 import { findLessonByUserAndMaterial } from '@/models/lesson';
+import { getMaterialById } from '@/models/material';
 
 export default async function handler(
   req: NextApiRequest,
@@ -46,19 +47,27 @@ async function createNewLessonHandler(
   res: NextApiResponse,
 ) {
   const { currentUser } = req
-  const { url } = req.body;
-  if (!url) {
+  const { url, materialId } = req.body;
+  if (!url && !materialId) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
   try {
+    let material;
 
-    const { material, error } = await getOrCreateMaterialByUrl(url)
-    if (error) {
-      return res.status(400).json({ message: error });
+    if (materialId) {
+      console.log(materialId)
+      material = await getMaterialById(materialId)
+    } else {
+      const { material: materialByUrl, error } = await getOrCreateMaterialByUrl(url)
+      if (error) {
+        return res.status(400).json({ message: error });
+      }
+      material = materialByUrl
     }
 
-    console.log({ material })
+
+    console.log({ material, currentUser })
 
     const params = { userId: currentUser.id, materialId: material.id }
     const existingLesson = await findLessonByUserAndMaterial(params)

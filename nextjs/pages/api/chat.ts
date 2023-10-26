@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
+import { getLesson } from '@/models/lesson';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // defaults to process.env["OPENAI_API_KEY"]
@@ -10,7 +11,15 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const { url, history = [], message } = req.body;
+    console.log("/api/chat")
+    const { url, history = [], message, lessonId } = req.body;
+
+    let lessonUrl = url;
+    if (lessonId) {
+      const lesson = await getLesson(lessonId)
+      lessonUrl = lesson?.material.url ?? url;
+      console.log({ lesson })
+    }
 
     const params: OpenAI.Chat.ChatCompletionCreateParams = {
       temperature: 0,
@@ -18,7 +27,7 @@ export default async function handler(
         {
           role: 'system',
           content: `
-          [Text from: ${url}]
+          [Text from: ${lessonUrl}]
           
           You are an English teacher, in a conversation with a student learning English. Use a brief and simple dialogue, answering the student's questions with no more than four sentences, and always including an open-ended like (why, how, what) question related to the provided news article context.
           

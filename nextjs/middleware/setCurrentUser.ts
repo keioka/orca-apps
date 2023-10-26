@@ -10,7 +10,6 @@ const prisma = new PrismaClient();
 export const setCurrentUser = async (req: NextApiRequest) => {
 
   console.log("========setCurrentUser======")
-  console.log(req.fbUid)
 
   if (!req.fbUid) {
     throw new Error('No auth in req context')
@@ -27,7 +26,7 @@ export const setCurrentUser = async (req: NextApiRequest) => {
     });
 
     if (!auth || !auth.user) {
-      return { error: { message: 'No user found', type: "NOT_FOUND" } }
+      throw new Error('No auth in DB')
     }
 
     req.currentUser = auth.user;

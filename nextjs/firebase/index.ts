@@ -46,9 +46,6 @@ export const validateToken = async (req: NextApiRequest, res: NextApiResponse) =
   }
 }
 
-
-
-
 export const validateTokenWithoutError = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // Extract the token from the request headers

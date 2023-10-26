@@ -87,7 +87,7 @@ export async function fetchAndStoreRSS({ url, name, category }: { url: string, n
         category,
         categoryExternal: item.categories && typeof item.categories[0] === 'string' ? item.categories[0].trim().toLowerCase() : category,
         url: item.link?.trim(),
-        imageUrl: item.image?.trim(),
+        imageUrl: item.image && typeof item.image === 'string' ? item.image.trim() : "",
         publishedAt,
         publisher: {
           connectOrCreate: {
