@@ -7,15 +7,14 @@ interface MaterialWithLesson extends Material {
 }
 
 export async function getMaterialById(id: string): Promise<Material | null> {
-  const material = await prisma.material.findUnique({
+  return await prisma.material.findUnique({
     where: {
-      id: Number(id),
+      id,
     },
     include: {
       publisher: true,
     },
   });
-  return material;
 }
 
 
@@ -117,43 +116,61 @@ export async function createMaterial(materialData: Omit<Material, 'id'>): Promis
 
 interface VocabParams {
   word: string;
-  type: string;
-  sentence: string;
+  pronounce: string;
   meaning: string;
+  sentence: string;
   translation: string;
+  langCode: string
+  example: string;
 }
 
 interface Vocab {
   id: string;
-  word: string;
-  type: string;
-  sentence: string;
-  meaning: string;
-  translation: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
-export async function createVocabs(materialId: number, vocabParams: VocabParams[]): Promise<Vocab> {
-  const vocabulariesToCreate = vocabParams.map(vocab => ({
-    name: vocab.word, // Assuming the name is the same as the word
-    word: vocab.word,
-    meaning: vocab.meaning,
-    materialId: materialId
-  }));
+export async function createVocabs({ materialId, vocabParams }: { materialId: string, vocabParams: VocabParams[] }): Promise<Vocab> {
+  // const vocabulariesToCreate = vocabParams.map(vocab => ();
 
-  await prisma.vocabulary.createMany({
-    data: vocabulariesToCreate,
-    skipDuplicates: true,
-  });
+  for (let vocabParam of vocabParams) {
+    await prisma.vocabulary.create({
+      data: {
+        word: vocabParam.word,
+        meaning: vocabParam.meaning,
+        materialId: materialId,
+        sentence: vocabParam.sentence,
+        pronounce: vocabParam.pronounce,
+        example: vocabParam.example,
+        translation: {
+          create: {
+            content: vocabParam.translation,
+            language: {
+              connect: {
+                code: vocabParam.langCode
+              }
+            }
+          }
+        }
+      }
+    })
+  }
+}
 
-  const newVocabs = await prisma.vocabulary.findMany({
+export async function getVocabsByMaterialId({ materialId, langCode }: { materialId: string, langCode: string }): Promise<Vocab[]> {
+  const vocabs = await prisma.vocabulary.findMany({
     where: {
-      materialId: materialId
+      materialId
+    },
+    include: {
+      translation: {
+        where: {
+          language: {
+            code: langCode
+          }
+        }
+      }
     }
-  })
-
-  return newVocabs
+  });
+  return vocabs;
 }
 
 

@@ -1,17 +1,14 @@
 import OpenAI from 'openai';
 
-export const config = {
-  maxDuration: 300,
-};
-
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // defaults to process.env["OPENAI_API_KEY"]
 });
 
-interface GetVocabByWordSentenceParams { text: string }
+interface GetVocabByWordSentenceParams { text: string, transLangCode: string }
 
-async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
+export async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
   console.time('openai');
+  console.log({ params })
   const response = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo-16k',
     temperature: 0,
@@ -25,7 +22,7 @@ async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
           - [pronounce]: Pronounce of the word or phrase
           - [meaning]: Meaning of the word or phrase
           - [sentence]: Sentence from the content
-          - [transMeaningJaByContext]: Translate meaning of the word or phrase from English to Japanese
+          - [transMeaning${params.transLangCode}ByContext]: Translate meaning of the word or phrase from English to Japanese
           - [example]: Give some examples of the word or phrase
           """
           ${params.text}
@@ -63,7 +60,7 @@ async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
                   type: "string",
                   description: "other example for the word or phrase"
                 },
-                transMeaningJaByContext: {
+                [`transMeaning${params.transLangCode}ByContext`]: {
                   type: "string",
                   description: "translation of the meaning or phrase to Japanese"
                 },
@@ -84,55 +81,11 @@ async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
     return { err: 'No response from OpenAI' }
   }
 
+  console.log({ result: result.vocabs })
+
+
   return {
     vocabs: result.vocabs
   }
 
 }
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  // const body = await req.json();
-  // const { text } = body;
-  const { text } = req.body;
-
-  if (req.method !== 'POST') {
-    console.error("Method not allowed");
-    // return resJSON(400, { message: 'Method not allowed' });
-    res.status(405).json({ message: 'Method not allowed' });
-  }
-
-  if (!text) {
-    console.error("Missing required fields");
-    // return resJSON(400, { message: 'Missing required fields' });
-    res.status(400).json({ message: 'Missing required fields' });
-  }
-
-  try {
-    const { vocabs } = await getVocabsFromText({
-      text
-    })
-
-    return res.status(200).json({ vocabs });
-    // return resJSON(200, { vocabs });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: error.message });
-    // return resJSON(500, { message: error.message });
-  }
-}
-
-
-// function resJSON(status: number, data: any) {
-//   return new NextResponse(
-//     JSON.stringify(data),
-//     {
-//       status,
-//       headers: {
-//         'Content-Type': 'application/json'
-//       }
-//     }
-//   )
-// }

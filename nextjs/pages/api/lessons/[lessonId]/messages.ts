@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import { createMessage, listMessages } from "@/models/message";
 import { validateToken } from '@/firebase';
-
+import { setCurrentUser } from '@/middleware/setCurrentUser';
 const prisma = new PrismaClient();
 
 export default async function handle(
@@ -22,7 +22,7 @@ export default async function handle(
 async function fetchMessagesHandler(req: NextApiRequest, res: NextApiResponse) {
   const { lessonId } = req.query;
   await validateToken(req, res)
-
+  await setCurrentUser(req, res)
   // Validate body parameters
   if (!lessonId) {
     return res.status(400).json({ error: "fetchMessagesHandler: Missing required parameters" });

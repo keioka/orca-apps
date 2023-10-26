@@ -1,101 +1,95 @@
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // defaults to process.env["OPENAI_API_KEY"]
-});
-
-interface GetVocabByWordSentenceParams { url: string }
-
-async function getVocabs(params: GetVocabByWordSentenceParams) {
-  console.time('openai');
-  const response = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo-16k',
-    temperature: 0,
-    messages: [
-      {
-        role: "system",
-        content: `
-          [Text from: ${params.url}]
-          
-          As an English teacher, can you give me vocabulary for an English learner including phrasal verbs and phrases as many as possible from a given url. 
-          At least 25 words.
-        `
-      }
-    ],
-    functions: [{
-      name: "set_recipe",
-      parameters: {
-        type: "object",
-        properties: {
-          vocabs: {
-            type: "array",
-            items: {
-              type: 'object',
-              properties: {
-                word: {
-                  type: "string",
-                  description: "sentence from the content"
-                },
-                pronounce: {
-                  type: "string",
-                  description: "Pronounce of the word or phrase"
-                },
-                meaning: {
-                  type: "string",
-                  description: "Meaning of the word or phrase"
-                },
-                example: {
-                  type: "string",
-                  description: "sentence from the content"
-                },
-                transJa: {
-                  type: "string",
-                  description: "translation of the word or phrase to Japanese"
-                },
-              }
-            }
-          }
-        }
-      }
-    }],
-    function_call: { name: "set_recipe" }
-  });
-  console.timeEnd('openai'); //Prints something like that-> test: 11374.004ms
-
-  const generatedText = response.choices[0].message.function_call.arguments;
-  const result = JSON.parse(generatedText)
-
-  if (!result || !result.vocabs) {
-    return { err: 'No response from OpenAI' }
-  }
-
-  return {
-    vocabs: result.vocabs
-  }
-
-}
+import { NextApiRequest, NextApiResponse } from 'next';
+import { getVocabsFromText } from 'utils/openai';
+import { getMaterialById, createVocabs } from '@/models/material';
+import { parseWebText } from '@/utils/webParser';
+import { capitalize } from 'lodash';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { url } = req.body;
+  const { url, materialId, transLangCode = 'ja' } = req.body;
 
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  if (!url) {
+  if (!url && !materialId) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
   try {
-    const { vocabs } = await getVocabs({
-      url
+
+    let text
+    if (url) {
+      text = await parseWebText(url)
+    } else if (materialId) {
+      const material = await getMaterialById(materialId)
+      if (!material) {
+        return res.status(404).json({ message: 'Material not found' });
+      }
+      text = await parseWebText(material.url)
+    }
+
+
+    const splitContent = splitTextBySentenceWithWordCount(text, 250)
+
+    const transLangCodeCap = capitalize(transLangCode)
+
+    splitContent.forEach(async (content) => {
+      const { vocabs } = await getVocabsFromText({
+        text: content,
+        transLangCode: transLangCodeCap
+      })
+
+      const mappedVocabs = vocabs.map((vocab) => {
+        return {
+          ...vocab,
+          translation: vocab[`transMeaning${transLangCodeCap}ByContext`],
+          langCode: transLangCode
+        }
+      })
+
+      await createVocabs({
+        vocabParams: mappedVocabs,
+        materialId
+      })
+
+      return vocabs
     })
 
-    return res.status(200).json({ vocabs });
+    return res.status(200).json({ status: "IN_PROGRESS" });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: error.message });
   }
 }
+
+function splitTextBySentenceWithWordCount(text: string, count: number): string[] {
+  const regex = /([.?!])\s*/; // Regex to split by delimiters and capture them
+  const sentences = text.split(regex);
+  const splitSentences: string[] = [];
+  let currentContent = '';
+  let wordCount = 0;
+
+  for (let i = 0; i < sentences.length; i += 2) { // Increment by 2 to skip delimiters
+    const sentence = sentences[i] + (sentences[i + 1] || ''); // Combine sentence with its delimiter
+    const currentSentenceWordCount = sentence.split(/\s+/).filter(Boolean).length; // Get the number of words in the current sentence
+
+    if ((wordCount + currentSentenceWordCount) > count) {
+      splitSentences.push(currentContent.trim());
+      currentContent = sentence;
+      wordCount = currentSentenceWordCount;
+    } else {
+      currentContent += ' ' + sentence;
+      wordCount += currentSentenceWordCount;
+    }
+  }
+
+  if (currentContent) {
+    splitSentences.push(currentContent.trim());
+  }
+
+  return splitSentences;
+}
+
