@@ -12,11 +12,13 @@
     "build": "next build",
     "start": "next start",
     "test": "jest",
+    "db:migrate": "prisma migrate deploy --schema='./db/prisma/schema.prisma'",
+    "db:rollback": "prisma migrate resolve --schema='./db/prisma/schema.prisma' --rolled-back",
     "type-check": "tsc --noEmit",
     "lint": "eslint --ignore-path .gitignore \"**/*.+(ts|js|tsx)\"",
     "format": "prettier --ignore-path .gitignore \"**/*.+(ts|js|tsx)\" --write",
     "ingest": "tsx -r dotenv/config scripts/ingest-data.ts",
-    "postinstall": "prisma generate --schema='./db/prisma/schema.prisma'"
+    "postinstall": "prisma generate --schema='./db/prisma/schema.prisma' && prisma migrate deploy --schema='./db/prisma/schema.prisma'"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",

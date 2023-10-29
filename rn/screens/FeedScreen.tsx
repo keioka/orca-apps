@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    paddingTop: 80,
+    paddingTop: 60,
     // paddingBottom: 24,
     paddingHorizontal: 24,
     flexDirection: 'row',
