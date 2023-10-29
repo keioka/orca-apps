@@ -15,33 +15,28 @@ interface Material {
 interface MaterialsState {
   items: Material[];
   loading: boolean;
+  isFetchingSummary: boolean;
   error: string | null;
+  vocabs: { [key: string]: string[] }
+  summaries: { [key: string]: string[] }
 }
 
 // Define the initial state
 const initialState: MaterialsState = {
   items: [],
+  page: {
+    totalItems: 0,
+    currentPage: 0,
+    totalPages: 0,
+  },
+  vocabs: {},
+  summaries: {},
   loading: false,
+  isFetchingSummary: false,
   error: null,
 };
 
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
-
-
-// Define the fetchMaterials async thunk
-export const fetchMaterials = createAsyncThunk<Material[], void>(
-  'materials/fetchMaterials',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios(`${ROOT_URL}/api/materials`); // Replace with your API endpoint
-      const data = response.data;
-      return data;
-    } catch (error) {
-      const message = error.message;
-      return rejectWithValue(message)
-    }
-  }
-);
+const ROOT_URL = process.env.NODE_ENV === "development" ? "http://192.168.1.2:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
 
 // Create the materials slice
 const materialsSlice = createSlice({
@@ -69,14 +64,39 @@ const materialsSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchMaterials.fulfilled, (state, action) => {
-        state.items = action.payload;
+        state.items = action.payload || [];
         state.loading = false;
         state.error = null;
       })
       .addCase(fetchMaterials.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
+      })
+      .addCase(fetchVocabs.pending, (state) => {
+
+      })
+      .addCase(fetchVocabs.fulfilled, (state, action) => {
+        const { vocabs, materialId } = action.payload
+        if (!state.vocabs[materialId]) {
+          state.vocabs[materialId] = []
+        }
+
+        state.vocabs[materialId] = [...state.vocabs[materialId], ...vocabs]
+      })
+      .addCase(fetchSummaries.pending, (state) => {
+        state.isFetchingSummary = true;
+      })
+      .addCase(fetchSummaries.fulfilled, (state, action) => {
+        const { summaries, materialId } = action.payload
+        if (!state.summaries[materialId]) {
+          state.summaries[materialId] = []
+        }
+        state.summaries[materialId] = [...state.summaries[materialId], ...summaries]
+        state.isFetchingSummary = false
+      })
+      .addCase(fetchSummaries.rejected, (state, action) => {
+        state.isFetchingSummary = false
+      })
   },
 });
 
@@ -89,3 +109,146 @@ export default materialsSlice.reducer;
 export const selectMaterials = (state: RootState) => state.materials.items;
 export const selectLoading = (state: RootState) => state.materials.loading;
 export const selectError = (state: RootState) => state.materials.error;
+
+
+interface FetchMaterialsParams {
+  category: string,
+  date: string,
+  offset: number,
+  limit: number
+}
+
+// Define the fetchMaterials async thunk
+export const fetchMaterials = createAsyncThunk<Material[], void>(
+  'materials/fetchMaterials',
+  async (params: FetchMaterialsParams, { rejectWithValue }) => {
+    try {
+      const response = await axios(`${ROOT_URL}/api/materials`, {
+        params: params
+      }); // Replace with your API endpoint
+
+      const data = response.data;
+
+      if (!data || !data.items) {
+        return rejectWithValue('Failed to fetch materials')
+      }
+
+      return data.items;
+    } catch (error) {
+      const message = error.message;
+      return rejectWithValue(message)
+    }
+  }
+);
+
+interface FetchVocabsParams {
+  materialId: string,
+  url: string,
+}
+
+// Define the fetchMaterials async thunk
+export const createVocabs = createAsyncThunk<Material[], void>(
+  'materials/createVocabs',
+  async (params: FetchVocabsParams, { rejectWithValue }) => {
+    try {
+      const response = await axios(`${ROOT_URL}/api/vocabs`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: JSON.stringify({
+          materialId: params.materialId,
+          url: params.url,
+        })
+      }); // Replace with your API endpoint
+
+      const data = response.data;
+      return data;
+    } catch (error) {
+      const message = error.message;
+      return rejectWithValue(message)
+    }
+  }
+);
+
+
+export const fetchVocabs = createAsyncThunk(
+  'materials/fetchVocabs',
+  async ({ materialId }: FetchCaptionArgs, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${ROOT_URL}/api/materials/${materialId}/vocabs`, {
+        materialId
+      })
+
+      const { vocabs } = response.data;
+
+      return { vocabs, materialId }
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(error.message)
+    }
+  }
+);
+
+interface FetchSummariesParams {
+  materialId: string,
+  levels: string[]
+}
+
+export const fetchSummaries = createAsyncThunk<Material[], void>(
+  'materials/fetchSummaries',
+  async ({ materialId, levels }: FetchSummariesParams, { rejectWithValue }) => {
+    try {
+      const response = await axios(`${ROOT_URL}/api/summary`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: JSON.stringify({
+          materialId,
+          levels
+        })
+      }); // Replace with your API endpoint
+
+      const data = response.data;
+
+      if (!data) {
+        return rejectWithValue('Failed to fetch materials')
+      }
+
+      return { summaries: data.summaries, materialId };
+    } catch (error) {
+      console.error(error)
+      const message = error.message;
+      return rejectWithValue(message)
+    }
+  }
+);
+
+async function getSummariesByLevel(params: { url: string, levels: string[] }) {
+  const { url, levels } = params
+
+  const response = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/summaryByLevel`,
+    {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        url,
+        levels
+      })
+    }
+  )
+
+  const result = await response.json()
+  console.log({ result })
+
+  if (!response.ok) {
+    console.log({ result })
+    console.error("Error fetching Vocab");
+    throw new Error("Error fetching Vocab");
+  }
+
+  return { result }
+}

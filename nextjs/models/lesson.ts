@@ -1,6 +1,6 @@
-import { Prisma, PrismaClient, Material } from '@prisma/client';
+import { Material } from '@prisma/client';
 
-const prisma = new PrismaClient()
+import prisma from '../db'
 
 export async function createLesson(
   {

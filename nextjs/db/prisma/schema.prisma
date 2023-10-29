@@ -142,7 +142,7 @@ model Lesson {
 
 model Message {
   id          Int           @id @default(autoincrement())
-  fullContent String        @map("full_content")
+  content     String        @map("content")
   sentences   Sentence[]
   lesson      Lesson?       @relation(fields: [lessonId], references: [id])
   lessonId    Int?          @map("lesson_id")
@@ -159,7 +159,7 @@ model Message {
 model Sentence {
   id              Int              @id @default(autoincrement())
   content         String
-  Message         Message          @relation(fields: [messageId], references: [id])
+  message         Message          @relation(fields: [messageId], references: [id])
   messageId       Int              @map("message_id")
   sentenceIndex   Int              @map("sentence_index")
   paraphrases     Paraphrase[]
@@ -175,7 +175,6 @@ model Paraphrase {
   id         Int       @id @default(autoincrement())
   content    String
   type       String
-  url        String
   sentenceId Int?      @map("sentence_id")
   sentence   Sentence? @relation(fields: [sentenceId], references: [id])
 
@@ -183,6 +182,7 @@ model Paraphrase {
   updatedAt       DateTime          @updatedAt @map("updated_at")
   SavedParaphrase SavedParaphrase[]
 
+  @@unique([content, sentenceId])
   @@map("paraphrases")
 }
 

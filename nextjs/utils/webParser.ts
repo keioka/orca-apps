@@ -52,6 +52,8 @@ export async function parseWebText(url: string): Promise<string | null> {
   const document = new JSDOM(body)
   const article = new Readability(document.window.document).parse();
 
+  console.log("content=========================")
+  console.log(article.textContent)
 
   // Use Cheerio to parse the HTML
   // const $ = cheerio.load(html);

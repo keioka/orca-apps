@@ -81,9 +81,6 @@ export async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
     return { err: 'No response from OpenAI' }
   }
 
-  console.log({ result: result.vocabs })
-
-
   return {
     vocabs: result.vocabs
   }

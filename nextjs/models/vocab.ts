@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from '../db'
 
 export async function saveVocab({ userId, vocabId }: { vocabId: number, userId: string }) {
   return await prisma.savedVocabularies.create({

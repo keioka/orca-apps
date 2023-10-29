@@ -6,11 +6,12 @@ import materials from './features/materials';
 import lessons from './features/lessons';
 import transcribe from './features/transcribe';
 import videoInfo from './features/videoInfo';
+import note from './features/note';
 
 const logger = (storeAPI: any) => (next: any) => (action: any) => {
-  console.log(`dispatching: ${action.type}`, action)
+  console.log(`🔶 Dispatching: ${action.type}`, action)
   let result = next(action)
-  console.log('next state', storeAPI.getState())
+  console.log('🟢 Next state', storeAPI.getState())
   return result
 }
 
@@ -23,6 +24,7 @@ export const store = configureStore({
     lessons: lessons,
     transcribe: transcribe,
     videoInfo: videoInfo,
+    note: note,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });

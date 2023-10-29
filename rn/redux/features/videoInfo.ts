@@ -24,8 +24,7 @@ const initialState: VideoInfoState = {
 interface FetchCaptionsArgs {
   videoId: string;
 }
-
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
 export const fetchCaptions = createAsyncThunk(
   'videoInfo/fetchCaptions',
@@ -63,7 +62,7 @@ export const fetchVocabs = createAsyncThunk(
   'videoInfo/fetchVocabs',
   async ({ materialId }: FetchCaptionArgs, { rejectWithValue }) => {
     try {
-      const caption = await axios.post(`${ROOT_URL}/api/youtube/vocabs`, {
+      const caption = await axios.post(`${ROOT_URL}/api/materials/${materialId}/vocabs`, {
         materialId
       })
 

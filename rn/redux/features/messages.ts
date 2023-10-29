@@ -1,55 +1,65 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { LoadingStatus } from '../types';
+import { validateSessionAndToken } from '../../helpers/validate';
 
 const NAME = 'message'
+
+const ROOT_URL = process.env.NODE_ENV === "development" ? "http://192.168.1.2:3000" : "https://orca-fullstack.vercel.app";
 
 interface Message {
   text: string;
   role: string;
 }
 
+interface Paraphrase {
+  content: string;
+
+}
+
 interface MessageLesson {
   [lessonId: string]: Message[];
 }
 
+interface ParaphraseMap {
+  [messageId: string]: SentenceMap;
+}
+
+interface SentenceMap {
+  [sentenceIndex: number]: Paraphrase[];
+}
+
 interface MessageState {
   messageMap: MessageLesson;
+  paraphraseMap: ParaphraseMap;
   status: LoadingStatus;
-  statusCreate: LoadingStatus;
+  isFetchingParaphrases: boolean;
   error: string | null;
   addingMessage: boolean;
 }
-const AI_ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:7777" : "https://orca-ai.fo65boa2oj892.us-west-2.cs.amazonlightsail.com"  // process.env.EXPO_PUBLIC_API_ROOT
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
 
-const initialState: MessageState = { messageMap: {}, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null, addingMessage: false };
+const initialState: MessageState = { messageMap: {}, paraphraseMap: {}, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null, addingMessage: false };
+
 
 export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue }) => {
   try {
-    const state = getState()
+    const state = getState();
+    const token = validateSessionAndToken(state);
 
-    if (!state.auth.session) {
-      return rejectWithValue('fetchMessages: Session is not defined')
-    }
-
-    const token = state.auth.session.accessToken;
     const response = await axios.get(`${ROOT_URL}/api/lessons/${lessonId}/messages`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-
-    console.log({ messages: response.data });
-    return { [lessonId]: response.data };
+    return { messages: response.data, lessonId };
   } catch (error) {
     console.error(error)
-    rejectWithValue('Failed to fetch lesson')
+    return rejectWithValue(error.message || 'Failed to fetch lesson');
   }
 });
 
 
-export const createMessage = createAsyncThunk(`${NAME}/create`, async ({
+export const createAIMessage = createAsyncThunk(`${NAME}/create`, async ({
   message,
   lessonId
 }: {
@@ -58,18 +68,31 @@ export const createMessage = createAsyncThunk(`${NAME}/create`, async ({
 }, { getState, rejectWithValue }) => {
   try {
 
-    console.log("========= createMessage ================")
     const state = getState()
+    const token = validateSessionAndToken(state);
 
-    if (!state.auth.session) {
-      return rejectWithValue('fetchMessages: Session is not defined')
-    }
+    const response = await axios.post(`${ROOT_URL}/api/lessons/${lessonId}/chat`,
+      {
+        message,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    const aiMessage = response.data
+    return { message: aiMessage, lessonId };
+  } catch (error) {
+    console.error(error)
+    rejectWithValue(error.response.data.message)
+  }
+});
 
-    const token = state.auth.session.accessToken;
-
-    if (!token) {
-      rejectWithValue('No session found')
-    }
+export const addUserMessage = createAsyncThunk(`${NAME}/add`, async ({ lessonId, message }: { message: string, lessonId: string }, { getState, rejectWithValue }) => {
+  try {
+    const state = getState()
+    const token = validateSessionAndToken(state);
 
     const response = await axios.post(`${ROOT_URL}/api/lessons/${lessonId}/messages`,
       {
@@ -81,33 +104,30 @@ export const createMessage = createAsyncThunk(`${NAME}/create`, async ({
         }
       }
     );
-
-    console.log({ messages: response.data });
-    return { [lessonId]: [...state.messages.messageMap[lessonId], response.data] };
+    const userMessage = response.data
+    return { message: userMessage, lessonId };
   } catch (error) {
     console.error(error)
     rejectWithValue(error.response.data.message)
   }
 });
 
-export const addMessage = createAsyncThunk(`${NAME}/add`, async (body: { message: string, lessonId: string }, { getState, rejectWithValue }) => {
+export const fetchParaphrases = createAsyncThunk(`${NAME}/fetchParaphrases`, async ({ messageId, sentence, sentenceIndex }: { messageId: string }, { getState, rejectWithValue }) => {
   try {
-    console.log("========= addMessage ================")
     const state = getState()
+    const token = validateSessionAndToken(state);
 
-    if (!state.auth.session) {
-      return rejectWithValue('fetchMessages: Session is not defined')
-    }
-
-    const token = state.auth.session.accessToken;
-
-    if (!token) {
-      rejectWithValue('No session found')
+    if (!messageId || !sentence || sentenceIndex == null) {
+      return rejectWithValue('No messageId or sentence or sentenceIndex')
     }
 
     const response = await axios.post(
-      `${AI_ROOT_URL}/api/chat`,
-      body,
+      `${ROOT_URL}/api/messages/${messageId}/paraphrase`,
+      {
+        sentence,
+        sentenceIndex,
+        messageId
+      },
       {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -119,18 +139,27 @@ export const addMessage = createAsyncThunk(`${NAME}/add`, async (body: { message
       return rejectWithValue('Failed to create message')
     }
 
-    return { message: response.data };
+    return { paraphrases: response.data.phrases, messageId, sentenceIndex };
   } catch (error) {
     console.error(error)
     const errorMessage = error.response.data.message
     return rejectWithValue(errorMessage)
+
   }
-});
+})
 
 const messageSlice = createSlice({
   name: NAME,
   initialState,
   reducers: {
+    // addUserMessage: (state, action: PayloadAction<{ lessonId: string, message: string }>) => {
+    //   const { lessonId, message } = action.payload
+    //   const prevMessages = state.messageMap[lessonId] || []
+    //   state.messageMap = {
+    //     ...state.messageMap,
+    //     [lessonId]: [...prevMessages, { type: "user", content: message, createdAt: new Date().toISOString() }]
+    //   }
+    // },
     clearError: (state) => {
       state.error = null;
     }
@@ -141,10 +170,20 @@ const messageSlice = createSlice({
         state.status = LoadingStatus.LOADING;
       })
       .addCase(fetchMessages.fulfilled, (state, action: PayloadAction<any[]>) => {
+        const { lessonId, messages } = action.payload
+        const messagesMap = messages.map((message: any) => {
+          return {
+            id: message.id,
+            type: message.type,
+            content: message.content,
+            createdAt: message.createdAt
+          }
+        })
+        console.log({ messagesMap })
         state.status = LoadingStatus.SUCCESS;
         state.messageMap = {
           ...state.messages,
-          ...action.payload
+          [lessonId]: messagesMap
         };
 
       })
@@ -152,44 +191,59 @@ const messageSlice = createSlice({
         state.status = LoadingStatus.FAILED;
         state.error = action.error.message;
       })
-      .addCase(addMessage.pending, (state, action: PayloadAction<string | null>) => {
+      .addCase(createAIMessage.pending, (state, action: PayloadAction<string | null>) => {
         state.statusCreate = LoadingStatus.LOADING;
-        const lessonId = action.meta.arg.lessonId;
+      })
+      .addCase(createAIMessage.fulfilled, (state, action: PayloadAction<any[]>) => {
+        state.statusCreate = LoadingStatus.SUCCESS;
+        const { message, lessonId } = action.payload
+        const prevMessages = state.messageMap[lessonId] || []
 
         state.messageMap = {
           ...state.messageMap,
-          [lessonId]: [...state.messageMap[lessonId], { type: "user", fullContent: action.meta.arg.message }]
+          [lessonId]: [...prevMessages, message]
         }
-        state.addingMessage = true
       })
-      .addCase(addMessage.fulfilled, (state, action: PayloadAction<any[]>) => {
-        state.statusCreate = LoadingStatus.SUCCESS;
-        const lessonId = action.meta.arg.lessonId;
-        state.messageMap = {
-          ...state.messageMap,
-          [action.meta.arg.lessonId]: [...state.messageMap[lessonId], { type: "ai", fullContent: action.payload.message }]
-        }
-        state.addingMessage = false
-      })
-      .addCase(addMessage.rejected, (state, action: PayloadAction<string | null>) => {
+      .addCase(createAIMessage.rejected, (state, action: PayloadAction<string | null>) => {
         state.statusCreate = LoadingStatus.FAILED;
         state.error = action.error.message;
-        state.addingMessage = false
       })
-      .addCase(createMessage.pending, (state, action: PayloadAction<string | null>) => {
+      .addCase(addUserMessage.pending, (state, action: PayloadAction<string | null>) => {
         state.statusCreate = LoadingStatus.LOADING;
       })
-      .addCase(createMessage.fulfilled, (state, action: PayloadAction<any[]>) => {
+      .addCase(addUserMessage.fulfilled, (state, action: PayloadAction<any[]>) => {
         state.statusCreate = LoadingStatus.SUCCESS;
-        console.log({ action })
+        const { message, lessonId } = action.payload
+        const prevMessages = state.messageMap[lessonId] || []
+
         state.messageMap = {
           ...state.messageMap,
-          ...action.payload
+          [lessonId]: [...prevMessages, message]
         }
       })
-      .addCase(createMessage.rejected, (state, action: PayloadAction<string | null>) => {
+      .addCase(addUserMessage.rejected, (state, action: PayloadAction<string | null>) => {
         state.statusCreate = LoadingStatus.FAILED;
         state.error = action.error.message;
+      })
+      .addCase(fetchParaphrases.pending, (state, action: PayloadAction<string | null>) => {
+        state.isFetchingParaphrases = true
+      })
+      .addCase(fetchParaphrases.fulfilled, (state, action: PayloadAction<any[]>) => {
+        state.isFetchingParaphrases = false
+        const { paraphrases, messageId, sentenceIndex } = action.payload
+        const prevParaphrases = state.paraphraseMap[messageId] || {}
+        const prevSentenceParaphrases = prevParaphrases[sentenceIndex] || []
+        state.paraphraseMap = {
+          ...state.paraphraseMap,
+          [messageId]: {
+            ...prevParaphrases,
+            [sentenceIndex]: [...prevSentenceParaphrases, ...paraphrases]
+          }
+        }
+      })
+      .addCase(fetchParaphrases.rejected, (state, action: PayloadAction<string | null>) => {
+        state.isFetchingParaphrases = false
+        state.error = action.payload;
       });
   },
 });

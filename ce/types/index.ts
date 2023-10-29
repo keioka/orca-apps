@@ -11,7 +11,7 @@ export interface VocabularyItem {
   pronounce: string;
   meaning: string;
   sentence: string;
-  transJaByContext: string;
+  transMeaningJaByContext: string;
   example: string;
 }
 
@@ -44,7 +44,7 @@ export type VocabularyData = {
   pronounce: string;
   meaning: string;
   sentence: string;
-  transJaByContext: string;
+  transMeaningJaByContext: string;
   example: string;
 };
 

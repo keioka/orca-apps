@@ -20,7 +20,6 @@ interface MessageState {
   error: string | null;
   addingMessage: boolean;
 }
-const AI_ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:7777" : "https://orca-ai.fo65boa2oj892.us-west-2.cs.amazonlightsail.com"  // process.env.EXPO_PUBLIC_API_ROOT
 const ROOT_URL = process.env.API_ROOT
 
 const initialState: MessageState = { messageMap: {}, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null, addingMessage: false };
@@ -119,7 +118,9 @@ export const addMessage = createAsyncThunk(`${NAME}/add`, async (body: { message
       return rejectWithValue('Failed to create message')
     }
 
-    return { message: response.data };
+    const message = response.data.completion.choices[0].message
+
+    return { message };
   } catch (error) {
     console.error(error)
     const errorMessage = error.response.data.message

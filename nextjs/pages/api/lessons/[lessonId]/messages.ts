@@ -3,6 +3,8 @@ import { PrismaClient } from "@prisma/client";
 import { createMessage, listMessages } from "@/models/message";
 import { validateToken } from '@/firebase';
 import { setCurrentUser } from '@/middleware/setCurrentUser';
+import { chat } from "@/utils/openai/chat";
+
 const prisma = new PrismaClient();
 
 export default async function handle(
@@ -58,9 +60,8 @@ async function fetchMessagesHandler(req: NextApiRequest, res: NextApiResponse) {
 async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
   const { lessonId } = req.query;
   const { message } = req.body;
-  console.log({ req })
   await validateToken(req, res)
-
+  await setCurrentUser(req, res)
   // Validate body parameters
   if (!lessonId) {
     return res.status(400).json({ error: "createMessageHandler: Missing required parameters" });
@@ -78,6 +79,10 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
     where: {
       id: Number(lessonId),
     },
+    include: {
+      messages: true,
+      material: true,
+    }
   });
 
   if (!lesson) {
@@ -85,7 +90,7 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   if (lesson.userId !== req.currentUser?.id) {
-    return res.status(403).json({ message: "createMessageHandler: Unauthorized" });
+    return res.status(403).json({ message: "createMessageHandler: Not permitted" });
   }
 
   try {
@@ -97,9 +102,9 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ message: "createMessageHandler: Invalid parameters" });
     }
 
-    const newMessage = await createMessage({ message, lessonId, createdById: req.currentUser?.id as string });
+    const userMessage = await createMessage({ message, lessonId, createdById: req.currentUser?.id as string, type: "user" });
 
-    return res.status(200).json(newMessage);
+    return res.status(200).json(userMessage);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "createMessageHandler: An error occurred while creating the message" });

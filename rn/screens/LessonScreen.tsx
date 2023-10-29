@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, Text, View, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard } from 'react-native';
-import { CardMessage } from '../components/CardMessage';
 import { CardSummary } from '../components/CardSummary';
 import { CardVocab, CardVocabXS } from '../components/CardVocab';
 import { WebView } from 'react-native-webview';
@@ -11,13 +10,13 @@ import { vocab } from '../helpers/dummy';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { LoadingStatus } from '../redux/types';
 import { fetchLesson } from '../redux/features/lessons';
-import { fetchMessages, createMessage, addMessage } from '../redux/features/messages';
+import { fetchMessages } from '../redux/features/messages';
 import { messages as messageDummy } from '../helpers/dummy'
 import { Audio } from "expo-av";
 import { TalkMode } from '../components/TalkMode';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from '../components/Button';
-import { fetchCaptions, fetchSummaries, fetchVocabs } from '../redux/features/videoInfo';
+import { fetchVocabs, createVocabs, fetchSummaries } from '../redux/features/materials';
 import { utc } from 'moment';
 import { ActivityIndicator } from 'react-native';
 
@@ -27,8 +26,10 @@ enum LearningModeTab {
   Vocabulary = 'vocabulary',
 }
 
-const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+const levels = ['K5', '5Y', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 const levelsMap = {
+  K5: 'Beginner (K5)',
+  '5Y': 'Elementary (5Y)',
   A1: 'Beginner (A1)',
   A2: 'Elementary (A2)',
   B1: 'Intermediate (B1)',
@@ -41,28 +42,27 @@ function SummaryTab({ materialId }: { materialId: string }) {
   const dispatch = useAppDispatch()
   const summaries = useAppSelector(state => {
     if (!materialId) return []
-    if (!state.videoInfo.summaries[materialId]) return []
-    return state.videoInfo.summaries[materialId]
+    if (!state.materials.summaries[materialId]) return []
+    return state.materials.summaries[materialId]
   })
-
-  const isLoadingSummary = useAppSelector(state => {
-    return false
-    return state.videoInfo.loadingStatus === LoadingStatus.Loading
-  })
+  const isFetchingSummary = useAppSelector(state => state.materials.isFetchingSummary)
 
   const [tabLevel, setTabLevel] = useState(levels[0])
 
+  useEffect(() => {
+    if (isFetchingSummary) return
+    dispatch(fetchSummaries({ materialId, levels: [levels[0]] }))
+  }, [])
+
   const summary = useMemo(() => {
-    return { content: "The article discusses the Seven Wonders of the Ancient World, as described by Philo of Byzantium. It mentions the history of Philo's manuscript and how it made its way to Europe. The text emphasizes the significance of Philo's work as the first known catalog of the Seven Wonders. It then provides detailed descriptions of each wonder, including the Hanging Gardens of Babylon, the Pyramids in Memphis, the Olympian Zeus, the Colossus at Rhodes, the Walls of Babylon, and the Temple of Artemis at Ephesus. The article praises the craftsmanship and grandeur of these wonders, and how they continue to capture the imagination of people throughout history." }
     return summaries.find((summary) => summary.level === tabLevel)
   }, [tabLevel, summaries])
 
   const handleOnPress = (level) => {
     setTabLevel(level)
-
     if (summaries.find((summary) => summary.level === level)) return
-
-    dispatch(fetchSummaries({ materialId, level }))
+    // TODO: Prevent fetch if it is loading depends on level and materialId
+    dispatch(fetchSummaries({ materialId, levels: [level] }))
   }
 
   return (
@@ -100,13 +100,13 @@ function SummaryTab({ materialId }: { materialId: string }) {
               content={summary.content}
             />
           }
-          {isLoadingSummary &&
+          {isFetchingSummary &&
             <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
               <ActivityIndicator size="large" color="#007991" />
             </View>
           }
         </View>
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <Text style={styles.subtitleKeyPoints}>Key points</Text>
           <CardSummary
             points={
@@ -125,20 +125,38 @@ function SummaryTab({ materialId }: { materialId: string }) {
               ]
             }
           />
-        </View>
+        </View> */}
       </ScrollView >
     </>
   )
 }
 
-function VocabularyTab() {
+function VocabularyTab({ materialId }: { materialId: string }) {
+  const dispatch = useAppDispatch()
+  const vocabs = useAppSelector(state => { return state.materials.vocabs[materialId] || [] })
+
+  useEffect(() => {
+    dispatch(createVocabs({ materialId }))
+
+
+    const interval = setInterval(() => {
+      dispatch(fetchVocabs({ materialId }))
+    }, 10000)
+
+
+    return () => {
+      clearInterval(interval);
+    }
+  }, [])
+
+  // const 
   return (
     <ScrollView
       style={{ height: "100%" }}
       contentContainerStyle={styles.vocabularyView}
       showsVerticalScrollIndicator={false}
     >
-      {vocab.map((item, index) => (
+      {vocabs.map((item, index) => (
         <View style={styles.cardWrapper}>
           <CardVocab vocab={item} />
         </View>
@@ -157,14 +175,6 @@ function LearningMode({ onPressToggle, lesson, }: { onPressToggle: () => void, l
     return state.videoInfo.captions[materialId]
   })
 
-  useEffect(() => {
-    if (!lesson.material) return
-
-    dispatch(fetchCaptions({ materialId: lesson.material.id }))
-    dispatch(fetchSummaries({ materialId: lesson.material.id }))
-    dispatch(fetchVocabs({ materialId: lesson.material.id }))
-
-  }, [lesson.id])
 
   return (
     <View style={{ width: "100%", height: "100%" }}>
@@ -236,10 +246,11 @@ function LearningMode({ onPressToggle, lesson, }: { onPressToggle: () => void, l
                 ))}
               </ScrollView>
             </View> : <WebView
+              startInLoadingState
               originWhitelist={['*']}
               source={{ uri: lesson.material.url }}
               style={styles.webview}
-              menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
+            // menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
             />}
         </>
       }
@@ -250,7 +261,7 @@ function LearningMode({ onPressToggle, lesson, }: { onPressToggle: () => void, l
       }
       {
         tab === LearningModeTab.Vocabulary && (
-          <VocabularyTab />
+          <VocabularyTab materialId={lesson.material.id} />
         )
       }
       <TouchableOpacity onPress={onPressToggle}>
@@ -271,14 +282,13 @@ enum Mode {
   Talk = 'Talk',
 }
 
-export function LessonScreen({ route }) {
-  const [mode, setMode] = useState(Mode.Learning)
+export function LessonScreen({ route, navigation }) {
   const dispatch = useAppDispatch()
   const lessonId = route.params.lessonId
   const lessons = useAppSelector(state => { return state.lessons.lessons })
   const lesson = useAppSelector(state => { return state.lessons.lessons.find((lesson) => lesson.id === lessonId) })
 
-  const onPressToggle = () => setMode(mode === Mode.Learning ? Mode.Talk : Mode.Learning)
+  const onPressToggle = () => navigation.navigate('Talk', { lessonId })
 
   useEffect(() => {
     dispatch(fetchLesson(lessonId))
@@ -292,14 +302,14 @@ export function LessonScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      {mode === Mode.Learning ? <LearningMode onPressToggle={onPressToggle} lesson={lesson} /> : <TalkMode onPressToggle={onPressToggle} lesson={lesson} />}
+      <LearningMode onPressToggle={onPressToggle} lesson={lesson} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   menu: {
-    padding: 8,
+    padding: 4,
     backgroundColor: '#242424',
     color: "#fff",
     flexDirection: 'row',
@@ -315,12 +325,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    padding: 12,
+    padding: 2,
+    paddingHorizontal: 8,
+    paddingVertical: 16,
     alignItems: 'center',
   },
   buttonActive: {
     backgroundColor: "#fff",
-    padding: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
     borderRadius: 32,
     alignItems: 'center',
   },
@@ -402,6 +415,7 @@ const styles = StyleSheet.create({
     paddingTop: 24,
   },
   cardWrapper: {
+    width: "90%",
     marginBottom: 8,
   },
   section: {

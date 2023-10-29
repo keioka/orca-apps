@@ -1,6 +1,6 @@
-import { Prisma, PrismaClient, Material } from '@prisma/client';
+import { Material } from '@prisma/client';
 
-const prisma = new PrismaClient();
+import prisma from '../db'
 
 interface MaterialWithLesson extends Material {
   lessonId?: number | null
@@ -155,6 +155,34 @@ export async function createVocabs({ materialId, vocabParams }: { materialId: st
   }
 }
 
+
+export async function createSummary({ materialId, vocabParams }: { materialId: string, vocabParams: VocabParams[] }): Promise<Vocab> {
+  // const vocabulariesToCreate = vocabParams.map(vocab => ();
+
+  for (let vocabParam of vocabParams) {
+    await prisma.vocabulary.create({
+      data: {
+        word: vocabParam.word,
+        meaning: vocabParam.meaning,
+        materialId: materialId,
+        sentence: vocabParam.sentence,
+        pronounce: vocabParam.pronounce,
+        example: vocabParam.example,
+        translation: {
+          create: {
+            content: vocabParam.translation,
+            language: {
+              connect: {
+                code: vocabParam.langCode
+              }
+            }
+          }
+        }
+      }
+    })
+  }
+}
+
 export async function getVocabsByMaterialId({ materialId, langCode }: { materialId: string, langCode: string }): Promise<Vocab[]> {
   const vocabs = await prisma.vocabulary.findMany({
     where: {
@@ -170,6 +198,7 @@ export async function getVocabsByMaterialId({ materialId, langCode }: { material
       }
     }
   });
+
   return vocabs;
 }
 

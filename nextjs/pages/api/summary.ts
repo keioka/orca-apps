@@ -91,19 +91,18 @@ async function createSummary(params: GetSummaryParams) {
     groupedLevels.push(params.levels.slice(i, i + 2));
   }
 
-  groupedLevels.forEach(async (levelGroup) => {
+  const summaries = await Promise.all(groupedLevels.map(async (levelGroup) => {
     const summaries = await getSummaryForLevel({ url: params.url, levels: levelGroup })
     for (const summary of summaries.summaries) {
-      console.log("summary ===============", summary)
-      console.log("params=========", params)
-
-      await SummaryModel.createSummary({
+      return await SummaryModel.createSummary({
         materialId: params.materialId,
         level: summary.level,
         content: summary.summary
       })
     }
-  });
+  }))
+
+  return summaries
 }
 
 
@@ -156,8 +155,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    await createSummary({ url: urlToUse, levels, materialId });
-    return res.status(200).json({ status: "IN_PROGRESS" });
+    const summaries = await createSummary({ url: urlToUse, levels, materialId });
+    return res.status(200).json({ summaries });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: error.message });

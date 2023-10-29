@@ -6,7 +6,7 @@ const vocab = {
   meaning: "previous or past",
   pronounce: "ˈfɔːrmər",
   sentence: "Cassidy Hutchinson, the former Trump White House aide",
-  transJaByContext: "以前の",
+  transMeaningJaByContext: "以前の",
   word: "former"
 }
 
