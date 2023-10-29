@@ -2,19 +2,16 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { StyleSheet, ScrollView, Text, View, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { CardMessage } from '../components/CardMessage';
 import { CardVocab, CardVocabXS } from '../components/CardVocab';
-import { WebView } from 'react-native-webview';
+// import { WebView } from 'react-native-webview';
 import { TextInput, Card, Modal, Portal, } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { vocab } from '../helpers/dummy';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { LoadingStatus } from '../redux/types';
-import { fetchLesson } from '../redux/features/lessons';
-import { fetchMessages, createMessage, addMessage } from '../redux/features/messages';
-import { messages as messageDummy } from '../helpers/dummy'
-import { Audio } from "expo-av";
+import { fetchMessages, createAIMessage, addUserMessage } from '../redux/features/messages';
 import { useAudio } from '../hooks/audio';
 import { transcribeAudio } from '../redux/features/transcribe'
-import { Button } from './Button';
+import { fetchSavedParaphrases } from '../redux/features/note';
 
 enum TalkHelper {
   Vocab = 'vocab',
@@ -27,17 +24,13 @@ enum Mode {
   Talk = 'talk',
 }
 
-const apiUrl = 'http://localhost:3000';
+const apiUrl = 'http://192.168.1.2:3000';
 
 async function getMetadata(url: string) {
   try {
     const response = await fetch(`${apiUrl}/api/metatag?${new URLSearchParams({ url })}`,
       {
         method: 'GET',
-        headers: {
-          'X-RapidAPI-Key': 'REDACTED_RAPIDAPI_KEY',
-          'X-RapidAPI-Host': 'og-link-preview.p.rapidapi.com'
-        }
       });
     const result = await response.json();
     return result
@@ -48,13 +41,13 @@ async function getMetadata(url: string) {
 
 
 export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void, lesson: {} }) {
-  const [message, setMessage] = useState(null)
+  const [message, setMessage] = useState()
   const [helper, setHelper] = useState(null)
   const dispatch = useAppDispatch()
-  const messages = useAppSelector(state => { return state.messages.messageMap[lesson.id] })
+  const messages = useAppSelector(state => { return state.messages.messageMap[lesson.id] || [] })
   const statusCreate = useAppSelector(state => { return state.messages.statusCreate })
-  const [newsTitle, setNewsTitle] = useState("Artificial Intelligence");
-  const [newsImageUrl, setNewsImageUrl] = useState("https://media.cnn.com/api/v1/images/stellar/prod/230413152030-kim-jong-un-0410.jpg?c=16x9&q=h_540,w_960,c_fill/f_webp");
+  const [newsTitle, setNewsTitle] = useState("Loading");
+  const [newsImageUrl, setNewsImageUrl] = useState(null);
   const [loadingMetadata, setLoadingMetadata] = useState(false)
   const { startRecording, stopRecording, file } = useAudio();
   const [openRecordingModal, setOpenRecordingModal] = useState(false);
@@ -68,8 +61,9 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
     }
     return messages.map((item) => {
       return {
-        message: item.fullContent,
-        role: item.type === "user" ? "user" : "ai",
+        id: item.id,
+        message: item.content,
+        role: item.type,
         createdAt: new Date(item.createdAt)
       }
     })
@@ -90,11 +84,11 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
         console.error(error);
       }
     }
+    dispatch(fetchSavedParaphrases({}))
     fetchMetadata()
   }, [])
 
   useEffect(() => {
-    console.log({ messages })
     if (!scrollViewRef.current) return
     scrollViewRef.current.scrollToEnd({ animated: true })
   }, [messages.length])
@@ -105,7 +99,8 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
   }
 
   const submitMessage = () => {
-    dispatch(addMessage({ message, lessonId: lesson.id }))
+    dispatch(addUserMessage({ message, lessonId: lesson.id }))
+    dispatch(createAIMessage({ message, lessonId: lesson.id }))
     setMessage(null)
     Keyboard.dismiss()
   }
@@ -116,6 +111,8 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
   }
 
   const isTypeVideo = lesson.material.type === "video"
+  const disabledSubmit = !message || message === "" || isAddingMessage
+
   return (
     <View style={{ flex: 1, height: "100%" }}>
       <Portal>
@@ -147,19 +144,19 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
         </Modal>
       </Portal>
       <View style={styles.menuTalkMode}>
-        <View style={{ flexDirection: "row", height: 108 }}>
-          {isTypeVideo ? <WebView
+        <View style={{ flexDirection: "row", paddingVertical: 8 }}>
+          {/* {isTypeVideo ? <WebView
             // style={styles.youtubeView}
             javaScriptEnabled={true}
             domStorageEnabled={true}
             source={{ uri: lesson.material.url }}
-          /> : <Image source={{ uri: newsImageUrl }} style={{ width: 108, height: 108 }} />}
+          /> : <Image source={{ uri: newsImageUrl }} style={{ width: 108, height: 108 }} />} */}
           <View
             style={{
               flex: 1,
               width: "100%",
               marginLeft: 8,
-              paddingVertical: 16,
+              paddingVertical: 8,
               paddingHorizontal: 8,
               // flexWrap: "wrap",
               flexGrow: 1
@@ -169,11 +166,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
           </View>
         </View>
       </View>
-      <View
-        style={styles.switch}
-      >
-        <Button onPress={onPressToggle}>Back to learn mode</Button>
-      </View>
+
       <View style={{ flex: 1 }}>
         <ScrollView
           ref={scrollViewRef}
@@ -183,8 +176,8 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
           }}
           showsVerticalScrollIndicator={false}
         >
-          {messageConvert.map((item, index) => (
-            <CardMessage message={item} />
+          {messageConvert.map((item) => (
+            <CardMessage key={item.id} message={item} />
           ))}
 
           {
@@ -195,29 +188,32 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
           }
         </ScrollView>
       </View>
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={90}>
+      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={64} contentContainerStyle={{ borderTopColor: "#f4f4f4", borderTopWidth: 1 }}>
         <>
-          {helper && <View
-            style={{
-              paddingVertical: 8,
-              paddingHorizontal: 32,
-              backgroundColor: "#fff",
-              flexDirection: "column",
-              flexGrow: 1,
-              borderBottomWidth: 1,
-              borderBottomColor: "#f4f4f4",
-            }}>
-            <Text style={{ fontSize: 12, fontWeight: "bold", color: "lightgray" }}>Saved vocabs</Text>
-            <ScrollView horizontal style={{ backgroundColor: "#fff", paddingVertical: 12 }}>
-              {vocab.map((vocab) => <View style={{ marginRight: 8, backgroundColor: "#fff", }}><CardVocabXS vocab={vocab} /></View>)}
-            </ScrollView>
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <TouchableOpacity onPress={() => setHelper(null)}>
-                <Ionicons name="chevron-down-outline" size={24} color="lightgray" />
-              </TouchableOpacity>
+          {helper && (
+            <View
+              style={{
+                paddingVertical: 8,
+                paddingHorizontal: 64,
+                backgroundColor: "#fff",
+                flexDirection: "column",
+                flexGrow: 1,
+                borderBottomWidth: 1,
+                borderBottomColor: "#f4f4f4",
+                width: "100%",
+              }}
+            >
+              <Text style={{ fontSize: 12, fontWeight: "bold", color: "lightgray" }}>Saved vocabs</Text>
+              <ScrollView horizontal style={{ backgroundColor: "#fff", paddingVertical: 12 }}>
+                {vocab.map((vocab) => <View style={{ marginRight: 8, backgroundColor: "#fff", }}><CardVocabXS vocab={vocab} /></View>)}
+              </ScrollView>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <TouchableOpacity onPress={() => setHelper(null)}>
+                  <Ionicons name="chevron-down-outline" size={24} color="lightgray" />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-          }
+          )}
 
           <View
             style={{
@@ -230,17 +226,17 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
               flexGrow: 1,
             }}
           >
-            <ScrollView
+            {/* <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               style={{
-                // width: "100%",
+                width: "100%",
                 flexGrow: 1,
                 paddingHorizontal: 22,
               }}
               contentContainerStyle={{
                 flexGrow: 1,
-                // width: "100%",
+                width: "100%",
                 alignItems: "center",
                 marginBottom: 8,
               }}
@@ -266,28 +262,19 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
                   </Text>
                 </View>
               </TouchableOpacity>
-            </ScrollView>
+            </ScrollView> */}
 
-            <View style={{ backgroundColor: "#fff", alignItems: "center", justifyContent: "center", flexGrow: 1 }}>
+            <View style={styles.footer}>
               <View
-                style={{
-                  width: "90%",
-                  backgroundColor: '#f4f4f4',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 64,
-                  flexDirection: "row",
-                  height: 64,
-                  paddingLeft: 48,
-                  paddingRight: 48,
-                }}
+                style={[styles.textInputWrapper]}
               >
                 <TouchableOpacity onPress={onPressMic}>
                   <Ionicons name="mic" size={24} color="#FB4D3D" />
                 </TouchableOpacity>
                 <TextInput
-                  style={styles.messageTextInput}
-                  multiline
+                  style={[styles.messageTextInput]}
+                  // multiline
+                  dense
                   mode="flat"
                   underlineColor='transparent'
                   selectionColor='#9FD1D5'
@@ -297,7 +284,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
                     setMessage(value)
                   }}
                 />
-                <TouchableOpacity onPress={submitMessage} disabled={!message || message === "" || isAddingMessage}>
+                <TouchableOpacity onPress={submitMessage} disabled={disabledSubmit}>
                   <Ionicons name="send" size={21} color="#9FD1D5" />
                 </TouchableOpacity>
               </View>
@@ -320,7 +307,7 @@ const styles = StyleSheet.create({
   },
   menuTalkMode: {
     width: "100%",
-    backgroundColor: '#fff',
+    backgroundColor: '#242424',
   },
   tabWrapper: {
     flex: 1,
@@ -349,6 +336,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f4f4',
     height: "100%"
   },
+  textInputWrapper: {
+    width: "90%",
+    backgroundColor: '#f4f4f4',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    flexDirection: "row",
+    height: 48,
+    paddingLeft: 42,
+    paddingRight: 42,
+  },
   messageTextInput: {
     width: '100%',
     borderWidth: 0,
@@ -357,9 +355,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderTopColor: 'transparent',
     borderBottomColor: 'transparent',
-    marginBottom: 12
+    height: 48,
   },
   menuTalkModeTitle: {
+    color: "#fff",
     fontSize: 13,
   },
   menuTalkModeSubtitle: {
@@ -371,6 +370,12 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     alignItems: 'center',
   },
+  footer: {
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    flexGrow: 1,
+  },
   webview: {
     flex: 1,
     height: 100,
@@ -381,7 +386,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 64,
     // position: 'absolute',
-    backgroundColor: '#fff',
+    // backgroundColor: '#f6f6f6',
     alignItems: 'center',
     justifyContent: 'center',
   },

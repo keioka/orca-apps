@@ -73,7 +73,7 @@ const lessonSlice = createSlice({
 
     builder.addCase(fetchLesson.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message || 'Failed to fetch lesson';
+      state.error = action.error.payload || 'Failed to fetch lesson';
     });
 
     builder.addCase(createLesson.pending, (state) => {
@@ -98,7 +98,7 @@ const lessonSlice = createSlice({
 
 export const { clearCreatedLessonId } = lessonSlice.actions;
 
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.NODE_ENV === "development" ? "http://192.168.1.2:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
 
 export const fetchLesson = createAsyncThunk(
   'lesson/fetchLesson',
@@ -134,7 +134,7 @@ export const fetchLesson = createAsyncThunk(
 );
 
 // Define the async thunk to fetch the lesson
-export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ materialId }, { getState, rejectWithValue }) => {
+export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async (_, { getState, rejectWithValue }) => {
   try {
     const { auth } = getState()
     const { session } = auth
@@ -142,7 +142,7 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ ma
       rejectWithValue('No session found')
     }
 
-    const token = session?.access_token
+    const token = session?.accessToken
     if (!token) {
       return rejectWithValue('No session found')
     }

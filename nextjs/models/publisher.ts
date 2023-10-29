@@ -1,7 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from '../db'
 
 export function getPublisherByDomain(domain: string) {
-  const prisma = new PrismaClient();
   return prisma.publisher.findUnique({
     where: {
       domain: domain

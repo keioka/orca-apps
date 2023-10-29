@@ -37,9 +37,9 @@ export const CardVocab = ({
   vocab: {
     word,
     meaning,
-    meaningTrans,
     example,
-    pronunce
+    pronounce,
+    translation
   },
 }: {
   vocab: {
@@ -48,18 +48,21 @@ export const CardVocab = ({
     meaningTrans: string;
     example: string;
     image: string;
-    pronunce: string;
+    pronounce: string;
+    translation: {
+      content: string;
+    }
   }
 }) => {
   return (
     <Card style={[styles.cardBase, styles.card]}>
       <Card.Content style={styles.cardContent}>
         <Text style={styles.vocab}>{word}</Text>
-        <Text>{pronunce}</Text>
+        <Text>{pronounce}</Text>
 
         <View style={styles.sectionMeaning}>
           <Text style={styles.meaning}>{meaning}</Text>
-          <Text style={styles.meaning}>{meaningTrans}</Text>
+          <Text style={styles.meaning}>{translation ? translation[0].content : null}</Text>
         </View>
         <View style={styles.sectionExample}>
           <Text style={styles.subtitle}>Example</Text>
@@ -118,7 +121,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   card: {
-    width: '90%',
+    width: '100%',
     // border: '1px solid #f4f4f4',
     paddingVertical: 24
   },

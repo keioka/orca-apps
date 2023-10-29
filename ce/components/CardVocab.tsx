@@ -82,7 +82,7 @@ export function CardVocab({
         </Stack>
         <Stack direction="row" spacing={1} sx={{ paddingTop: 1 }}>
           <Typography variant="body2" component="h6">
-            {vocab.transJaByContext}（英：{vocab.meaning}）
+            {vocab.transMeaningJaByContext}（英：{vocab.meaning}）
           </Typography>
         </Stack>
         <Stack spacing={1} sx={{ paddingTop: 1 }}>

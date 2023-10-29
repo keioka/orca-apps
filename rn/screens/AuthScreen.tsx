@@ -15,9 +15,13 @@ export function AuthScreen({ navigation }) {
 
   useEffect(() => {
     if (session) {
-      navigation.navigate('Home')
+      navigation.navigate('Main')
     }
   })
+
+  const handleSignupGoogle = async () => {
+    dispatch(signUpWithEmail({ email, password }))
+  }
 
   const handleSignup = async () => {
     dispatch(signUpWithEmail({ email, password }))

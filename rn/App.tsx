@@ -5,6 +5,7 @@ import { CardArticle } from './components/CardArticle';
 import { FeedScreen } from './screens/FeedScreen';
 import { LessonScreen } from './screens/LessonScreen';
 import { HistoryScreen } from './screens/HistoryScreen';
+import { TalkScreen } from './screens/TalkScreen';
 import { NoteScreen } from './screens/NoteScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -14,14 +15,19 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { AuthScreen } from './screens/AuthScreen';
+import { ProfileScreen } from './screens/ProfileScreen';
+import { SplashScreen } from './screens/SplashScreen';
+
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setSession } from './redux/features/auth'
 import { firebase } from './firebase'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { fetchLessons } from './redux/features/lessons';
 import { Snackbar } from 'react-native-paper';
 import NetworkLogger from 'react-native-network-logger';
 import LogRocket from '@logrocket/react-native';
+import "./googleAuth.ts"
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -108,12 +114,20 @@ const HomeStack = () => (
       component={LessonScreen}
       options={{
         tabBarLabel: 'Lesson',
-      }} />
+      }}
+    />
+    <Tab.Screen
+      name="Talk"
+      component={TalkScreen}
+      options={{
+        tabBarLabel: 'Talk',
+      }}
+    />
   </Stack.Navigator>
 )
 
-const RootStack = () => (
-  <Stack.Navigator initialRouteName="Main">
+const RootStack = ({ initialRouteName }) => (
+  <Stack.Navigator initialRouteName={initialRouteName}>
     <Tab.Screen
       name="Main"
       component={MainTab}
@@ -128,14 +142,26 @@ const RootStack = () => (
         headerShown: false,
       }}
     />
+    <Tab.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
   </Stack.Navigator>
 )
 
-const Root = () => {
+const Root = ({ navigation }) => {
   const dispatch = useAppDispatch()
+  const [session, errorSession] = useAppSelector((state) => [state.auth.session, state.auth.error])
   const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSignedin, setIsSignin] = useState(false)
 
   useEffect(() => {
+    setIsLoading(true)
+
     try {
       const auth = getAuth(firebase);
       console.log("============ Init onAuthStateChanged ============")
@@ -146,14 +172,21 @@ const Root = () => {
             accessToken: user.accessToken,
             uid: user.uid,
           }))
+          dispatch(fetchLessons())
         } else {
+          console.log("========================================")
+          console.log({ navigation })
+          navigation.navigate('Auth')
           dispatch(setSession(null))
         }
       })
     } catch (error) {
       console.error(error)
       setError(error.message)
+    } finally {
+      setIsLoading(false)
     }
+
   }, [])
 
   if (error) {
@@ -164,8 +197,13 @@ const Root = () => {
     )
   }
 
+
+  if (isLoading) {
+    return <SplashScreen />
+  }
+
   return (
-    <RootStack />
+    <RootStack initialRouteName={isSignedin ? "Main" : "Auth"} />
   )
 }
 

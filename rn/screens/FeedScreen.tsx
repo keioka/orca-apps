@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Modal, Portal, Text, Snackbar } from 'react-native-paper';
@@ -60,14 +60,17 @@ const categories = [
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
   const { feed, status, error } = useAppSelector((state) => state.feed);
-  const { creating, createdLessonId, error: errorLesson } = useAppSelector((state) => state.lessons);
-
-  const { items, } = useAppSelector((state) => state.materials);
+  const { lessons, creating, createdLessonId, error: errorLesson } = useAppSelector((state) => state.lessons);
+  const { items } = useAppSelector((state) => state.materials);
   const session = useAppSelector((state) => state.auth.session)
   const [selectedCategory, setActiveCategory] = useState(categories[0].id)
 
   useEffect(() => {
-    dispatch(fetchMaterials())
+    dispatch(fetchMaterials({
+      category: selectedCategory === 0 ? null : categories[selectedCategory].title,
+      offset: 0,
+      limit: 50
+    }))
   }, [])
 
   useEffect(() => {
@@ -77,6 +80,17 @@ export function FeedScreen({ navigation }) {
     }
   }, [creating, createdLessonId])
 
+  const materials = useMemo(() => {
+    return items.map((item) => {
+      const lesson = lessons.find((lesson) => lesson.materialId === item.id)
+      return {
+        ...item,
+        lessonId: lesson?.id
+      }
+    })
+  }, [items, lessons])
+
+  console.log({ materials })
   const handleSignOut = async () => {
     dispatch(signOut())
     navigation.navigate('Auth')
@@ -99,8 +113,6 @@ export function FeedScreen({ navigation }) {
     clearError()
   }
 
-  console.log({ items })
-
   return (
     <View style={styles.container}>
       <Portal>
@@ -122,7 +134,7 @@ export function FeedScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={styles.headerDateText}>July 19</Text>
+          <Text style={styles.headerDateText}>{getToday()}</Text>
           <TouchableOpacity onPress={handlePress}>
             {session ? <View>
               {/* <Text style={styles.headerDateText}>s</Text> */}
@@ -143,7 +155,7 @@ export function FeedScreen({ navigation }) {
         >
           {categories.map((category) => {
             return (
-              <TouchableOpacity onPress={() => setActiveCategory(category.id)}>
+              <TouchableOpacity key={category.id} onPress={() => setActiveCategory(category.id)}>
                 <View style={[{ justifyContent: "center", alignItems: "center", width: 96, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.id && { borderBottomColor: "#4CB8C4" }]}>
                   <Ionicons name={category.icon} size={24} color={selectedCategory === category.id ? "#4CB8C4" : "#242424"} />
                   <Text style={{ marginTop: 8, }}>{category.title}</Text>
@@ -155,19 +167,23 @@ export function FeedScreen({ navigation }) {
         </ScrollView>
         {
           feed.map((item, index) => (
-            <CardArticle
-              item={item}
-              onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
-            />
+            <View key={index} style={{ marginVertical: 2, width: "95%" }}>
+              <CardArticle
+                item={item}
+                onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
+              />
+            </View>
           ))
         }
         {
-          items.map((item, index) => (
-            <CardArticle
-              item={item}
-              onPressStart={() => onPressStart({ url: item.url, lessonId: item.lessonId, materialId: item.id })}
-              lessonId={item.lessonId}
-            />
+          materials.map((item, index) => (
+            <View key={item.id} style={{ marginVertical: 2, width: "95%" }}>
+              <CardArticle
+                item={item}
+                onPressStart={() => onPressStart({ url: item.url, lessonId: item.lessonId, materialId: item.id, lessonId: item.lessonId })}
+                lessonId={item.lessonId}
+              />
+            </View>
           ))
         }
       </ScrollView>
@@ -218,3 +234,44 @@ const styles = StyleSheet.create({
     // paddingTop: 96,
   },
 });
+
+function getDayWithSuffix(day: number) {
+  if (day >= 11 && day <= 13) {
+    return day + "th";
+  } else {
+    const lastDigit = day % 10;
+    switch (lastDigit) {
+      case 1:
+        return day + "st";
+      case 2:
+        return day + "nd";
+      case 3:
+        return day + "rd";
+      default:
+        return day + "th";
+    }
+  }
+}
+
+function getToday() {
+  // Create a new Date object
+  const currentDate = new Date();
+
+  // Define an array of month names
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  // Get the month and day from the current date
+  const month = monthNames[currentDate.getMonth()];
+  const day = currentDate.getDate();
+
+  // Get the day with the appropriate suffix
+  const formattedDay = getDayWithSuffix(day);
+
+  // Create the desired format
+  const formattedDate = `${month} ${formattedDay}`;
+
+  return formattedDate;
+}

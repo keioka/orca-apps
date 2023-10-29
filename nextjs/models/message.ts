@@ -1,19 +1,20 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from '../db'
 
 export async function createMessage({
   message,
+  type,
   createdById,
   lessonId
 }: {
   message: string;
+  type: "user" | "ai";
   createdById?: string;
   lessonId: string;
 }) {
 
   const data = {
-    fullContent: message,
+    content: message,
+    type,
     lesson: {
       connect: {
         id: Number(lessonId),
@@ -48,4 +49,14 @@ export async function listMessages(lessonId: string) {
   })
 
   return messages
+}
+
+export async function findMessageById(messageId: string) {
+  return await prisma.message.findUnique({
+    where: { id: parseInt(messageId) }
+  });
+}
+
+export async function addParaphrase(messageId: string) {
+
 }

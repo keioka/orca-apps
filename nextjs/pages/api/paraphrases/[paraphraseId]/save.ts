@@ -1,0 +1,46 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient } from '@prisma/client';
+import { validateToken } from '@/firebase';
+import { setCurrentUser } from '@/middleware/setCurrentUser';
+import * as ParaphraseModel from '@/models/paraphrase';
+
+const prisma = new PrismaClient();
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  try {
+    await validateToken(req, res)
+    await setCurrentUser(req, res)
+
+    if (req.method === 'POST') {
+      return await saveParaphraseHandler(req, res)
+    }
+
+    return res.status(405).json({ message: 'Method not allowed' });
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+async function saveParaphraseHandler(req: NextApiRequest, res: NextApiResponse) {
+  const { paraphraseId } = req.query;
+  const { currentUser } = req
+  try {
+
+    const isAllowed = await ParaphraseModel.pCheckSaveParaphrase({ paraphraseId, userId: currentUser.id })
+
+    if (!isAllowed) {
+      return res.status(403).json({ message: 'Permission denied' });
+    }
+
+    const savedPhraseInfo = await ParaphraseModel.saveParaphrase({ paraphraseId, userId: currentUser.id })
+
+    return res.status(200).json({ savedPhraseInfo });
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ error: "saveParaphraseHandler: Internal Server Error" });
+  }
+}

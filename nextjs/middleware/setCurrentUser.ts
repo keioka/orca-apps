@@ -3,11 +3,9 @@ import {
   NextApiResponse,
 } from 'next';
 
-import { PrismaClient } from '@prisma/client';
+import prisma from '../db';
 
-const prisma = new PrismaClient();
-
-export const setCurrentUser = async (req: NextApiRequest) => {
+export const setCurrentUser = async (req: NextApiRequest,) => {
 
   console.log("========setCurrentUser======")
 
@@ -33,7 +31,5 @@ export const setCurrentUser = async (req: NextApiRequest) => {
   } catch (err) {
     console.error(err)
     throw new Error("Failed to set current user");
-  } finally {
-    prisma.$disconnect()
   }
 }

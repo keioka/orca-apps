@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import { CardVocab } from '../components/CardVocab';
 import { vocab, phrases, grammar } from '../helpers/dummy';
 import { CardPhrase } from '../components/CardPhrase';
 import { CardGrammar } from '../components/CardGrammar';
-
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { fetchSavedVocab, fetchSavedParaphrases } from '../redux/features/note';
 
 enum NoteTab {
   Vocabulary = 'vocabulary',
@@ -16,6 +17,13 @@ enum NoteTab {
 
 export function NoteScreen() {
   const [tab, setTab] = useState(NoteTab.Vocabulary)
+  const dispatch = useAppDispatch()
+  const savedVocabularies = useAppSelector((state) => state.note.vocabularies)
+
+  useEffect(() => {
+    dispatch(fetchSavedVocab())
+    dispatch(fetchSavedParaphrases())
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -57,14 +65,18 @@ export function NoteScreen() {
         showsVerticalScrollIndicator={false}
       >
         {tab === NoteTab.Vocabulary && (
-          <View>
-            {vocab.map((item, index) => (
-              <View style={styles.cardWrapper}>
-                <CardVocab
-                  vocab={item}
-                />
-              </View>
-            ))}
+          <View style={{ width: "100%" }}>
+            {savedVocabularies.map((item, index) => {
+              const vocab = item.vocabulary
+              console.log({ vocab, item })
+              return (
+                <View style={styles.cardWrapper}>
+                  <CardVocab
+                    vocab={vocab}
+                  />
+                </View>
+              )
+            })}
           </View>
         )}
 

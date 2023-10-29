@@ -31,14 +31,18 @@ export default async function handler(
       text = await parseWebText(material.url)
     }
 
+    if (!text) {
+      console.error("Missing text");
+      return res.status(500).json({ message: 'Missing text' });
+    }
 
-    const splitContent = splitTextBySentenceWithWordCount(text, 250)
+    const splitContent = splitTextBySentenceWithWordCount(text.trim(), 250)
 
     const transLangCodeCap = capitalize(transLangCode)
 
     splitContent.forEach(async (content) => {
       const { vocabs } = await getVocabsFromText({
-        text: content,
+        text: content.trim(),
         transLangCode: transLangCodeCap
       })
 

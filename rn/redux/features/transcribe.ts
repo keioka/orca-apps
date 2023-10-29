@@ -13,7 +13,7 @@ const initialState: TranscribeState = {
   error: null,
 };
 
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.NODE_ENV === "development" ? "http://192.168.1.2:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
 
 export const transcribeAudio = createAsyncThunk(
   'transcribe/fetchTranscript',
