@@ -6,7 +6,7 @@ import { addInitialPublisherAndMaterials } from '@/utils/rss';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-      addInitialPublisherAndMaterials()
+      await addInitialPublisherAndMaterials()
       return res.status(201).json({ message: 'Success' });
     } catch (error) {
       console.error(error)
