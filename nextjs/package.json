@@ -12,7 +12,7 @@
     "build": "next build",
     "start": "next start",
     "test": "jest",
-    "db:migrate": "prisma migrate deploy --schema='./db/prisma/schema.prisma'",
+    "db:migrate": "prisma migrate dev --schema='./db/prisma/schema.prisma'",
     "db:rollback": "prisma migrate resolve --schema='./db/prisma/schema.prisma' --rolled-back",
     "type-check": "tsc --noEmit",
     "lint": "eslint --ignore-path .gitignore \"**/*.+(ts|js|tsx)\"",

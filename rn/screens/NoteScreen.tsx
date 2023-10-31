@@ -68,11 +68,11 @@ export function NoteScreen() {
           <View style={{ width: "100%" }}>
             {savedVocabularies.map((item, index) => {
               const vocab = item.vocabulary
-              console.log({ vocab, item })
               return (
-                <View style={styles.cardWrapper}>
+                <View key={`vocab_${vocab.id}`} style={styles.cardWrapper}>
                   <CardVocab
                     vocab={vocab}
+                    hideSaveButton
                   />
                 </View>
               )
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     marginBottom: 8,
-    width: "100%",
+    paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },

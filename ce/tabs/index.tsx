@@ -307,7 +307,6 @@ function Search() {
       return []
     }
 
-    console.log({ selectedCategory })
     return publishers
       .filter((publisher) => publisher.category === selectedCategory)
       .map((publisher) => {

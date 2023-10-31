@@ -13,11 +13,11 @@ export function AuthScreen({ navigation }) {
   const session = useAppSelector((state) => state.auth.session)
   const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    if (session) {
-      navigation.navigate('Main')
-    }
-  })
+  // useEffect(() => {
+  //   if (session) {
+  //     navigation.navigate('Main')
+  //   }
+  // })
 
   const handleSignupGoogle = async () => {
     dispatch(signUpWithEmail({ email, password }))

@@ -123,9 +123,11 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   textChip: {
-    fontSize: 8,
+    fontSize: 10,
     padding: 0,
     margin: 0,
+    marginTop: 4,
+    lineHeight: 0
   },
   btn: {
     borderRadius: 20,
