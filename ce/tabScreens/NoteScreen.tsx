@@ -12,7 +12,6 @@ import { Note } from "~components/Note"
 export function NoteScreen() {
   const data = useAppSelector(state => state.saveData)
 
-  console.log({ data })
   return (
     <Box>
       <Box sx={{ marginBottom: 2 }}>

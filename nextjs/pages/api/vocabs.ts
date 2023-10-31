@@ -54,12 +54,16 @@ export default async function handler(
         }
       })
 
-      await createVocabs({
-        vocabParams: mappedVocabs,
-        materialId
-      })
+      try {
+        await createVocabs({
+          vocabParams: mappedVocabs,
+          materialId
+        })
+      } catch (error) {
+        console.error(error);
+      }
 
-      return vocabs
+      return mappedVocabs
     })
 
     return res.status(200).json({ status: "IN_PROGRESS" });

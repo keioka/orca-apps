@@ -1,12 +1,13 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import feed from './features/feed';
-import messages from './features/messages';
+import message from './features/messages';
 import auth from './features/auth'
-import materials from './features/materials';
-import lessons from './features/lessons';
+import material from './features/materials';
+import lesson from './features/lessons';
 import transcribe from './features/transcribe';
 import videoInfo from './features/videoInfo';
 import note from './features/note';
+import publisher from './features/publishers';
 
 const logger = (storeAPI: any) => (next: any) => (action: any) => {
   console.log(`🔶 Dispatching: ${action.type}`, action)
@@ -19,12 +20,13 @@ export const store = configureStore({
   reducer: {
     auth: auth,
     feed: feed,
-    materials: materials,
-    messages: messages,
-    lessons: lessons,
+    material: material,
+    message: message,
+    lesson: lesson,
     transcribe: transcribe,
     videoInfo: videoInfo,
     note: note,
+    publisher: publisher,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });

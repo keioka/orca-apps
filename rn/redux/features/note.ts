@@ -117,7 +117,7 @@ const noteDataSlice = createSlice({
 
 export const { saveParaphrases, saveGrammarMistakes, toggleArchive } = noteDataSlice.actions;
 
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://192.168.1.2:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
 export const saveVocab = createAsyncThunk(`note/saveVocab`, async ({ vocabId }: { vocabId: string }, { getState, rejectWithValue }) => {
   try {
@@ -126,6 +126,7 @@ export const saveVocab = createAsyncThunk(`note/saveVocab`, async ({ vocabId }: 
 
     const response = await axios.post(
       `${ROOT_URL}/api/vocabs/${vocabId}/save`,
+      null,
       {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -139,7 +140,7 @@ export const saveVocab = createAsyncThunk(`note/saveVocab`, async ({ vocabId }: 
 
     const saveInfo = response.data
 
-    return { saveInfo };
+    return saveInfo;
   } catch (error) {
     console.error(error)
     const errorMessage = error.response.data.message

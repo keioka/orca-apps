@@ -8,12 +8,14 @@ import { StyleSheet, ScrollView, Text, View } from 'react-native';
 export function TalkScreen({ route, navigation }) {
   const dispatch = useAppDispatch()
   const lessonId = route.params.lessonId
-  const lesson = useAppSelector(state => { return state.lessons.lessons.find((lesson) => lesson.id === lessonId) })
+  const lesson = useAppSelector(state => { return state.lesson.lessons.find((lesson) => lesson.id === lessonId) })
 
   const onPressToggle = () => navigation.navigate('Lesson', { lessonId })
 
   useEffect(() => {
-    dispatch(fetchLesson(lessonId))
+    if (!lesson) {
+      dispatch(fetchLesson(lessonId))
+    }
     dispatch(fetchMessages(lessonId))
   }, [])
 

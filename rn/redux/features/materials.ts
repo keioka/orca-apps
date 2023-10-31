@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
+import { uniqBy } from 'lodash';
 import axios from 'axios';
 // Define the type for the material
 interface Material {
@@ -9,6 +10,7 @@ interface Material {
   category: string;
   url: string;
   publishedAt: string;
+
 }
 
 // Define the type for the state
@@ -16,6 +18,7 @@ interface MaterialsState {
   items: Material[];
   loading: boolean;
   isFetchingSummary: boolean;
+  isFetchingVocabs: boolean;
   error: string | null;
   vocabs: { [key: string]: string[] }
   summaries: { [key: string]: string[] }
@@ -33,10 +36,11 @@ const initialState: MaterialsState = {
   summaries: {},
   loading: false,
   isFetchingSummary: false,
+  isFetchingVocabs: false,
   error: null,
 };
 
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://192.168.1.2:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
 // Create the materials slice
 const materialsSlice = createSlice({
@@ -73,7 +77,7 @@ const materialsSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(fetchVocabs.pending, (state) => {
-
+        state.isFetchingVocabs = true;
       })
       .addCase(fetchVocabs.fulfilled, (state, action) => {
         const { vocabs, materialId } = action.payload
@@ -81,7 +85,11 @@ const materialsSlice = createSlice({
           state.vocabs[materialId] = []
         }
 
-        state.vocabs[materialId] = [...state.vocabs[materialId], ...vocabs]
+        state.vocabs[materialId] = uniqBy([...state.vocabs[materialId], ...vocabs], 'id')
+        state.isFetchingVocabs = false
+      })
+      .addCase(fetchVocabs.rejected, (state, action) => {
+        state.isFetchingVocabs = false
       })
       .addCase(fetchSummaries.pending, (state) => {
         state.isFetchingSummary = true;
@@ -91,7 +99,7 @@ const materialsSlice = createSlice({
         if (!state.summaries[materialId]) {
           state.summaries[materialId] = []
         }
-        state.summaries[materialId] = [...state.summaries[materialId], ...summaries]
+        state.summaries[materialId] = uniqBy([...state.summaries[materialId], ...summaries], 'id')
         state.isFetchingSummary = false
       })
       .addCase(fetchSummaries.rejected, (state, action) => {
@@ -106,9 +114,9 @@ export const { clearError, setLessonIdToMaterial } = materialsSlice.actions;
 export default materialsSlice.reducer;
 
 // Selectors
-export const selectMaterials = (state: RootState) => state.materials.items;
-export const selectLoading = (state: RootState) => state.materials.loading;
-export const selectError = (state: RootState) => state.materials.error;
+export const selectMaterials = (state: RootState) => state.material.items;
+export const selectLoading = (state: RootState) => state.material.loading;
+export const selectError = (state: RootState) => state.material.error;
 
 
 interface FetchMaterialsParams {

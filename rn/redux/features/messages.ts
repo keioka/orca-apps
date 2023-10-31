@@ -5,7 +5,7 @@ import { validateSessionAndToken } from '../../helpers/validate';
 
 const NAME = 'message'
 
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://192.168.1.2:3000" : "https://orca-fullstack.vercel.app";
+const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
 interface Message {
   text: string;
@@ -182,7 +182,7 @@ const messageSlice = createSlice({
         console.log({ messagesMap })
         state.status = LoadingStatus.SUCCESS;
         state.messageMap = {
-          ...state.messages,
+          ...state.message,
           [lessonId]: messagesMap
         };
 

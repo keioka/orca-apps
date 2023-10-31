@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, Text, View } from 'react-native';
 import { CardArticle } from './components/CardArticle';
@@ -15,18 +15,18 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { AuthScreen } from './screens/AuthScreen';
-import { ProfileScreen } from './screens/ProfileScreen';
+import { CategoryScreen } from './screens/CategoryScreen';
 import { SplashScreen } from './screens/SplashScreen';
-
-import { useEffect } from 'react';
+import { AppState } from 'react-native';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { setSession } from './redux/features/auth'
+import { setSession, refreshToken } from './redux/features/auth'
 import { firebase } from './firebase'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { fetchLessons } from './redux/features/lessons';
 import { Snackbar } from 'react-native-paper';
 import NetworkLogger from 'react-native-network-logger';
 import LogRocket from '@logrocket/react-native';
+import 'react-native-url-polyfill/auto';
 import "./googleAuth.ts"
 
 const Stack = createNativeStackNavigator();
@@ -126,38 +126,45 @@ const HomeStack = () => (
   </Stack.Navigator>
 )
 
-const RootStack = ({ initialRouteName }) => (
-  <Stack.Navigator initialRouteName={initialRouteName}>
-    <Tab.Screen
-      name="Main"
-      component={MainTab}
-      options={{
-        headerShown: false,
-      }}
-    />
-    <Tab.Screen
-      name="Auth"
-      component={AuthScreen}
-      options={{
-        headerShown: false,
-      }}
-    />
-    <Tab.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={{
-        headerShown: false,
-      }}
-    />
+const RootStack = ({ isLogin }) => (
+  <Stack.Navigator>
+    {isLogin ?
+      <>
+        <Stack.Screen
+          name="Main"
+          component={MainTab}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Category"
+          component={CategoryScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </> :
+      <>
+        <Stack.Screen
+          name="Auth"
+          component={AuthScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </>
+    }
   </Stack.Navigator>
 )
 
-const Root = ({ navigation }) => {
+const Root = () => {
   const dispatch = useAppDispatch()
+  const appState = useRef(AppState.currentState);
   const [session, errorSession] = useAppSelector((state) => [state.auth.session, state.auth.error])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isSignedin, setIsSignin] = useState(false)
+  const isLogin = !!session
 
   useEffect(() => {
     setIsLoading(true)
@@ -174,9 +181,6 @@ const Root = ({ navigation }) => {
           }))
           dispatch(fetchLessons())
         } else {
-          console.log("========================================")
-          console.log({ navigation })
-          navigation.navigate('Auth')
           dispatch(setSession(null))
         }
       })
@@ -188,6 +192,25 @@ const Root = ({ navigation }) => {
     }
 
   }, [])
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        dispatch(refreshToken())
+        console.log('App has come to the foreground!');
+      }
+
+      appState.current = nextAppState;
+      console.log('AppState', appState.current);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   if (error) {
     return (
@@ -202,8 +225,9 @@ const Root = ({ navigation }) => {
     return <SplashScreen />
   }
 
+  console.log({ isLogin })
   return (
-    <RootStack initialRouteName={isSignedin ? "Main" : "Auth"} />
+    <RootStack isLogin={isLogin} />
   )
 }
 

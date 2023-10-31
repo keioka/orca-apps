@@ -44,7 +44,7 @@ const chartConfig = {
 
 export function HistoryScreen({ navigation }) {
   const { feed, status, error } = useAppSelector((state) => state.feed);
-  const { lessons } = useAppSelector((state) => state.lessons);
+  const { lessons } = useAppSelector((state) => state.lesson);
 
   const dispatch = useAppDispatch();
 

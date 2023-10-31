@@ -24,7 +24,7 @@ enum Mode {
   Talk = 'talk',
 }
 
-const apiUrl = 'http://192.168.1.2:3000';
+const apiUrl = process.env.EXPO_PUBLIC_API_ROOT;
 
 async function getMetadata(url: string) {
   try {
@@ -44,14 +44,14 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
   const [message, setMessage] = useState()
   const [helper, setHelper] = useState(null)
   const dispatch = useAppDispatch()
-  const messages = useAppSelector(state => { return state.messages.messageMap[lesson.id] || [] })
-  const statusCreate = useAppSelector(state => { return state.messages.statusCreate })
+  const messages = useAppSelector(state => { return state.message.messageMap[lesson.id] || [] })
+  const statusCreate = useAppSelector(state => { return state.message.statusCreate })
   const [newsTitle, setNewsTitle] = useState("Loading");
   const [newsImageUrl, setNewsImageUrl] = useState(null);
   const [loadingMetadata, setLoadingMetadata] = useState(false)
   const { startRecording, stopRecording, file } = useAudio();
   const [openRecordingModal, setOpenRecordingModal] = useState(false);
-  const isAddingMessage = useAppSelector(state => { return state.messages.addingMessage })
+  const isAddingMessage = useAppSelector(state => { return state.message.addingMessage })
 
   const scrollViewRef = useRef(null);
 

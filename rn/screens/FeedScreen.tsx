@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback, } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, ScrollView, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, ScrollView, SafeAreaView, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Modal, Portal, Text, Snackbar } from 'react-native-paper';
 import { CardArticle } from '../components/CardArticle';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchMaterials, clearError } from '../redux/features/materials';
 import { createLesson, clearCreatedLessonId, clearError as clearErrorLesson } from '../redux/features/lessons';
 import { signOut } from '../redux/features/auth';
+import { clearHasSuccessCreateFollow } from '../redux/features/publishers';
 
 const categories = [
   {
@@ -60,17 +61,33 @@ const categories = [
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
   const { feed, status, error } = useAppSelector((state) => state.feed);
-  const { lessons, creating, createdLessonId, error: errorLesson } = useAppSelector((state) => state.lessons);
-  const { items } = useAppSelector((state) => state.materials);
+  const { lessons, creating, createdLessonId, error: errorLesson } = useAppSelector((state) => state.lesson);
+  const { items } = useAppSelector((state) => state.material);
   const session = useAppSelector((state) => state.auth.session)
   const [selectedCategory, setActiveCategory] = useState(categories[0].id)
+  const [refreshing, setRefreshing] = useState(false);
+  const [offset, setOffset] = useState(0);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    dispatch(fetchMaterials({
+      category: selectedCategory === 0 ? null : categories[selectedCategory].title,
+      offset,
+      limit: 50
+    }))
+    setOffset(offset + 50)
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     dispatch(fetchMaterials({
       category: selectedCategory === 0 ? null : categories[selectedCategory].title,
-      offset: 0,
+      offset,
       limit: 50
     }))
+    setOffset(offset + 50)
   }, [])
 
   useEffect(() => {
@@ -113,8 +130,13 @@ export function FeedScreen({ navigation }) {
     clearError()
   }
 
+  const handleNavigateToCategory = () => {
+    dispatch(clearHasSuccessCreateFollow())
+    navigation.navigate('Category')
+  }
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Portal>
         <Modal visible={creating} dismissable={false}>
           <View style={{
@@ -128,9 +150,8 @@ export function FeedScreen({ navigation }) {
           </View>
         </Modal>
       </Portal>
-      <ScrollView
+      <View
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContainer}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
@@ -163,37 +184,51 @@ export function FeedScreen({ navigation }) {
               </TouchableOpacity>
             )
           })}
+          <TouchableOpacity key="category_add" onPress={handleNavigateToCategory}>
+            <View style={[{ justifyContent: "center", alignItems: "center", width: 96, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }]}>
+              <Ionicons name="add-circle-outline" size={24} color="#242424" />
+              <Text style={{ marginTop: 8, }}>Add</Text>
+            </View>
+          </TouchableOpacity>
 
         </ScrollView>
-        {
-          feed.map((item, index) => (
-            <View key={index} style={{ marginVertical: 2, width: "95%" }}>
-              <CardArticle
-                item={item}
-                onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
-              />
-            </View>
-          ))
-        }
-        {
-          materials.map((item, index) => (
-            <View key={item.id} style={{ marginVertical: 2, width: "95%" }}>
-              <CardArticle
-                item={item}
-                onPressStart={() => onPressStart({ url: item.url, lessonId: item.lessonId, materialId: item.id, lessonId: item.lessonId })}
-                lessonId={item.lessonId}
-              />
-            </View>
-          ))
-        }
-      </ScrollView>
+        <ScrollView
+          contentContainerStyle={styles.scrollViewContainer}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          {
+            feed.map((item, index) => (
+              <View key={index} style={{ marginVertical: 2, width: "95%" }}>
+                <CardArticle
+                  item={item}
+                  onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
+                />
+              </View>
+            ))
+          }
+          {
+            materials.map((item, index) => (
+              <View key={item.id} style={{ marginVertical: 2, width: "95%" }}>
+                <CardArticle
+                  item={item}
+                  onPressStart={() => onPressStart({ url: item.url, lessonId: item.lessonId, materialId: item.id, lessonId: item.lessonId })}
+                  lessonId={item.lessonId}
+                />
+              </View>
+            ))
+          }
+        </ScrollView>
+      </View>
       <Snackbar
         visible={!!error || !!errorLesson}
         onDismiss={handleClearAllErrors}
       >
         {error || errorLesson}
       </Snackbar>
-    </View >
+    </SafeAreaView >
   );
 }
 
@@ -207,13 +242,14 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     width: '100%',
+    height: '100%',
   },
   scrollViewContainer: {
     alignItems: 'center',
   },
   header: {
     width: '100%',
-    paddingTop: 60,
+    paddingTop: 30,
     // paddingBottom: 24,
     paddingHorizontal: 24,
     flexDirection: 'row',

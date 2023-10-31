@@ -108,6 +108,7 @@ model Vocabulary {
   translation       Translation[]
   savedVocabularies SavedVocabularies[]
 
+  @@unique([word, materialId])
   @@map("vocabularies")
 }
 

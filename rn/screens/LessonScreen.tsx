@@ -1,24 +1,17 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, Text, View, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { CardSummary } from '../components/CardSummary';
 import { CardVocab, CardVocabXS } from '../components/CardVocab';
 import { WebView } from 'react-native-webview';
-import { TextInput, Card } from 'react-native-paper';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { vocab } from '../helpers/dummy';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { LoadingStatus } from '../redux/types';
 import { fetchLesson } from '../redux/features/lessons';
 import { fetchMessages } from '../redux/features/messages';
-import { messages as messageDummy } from '../helpers/dummy'
-import { Audio } from "expo-av";
-import { TalkMode } from '../components/TalkMode';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from '../components/Button';
 import { fetchVocabs, createVocabs, fetchSummaries } from '../redux/features/materials';
 import { utc } from 'moment';
 import { ActivityIndicator } from 'react-native';
+import { saveVocab } from '../redux/features/note';
+import { createSelector } from 'reselect';
 
 enum LearningModeTab {
   Article = 'article',
@@ -42,10 +35,10 @@ function SummaryTab({ materialId }: { materialId: string }) {
   const dispatch = useAppDispatch()
   const summaries = useAppSelector(state => {
     if (!materialId) return []
-    if (!state.materials.summaries[materialId]) return []
-    return state.materials.summaries[materialId]
+    if (!state.material.summaries[materialId]) return []
+    return state.material.summaries[materialId]
   })
-  const isFetchingSummary = useAppSelector(state => state.materials.isFetchingSummary)
+  const isFetchingSummary = useAppSelector(state => state.material.isFetchingSummary)
 
   const [tabLevel, setTabLevel] = useState(levels[0])
 
@@ -133,13 +126,26 @@ function SummaryTab({ materialId }: { materialId: string }) {
 
 function VocabularyTab({ materialId }: { materialId: string }) {
   const dispatch = useAppDispatch()
-  const vocabs = useAppSelector(state => { return state.materials.vocabs[materialId] || [] })
+
+  // Step 1: Create input selectors
+  const getMaterialsState = state => state.material;
+  const getMaterialId = (state, materialId) => materialId;
+
+  // Step 2: Create the memoized selector using createSelector
+  const selectVocabsByMaterialId = createSelector(
+    [getMaterialsState, getMaterialId],
+    (materials, materialId) => materials.vocabs[materialId] || []
+  );
+
+  const vocabs = useAppSelector(state => selectVocabsByMaterialId(state, materialId));
+  const isFetchingVocabs = useAppSelector(state => state.material.isFetchingVocabs)
 
   useEffect(() => {
     dispatch(createVocabs({ materialId }))
 
 
     const interval = setInterval(() => {
+      console.log("fetchVocabsInterval")
       dispatch(fetchVocabs({ materialId }))
     }, 10000)
 
@@ -149,6 +155,9 @@ function VocabularyTab({ materialId }: { materialId: string }) {
     }
   }, [])
 
+  const handleClickSave = (vocab) => {
+    dispatch(saveVocab({ vocabId: vocab.id }))
+  }
   // const 
   return (
     <ScrollView
@@ -157,10 +166,15 @@ function VocabularyTab({ materialId }: { materialId: string }) {
       showsVerticalScrollIndicator={false}
     >
       {vocabs.map((item, index) => (
-        <View style={styles.cardWrapper}>
-          <CardVocab vocab={item} />
+        <View key={`vocab_${item.id}`} style={styles.cardWrapper}>
+          <CardVocab vocab={item} onClickSave={() => handleClickSave(item)} />
         </View>
       ))}
+      {isFetchingVocabs && (
+        <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator size="large" color="#007991" />
+        </View>
+      )}
     </ScrollView>
   )
 }
@@ -285,8 +299,8 @@ enum Mode {
 export function LessonScreen({ route, navigation }) {
   const dispatch = useAppDispatch()
   const lessonId = route.params.lessonId
-  const lessons = useAppSelector(state => { return state.lessons.lessons })
-  const lesson = useAppSelector(state => { return state.lessons.lessons.find((lesson) => lesson.id === lessonId) })
+  const lessons = useAppSelector(state => { return state.lesson.lessons })
+  const lesson = useAppSelector(state => { return state.lesson.lessons.find((lesson) => lesson.id === lessonId) })
 
   const onPressToggle = () => navigation.navigate('Talk', { lessonId })
 

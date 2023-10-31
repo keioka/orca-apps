@@ -36,7 +36,7 @@ const lessonSlice = createSlice({
   extraReducers: (builder) => {
     // Define the async thunk to fetch the lesson
     builder.addCase(fetchLessons.fulfilled, (state, action) => {
-      state.lessons = action.payload;
+      state.lesson = action.payload;
       state.loading = false;
       state.error = null;
     });
@@ -55,11 +55,11 @@ const lessonSlice = createSlice({
     builder.addCase(fetchLesson.fulfilled, (state, action) => {
       const updatedLesson = action.payload;
       console.log({ a: action.payload })
-      const index = state.lessons.findIndex((lesson) => lesson.id === updatedLesson.id);
+      const index = state.lesson.findIndex((lesson) => lesson.id === updatedLesson.id);
       if (index !== -1) {
-        state.lessons[index] = updatedLesson;
+        state.lesson[index] = updatedLesson;
       } else {
-        state.lessons.push(updatedLesson);
+        state.lesson.push(updatedLesson);
       }
 
       state.loading = false;
@@ -82,7 +82,7 @@ const lessonSlice = createSlice({
     });
 
     builder.addCase(createLesson.fulfilled, (state, action) => {
-      state.lessons = [...state.lessons, action.payload];
+      state.lesson = [...state.lesson, action.payload];
       state.createdLessonId = action.payload.id;
       state.creating = false;
       state.error = null;
@@ -98,7 +98,7 @@ const lessonSlice = createSlice({
 
 export const { clearCreatedLessonId } = lessonSlice.actions;
 
-const ROOT_URL = process.env.NODE_ENV === "development" ? "http://192.168.1.2:3000" : "https://orca-fullstack.vercel.app"  // process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
 export const fetchLesson = createAsyncThunk(
   'lesson/fetchLesson',
@@ -147,19 +147,16 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async (_, {
       return rejectWithValue('No session found')
     }
 
-    const response = await fetch(`${ROOT_URL}/api/lessons`, {
+    const response = await axios.get(`${ROOT_URL}/api/lessons`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     }); // Replace with your API endpoint
 
-
-    if (!response.ok) {
-      return rejectWithValue('Failed to fetch lesson');
-    }
-    const data = await response.json();
+    const data = await response.data;
     return data;
   } catch (error) {
+    console.error(error)
     return rejectWithValue('Failed to fetch lesson');
   }
 });
