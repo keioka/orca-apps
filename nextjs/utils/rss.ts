@@ -12,7 +12,7 @@ import realEstate from '../db/seedData/real_estate.json';
 import environment from '../db/seedData/environment.json';
 import finance from '../db/seedData/finance.json';
 import gaming from '../db/seedData/gaming.json';
-import lifestyle from '../db/seedData/lifestyle.json';
+// import lifestyle from '../db/seedData/lifestyle.json';
 import usNews from '../db/seedData/us_news.json';
 import worldNews from '../db/seedData/world_news.json';
 import vc from '../db/seedData/vc.json';
