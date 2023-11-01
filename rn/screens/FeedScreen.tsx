@@ -1,62 +1,15 @@
 import { useState, useEffect, useMemo, useCallback, } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, SafeAreaView, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { Modal, Portal, Text, Snackbar } from 'react-native-paper';
+import { Modal, Portal, Text, Snackbar, Button } from 'react-native-paper';
 import { CardArticle } from '../components/CardArticle';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchMaterials, clearError } from '../redux/features/materials';
 import { createLesson, clearCreatedLessonId, clearError as clearErrorLesson } from '../redux/features/lessons';
 import { signOut } from '../redux/features/auth';
-import { clearHasSuccessCreateFollow } from '../redux/features/publishers';
-
-const categories = [
-  {
-    id: 0,
-    title: 'For you',
-    icon: 'star-outline',
-  },
-  {
-    id: 1,
-    title: 'US News',
-    icon: 'book-outline',
-  },
-  {
-    id: 2,
-    title: 'World News',
-    icon: 'globe-outline',
-  },
-  {
-    id: 3,
-    title: 'Business',
-    icon: 'briefcase-outline',
-  },
-  {
-    id: 4,
-    title: 'Technology',
-    icon: 'hardware-chip-outline',
-  },
-  {
-    id: 5,
-    title: 'Entertainment',
-    icon: 'film-outline',
-  },
-  {
-    id: 6,
-    title: 'Sports',
-    icon: 'football-outline',
-  },
-  {
-    id: 7,
-    title: 'Science',
-    icon: 'flask-outline',
-  },
-  {
-    id: 8,
-    title: 'Health',
-    icon: 'heart-outline',
-  },
-]
+import { clearHasSuccessCreateFollow, fetchFollowPublishers } from '../redux/features/publishers';
+import { categories } from '../helpers/categories';
 
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
@@ -64,14 +17,37 @@ export function FeedScreen({ navigation }) {
   const { lessons, creating, createdLessonId, error: errorLesson } = useAppSelector((state) => state.lesson);
   const { items } = useAppSelector((state) => state.material);
   const session = useAppSelector((state) => state.auth.session)
-  const [selectedCategory, setActiveCategory] = useState(categories[0].id)
+  const [selectedCategory, setActiveCategory] = useState("all")
   const [refreshing, setRefreshing] = useState(false);
   const [offset, setOffset] = useState(0);
+  const followPublisherIds = useAppSelector((state) => state.publisher.followIds)
+  const followCategories = useAppSelector((state) => state.publisher.followCategories)
+
+  useEffect(() => {
+    dispatch(fetchFollowPublishers())
+  }, [])
+
+  useEffect(() => {
+    dispatch(fetchMaterials({
+      offset,
+      limit: 50,
+      followPublisherIds
+    }))
+    setOffset(offset + 50)
+
+  }, [followPublisherIds])
+
+  useEffect(() => {
+    if (createdLessonId) {
+      navigation.navigate('Lesson', { lessonId: createdLessonId })
+      dispatch(clearCreatedLessonId())
+    }
+  }, [creating, createdLessonId])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(fetchMaterials({
-      category: selectedCategory === 0 ? null : categories[selectedCategory].title,
+      // category: selectedCategory === "all" ? null : categories[selectedCategory].slug,
       offset,
       limit: 50
     }))
@@ -81,23 +57,9 @@ export function FeedScreen({ navigation }) {
     }, 2000);
   }, []);
 
-  useEffect(() => {
-    dispatch(fetchMaterials({
-      category: selectedCategory === 0 ? null : categories[selectedCategory].title,
-      offset,
-      limit: 50
-    }))
-    setOffset(offset + 50)
-  }, [])
-
-  useEffect(() => {
-    if (createdLessonId) {
-      navigation.navigate('Lesson', { lessonId: createdLessonId })
-      dispatch(clearCreatedLessonId())
-    }
-  }, [creating, createdLessonId])
 
   const materials = useMemo(() => {
+    if (!items) return []
     return items.map((item) => {
       const lesson = lessons.find((lesson) => lesson.materialId === item.id)
       return {
@@ -107,7 +69,19 @@ export function FeedScreen({ navigation }) {
     })
   }, [items, lessons])
 
-  console.log({ materials })
+  const selectedMaterials = useMemo(() => {
+    if (!materials) return []
+    if (selectedCategory === "all") {
+      return materials
+    }
+    return materials.filter((material) => material.publisher.category === selectedCategory)
+  }, [materials, selectedCategory])
+
+  const followCategoryItems = useMemo(() => {
+    if (!followCategories) return []
+    return categories.filter((category) => followCategories.includes(category.slug))
+  }, [followCategories])
+
   const handleSignOut = async () => {
     dispatch(signOut())
     navigation.navigate('Auth')
@@ -174,11 +148,18 @@ export function FeedScreen({ navigation }) {
           showsHorizontalScrollIndicator={false}
           horizontal
         >
-          {categories.map((category) => {
+          <TouchableOpacity key="all" onPress={() => setActiveCategory("all")}>
+            <View style={[{ justifyContent: "center", alignItems: "center", width: 96, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#4CB8C4" }]}>
+              <Ionicons name="star" size={24} color={selectedCategory === "all" ? "#4CB8C4" : "#242424"} />
+              <Text style={{ marginTop: 8, }}>All</Text>
+            </View>
+          </TouchableOpacity>
+
+          {followCategoryItems.map((category) => {
             return (
-              <TouchableOpacity key={category.id} onPress={() => setActiveCategory(category.id)}>
-                <View style={[{ justifyContent: "center", alignItems: "center", width: 96, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.id && { borderBottomColor: "#4CB8C4" }]}>
-                  <Ionicons name={category.icon} size={24} color={selectedCategory === category.id ? "#4CB8C4" : "#242424"} />
+              <TouchableOpacity key={category.slug} onPress={() => setActiveCategory(category.slug)}>
+                <View style={[{ justifyContent: "center", alignItems: "center", width: 96, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.slug && { borderBottomColor: "#4CB8C4" }]}>
+                  <Ionicons name={category.icon} size={24} color={selectedCategory === category.slug ? "#4CB8C4" : "#242424"} />
                   <Text style={{ marginTop: 8, }}>{category.title}</Text>
                 </View>
               </TouchableOpacity>
@@ -199,7 +180,7 @@ export function FeedScreen({ navigation }) {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          {
+          {/* {
             feed.map((item, index) => (
               <View key={index} style={{ marginVertical: 2, width: "95%" }}>
                 <CardArticle
@@ -208,9 +189,17 @@ export function FeedScreen({ navigation }) {
                 />
               </View>
             ))
+          } */}
+          {
+            materials.length === 0 && (
+              <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ color: "#242424" }}>No materials</Text>
+                <Button onPress={handleNavigateToCategory} mode="contained">Add News Feeds</Button>
+              </View>
+            )
           }
           {
-            materials.map((item, index) => (
+            selectedMaterials.map((item, index) => (
               <View key={item.id} style={{ marginVertical: 2, width: "95%" }}>
                 <CardArticle
                   item={item}

@@ -4,52 +4,26 @@ import { Card, Button, Tab, TabView, ActivityIndicator } from 'react-native-pape
 import { BsArrowRightCircleFill, BsArrowLeftCircleFill } from 'react-icons/bs'; // Note: you need to find alternative icons that work with React Native, react-icons won't work
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
-
-// ... (All other constant declarations and async functions remain the same)
-
-const locale = {
-  detail: {
-    en: "Detail",
-    ja: "詳細"
-  },
-  rephrase: {
-    en: "Rephrase",
-    ja: "言い換え表現"
-  },
-  grammar: {
-    en: "Grammar",
-    ja: "文法チェック"
-  },
-  mistake: {
-    en: "Mistake",
-    ja: "間違い"
-  },
-  reason: {
-    en: "Reason",
-    ja: "理由"
-  },
-  fix: {
-    en: "Fix",
-    ja: "修正提案"
-  }
-}
+import { useNavigation } from '@react-navigation/native';
 
 export const CardPhrase = ({
-  data: {
-    phrase,
-    paraphrase,
-  }
-}: {
-  data: {
-    phrase: string;
-    paraphrase: string;
-  }
+  data
 }) => {
+  const navigation = useNavigation();
+  console.log({ data })
+  const paraphrase = data.paraphrase.content
+  const originalSentence = data.paraphrase.sentence.message.content
+  const lesson = data.paraphrase.sentence.message.lesson
+  const material = lesson.material
+
+  function handlePressBackToLesson() {
+    navigation.navigate('Lesson', { lessonId: lesson.id })
+  }
+
   return (
     <Card style={styles.card}>
       <Card.Content style={styles.cardContent}>
-        <Text style={styles.phrase}>{phrase}</Text>
+        <Text style={styles.phrase}>{originalSentence}</Text>
         <View style={styles.sectionIcon}>
           <Ionicons name="caret-down-outline" size={24} color="lightgreen" />
         </View>
@@ -58,15 +32,15 @@ export const CardPhrase = ({
           <Text style={styles.subtitle}>Context</Text>
           {/* <Text style={styles.meaning}>{example}</Text> */}
           <View style={{ flex: 1, flexDirection: "row", marginTop: 8 }}>
-            <Image source={{ uri: "https://media.cnn.com/api/v1/images/stellar/prod/230714140340-george-clooney-file-052423-restricted.jpg?c=16x9&q=h_720,w_1280,c_fill/f_webp" }} style={{ width: 64, height: 32 }} />
+            {/* <Image source={{ uri: "https://media.cnn.com/api/v1/images/stellar/prod/230714140340-george-clooney-file-052423-restricted.jpg?c=16x9&q=h_720,w_1280,c_fill/f_webp" }} style={{ width: 64, height: 32 }} /> */}
             <View style={{ flex: 1, flexDirection: "row", marginLeft: 8, overflow: "hidden", flexGrow: 1 }}>
-              <Text style={{ flex: 1, width: "100%", overflow: "hidden", flexWrap: "nowrap", flexGrow: 1 }}>George Clooney says entertainment industry is at an ‘inflection point,’ as actors like Jason Sudeikis join picket lines</Text>
+              <Text style={{ flex: 1, width: "100%", overflow: "hidden", flexWrap: "nowrap", flexGrow: 1 }}>{material.title}</Text>
             </View>
           </View>
         </View>
       </Card.Content>
       <Card.Actions style={styles.cardContent}>
-        <Button style={styles.btn} textColor="#242424">Back to Lesson</Button>
+        <Button style={styles.btn} textColor="#242424" onPress={handlePressBackToLesson}>Back to Lesson</Button>
       </Card.Actions>
     </Card>
   );
@@ -77,7 +51,7 @@ const styles = StyleSheet.create({
     elevation: 0,
     shadowOpacity: 0,
     borderRadius: 4,
-    width: '90%',
+    width: '100%',
     // border: '1px solid #f4f4f4',
     backgroundColor: '#fff',
     paddingVertical: 24

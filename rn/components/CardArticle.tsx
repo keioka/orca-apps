@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Card, Title, Paragraph, Text, Chip } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { WebView } from 'react-native-webview';
 import { Button } from './Button';
+import { Image } from 'expo-image';
 
 interface CardArticleProps {
   item: {
@@ -18,6 +19,25 @@ interface CardArticleProps {
   onPressStart: () => void;
   hideSaveButton?: boolean;
   lessonId?: string;
+}
+
+const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M | azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj ? j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
+
+function fetchFavicon(url) {
+  // Try fetching favicon.ico from the root domain first
+  try {
+    //
+    const domain = new URL(url).origin;
+    const size = 24
+    // const faviconUrl = `${domain}/favicon.ico`;
+    const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`
+    return faviconUrl
+  } catch (err) {
+    console.error(err)
+    return null
+  }
 }
 
 export const CardArticle = ({
@@ -55,7 +75,19 @@ export const CardArticle = ({
         </View>
       </Card.Content>
     </TouchableOpacity>
-    <Card.Actions style={styles.cardAction}>
+    <View style={styles.cardAction}>
+
+      {item.publisher && <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
+        <Image
+          style={styles.publisherImg}
+          source={fetchFavicon(item.publisher.rssUrl) || item.publisher.imageUrl}
+          placeholder={blurhash}
+          contentFit="cover"
+          transition={1000}
+        />
+        <Text style={styles.textPublisherName}>{item.publisher.name}</Text>
+      </View>}
+
       <View style={styles.sectionActionButtons}>
         {/* <Button onPress={onPressStart} style={styles.btn} textColor="#fff" isGradient={!!lessonId}>{lessonId ? "Resume" : "Start"}</Button> */}
         {lessonId &&
@@ -63,13 +95,13 @@ export const CardArticle = ({
             Already
           </Chip>
         }
-        {!hideSaveButton &&
+        {/* {!hideSaveButton &&
           <TouchableOpacity onPress={onPressStart} style={styles.btnSave} textColor="#242424" >
             <Ionicons name="bookmark" size={18} color="#c6c6c6" />
           </TouchableOpacity>
-        }
+        } */}
       </View>
-    </Card.Actions>
+    </View>
   </Card>
 );
 
@@ -102,6 +134,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   cardAction: {
+    paddingVertical: 8,
+    paddingHorizontal: 18,
+    flexDirection: 'row',
     width: '100%',
     marginTop: 0,
     justifyContent: 'space-between',
@@ -156,6 +191,13 @@ const styles = StyleSheet.create({
   },
   sectionActionButtons: {
     flexDirection: 'row',
-  }
+  },
+  publisherImg: {
+    width: 24,
+    height: 24,
+    borderRadius: 8,
+    marginRight: 8,
+    resizeMode: 'contain'
+  },
 });
 

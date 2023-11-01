@@ -56,6 +56,17 @@ export async function getLesson(lessonId: string) {
   return lesson
 }
 
+export async function setInitMessage(lessonId: string) {
+  await prisma.lesson.update({
+    where: {
+      id: lessonId,
+    },
+    data: {
+      initMessage: true,
+    }
+  })
+}
+
 export async function findLessonByUserAndMaterial(params: { userId: string, materialId: string }): Promise<Lesson | null> {
   return prisma.lesson.findUnique({
     where: {

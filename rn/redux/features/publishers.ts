@@ -19,7 +19,6 @@ const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
 export const fetchPublishers = createAsyncThunk('publishers/fetch', async (_, { getState, rejectWithValue }) => {
   const state = getState()
-  console.log({ state })
   const token = validateSessionAndToken(state);
 
   try {
@@ -107,6 +106,7 @@ const publisherSlice = createSlice({
       .addCase(createFollowPublishers.fulfilled, (state, action: PayloadAction<any[]>) => {
         state.isCreatingFollow = false
         state.followIds = action.payload.publisherIds;
+        state.followCategories = action.payload.categories;
         state.hasSuccessCreateFollow = true
       })
       .addCase(createFollowPublishers.rejected, (state, action: PayloadAction<string | null>) => {
@@ -120,6 +120,7 @@ const publisherSlice = createSlice({
       .addCase(fetchFollowPublishers.fulfilled, (state, action: PayloadAction<any[]>) => {
         state.isFetchingFollow = false
         state.followIds = action.payload.publisherIds;
+        state.followCategories = action.payload.categories;
       })
       .addCase(fetchFollowPublishers.rejected, (state, action: PayloadAction<string | null>) => {
         state.isFetchingFollow = false

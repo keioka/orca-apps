@@ -19,11 +19,15 @@ export function NoteScreen() {
   const [tab, setTab] = useState(NoteTab.Vocabulary)
   const dispatch = useAppDispatch()
   const savedVocabularies = useAppSelector((state) => state.note.vocabularies)
+  const savedParaphrases = useAppSelector((state) => state.note.paraphrases)
 
   useEffect(() => {
     dispatch(fetchSavedVocab())
-    dispatch(fetchSavedParaphrases())
+    dispatch(fetchSavedParaphrases({}))
   }, [])
+
+
+  console.log({ savedParaphrases })
 
   return (
     <View style={styles.container}>
@@ -67,6 +71,7 @@ export function NoteScreen() {
         {tab === NoteTab.Vocabulary && (
           <View style={{ width: "100%" }}>
             {savedVocabularies.map((item, index) => {
+              console.log(item)
               const vocab = item.vocabulary
               return (
                 <View key={`vocab_${vocab.id}`} style={styles.cardWrapper}>
@@ -82,13 +87,16 @@ export function NoteScreen() {
 
         {tab === NoteTab.Phrase && (
           <View style={{ width: "100%" }}>
-            {phrases.map((item, index) => (
-              <View style={styles.cardWrapper}>
-                <CardPhrase
-                  data={item}
-                />
-              </View>
-            ))}
+            {savedParaphrases.map((item, index) => {
+              console.log(item)
+              return (
+                <View key={`phrase_${item.id}`} style={styles.cardWrapper}>
+                  <CardPhrase
+                    data={item}
+                  />
+                </View>
+              )
+            })}
           </View>
         )}
 

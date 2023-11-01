@@ -35,6 +35,7 @@ interface GetMaterialsParams {
   category?: string;
   offset?: number; // Offset for pagination
   limit?: number; // Maximum number of records to retrieve for pagination
+  publisherIds?: string[];
 }
 
 interface PaginationResult<T> {
@@ -59,6 +60,10 @@ export async function getMaterials(params: GetMaterialsParams): Promise<Paginati
 
   if (params.category) {
     where.category = { equals: params.category };
+  }
+
+  if (params.publisherIds) {
+    where.publisherId = { in: params.publisherIds };
   }
 
   // Retrieve the materials for the current page
@@ -112,6 +117,14 @@ export async function createMaterial(materialData: Omit<Material, 'id'>): Promis
     },
   });
   return material;
+}
+
+export async function upsertMaterial(materialData: Omit<Material, 'id'>): Promise<Material> {
+  return await prisma.material.upsert({
+    where: { url: materialData.url },
+    create: materialData,
+    update: materialData
+  });
 }
 
 interface VocabParams {

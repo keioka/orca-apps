@@ -4,36 +4,8 @@ import { Card, Button, Tab, TabView, ActivityIndicator } from 'react-native-pape
 import { BsArrowRightCircleFill, BsArrowLeftCircleFill } from 'react-icons/bs'; // Note: you need to find alternative icons that work with React Native, react-icons won't work
 import axios from 'axios';
 import * as Speech from 'expo-speech';
-import Icon from 'react-native-vector-icons/AntDesign';
-
-// ... (All other constant declarations and async functions remain the same)
-
-const locale = {
-  detail: {
-    en: "Detail",
-    ja: "詳細"
-  },
-  rephrase: {
-    en: "Rephrase",
-    ja: "言い換え表現"
-  },
-  grammar: {
-    en: "Grammar",
-    ja: "文法チェック"
-  },
-  mistake: {
-    en: "Mistake",
-    ja: "間違い"
-  },
-  reason: {
-    en: "Reason",
-    ja: "理由"
-  },
-  fix: {
-    en: "Fix",
-    ja: "修正提案"
-  }
-}
+import Ionicons from '@expo/vector-icons/Ionicons';
+import PreviewMaterial from './PreviewMaterial';
 
 export const CardVocab = ({
   vocab: {
@@ -42,7 +14,8 @@ export const CardVocab = ({
     example,
     pronounce,
     translation,
-    sentence
+    sentence,
+    material
   },
   onClickSave,
 }: {
@@ -59,6 +32,7 @@ export const CardVocab = ({
     }
   }
 }) => {
+
   const handlePressSpeak = () => {
     console.log("------- speak -------------")
     Speech.speak(word, {
@@ -81,7 +55,7 @@ export const CardVocab = ({
 
           <TouchableOpacity onPress={handlePressSpeak} >
             <View style={styles.buttonSpeak}>
-              <Icon name="sound" size={18} color="#242424" />
+              <Ionicons name="volume-medium-outline" size={18} color="#242424" />
             </View>
           </TouchableOpacity>
 
@@ -101,10 +75,20 @@ export const CardVocab = ({
             <Text style={styles.meaning}>{sentence}</Text>
           </View>
         </View>
+
+        {
+          material && (
+            <View style={{ marginTop: 16 }}>
+              <Text style={styles.subtitle}>Source</Text>
+              <PreviewMaterial material={material} />
+            </View>
+          )
+        }
       </Card.Content>
+
       <Card.Actions style={styles.cardContent}>
         {!!onClickSave && <Button textColor='#545454' style={{ backgroundColor: "#f4f4f4", borderColor: "#d4d4d4" }} onPress={onClickSave}>Save</Button>}
-        <Button textColor='#545454' style={{ backgroundColor: "#f4f4f4", borderColor: "#d4d4d4" }}>Back to the original</Button>
+        {/* <Button textColor='#545454' style={{ backgroundColor: "#f4f4f4", borderColor: "#d4d4d4" }}>Back to the original</Button> */}
       </Card.Actions>
     </Card>
   );

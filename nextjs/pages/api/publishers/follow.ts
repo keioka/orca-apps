@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { followPublishers, getFollowPublishers } from "@/models/publisher";
+import { followPublishers, getFollowPublishers, getFollowPublishersCategory } from "@/models/publisher";
 import { validateToken } from '@/firebase';
 import { setCurrentUser } from '@/middleware/setCurrentUser';
 
@@ -14,8 +14,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const followPublishers = await getFollowPublishers({ userId: req.currentUser?.id })
+    const categories = await getFollowPublishersCategory({ userId: req.currentUser?.id })
     const followPublisherIds = followPublishers.map((followPublisher) => followPublisher.publisherId)
-    return res.status(200).json({ publisherIds: followPublisherIds });
+    const followPublisherCategories = categories.map((followPublisher) => followPublisher.category)
+
+    return res.status(200).json({ publisherIds: followPublisherIds, categories: followPublisherCategories });
 
   } else if (req.method === "POST") {
     const { publisherIds } = req.body
@@ -35,7 +38,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     })
 
     await followPublishers({ publishers });
-    return res.status(201).json({ publisherIds });
+    const categories = await getFollowPublishersCategory({ userId: req.currentUser?.id })
+    const followPublisherCategories = categories.map((followPublisher) => followPublisher.category)
+    return res.status(201).json({ publisherIds, categories: followPublisherCategories });
   } else {
     res.status(405).json({ error: "Method not allowed" });
   }
