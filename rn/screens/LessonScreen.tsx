@@ -6,7 +6,8 @@ import { WebView } from 'react-native-webview';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchLesson } from '../redux/features/lessons';
 import { fetchMessages } from '../redux/features/messages';
-import { Button } from '../components/Button';
+// import { Button } from '../components/Button';
+import { Button } from 'react-native-paper';
 import { fetchVocabs, createVocabs, fetchSummaries } from '../redux/features/materials';
 import { utc } from 'moment';
 import { ActivityIndicator } from 'react-native';
@@ -179,7 +180,89 @@ function VocabularyTab({ materialId }: { materialId: string }) {
   )
 }
 
-function LearningMode({ onPressToggle, lesson, }: { onPressToggle: () => void, lesson: {} }) {
+function ArticleTab({ lesson, captions }: { materialId: string }) {
+  const [shouldShow, setShouldShow] = useState(false)
+  const [shouldEmbed, setShouldEmbed] = useState(true)
+
+
+  if (shouldShow) {
+    return (
+      <View style={{ position: "absolute", }}>
+        <WebView
+          startInLoadingState
+          mediaPlaybackRequiresUserAction
+          originWhitelist={['*']}
+          source={{ uri: lesson.material.url }}
+          style={styles.webview}
+        // menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
+        />
+      </View>
+    )
+  }
+
+  return (
+    <>
+      {lesson.material.type === "video" ?
+        <View style={{ flexGrow: 1 }}>
+          <WebView
+            originWhitelist={['*']}
+            source={{ uri: lesson.material.url }}
+            style={styles.youtubeWebview}
+            allowsFullscreenVideo={false}
+            allowFullScreen={false}
+            allowsInlineMediaPlayback
+          />
+          <ScrollView
+            style={{
+              flex: 1,
+              height: "100%",
+              width: "100%",
+              padding: 16,
+            }}
+            contentContainerStyle={{
+              flexGrow: 1,
+              width: "100%",
+              paddingBottom: 32,
+            }}
+          >
+            {captions.map((caption) => (
+              <View style={{
+                backgroundColor: "#fff",
+                height: 64,
+                marginVertical: 8,
+                padding: 16,
+                borderRadius: 12,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <Text style={{
+                  width: "100%",
+                }}>
+                  {utc(caption.offset).format('HH:mm:ss')}: {caption.text}
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
+        </View> :
+        <View style={{ height: "100%", width: "100%" }}>
+          {shouldEmbed && <WebView
+            startInLoadingState
+            mediaPlaybackRequiresUserAction
+            originWhitelist={['*']}
+            source={{ uri: lesson.material.url }}
+            style={styles.webview}
+          // menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
+          />}
+          {/* {!shouldEmbed && <View style={{ justifyContent: "center", alignItems: "center", height: "100%" }}>
+            <Button>Go to the website</Button>
+          </View>} */}
+        </View>
+      }
+    </>
+  )
+}
+
+function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, lesson: {} }) {
   const [tab, setTab] = useState(LearningModeTab.Article)
   const dispatch = useAppDispatch()
   const captions = useAppSelector(state => {
@@ -195,7 +278,7 @@ function LearningMode({ onPressToggle, lesson, }: { onPressToggle: () => void, l
       <View style={styles.menu}>
         <View style={[styles.tabWrapper]}>
           <TouchableOpacity onPress={() => setTab(LearningModeTab.Article)}>
-            <View style={[styles.button, tab === LearningModeTab.Article ? styles.buttonActive : null]}>
+            <View style={tab === LearningModeTab.Article ? styles.buttonActive : null}>
               <Text style={[styles.textMenu, tab === LearningModeTab.Article ? { color: "#242424" } : null]}>Article</Text>
             </View>
           </TouchableOpacity >
@@ -217,56 +300,7 @@ function LearningMode({ onPressToggle, lesson, }: { onPressToggle: () => void, l
       </View>
 
       {tab === LearningModeTab.Article &&
-        <>
-          {lesson.material.type === "video" ?
-            <View style={{ flexGrow: 1 }}>
-              <WebView
-                originWhitelist={['*']}
-                source={{ uri: lesson.material.url }}
-                style={styles.youtubeWebview}
-                allowsFullscreenVideo={false}
-                allowFullScreen={false}
-                allowsInlineMediaPlayback
-              />
-              <ScrollView
-                style={{
-                  flex: 1,
-                  height: "100%",
-                  width: "100%",
-                  padding: 16,
-                }}
-                contentContainerStyle={{
-                  flexGrow: 1,
-                  width: "100%",
-                  paddingBottom: 32,
-                }}
-              >
-                {captions.map((caption) => (
-                  <View style={{
-                    backgroundColor: "#fff",
-                    height: 64,
-                    marginVertical: 8,
-                    padding: 16,
-                    borderRadius: 12,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                    <Text style={{
-                      width: "100%",
-                    }}>
-                      {utc(caption.offset).format('HH:mm:ss')}: {caption.text}
-                    </Text>
-                  </View>
-                ))}
-              </ScrollView>
-            </View> : <WebView
-              startInLoadingState
-              originWhitelist={['*']}
-              source={{ uri: lesson.material.url }}
-              style={styles.webview}
-            // menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
-            />}
-        </>
+        <ArticleTab lesson={lesson} captions={captions} />
       }
       {
         tab === LearningModeTab.Summary && (
@@ -278,13 +312,9 @@ function LearningMode({ onPressToggle, lesson, }: { onPressToggle: () => void, l
           <VocabularyTab materialId={lesson.material.id} />
         )
       }
-      <TouchableOpacity onPress={onPressToggle}>
-        <View
-          style={styles.switch}
-        >
-          <Button onPress={onPressToggle}>
-            Go to {Mode.Talk} Mode
-          </Button>
+      <TouchableOpacity onPress={onPressToggle} style={styles.switch}>
+        <View>
+          <Text style={styles.buttonTalkMode}>Go to {Mode.Talk} Mode</Text>
         </View>
       </TouchableOpacity >
     </View >
@@ -299,7 +329,6 @@ enum Mode {
 export function LessonScreen({ route, navigation }) {
   const dispatch = useAppDispatch()
   const lessonId = route.params.lessonId
-  const lessons = useAppSelector(state => { return state.lesson.lessons })
   const lesson = useAppSelector(state => { return state.lesson.lessons.find((lesson) => lesson.id === lessonId) })
 
   const onPressToggle = () => navigation.navigate('Talk', { lessonId })
@@ -324,6 +353,7 @@ export function LessonScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   menu: {
     padding: 4,
+    height: 48,
     backgroundColor: '#242424',
     color: "#fff",
     flexDirection: 'row',
@@ -343,6 +373,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 16,
     alignItems: 'center',
+  },
+  buttonTalkMode: {
+    color: "#fff",
   },
   buttonActive: {
     backgroundColor: "#fff",
@@ -401,23 +434,16 @@ const styles = StyleSheet.create({
 
   },
   switch: {
+    position: 'absolute',
+    bottom: 0,
     width: "100%",
     flexGrow: 1,
     height: 64,
     // position: 'absolute',
-    backgroundColor: '#fff',
+    backgroundColor: 'blue',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  switchButton: {
-    height: 48,
-    borderRadius: 48,
-    backgroundColor: '#9FD1D5',
-    borderWidth: 0,
     color: "#fff",
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: "90%",
   },
   summaryView: {
     flexGrow: 1,

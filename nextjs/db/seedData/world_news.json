@@ -1,0 +1,605 @@
+[
+  {
+    "url": "http://feeds.bbci.co.uk/news/world/rss.xml"
+  },
+  {
+    "url": "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml"
+  },
+  {
+    "url": "http://www.aljazeera.com/xml/rss/all.xml"
+  },
+  {
+    "url": "https://defence-blog.com/feed/"
+  },
+  {
+    "url": "https://www.e-ir.info/feed/"
+  },
+  {
+    "url": "https://www.globalissues.org/news/feed"
+  },
+  {
+    "url": "https://www.thecipherbrief.com/feed"
+  },
+  {
+    "url": "https://www.yahoo.com/news/rss/world/"
+  },
+  {
+    "url": "https://www.blogger.com/feeds/468623359017296874/posts/default"
+  },
+  {
+    "url": "https://viralnow.uk/feed/"
+  },
+  {
+    "url": "http://rss.cnn.com/rss/edition_world.rss"
+  },
+  {
+    "url": "https://timesofindia.indiatimes.com/rssfeeds/296589292.cms"
+  },
+  {
+    "url": "https://www.cnbc.com/id/100727362/device/rss/rss.html"
+  },
+  {
+    "url": "https://feeds.washingtonpost.com/rss/world"
+  },
+  {
+    "url": "https://www.rt.com/rss/news/"
+  },
+  {
+    "url": "http://abcnews.go.com/abcnews/internationalheadlines"
+  },
+  {
+    "url": "https://feeds.feedburner.com/ndtvnews-world-news"
+  },
+  {
+    "url": "http://www.npr.org/rss/rss.php?id=1004"
+  },
+  {
+    "url": "https://www.thesun.co.uk/news/worldnews/feed/"
+  },
+  {
+    "url": "http://feeds.skynews.com/feeds/rss/world.xml"
+  },
+  {
+    "url": "http://feeds.feedburner.com/daily-express-world-news"
+  },
+  {
+    "url": "http://www.cbc.ca/cmlink/rss-world"
+  },
+  {
+    "url": "https://www.cbsnews.com/latest/rss/world"
+  },
+  {
+    "url": "http://feeds.feedburner.com/time/world"
+  },
+  {
+    "url": "https://time.com/feed/"
+  },
+  {
+    "url": "http://www.smh.com.au/rssheadlines/world/article/rss.xml"
+  },
+  {
+    "url": "https://www.france24.com/en/rss"
+  },
+  {
+    "url": "https://www.ctvnews.ca/rss/world/ctvnews-ca-world-public-rss-1.822289"
+  },
+  {
+    "url": "http://www.channelnewsasia.com/rssfeeds/8395884"
+  },
+  {
+    "url": "http://feeds.news24.com/articles/news24/World/rss"
+  },
+  {
+    "url": "https://globalnews.ca/world/feed/"
+  },
+  {
+    "url": "https://www.rawstory.com/category/world/feed/"
+  },
+  {
+    "url": "https://www.seattletimes.com/nation-world/world/feed/"
+  },
+  {
+    "url": "http://www.washingtontimes.com/rss/headlines/news/world"
+  },
+  {
+    "url": "https://www.dailytelegraph.com.au/news/world/rss"
+  },
+  {
+    "url": "http://www1.cbn.com/cbnnews/world/feed"
+  },
+  {
+    "url": "https://www.rand.org/topics/international-affairs.xml/feed"
+  },
+  {
+    "url": "https://warontherocks.com/feed/"
+  },
+  {
+    "url": "https://ifpnews.com/feed/"
+  },
+  {
+    "url": "https://247newsaroundtheworld.com/feed/"
+  },
+  {
+    "url": "https://dailyresearchplot.com/feed/"
+  },
+  {
+    "url": "https://wan-ifra.org/news/feed/"
+  },
+  {
+    "url": "https://feeds.thelocal.com/rss/es"
+  },
+  {
+    "url": "https://insidexpress.com/feed/"
+  },
+  {
+    "url": "https://smallwarsjournal.com/rss/blogs"
+  },
+  {
+    "url": "https://www.easternherald.com/feed/"
+  },
+  {
+    "url": "https://www.watchdoguganda.com/feed"
+  },
+  {
+    "url": "https://www.headlinesoftoday.com/feed"
+  },
+  {
+    "url": "https://quintdaily.com/feed/"
+  },
+  {
+    "url": "https://worldnewsera.com/feed/"
+  },
+  {
+    "url": "https://articleify.com/feed/"
+  },
+  {
+    "url": "https://internewscast.com/feed/"
+  },
+  {
+    "url": "https://newsblaze.com/feed/"
+  },
+  {
+    "url": "https://wowplus.net/feed/"
+  },
+  {
+    "url": "https://www.theunionjournal.com/feed/"
+  },
+  {
+    "url": "https://worldweeklynews.com/feed/"
+  },
+  {
+    "url": "https://globalpressjournal.com/feed/"
+  },
+  {
+    "url": "https://radarr.africa/feed/"
+  },
+  {
+    "url": "https://www.thenexthint.com/feed/"
+  },
+  {
+    "url": "http://feeds.feedburner.com/WarNewsUpdates"
+  },
+  {
+    "url": "https://www.forsige.com/feed/"
+  },
+  {
+    "url": "https://newslanes.com/feed/"
+  },
+  {
+    "url": "https://digitalive.world/feed/"
+  },
+  {
+    "url": "https://www.akinblog.com/feed/"
+  },
+  {
+    "url": "https://warritatafo.com/feed/"
+  },
+  {
+    "url": "https://www.blowthetruth.com/feeds/posts/default"
+  },
+  {
+    "url": "https://www.usnn.news/feed/"
+  },
+  {
+    "url": "http://worldunitednews.blogspot.com/feeds/posts/default"
+  },
+  {
+    "url": "https://www.scmp.com/rss/91/feed"
+  },
+  {
+    "url": "http://www.independent.co.uk/news/world/rss"
+  },
+  {
+    "url": "https://www.pri.org/stories/feed/everything"
+  },
+  {
+    "url": "https://hgsmediaplus.com/feed/"
+  },
+  {
+    "url": "https://www.latimes.com/world/rss2.0.xml"
+  },
+  {
+    "url": "https://www.abc.net.au/news/feed/52278/rss.xml"
+  },
+  {
+    "url": "http://www.mirror.co.uk/news/world-news/rss.xml"
+  },
+  {
+    "url": "https://internetprotocol.co/rss/"
+  },
+  {
+    "url": "https://3-mob.com/feed/"
+  },
+  {
+    "url": "https://editorialge.com/feed/"
+  },
+  {
+    "url": "https://www.worldstopexports.com/feed/"
+  },
+  {
+    "url": "https://reporter.am/feed"
+  },
+  {
+    "url": "https://rss.csmonitor.com/feeds/world"
+  },
+  {
+    "url": "https://rocetoday.com/feed/"
+  },
+  {
+    "url": "https://feeds.breakingnews.ie/bnworld"
+  },
+  {
+    "url": "https://salars.net/feed/"
+  },
+  {
+    "url": "https://bbcbreakingnews.com/feed/"
+  },
+  {
+    "url": "https://newsblenda.com/feed/"
+  },
+  {
+    "url": "https://www.spiegel.de/international/index.rss"
+  },
+  {
+    "url": "https://timespek.com/feed/"
+  },
+  {
+    "url": "https://justworldnews.org/feed/"
+  },
+  {
+    "url": "https://justworldeducational.org/category/blog/feed/"
+  },
+  {
+    "url": "https://www.igorbnews.com/feeds/posts/default?alt=rss"
+  },
+  {
+    "url": "https://www.dainikviral.com/feed"
+  },
+  {
+    "url": "https://worldupdatedaily.blogspot.com/feeds/posts/default?alt=rss"
+  },
+  {
+    "url": "https://swagonnews.com/feed/"
+  },
+  {
+    "url": "https://www.nhpolitician.com/feed/"
+  },
+  {
+    "url": "https://www.theguardian.com/world/rss"
+  },
+  {
+    "url": "https://www.buzzfeed.com/world.xml"
+  },
+  {
+    "url": "https://www.euronews.com/home/euronews/application/public/rss?%25level=program&name=nocomment"
+  },
+  {
+    "url": "https://www.vox.com/rss/world/index.xml"
+  },
+  {
+    "url": "http://www.thestar.com/content/thestar/feed.RSSManagerServlet.articles.news.world.rss"
+  },
+  {
+    "url": "https://www.brookings.edu/topic/international-affairs/feed/"
+  },
+  {
+    "url": "https://www.dkoding.in/feed/"
+  },
+  {
+    "url": "https://kwttoday.com/feed/"
+  },
+  {
+    "url": "https://www.thevividreader.com/feed/"
+  },
+  {
+    "url": "https://www.neweurope.eu/category/world/feed/"
+  },
+  {
+    "url": "https://rightwirereport.com/feed/"
+  },
+  {
+    "url": "https://www.newsrust.com/feeds/posts/default?alt=rss"
+  },
+  {
+    "url": "https://patriotrising.com/feed/"
+  },
+  {
+    "url": "https://publicnewsupdate.com/feed/"
+  },
+  {
+    "url": "https://www.statehooddc.com/feed/"
+  },
+  {
+    "url": "https://feeds.feedburner.com/feedly/KFJf"
+  },
+  {
+    "url": "https://lionnetnews.com/feed/"
+  },
+  {
+    "url": "https://www.thelifecart.com/feeds/posts/default?alt=rss"
+  },
+  {
+    "url": "https://cosmic-times.com/feed/"
+  },
+  {
+    "url": "https://amnews247.com/feed/"
+  },
+  {
+    "url": "https://stardiapost.com/feed"
+  },
+  {
+    "url": "https://annalshub.com/feed/"
+  },
+  {
+    "url": "https://tftnews.com/feed/"
+  },
+  {
+    "url": "https://deenewsline.com.ng/feed/"
+  },
+  {
+    "url": "https://worldnews24daily.com/feed/"
+  },
+  {
+    "url": "https://nationscoops.com/feed/"
+  },
+  {
+    "url": "https://www.thetimesinplainenglish.com/feed/"
+  },
+  {
+    "url": "https://www.commissionbro.com/feed"
+  },
+  {
+    "url": "https://www.newsdesk.io/feed/"
+  },
+  {
+    "url": "https://www.rapidgist.com/feed/"
+  },
+  {
+    "url": "https://carihargaterupdate.com/feed/"
+  },
+  {
+    "url": "https://www.newscentric.com.ng/feed"
+  },
+  {
+    "url": "https://funmitrends.com.ng/feed"
+  },
+  {
+    "url": "https://www.yerozo.com/feed"
+  },
+  {
+    "url": "https://www.akajesusnews.com.ng/feed"
+  },
+  {
+    "url": "https://web.neduwealth.com/feeds/posts/default"
+  },
+  {
+    "url": "https://balticword.eu/feed"
+  },
+  {
+    "url": "http://odincenews.com/feed/"
+  },
+  {
+    "url": "https://ebysblog.com/feed"
+  },
+  {
+    "url": "https://www.dailyechoed.com/feed"
+  },
+  {
+    "url": "https://thisdaytrends.com/feed"
+  },
+  {
+    "url": "https://www.thenewscave.com/feed/"
+  },
+  {
+    "url": "https://www.focusnews.com.ng/feeds/posts/default?alt=rss"
+  },
+  {
+    "url": "http://sknreporter.com/feed/"
+  },
+  {
+    "url": "https://acebloggers.com.ng/feed"
+  },
+  {
+    "url": "https://soulwriteempire.com/feed/"
+  },
+  {
+    "url": "https://newzitnews.com/feed"
+  },
+  {
+    "url": "https://www.blogger.com/feeds/2886832199291333748/posts/default"
+  },
+  {
+    "url": "https://encorepetfood.co.uk/feed"
+  },
+  {
+    "url": "https://globalvisionuk.com/feed/"
+  },
+  {
+    "url": "http://feeds.feedburner.com/avjnews/BGki"
+  },
+  {
+    "url": "http://asiandefencenewschannel.blogspot.com/feeds/posts/default"
+  },
+  {
+    "url": "http://www.littynews.com/feed/"
+  },
+  {
+    "url": "https://thedetrend.com/feed/"
+  },
+  {
+    "url": "https://dmwire.com/feed/"
+  },
+  {
+    "url": "https://breakingnewscentral.com/feed/"
+  },
+  {
+    "url": "https://allworldnews24hours6.blogspot.com/feeds/posts/default"
+  },
+  {
+    "url": "https://thingknow.com/feed/"
+  },
+  {
+    "url": "https://dandyworldnews.com/feed/"
+  },
+  {
+    "url": "https://theweeklytide.com/feed/"
+  },
+  {
+    "url": "https://www.worldnews2you.gq/feeds/posts/default?alt=rss"
+  },
+  {
+    "url": "https://worldnews24you.blogspot.com/?m=1&utm_source=feedspot"
+  },
+  {
+    "url": "https://ridetv.co.ke/feed/"
+  },
+  {
+    "url": "https://feeds.feedburner.com/cgsblog"
+  },
+  {
+    "url": "https://www.news.rosettamoon.com/feed/"
+  },
+  {
+    "url": "https://awkwardvibes.com/feed"
+  },
+  {
+    "url": "https://www.theworldwomennews.com/feed/"
+  },
+  {
+    "url": "https://www.starmindinfo.com.ng/"
+  },
+  {
+    "url": "https://tataafo.com/feed"
+  },
+  {
+    "url": "https://quicktrendnews.wordpress.com/feed/"
+  },
+  {
+    "url": "https://www.kizzyklicks.com/feeds/posts/default"
+  },
+  {
+    "url": "https://thewholewisdom.com/feed"
+  },
+  {
+    "url": "https://thedailycanvas.com/feed/"
+  },
+  {
+    "url": "https://sixpostnews.com/feed"
+  },
+  {
+    "url": "https://dtownpost.com/feed/"
+  },
+  {
+    "url": "https://www.reporterfox.com/feed/"
+  },
+  {
+    "url": "https://www.worldpresslive.com/feeds/posts/default"
+  },
+  {
+    "url": "https://www.excite-news.site/feeds/posts/default"
+  },
+  {
+    "url": "http://augchi.com/feed"
+  },
+  {
+    "url": "https://emeylizzy.com.ng/feed"
+  },
+  {
+    "url": "https://www.suresource24.com/feeds/posts/default"
+  },
+  {
+    "url": "http://tellitlikeitisnews.com/feed/"
+  },
+  {
+    "url": "https://www.worldaffairsjournal.org/feed/"
+  },
+  {
+    "url": "https://cloutwork.com/?feed=rss2"
+  },
+  {
+    "url": "https://theoverday.com/feed"
+  },
+  {
+    "url": "https://newswarden.com/feed/"
+  },
+  {
+    "url": "https://newsobservatory.com/feed/"
+  },
+  {
+    "url": "https://z6mag.com/feed/"
+  },
+  {
+    "url": "https://world.wng.org/taxonomy/term/72/feed"
+  },
+  {
+    "url": "https://globalreport.news/feed/"
+  },
+  {
+    "url": "https://www.worldcelebritynews.com/feed/"
+  },
+  {
+    "url": "https://danielspost.news.blog/feed/"
+  },
+  {
+    "url": "https://bbcstoriesnews.blogspot.com/feeds/posts/default?alt=rss"
+  },
+  {
+    "url": "https://sputniknews.com/export/rss2/world/index.xml"
+  },
+  {
+    "url": "https://www.todayonline.com/feed/world"
+  },
+  {
+    "url": "https://africalaunchpad.com/feed/"
+  },
+  {
+    "url": "https://metinews.com/rss.xml"
+  },
+  {
+    "url": "https://www.censored.com.ng/feed"
+  },
+  {
+    "url": "https://zemocity.com/feed"
+  },
+  {
+    "url": "https://odincenews.com/feed"
+  },
+  {
+    "url": "https://ppapiblogue.blogspot.com/feeds/posts/default?alt=rss"
+  },
+  {
+    "url": "https://godsofsoccer.com/feed"
+  },
+  {
+    "url": "http://www.360hitsong.com/feed"
+  },
+  {
+    "url": "https://topthesaurus.com/index.php/feed/"
+  },
+  {
+    "url": "https://headlinecode.com/feed/"
+  },
+  {
+    "url": "https://armyyoutube.com/feeds/posts/default?alt=rss"
+  }
+]

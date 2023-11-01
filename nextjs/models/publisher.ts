@@ -8,6 +8,14 @@ export function getPublisherByDomain(domain: string) {
   })
 }
 
+export function getPublisherById(id: string) {
+  return prisma.publisher.findUnique({
+    where: {
+      id: id
+    }
+  })
+}
+
 
 interface FollowPublishersInput {
   publisherId: string;
@@ -26,5 +34,27 @@ export function getFollowPublishers({ userId }: { userId: string }) {
     where: {
       userId: userId
     }
+  })
+}
+
+
+export function getFollowPublishersCategory({ userId }: { userId: string }) {
+  return prisma.publisher.groupBy({
+    where: {
+      followRss: {
+        some: {
+          userId: userId
+        }
+      }
+    },
+    by: ["category"]
+  })
+}
+
+export function createPublishers(publishers: any[]) {
+  console.log({ publishers })
+  return prisma.publisher.createMany({
+    data: publishers,
+    skipDuplicates: true
   })
 }

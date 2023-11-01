@@ -17,7 +17,7 @@ export function TalkScreen({ route, navigation }) {
       dispatch(fetchLesson(lessonId))
     }
     dispatch(fetchMessages(lessonId))
-  }, [])
+  }, [lessonId])
 
 
   if (!lesson || !lesson.material) {

@@ -4,7 +4,7 @@ import { createMessage, listMessages } from "@/models/message";
 import { validateToken } from '@/firebase';
 import { setCurrentUser } from '@/middleware/setCurrentUser';
 import { chat } from "@/utils/openai/chat";
-
+import * as LessonModel from "@/models/lesson";
 const prisma = new PrismaClient();
 
 export default async function handle(
@@ -35,15 +35,7 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(401).json({ error: "createMessageHandler: Unauthorized" });
   }
 
-  const lesson = await prisma.lesson.findUnique({
-    where: {
-      id: Number(lessonId),
-    },
-    include: {
-      messages: true,
-      material: true,
-    }
-  });
+  const lesson = await LessonModel.getLesson(lessonId)
 
   if (!lesson) {
     return res.status(404).json({ message: "createMessageHandler: Lesson not found" });
@@ -72,6 +64,9 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
     const messageResponse = await chat({ message, url, history })
     const aiMessage = await createMessage({ message: messageResponse, lessonId, createdById: req.currentUser?.id as string, type: "ai" });
 
+    if (!lesson.initMessage) {
+      await LessonModel.setInitMessage(lesson.id)
+    }
     return res.status(200).json(aiMessage);
   } catch (error) {
     console.error(error);

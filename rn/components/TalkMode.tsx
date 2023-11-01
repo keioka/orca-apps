@@ -69,6 +69,12 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
     })
   }, [messages])
 
+  useEffect(() => {
+    if (!lesson.initMessage && messages.length === 0) {
+      dispatch(createAIMessage({ message: "Ask me a question about the news.", lessonId: lesson.id }))
+    }
+  }, [])
+
 
   useEffect(() => {
     async function fetchMetadata() {

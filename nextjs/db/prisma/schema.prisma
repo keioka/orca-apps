@@ -65,7 +65,7 @@ model Material {
 
 model Publisher {
   id               String      @id @default(uuid()) @db.Char(36)
-  name             String      @db.VarChar(100)
+  name             String      @db.VarChar(255)
   contentType      String      @map("content_type") @db.VarChar(32)
   publisherType    String      @map("publisher_type") @db.VarChar(32)
   rssUrl           String?     @unique @map("rss_url") @db.VarChar(255)
@@ -77,6 +77,7 @@ model Publisher {
   createdAt        DateTime    @default(now()) @map("created_at")
   updatedAt        DateTime    @updatedAt @map("updated_at")
   followRss        FollowRss[]
+  recommended      Boolean     @default(false)
 
   @@map("publishers")
 }
@@ -128,7 +129,9 @@ model SavedVocabularies {
 }
 
 model Lesson {
-  id         Int       @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
+  initMessage Boolean @default(false) @map("init_message")
+
   userId     String    @map("user_id") @db.Char(36)
   user       User      @relation(fields: [userId], references: [id])
   materialId String    @map("material_id")

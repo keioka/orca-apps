@@ -77,6 +77,7 @@ async function createNewLessonHandler(
     }
 
     const lesson = await createLesson(params)
+
     return res.status(200).json(lesson);
   } catch (err) {
     console.error(err)

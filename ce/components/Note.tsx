@@ -42,12 +42,7 @@ export function Note({ note, url }: NoteProps) {
   const paraphrases = note[PARAPHRASE_KEY]
   const gmChecks = note[GM_CHECK_KEY]
 
-  console.log({
-    gmChecks,
-    paraphrases,
-    vocabulary
-  })
-
+  console.log({ vocabulary })
   return (
     <Card
       sx={{
@@ -77,7 +72,7 @@ export function Note({ note, url }: NoteProps) {
           <Stack direction="row" spacing={2} sx={{ overflowX: "scroll", width: "100%" }}>
             {vocabulary && vocabulary.filter(validateVocab).map((vocabInfo) => {
               return (
-                <Box sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
+                <Box key={`note_vocabulary_${vocabInfo.id}`} sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
                   <CardVocab vocab={vocabInfo.data} onSaveVocab={() => { }} shouldHideDiscard shouldHideSave />
                 </Box>
               )
@@ -91,7 +86,7 @@ export function Note({ note, url }: NoteProps) {
           <Stack direction="row" spacing={2} sx={{ overflowX: "scroll", width: "100%" }}>
             {paraphrases && paraphrases.map((paraphraseInfo) => {
               return (
-                <Box sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
+                <Box key={`note_paraphrase_${paraphraseInfo.id}`} sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
                   <CardParaphrase paraphrase={paraphraseInfo.data} />
                 </Box>
               )
@@ -114,7 +109,7 @@ export function Note({ note, url }: NoteProps) {
               gmChecks && gmChecks.map((gmCheckInfo) => {
                 console.log({ gmCheckInfo })
                 return (
-                  <Box sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
+                  <Box key={`note_gmChecks_${gmCheckInfo.id}`} sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
                     <CardGMCheck gmCheck={gmCheckInfo.data} />
                   </Box>
                 )

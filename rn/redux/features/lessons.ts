@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { Lesson } from "../../types/lesson";
 import axios from 'axios';
 import { setLessonIdToMaterial } from './materials';
-
+import { unionBy } from 'lodash';
 // Define the lesson state
 interface LessonState {
   lessons: Lesson[];
@@ -36,7 +36,8 @@ const lessonSlice = createSlice({
   extraReducers: (builder) => {
     // Define the async thunk to fetch the lesson
     builder.addCase(fetchLessons.fulfilled, (state, action) => {
-      state.lesson = action.payload;
+      const newLessons = action.payload || []
+      state.lessons = unionBy([...state.lessons, ...newLessons], "id")
       state.loading = false;
       state.error = null;
     });
@@ -55,11 +56,11 @@ const lessonSlice = createSlice({
     builder.addCase(fetchLesson.fulfilled, (state, action) => {
       const updatedLesson = action.payload;
       console.log({ a: action.payload })
-      const index = state.lesson.findIndex((lesson) => lesson.id === updatedLesson.id);
+      const index = state.lessons.findIndex((lesson) => lesson.id === updatedLesson.id);
       if (index !== -1) {
-        state.lesson[index] = updatedLesson;
+        state.lessons[index] = updatedLesson;
       } else {
-        state.lesson.push(updatedLesson);
+        state.lessons.push(updatedLesson);
       }
 
       state.loading = false;
@@ -82,7 +83,7 @@ const lessonSlice = createSlice({
     });
 
     builder.addCase(createLesson.fulfilled, (state, action) => {
-      state.lesson = [...state.lesson, action.payload];
+      state.lessons = [...state.lessons, action.payload];
       state.createdLessonId = action.payload.id;
       state.creating = false;
       state.error = null;

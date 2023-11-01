@@ -52,9 +52,10 @@ export function HistoryScreen({ navigation }) {
     dispatch(fetchLessons())
   }, []);
 
-  const onPressStart = ({ materialId, url, lessonId }: { materialId: string, url: string, lessonId: string }) => {
+  const onPressStart = ({ url, lessonId }: { url: string, lessonId: string }) => {
     if (!lessonId) {
-      dispatch(createLesson({ materialId }))
+      console.error("Lesson ID is required")
+      throw new Error("Lesson ID is required")
     }
     navigation.navigate('Lesson', { url, lessonId })
   }
@@ -73,11 +74,11 @@ export function HistoryScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
-        <View style={styles.sectionSubtitle}>
+        {/* <View style={styles.sectionSubtitle}>
           <Text style={styles.subtitle}>Progress this week</Text>
-        </View>
+        </View> */}
         <View style={{ width: "90%" }}>
-          <BarChart
+          {/* <BarChart
             style={{ marginVertical: 8, borderRadius: 16 }}
             data={data}
             width={screenWidth * 0.9}
@@ -90,23 +91,23 @@ export function HistoryScreen({ navigation }) {
               paddingLeft: 0,
               borderRadius: 16,
             }}
-          />
+          /> */}
         </View>
         <View style={styles.sectionSubtitle}>
           <Text style={styles.subtitle}>Past Lessons</Text>
         </View>
-        {feed.map((item, index) => (
+        {/* {feed.map((item, index) => (
           <CardArticle
             item={item}
             onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
           />
-        ))}
+        ))} */}
         {lessons && lessons.map((item, index) => (
           <CardArticle
-            key={index}
+            key={`lesson_${item.id}`}
             item={item.material}
-            onPressStart={() => onPressStart({ url: item.material.url, lessonId: item.lessonId, materialId: item.id })}
-            lessonId={item.lessonId}
+            onPressStart={() => onPressStart({ url: item.material.url, lessonId: item.id })}
+            lessonId={item.id}
           />
         ))}
       </ScrollView>
@@ -138,6 +139,5 @@ const styles = StyleSheet.create({
   subtitle: {
     textAlign: 'left',
     fontSize: 24,
-    textAlignHorizontal: 'left',
   }
 });
