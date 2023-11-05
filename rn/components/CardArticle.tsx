@@ -1,10 +1,11 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Card, Title, Paragraph, Text, Chip } from 'react-native-paper';
+import { Card, Paragraph, Chip } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { WebView } from 'react-native-webview';
 import { Button } from './Button';
 import { Image } from 'expo-image';
+import { Text, Title } from './Text';
 
 interface CardArticleProps {
   item: {
@@ -115,6 +116,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#f4f4f4',
     marginTop: 16,
+    paddingVertical: 8
   },
   youtubeView: {
     width: "100%",
@@ -144,13 +146,12 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 10,
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 18,
-    color: "#242424",
     marginRight: 8
   },
   textPublisherName: {
-    fontSize: 11,
+    fontSize: 12,
   },
   containerChip: {
     height: 22,

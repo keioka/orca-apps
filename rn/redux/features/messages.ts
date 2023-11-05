@@ -34,13 +34,17 @@ interface MessageState {
   paraphraseMap: ParaphraseMap;
   translationMap: { [messageId: string]: string };
   status: LoadingStatus;
+  addingMessage: boolean;
   isFetchingParaphrases: boolean;
   isFetchingTranslation: boolean;
+  isSendingWhisper: boolean;
+  messageInputSpeech: string | null;
   error: string | null;
-  addingMessage: boolean;
 }
 
-const initialState: MessageState = { messageMap: {}, paraphraseMap: {}, translationMap: {}, isFetchingTranslation: false, error: null, addingMessage: false };
+const initialState: MessageState = { messageMap: {}, paraphraseMap: {}, translationMap: {}, isFetchingTranslation: false, error: null, addingMessage: false, messageInputSpeech: null };
+
+const whisperApiEndpoint = 'https://api.openai.com/v1/audio/transcriptions'
 
 
 export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue }) => {
@@ -189,6 +193,62 @@ export const fetchTranslation = createAsyncThunk(
   });
 
 
+function removeFilePrefix(filePath) {
+  if (filePath.startsWith('file://')) {
+    return filePath.substring(7);
+  }
+  return filePath;
+}
+
+export const sendWhisper = createAsyncThunk(
+  `${NAME}/sendWhisper`,
+  async (
+    { file, fileURI }: { file: Blob, fileURI: string },
+    { getState, rejectWithValue }
+  ) => {
+    try {
+
+      console.log({ file, fileURI })
+      const body = new FormData()
+      const fileObj = {
+        uri: removeFilePrefix(fileURI),
+        name: `unknown`,
+        type: "audio/wav" // file.type,
+      }
+      console.log("fileObj", fileObj)
+      // body.append('file', file)
+      body.append('file', new Blob(['test payload'], { type: 'text/csv' }));
+      body.append('audio_data', file)
+      body.append('type', 'audio')
+      body.append('model', 'whisper-1')
+      body.append('language', 'en')
+      // body.append('prompt', whisperConfig.prompt)
+      body.append('response_format', "text")
+      // body.append('temperature', `${whisperConfig.temperature}`)
+
+      // const headers: RawAxiosRequestHeaders = {
+      //   'Content-Type': 'multipart/form-data',
+      //   'Authorization': `Bearer ${process.env.EXPO_PUBLIC_OPEN_AI_API_KEY}`
+      // }
+
+      const response = await fetch(
+        `${ROOT_URL}/api/transcribe`,
+        {
+          method: 'POST',
+          body,
+        }
+      )
+
+      console.log(response)
+      return response
+
+    } catch (error) {
+      console.error(error)
+      rejectWithValue('Failed to translate')
+    }
+  });
+
+
 const messageSlice = createSlice({
   name: NAME,
   initialState,
@@ -260,7 +320,17 @@ const messageSlice = createSlice({
       .addCase(fetchTranslation.rejected, (state, action) => {
         state.isFetchingTranslation = false;
         state.error = action.error.message || 'Failed to fetch translation';
-      });
+      })
+      .addCase(sendWhisper.pending, (state) => {
+        state.isSendingWhisper = true;
+      })
+      .addCase(sendWhisper.fulfilled, (state, action: PayloadAction<{ messageId: string; translation: string }>) => {
+        state.isSendingWhisper = false;
+      })
+      .addCase(sendWhisper.rejected, (state, action) => {
+        state.isSendingWhisper = false;
+        state.error = action.error.message || 'Failed to send whisper';
+      })
   },
 });
 

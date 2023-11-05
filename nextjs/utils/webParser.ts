@@ -2,6 +2,7 @@ import urlMetadata from 'url-metadata'
 import { default as urlAPI } from 'url'
 import * as cheerio from 'cheerio';
 import axios from 'axios';
+import nlp from 'compromise'
 var { Readability } = require('@mozilla/readability');
 var { JSDOM } = require('jsdom');
 
@@ -9,6 +10,7 @@ interface SiteData {
   title: string;
   publisher: string;
   description: string;
+  keywords: string[];
   imageUrl: string;
   url: string;
   publisherName: string;
@@ -21,11 +23,22 @@ export async function fetchAndParseWebsite(url: string): Promise<SiteData | null
     const data = await urlMetadata(url)
     const parsedUrl = urlAPI.parse(url);
 
+    const description: string = data.description || data['og:description']
+
+    let keywords = []
+    if (data['keywords']) {
+      keywords.push(...data['keywords'].split(','))
+    }
+
+    let topics = nlp(description).topics().out('array')
+    keywords.push(...topics)
+
     const sitedata = {
       ...data,
       domain: parsedUrl.hostname,
       title: data.title || data['og:title'],
-      description: data.description || data['og:description'],
+      description: description,
+      keywords: keywords,
       imageUrl: data.image || data['og:image'],
       url: data.url || data['og:url'],
       publisherName: data['og:site_name'],

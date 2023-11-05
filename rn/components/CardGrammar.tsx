@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     elevation: 0,
     shadowOpacity: 0,
     borderRadius: 4,
-    width: '90%',
+    width: '100%',
     // border: '1px solid #f4f4f4',
     backgroundColor: '#fff',
     paddingVertical: 24

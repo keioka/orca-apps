@@ -33,6 +33,14 @@ export function getFollowPublishers({ userId }: { userId: string }) {
   return prisma.followRss.findMany({
     where: {
       userId: userId
+    },
+    include: {
+      publisher: {
+        select: {
+          id: true,
+          category: true
+        }
+      }
     }
   })
 }

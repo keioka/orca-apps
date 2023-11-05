@@ -15,10 +15,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const followPublishers = await getFollowPublishers({ userId: req.currentUser?.id })
     const categories = await getFollowPublishersCategory({ userId: req.currentUser?.id })
-    const followPublisherIds = followPublishers.map((followPublisher) => followPublisher.publisherId)
+
+    console.log("followPublishers", followPublishers)
+
+    const followPublisherInfo = followPublishers.map((followPublisher) => ({ publisherId: followPublisher.publisher.id, category: followPublisher.publisher.category }))
     const followPublisherCategories = categories.map((followPublisher) => followPublisher.category)
 
-    return res.status(200).json({ publisherIds: followPublisherIds, categories: followPublisherCategories });
+    return res.status(200).json({ followPublishers: followPublisherInfo, categories: followPublisherCategories });
 
   } else if (req.method === "POST") {
     const { publisherIds } = req.body

@@ -33,6 +33,7 @@ model User {
   Message             Message[]
   SavedParaphrase     SavedParaphrase[]
   SavedGrammarMistake SavedGrammarMistake[]
+  FollowHashtag       FollowHashtag[]
 
   @@map("users")
 }
@@ -50,11 +51,12 @@ model Material {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  lessons      Lesson[]
-  summary      Summary[]
-  vocabularies Vocabulary[]
-  publisherId  Int          @map("publisher_id")
-  publisher    Publisher    @relation(fields: [publisherId], references: [id])
+  lessons         Lesson[]
+  summary         Summary[]
+  vocabularies    Vocabulary[]
+  publisherId     Int               @map("publisher_id")
+  publisher       Publisher         @relation(fields: [publisherId], references: [id])
+  MaterialHashtag MaterialHashtag[]
 
   @@map("materials")
 }
@@ -194,4 +196,41 @@ model SavedGrammarMistake {
   updatedAt        DateTime       @updatedAt @map("updated_at")
 
   @@map("saved_grammar_mistakes")
+}
+
+model Hashtag {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  MaterialHashtag MaterialHashtag[]
+  FollowHashtag   FollowHashtag[]
+
+  @@map("hashtags")
+}
+
+model MaterialHashtag {
+  id         Int      @id @default(autoincrement())
+  materialId Int      @map("material_id")
+  material   Material @relation(fields: [materialId], references: [id])
+  hashtagId  Int      @map("hashtag_id")
+  hashtag    Hashtag  @relation(fields: [hashtagId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("material_hashtags")
+}
+
+model FollowHashtag {
+  id        Int     @id @default(autoincrement())
+  userId    String  @map("user_id")
+  user      User    @relation(fields: [userId], references: [id])
+  hashtagId Int     @map("hashtag_id")
+  hashtag   Hashtag @relation(fields: [hashtagId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("follow_hashtags")
 }

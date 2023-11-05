@@ -1,25 +1,38 @@
+import OpenAI from 'openai';
 import { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
-import { Configuration, OpenAIApi } from "openai";
+import { IncomingForm } from 'formidable';
 
-const configuration = new Configuration({
-  apiKey: "YOUR_OPENAI_API_KEY",
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY, // defaults to process.env["OPENAI_API_KEY"]
 });
-const openai = new OpenAIApi(configuration);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     // Transcribe an audio file
-    const file = req.file;
-    const result = await openai.createTranscription(
-      file,
-      "whisper-1"
-    );
+    const form = new IncomingForm();
 
-    res.status(200).json(result);
-  } else {
-    // Handle any other HTTP method
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    try {
+      const [fields, files] = await form.parse(req)
+      console.log({
+        fields,
+        files
+      })
+    } catch (err) {
+      console.error(err)
+    }
+
+    return res.status(200).json({ message: "ok" })
+    // const result = await openai.audio.transcriptions.create({
+    //   file,
+    //   model: "whisper-1",
+    // });
+
+    // res.status(200).json(result);
   }
 }

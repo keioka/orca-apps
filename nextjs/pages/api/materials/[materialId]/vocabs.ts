@@ -4,9 +4,13 @@ import { getVocabsByMaterialId } from '@/models/material';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { materialId } = req.query;
 
+  console.log(req.query)
   if (req.method === 'GET') {
     try {
-      const vocabs = await getVocabsByMaterialId(materialId as string);
+      if (!materialId && typeof materialId !== 'string') {
+        return res.status(400).json({ error: 'Missing required fields.' });
+      }
+      const vocabs = await getVocabsByMaterialId({ materialId });
       return res.status(200).json({ vocabs });
     } catch (error) {
       return res.status(500).json({ error: 'Failed to fetch vocabs.' });

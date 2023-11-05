@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, Text, View } from 'react-native';
 import { CardArticle } from './components/CardArticle';
@@ -16,7 +16,7 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { AuthScreen } from './screens/AuthScreen';
 import { CategoryScreen } from './screens/CategoryScreen';
-import { SplashScreen } from './screens/SplashScreen';
+// import { SplashScreen } from './screens/SplashScreen';
 import { AppState } from 'react-native';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setSession, refreshToken } from './redux/features/auth'
@@ -28,6 +28,10 @@ import NetworkLogger from 'react-native-network-logger';
 import LogRocket from '@logrocket/react-native';
 import 'react-native-url-polyfill/auto';
 import "./googleAuth.ts"
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -158,6 +162,26 @@ const RootStack = ({ isLogin }) => (
   </Stack.Navigator>
 )
 
+const fonts = {
+  'NotoSans-Black': require('./assets/fonts/NotoSans/NotoSans-Black.ttf'),
+  'NotoSans-BlackItalic': require('./assets/fonts/NotoSans/NotoSans-BlackItalic.ttf'),
+  'NotoSans-Bold': require('./assets/fonts/NotoSans/NotoSans-Bold.ttf'),
+  'NotoSans-BoldItalic': require('./assets/fonts/NotoSans/NotoSans-BoldItalic.ttf'),
+  'NotoSans-ExtraBold': require('./assets/fonts/NotoSans/NotoSans-ExtraBold.ttf'),
+  'NotoSans-ExtraBoldItalic': require('./assets/fonts/NotoSans/NotoSans-ExtraBoldItalic.ttf'),
+  'NotoSans-ExtraLight': require('./assets/fonts/NotoSans/NotoSans-ExtraLight.ttf'),
+  'NotoSans-ExtraLightItalic': require('./assets/fonts/NotoSans/NotoSans-ExtraLightItalic.ttf'),
+  'NotoSans-Italic': require('./assets/fonts/NotoSans/NotoSans-Italic.ttf'),
+  'NotoSans-Light': require('./assets/fonts/NotoSans/NotoSans-Light.ttf'),
+  'NotoSans-LightItalic': require('./assets/fonts/NotoSans/NotoSans-LightItalic.ttf'),
+  'NotoSans-Medium': require('./assets/fonts/NotoSans/NotoSans-Medium.ttf'),
+  'NotoSans-MediumItalic': require('./assets/fonts/NotoSans/NotoSans-MediumItalic.ttf'),
+  'NotoSans-Regular': require('./assets/fonts/NotoSans/NotoSans-Regular.ttf'),
+  'NotoSans-SemiBold': require('./assets/fonts/NotoSans/NotoSans-SemiBold.ttf'),
+  'NotoSans-SemiBoldItalic': require('./assets/fonts/NotoSans/NotoSans-SemiBoldItalic.ttf'),
+  'NotoSans-Thin': require('./assets/fonts/NotoSans/NotoSans-Thin.ttf'),
+  'NotoSans-ThinItalic': require('./assets/fonts/NotoSans/NotoSans-ThinItalic.ttf'),
+}
 const Root = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState);
@@ -166,6 +190,8 @@ const Root = () => {
   const [isLoading, setIsLoading] = useState(false)
   const isLogin = !!session
 
+  const [fontsLoaded] = useFonts(fonts);
+
   useEffect(() => {
     setIsLoading(true)
 
@@ -173,7 +199,6 @@ const Root = () => {
       const auth = getAuth(firebase);
       console.log("============ Init onAuthStateChanged ============")
       auth.onAuthStateChanged((user) => {
-        console.log({ user })
         if (user) {
           dispatch(setSession({
             accessToken: user.accessToken,
@@ -204,13 +229,21 @@ const Root = () => {
       }
 
       appState.current = nextAppState;
-      console.log('AppState', appState.current);
     });
 
     return () => {
       subscription.remove();
     };
   }, []);
+
+  useEffect(() => {
+    async function hide() {
+      if (!isLoading && fontsLoaded) {
+        await SplashScreen.hideAsync();
+      }
+    }
+    hide()
+  }, [isLoading, fontsLoaded])
 
   if (error) {
     return (
@@ -220,12 +253,6 @@ const Root = () => {
     )
   }
 
-
-  if (isLoading) {
-    return <SplashScreen />
-  }
-
-  console.log({ isLogin })
   return (
     <RootStack isLogin={isLogin} />
   )

@@ -5,7 +5,8 @@ import { validateSessionAndToken } from '../../helpers/validate';
 
 interface PublishersState {
   publishers: any[];
-  followIds: string[];
+  followPublishers: { publisherId: string, category: string }[];
+  followCategories: string[];
   isLoadingPublishers: boolean;
   isCreatingFollow: boolean;
   isFetchingFollow: boolean;
@@ -13,7 +14,7 @@ interface PublishersState {
   error: string | null;
 }
 
-const initialState: PublishersState = { publishers: [], followIds: [], isLoadingPublishers: false, error: null, hasSuccessCreateFollow: false };
+const initialState: PublishersState = { publishers: [], followPublishers: [], isLoadingPublishers: false, error: null, hasSuccessCreateFollow: false };
 
 const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
@@ -119,7 +120,7 @@ const publisherSlice = createSlice({
       })
       .addCase(fetchFollowPublishers.fulfilled, (state, action: PayloadAction<any[]>) => {
         state.isFetchingFollow = false
-        state.followIds = action.payload.publisherIds;
+        state.followPublishers = action.payload.followPublishers;
         state.followCategories = action.payload.categories;
       })
       .addCase(fetchFollowPublishers.rejected, (state, action: PayloadAction<string | null>) => {

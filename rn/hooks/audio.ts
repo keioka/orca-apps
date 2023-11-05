@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { Audio } from 'expo-av';
+import axios, { RawAxiosRequestHeaders } from 'axios';
 
 type Recording = {
   sound: Audio.Sound,
@@ -7,26 +8,38 @@ type Recording = {
   file: string,
 };
 
-const whisperConfig = {
-  apiKey: '',
-  autoStart: false,
-  autoTranscribe: true,
-  mode: 'transcriptions',
-  nonStop: false,
-  removeSilence: false,
-  stopTimeout: 10000,
-  streaming: false,
-  timeSlice: 1_000,
-  onDataAvailable: undefined,
-  onTranscribe: undefined,
-}
+
+const RECORDING_OPTIONS_PRESET_HIGH_QUALITY: Audio.RecordingOptions = {
+  android: {
+    extension: ".mp4",
+    outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+    audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_NB,
+    sampleRate: 44100,
+    numberOfChannels: 2,
+    bitRate: 128000,
+  },
+  ios: {
+    extension: ".wav",
+    audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_MIN,
+    sampleRate: 44100,
+    numberOfChannels: 2,
+    bitRate: 128000,
+    linearPCMBitDepth: 16,
+    linearPCMIsBigEndian: false,
+    linearPCMIsFloat: false,
+  },
+};
 
 export const useAudio = () => {
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const recording = useRef<Audio.Recording | null>(null);
+  // const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [message, setMessage] = useState("");
-  const [latestFile, setLatestFile] = useState<Audio.Recording | null>(null);
   const [recordings, setRecordings] = useState<Recording[]>([]);
+  const [latestFile, setLatestFile] = useState<Blob | null>(null);
+  const [latestFileURI, setLatestFileURI] = useState<string | null>(null);
+  const [sound, setSound] = useState<Audio.Sound | null>(null); // recordings[recordings.length - 1]?.sound || null);
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const transcribeInterim = () => { }; // Define this function
@@ -46,30 +59,11 @@ export const useAudio = () => {
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-      alert("Starting recording..");
 
-      const RECORDING_OPTIONS_PRESET_HIGH_QUALITY: Audio.RecordingOptions = {
-        android: {
-          extension: ".mp4",
-          outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-          audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_NB,
-          sampleRate: 44100,
-          numberOfChannels: 2,
-          bitRate: 128000,
-        },
-        ios: {
-          extension: ".wav",
-          audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_MIN,
-          sampleRate: 44100,
-          numberOfChannels: 2,
-          bitRate: 128000,
-          linearPCMBitDepth: 16,
-          linearPCMIsBigEndian: false,
-          linearPCMIsFloat: false,
-        },
-      };
-      const { recording } = await Audio.Recording.createAsync(RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-      setRecording(recording);
+      // await recording.current.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+
+      const { recording: recordingObj } = await Audio.Recording.createAsync(RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+      recording.current = recordingObj;
       console.log("Recording started");
       setIsRecording(true);
       intervalRef.current = setInterval(transcribeInterim, transcribeTimeout * 1000);
@@ -79,62 +73,55 @@ export const useAudio = () => {
   }
 
   async function stopRecording() {
-    if (!recording) {
+    if (!recording.current) {
       console.log("No active recording to stop");
       return;
     }
 
-    await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
-    const { sound, status } = await recording.createNewLoadedSoundAsync();
+    await recording.current.stopAndUnloadAsync();
+    const uri = recording.current.getURI();
+    await recording.current.createNewLoadedSoundAsync();
 
-    const updatedRecordings = [...recordings, {
-      sound: sound,
-      duration: getDurationFormatted(status.durationMillis),
-      file: uri,
-    }];
+    // const updatedRecordings = [...recordings, {
+    //   sound: sound,
+    //   duration: getDurationFormatted(status.durationMillis),
+    //   file: uri,
+    // }];
 
-    setLatestFile(recording);
-    setRecording(null);
-    setRecordings(updatedRecordings);
+    if (!uri) {
+      console.warn("No recording uri returned");
+      return;
+    }
+
+
+
+    const { sound, status } = await Audio.Sound.createAsync({ uri })
+    // await sound.playAsync();
+    setSound(sound);
+
+    console.log("status", status)
+    const response = await fetch(uri)
+    const file = await response.blob()
+
+    console.log(file instanceof Blob)
+    setLatestFile(file);
+    setLatestFileURI(uri);
+
+    console.log({ mimeType: file.type })
+    recording.current = null
+    // setRecordings(updatedRecordings);
     console.log("Recording stopped and stored at", uri);
 
     if (intervalRef.current) clearInterval(intervalRef.current);
     setIsRecording(false);
   }
 
-  // function send() {
-  //   const body = new FormData()
-  //   body.append('file', file)
-  //   body.append('model', 'whisper-1')
-  //   if (mode === 'transcriptions') {
-  //     body.append('language', whisperConfig?.language ?? 'en')
-  //   }
-  //   if (whisperConfig?.prompt) {
-  //     body.append('prompt', whisperConfig.prompt)
-  //   }
-  //   if (whisperConfig?.response_format) {
-  //     body.append('response_format', whisperConfig.response_format)
-  //   }
-  //   if (whisperConfig?.temperature) {
-  //     body.append('temperature', `${whisperConfig.temperature}`)
-  //   }
-  //   const headers: RawAxiosRequestHeaders = {}
-  //   headers['Content-Type'] = 'multipart/form-data'
-  //   if (apiKey) {
-  //     headers['Authorization'] = `Bearer ${apiKey}`
-  //   }
-  //   const { default: axios } = await import('axios')
-  //   const response = await axios.post(whisperApiEndpoint + mode, body, {
-  //     headers,
-  //   })
-  //   return response.data.text
-  // }
-
   return {
     startRecording,
     stopRecording,
-    file: latestFile
+    file: latestFile,
+    fileURI: latestFileURI,
+    sound
   }
 }
 

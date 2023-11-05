@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Card, Button, Tab, TabView, ActivityIndicator } from 'react-native-paper';
 import { BsArrowRightCircleFill, BsArrowLeftCircleFill } from 'react-icons/bs'; // Note: you need to find alternative icons that work with React Native, react-icons won't work
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import { Text } from './Text';
 
 export const CardPhrase = ({
   data
 }) => {
   const navigation = useNavigation();
-  console.log({ data })
+  console.log("data", data)
   const paraphrase = data.paraphrase.content
   const originalSentence = data.paraphrase.sentence.message.content
   const lesson = data.paraphrase.sentence.message.lesson

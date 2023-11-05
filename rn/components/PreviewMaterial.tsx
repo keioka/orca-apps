@@ -1,7 +1,8 @@
 import React from 'react';
-import { Card, Title, Text } from 'react-native-paper';
+import { Card } from 'react-native-paper';
 import { StyleSheet, View, Image } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Text, Title } from './Text';
 
 interface Material {
   category: string;
@@ -30,7 +31,7 @@ const PreviewMaterial: React.FC<PreviewMaterialProps> = ({ material }) => {
   };
 
   return (
-    <Card style={styles.card} onPress={() => console.log(`Navigating to ${url}`)}>
+    <View style={styles.card} onPress={() => console.log(`Navigating to ${url}`)}>
       <View style={styles.row}>
         {imageUrl ? (
           <Image source={{ uri: imageUrl }} style={styles.image} />
@@ -41,7 +42,7 @@ const PreviewMaterial: React.FC<PreviewMaterialProps> = ({ material }) => {
         )}
         <View style={styles.content}>
           <View>
-            <Title style={{ fontSize: 14, lineHeight: 14 }}>{title}</Title>
+            <Title style={{ fontSize: 14, lineHeight: 14 }} weight='Regular'>{title}</Title>
           </View>
           <View style={{ marginTop: 4 }}>
             <Text style={{ fontSize: 12, lineHeight: 12 }}>Published on: {formatDate(publishedAt)}</Text>
@@ -49,7 +50,7 @@ const PreviewMaterial: React.FC<PreviewMaterialProps> = ({ material }) => {
           </View>
         </View>
       </View>
-    </Card>
+    </View>
   );
 };
 
@@ -59,6 +60,9 @@ const styles = StyleSheet.create({
     elevation: 0,
     backgroundColor: '#fff',
     boxShadow: '0 0 0 0',
+    borderWidth: 1,
+    borderColor: '#f4f4f4',
+    borderRadius: 8
   },
   row: {
     flexDirection: 'row',
