@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { StyleSheet, ScrollView, Text, View, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { CardSummary } from '../components/CardSummary';
 import { CardVocab, CardVocabXS } from '../components/CardVocab';
 import { WebView } from 'react-native-webview';
@@ -7,12 +7,16 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchLesson } from '../redux/features/lessons';
 import { fetchMessages } from '../redux/features/messages';
 // import { Button } from '../components/Button';
-import { Button } from 'react-native-paper';
+import { Button, Modal, Portal, Snackbar } from 'react-native-paper';
 import { fetchVocabs, createVocabs, fetchSummaries } from '../redux/features/materials';
 import { utc } from 'moment';
 import { ActivityIndicator } from 'react-native';
 import { saveVocab } from '../redux/features/note';
 import { createSelector } from 'reselect';
+import { Text } from '../components/Text';
+import { Browser } from '../components/Browser';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { fetchSavedVocab, clearIsSavedVocab, clearErrorSaveVocab } from '../redux/features/note';
 
 enum LearningModeTab {
   Article = 'article',
@@ -140,15 +144,17 @@ function VocabularyTab({ materialId }: { materialId: string }) {
 
   const vocabs = useAppSelector(state => selectVocabsByMaterialId(state, materialId));
   const isFetchingVocabs = useAppSelector(state => state.material.isFetchingVocabs)
+  const savedVocabs = useAppSelector(state => state.note.vocabularies)
+  const isSavedVocab = useAppSelector(state => state.note.isSavedVocab)
+  const errorSaveVocab = useAppSelector(state => state.note.errors.saveVocabulary)
 
   useEffect(() => {
+    if (vocabs && vocabs.length > 0) return
     dispatch(createVocabs({ materialId }))
-
-
     const interval = setInterval(() => {
       console.log("fetchVocabsInterval")
       dispatch(fetchVocabs({ materialId }))
-    }, 10000)
+    }, 5000)
 
 
     return () => {
@@ -159,49 +165,77 @@ function VocabularyTab({ materialId }: { materialId: string }) {
   const handleClickSave = (vocab) => {
     dispatch(saveVocab({ vocabId: vocab.id }))
   }
-  // const 
+
+  const isSavedMap = useMemo(() => {
+    const map = {}
+    savedVocabs.forEach((vocab) => {
+      map[vocab.vocabularyId] = true
+    })
+    return map
+  }, [savedVocabs])
+
+  const onDismissSnackBar = () => {
+    dispatch(clearIsSavedVocab())
+  }
+
+
+  const onClearError = () => {
+    dispatch(clearErrorSaveVocab())
+  }
+
+  console.log({ isSavedVocab, savedVocabs })
+
   return (
-    <ScrollView
-      style={{ height: "100%" }}
-      contentContainerStyle={styles.vocabularyView}
-      showsVerticalScrollIndicator={false}
-    >
-      {vocabs.map((item, index) => (
-        <View key={`vocab_${item.id}`} style={styles.cardWrapper}>
-          <CardVocab vocab={item} onClickSave={() => handleClickSave(item)} />
-        </View>
-      ))}
-      {isFetchingVocabs && (
-        <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator size="large" color="#007991" />
-        </View>
-      )}
-    </ScrollView>
+    <>
+      <Snackbar
+        visible={isSavedVocab}
+        onDismiss={onDismissSnackBar}
+        elevation={5}
+      >
+        Saved
+      </Snackbar>
+      <Snackbar
+        visible={!!errorSaveVocab}
+        onDismiss={onClearError}
+      >
+        {typeof errorSaveVocab === "string" ? errorSaveVocab : "Error"}
+      </Snackbar>
+      <ScrollView
+        style={{ height: "100%", elevation: 2 }}
+        contentContainerStyle={styles.vocabularyView}
+        showsVerticalScrollIndicator={false}
+      >
+
+        {vocabs && vocabs.map((item, index) => {
+          const isSaved = savedVocabs.some((vocab) => vocab.vocabularyId == item.id)
+          return (
+            <View key={`vocab_${item.id}`} style={styles.cardWrapper}>
+              <CardVocab vocab={item} onClickSave={() => handleClickSave(item)} isSaved={isSavedMap[item.id]} />
+            </View>
+          )
+        })}
+        {isFetchingVocabs && (
+          <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator size="large" color="#007991" />
+          </View>
+        )}
+
+      </ScrollView>
+    </>
   )
 }
 
 function ArticleTab({ lesson, captions }: { materialId: string }) {
-  const [shouldShow, setShouldShow] = useState(false)
+  const [shouldShowBrowser, setShouldShowBrowser] = useState(true)
   const [shouldEmbed, setShouldEmbed] = useState(true)
-
-
-  if (shouldShow) {
-    return (
-      <View style={{ position: "absolute", }}>
-        <WebView
-          startInLoadingState
-          mediaPlaybackRequiresUserAction
-          originWhitelist={['*']}
-          source={{ uri: lesson.material.url }}
-          style={styles.webview}
-        // menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
-        />
-      </View>
-    )
-  }
 
   return (
     <>
+      <Portal>
+        <Modal visible={shouldShowBrowser} onDismiss={() => { setShouldShowBrowser(false) }} contentContainerStyle={{ flex: 1, backgroundColor: "#fff" }}>
+          <Browser key="lesson.material.url" initialUrl={lesson.material.url} onClose={() => setShouldShowBrowser(false)} />
+        </Modal>
+      </Portal>
       {lesson.material.type === "video" ?
         <View style={{ flexGrow: 1 }}>
           <WebView
@@ -244,15 +278,18 @@ function ArticleTab({ lesson, captions }: { materialId: string }) {
             ))}
           </ScrollView>
         </View> :
-        <View style={{ height: "100%", width: "100%" }}>
-          {shouldEmbed && <WebView
+        <View style={{ height: "100%", width: "100%", alignContent: "center", justifyContent: "center" }}>
+          <View style={{ padding: 24 }}>
+            <Button mode="contained" onPress={() => { setShouldShowBrowser(true) }}>Go to the article page</Button>
+          </View>
+          {/* {shouldEmbed && <WebView
             startInLoadingState
             mediaPlaybackRequiresUserAction
             originWhitelist={['*']}
             source={{ uri: lesson.material.url }}
             style={styles.webview}
-          // menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
-          />}
+          menuItems={[{ label: 'Tweet', key: 'tweet' }, { label: 'Save for later', key: 'saveForLater' }]}
+          />} */}
           {/* {!shouldEmbed && <View style={{ justifyContent: "center", alignItems: "center", height: "100%" }}>
             <Button>Go to the website</Button>
           </View>} */}
@@ -264,6 +301,8 @@ function ArticleTab({ lesson, captions }: { materialId: string }) {
 
 function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, lesson: {} }) {
   const [tab, setTab] = useState(LearningModeTab.Article)
+  const [openArticle, setOpenArticle] = useState(true)
+
   const dispatch = useAppDispatch()
   const captions = useAppSelector(state => {
     if (!lesson.material) return []
@@ -271,6 +310,11 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
     if (!state.videoInfo.captions[materialId]) return []
     return state.videoInfo.captions[materialId]
   })
+
+  useEffect(() => {
+    dispatch(fetchSavedVocab())
+    dispatch(fetchVocabs({ materialId: lesson.material.id }))
+  }, [])
 
 
   return (
@@ -299,7 +343,8 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
         </View>
       </View>
 
-      {tab === LearningModeTab.Article &&
+      {
+        tab === LearningModeTab.Article &&
         <ArticleTab lesson={lesson} captions={captions} />
       }
       {
@@ -313,7 +358,10 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
         )
       }
       <TouchableOpacity onPress={onPressToggle} style={styles.switch}>
-        <View>
+        <View style={{ flexDirection: "row", justifyContent: 'center', alignContent: "center" }}>
+          <View style={{ marginRight: 4 }}>
+            <Ionicons name="chatbubble-ellipses" size={18} color="white" />
+          </View>
           <Text style={styles.buttonTalkMode}>Go to {Mode.Talk} Mode</Text>
         </View>
       </TouchableOpacity >
@@ -440,7 +488,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     height: 64,
     // position: 'absolute',
-    backgroundColor: 'blue',
+    backgroundColor: '#2FABE8',
     alignItems: 'center',
     justifyContent: 'center',
     color: "#fff",
@@ -457,6 +505,7 @@ const styles = StyleSheet.create({
   cardWrapper: {
     width: "90%",
     marginBottom: 8,
+    elevation: 2,
   },
   section: {
     width: "100%",

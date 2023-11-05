@@ -6,7 +6,6 @@ const sharedPath = path.resolve(__dirname, '../shared');
 const defaultConfig = getDefaultConfig(__dirname);
 defaultConfig.resolver.assetExts.push('cjs');
 
-console.log({ sharedPath })
 defaultConfig.resolver.extraNodeModules = {
   '@shared': sharedPath
 }

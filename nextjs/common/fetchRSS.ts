@@ -38,6 +38,7 @@ interface RSS {
 
 const prisma = new PrismaClient();
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export async function fetchAndStoreRSS({ url, name, category }: { url: string, name: string, category: string }) {
   console.log("============================")
   console.log("fetching and storing rss", { url, name })

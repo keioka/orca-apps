@@ -7,8 +7,6 @@ import prisma from '../db';
 
 export const setCurrentUser = async (req: NextApiRequest,) => {
 
-  console.log("========setCurrentUser======")
-
   if (!req.fbUid) {
     throw new Error('No auth in req context')
   }

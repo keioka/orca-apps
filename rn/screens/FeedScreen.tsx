@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, SafeAreaView, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { Modal, Portal, Text, Snackbar, Button } from 'react-native-paper';
+import { Modal, Portal, Snackbar, Button } from 'react-native-paper';
 import { CardArticle } from '../components/CardArticle';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -10,6 +10,7 @@ import { createLesson, clearCreatedLessonId, clearError as clearErrorLesson } fr
 import { signOut } from '../redux/features/auth';
 import { clearHasSuccessCreateFollow, fetchFollowPublishers } from '../redux/features/publishers';
 import { categories } from '../helpers/categories';
+import { Text } from '../components/Text';
 
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
@@ -20,7 +21,7 @@ export function FeedScreen({ navigation }) {
   const [selectedCategory, setActiveCategory] = useState("all")
   const [refreshing, setRefreshing] = useState(false);
   const [offset, setOffset] = useState(0);
-  const followPublisherIds = useAppSelector((state) => state.publisher.followIds)
+  const followPublishers = useAppSelector((state) => state.publisher.followPublishers)
   const followCategories = useAppSelector((state) => state.publisher.followCategories)
 
   useEffect(() => {
@@ -28,14 +29,16 @@ export function FeedScreen({ navigation }) {
   }, [])
 
   useEffect(() => {
+    if (!followPublishers) return
+    const followPublisherIds = followPublishers.map((publisher) => publisher.publisherId)
     dispatch(fetchMaterials({
       offset,
       limit: 50,
-      followPublisherIds
+      publisherIds: followPublisherIds,
     }))
     setOffset(offset + 50)
 
-  }, [followPublisherIds])
+  }, [followPublishers])
 
   useEffect(() => {
     if (createdLessonId) {
@@ -45,11 +48,14 @@ export function FeedScreen({ navigation }) {
   }, [creating, createdLessonId])
 
   const onRefresh = useCallback(() => {
+    const followPublisherIds = followPublishers.filter((publisher) => publisher.category === selectedCategory).map((publisher) => publisher.publisherId)
+
     setRefreshing(true);
     dispatch(fetchMaterials({
       // category: selectedCategory === "all" ? null : categories[selectedCategory].slug,
       offset,
-      limit: 50
+      limit: 50,
+      publisherIds: followPublisherIds
     }))
     setOffset(offset + 50)
     setTimeout(() => {
@@ -109,6 +115,18 @@ export function FeedScreen({ navigation }) {
     navigation.navigate('Category')
   }
 
+  const handleSelectTab = (slug: string) => {
+    if (!followPublishers) return
+    setActiveCategory(slug)
+    const followPublisherIds = followPublishers.filter((publisher) => publisher.category === slug).map((publisher) => publisher.publisherId)
+    dispatch(fetchMaterials({
+      offset: 0,
+      limit: 50,
+      publisherIds: followPublisherIds
+    }))
+    setOffset(50)
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Portal>
@@ -129,7 +147,7 @@ export function FeedScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={styles.headerDateText}>{getToday()}</Text>
+          <Text style={styles.headerDateText} weight='Bold'>{getToday()}</Text>
           <TouchableOpacity onPress={handlePress}>
             {session ? <View>
               {/* <Text style={styles.headerDateText}>s</Text> */}
@@ -149,16 +167,16 @@ export function FeedScreen({ navigation }) {
           horizontal
         >
           <TouchableOpacity key="all" onPress={() => setActiveCategory("all")}>
-            <View style={[{ justifyContent: "center", alignItems: "center", width: 96, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#4CB8C4" }]}>
+            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#4CB8C4" }]}>
               <Ionicons name="star" size={24} color={selectedCategory === "all" ? "#4CB8C4" : "#242424"} />
               <Text style={{ marginTop: 8, }}>All</Text>
             </View>
           </TouchableOpacity>
 
-          {followCategoryItems.map((category) => {
+          {followCategoryItems && followCategoryItems.map((category) => {
             return (
-              <TouchableOpacity key={category.slug} onPress={() => setActiveCategory(category.slug)}>
-                <View style={[{ justifyContent: "center", alignItems: "center", width: 96, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.slug && { borderBottomColor: "#4CB8C4" }]}>
+              <TouchableOpacity key={category.slug} onPress={() => handleSelectTab(category.slug)}>
+                <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.slug && { borderBottomColor: "#4CB8C4" }]}>
                   <Ionicons name={category.icon} size={24} color={selectedCategory === category.slug ? "#4CB8C4" : "#242424"} />
                   <Text style={{ marginTop: 8, }}>{category.title}</Text>
                 </View>
@@ -166,7 +184,7 @@ export function FeedScreen({ navigation }) {
             )
           })}
           <TouchableOpacity key="category_add" onPress={handleNavigateToCategory}>
-            <View style={[{ justifyContent: "center", alignItems: "center", width: 96, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }]}>
+            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }]}>
               <Ionicons name="add-circle-outline" size={24} color="#242424" />
               <Text style={{ marginTop: 8, }}>Add</Text>
             </View>
@@ -199,7 +217,7 @@ export function FeedScreen({ navigation }) {
             )
           }
           {
-            selectedMaterials.map((item, index) => (
+            selectedMaterials && selectedMaterials.map((item, index) => (
               <View key={item.id} style={{ marginVertical: 2, width: "95%" }}>
                 <CardArticle
                   item={item}
@@ -234,7 +252,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   scrollViewContainer: {
-    alignItems: 'center',
+    // alignItems: 'center',
+    alignItems: 'flex-start',
   },
   header: {
     width: '100%',

@@ -48,6 +48,7 @@ interface PaginationResult<T> {
 export async function getMaterials(params: GetMaterialsParams): Promise<PaginationResult<MaterialWithLesson[]>> {
   const where: Prisma.MaterialWhereInput = {};
 
+  console.log({ params })
   if (params.date) {
     const startDate = new Date(params.date);
     startDate.setUTCHours(0, 0, 0, 0);
@@ -196,7 +197,7 @@ export async function createSummary({ materialId, vocabParams }: { materialId: s
   }
 }
 
-export async function getVocabsByMaterialId({ materialId, langCode }: { materialId: string, langCode: string }): Promise<Vocab[]> {
+export async function getVocabsByMaterialId({ materialId, langCode = 'ja' }: { materialId: string, langCode: string }): Promise<Vocab[]> {
   const vocabs = await prisma.vocabulary.findMany({
     where: {
       materialId

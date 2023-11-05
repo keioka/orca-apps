@@ -3,15 +3,17 @@ import { StyleSheet, ScrollView, Text, View, TouchableOpacity, Image, KeyboardAv
 import { CardMessage } from '../components/CardMessage';
 import { CardVocab, CardVocabXS } from '../components/CardVocab';
 // import { WebView } from 'react-native-webview';
-import { TextInput, Card, Modal, Portal, } from 'react-native-paper';
+import { TextInput, Card, Modal, Portal, Button, } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { vocab } from '../helpers/dummy';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { LoadingStatus } from '../redux/types';
-import { fetchMessages, createAIMessage, addUserMessage } from '../redux/features/messages';
+import { fetchMessages, createAIMessage, addUserMessage, sendWhisper } from '../redux/features/messages';
 import { useAudio } from '../hooks/audio';
 import { transcribeAudio } from '../redux/features/transcribe'
 import { fetchSavedParaphrases } from '../redux/features/note';
+import { Audio } from 'expo-av';
+import Voice from '@react-native-voice/voice';
 
 enum TalkHelper {
   Vocab = 'vocab',
@@ -39,17 +41,213 @@ async function getMetadata(url: string) {
   }
 }
 
+import { Component } from 'react';
+
+class VoiceTest extends Component {
+
+  state: Readonly<{}>;
+  constructor(props) {
+    super(props);
+    this.state = {
+      helper: null,
+      openRecordingModal: false,
+      isRecording: false,
+    }
+    Voice.onSpeechStart = this.onSpeechStartHandler.bind(this);
+    Voice.onSpeechEnd = this.onSpeechEndHandler.bind(this);
+    Voice.onSpeechResults = this.onSpeechResultsHandler.bind(this);
+    this.setOpenRecordingModal = this.setOpenRecordingModal.bind(this)
+    this.onPressMic = this.onPressMic.bind(this)
+    this.onStartButtonPress = this.onStartButtonPress.bind(this)
+    this.onEndButtonPress = this.onEndButtonPress.bind(this)
+    this.onClear = this.onClear.bind(this)
+    this.onClose = this.onClose.bind(this)
+  }
+
+  onStartButtonPress(e) {
+    Voice.start('en-US');
+  }
+
+  onSpeechStartHandler(e) {
+    console.log('onSpeechStart: ', e);
+  }
+
+  onSpeechEndHandler(e) {
+
+  }
+
+  onSpeechResultsHandler(e) {
+    this.props.handleSetMessage(e.value[0])
+  }
+
+  setHelper = (helper) => {
+    this.setState({ helper })
+  }
+
+  setOpenRecordingModal = (openRecordingModal: boolean) => {
+    this.setState({ openRecordingModal })
+  }
+
+  onPressMic = () => {
+    this.setState({ openRecordingModal: true })
+    // startRecording()
+  }
+
+  onStartButtonPress = (e) => {
+    this.setState({ isRecording: true })
+    Voice.start('en-US');
+  }
+
+  onEndButtonPress(e) {
+    this.setState({ isRecording: false })
+    Voice.stop();
+    this.setOpenRecordingModal(false)
+  }
+
+  onClear() {
+    this.props.handleSetMessage(null)
+  }
+
+  onClose() {
+    this.setOpenRecordingModal(false)
+  }
+
+  render() {
+    return (
+      <>
+        <Portal>
+          <Modal
+            visible={this.state.openRecordingModal}
+            onDismiss={this.onEndButtonPress}
+            contentContainerStyle={{
+              backgroundColor: 'white',
+              padding: 20,
+              margin: 20,
+              borderRadius: 20,
+              height: 300,
+            }}
+          >
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+              <View style={{ backgroundColor: "#f4f4f4", padding: 16, width: "100%", borderRadius: 8, marginBottom: 24 }}>
+                <Text>{this.props.message}</Text>
+              </View>
+              <TouchableOpacity
+                onPress={this.state.isRecording ? this.onEndButtonPress : this.onStartButtonPress}>
+                <View style={{ width: 64, height: 64, borderRadius: 64, backgroundColor: "red", justifyContent: "center", alignItems: "center" }}>
+                  {this.state.isRecording ? <Ionicons name={"square"} size={32} color="#fff" /> : <View style={{ width: 32, height: 32, borderRadius: 32, backgroundColor: "#fff" }} />}
+                </View>
+              </TouchableOpacity>
+              <Button
+                onPress={this.onClear}
+                textColor='#242424'
+                style={{
+                  marginTop: 16,
+                  backgroundColor: '#f4f4f4',
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <Ionicons name="trash-outline" size={16} color="#242424" />
+                <Text>Clear input</Text>
+              </Button>
+              <Button
+                onPress={this.onClose}
+                textColor='#242424'
+                style={{
+                  marginTop: 16,
+                  backgroundColor: '#f4f4f4',
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <Ionicons name="close" size={16} color="#242424" />
+                <Text>Close</Text>
+              </Button>
+            </View>
+          </Modal>
+        </Portal>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={64} contentContainerStyle={{ borderTopColor: "#f4f4f4", borderTopWidth: 1 }}>
+          <>
+            {this.state.helper && (
+              <View
+                style={{
+                  paddingVertical: 8,
+                  paddingHorizontal: 64,
+                  backgroundColor: "#fff",
+                  flexDirection: "column",
+                  flexGrow: 1,
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#f4f4f4",
+                  width: "100%",
+                }}
+              >
+                <Text style={{ fontSize: 12, fontWeight: "bold", color: "lightgray" }}>Saved vocabs</Text>
+                <ScrollView horizontal style={{ backgroundColor: "#fff", paddingVertical: 12 }}>
+                  {vocab.map((vocab) => <View style={{ marginRight: 8, backgroundColor: "#fff", }}><CardVocabXS vocab={vocab} /></View>)}
+                </ScrollView>
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                  <TouchableOpacity onPress={() => this.setHelper(null)}>
+                    <Ionicons name="chevron-down-outline" size={24} color="lightgray" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            <View
+              style={{
+                justifyContent: "center",
+                width: "100%",
+                paddingTop: 18,
+                paddingBottom: 8,
+                backgroundColor: "#fff",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+
+
+              <View style={styles.footer}>
+                <View
+                  style={[styles.textInputWrapper]}
+                >
+                  <TouchableOpacity onPress={this.onPressMic}>
+                    <Ionicons name="mic" size={24} color="#FB4D3D" />
+                  </TouchableOpacity>
+                  <TextInput
+                    style={[styles.messageTextInput]}
+                    // multiline
+                    dense
+                    mode="flat"
+                    underlineColor='transparent'
+                    selectionColor='#9FD1D5'
+                    activeUnderlineColor='transparent'
+                    value={this.props.message}
+                    onChangeText={(value) => {
+                      this.props.setMessage(value)
+                    }}
+                  />
+                  <TouchableOpacity onPress={this.props.submitMessage} disabled={this.props.disabledSubmit}>
+                    <Ionicons name="send" size={21} color="#9FD1D5" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </>
+        </KeyboardAvoidingView>
+      </>
+    )
+  }
+}
 
 export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void, lesson: {} }) {
   const [message, setMessage] = useState()
-  const [helper, setHelper] = useState(null)
   const dispatch = useAppDispatch()
   const messages = useAppSelector(state => { return state.message.messageMap[lesson.id] || [] })
   const statusCreate = useAppSelector(state => { return state.message.statusCreate })
   const [newsTitle, setNewsTitle] = useState("Loading");
   const [newsImageUrl, setNewsImageUrl] = useState(null);
   const [loadingMetadata, setLoadingMetadata] = useState(false)
-  const { startRecording, stopRecording, file } = useAudio();
+  const { startRecording, stopRecording, file, fileURI } = useAudio();
   const [openRecordingModal, setOpenRecordingModal] = useState(false);
   const isAddingMessage = useAppSelector(state => { return state.message.addingMessage })
 
@@ -75,6 +273,25 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
     }
   }, [])
 
+  // useEffect(() => {
+  //   Voice.onSpeechStart = function (e) {
+  //     console.log('onSpeechStart: ', e);
+  //   }
+  //   Voice.onSpeechEnd = function (e) {
+  //     setOpenRecordingModal(false)
+  //     console.log('onSpeechEnd: ', e);
+  //   }
+  //   Voice.onSpeechResults = handleVoiceResult
+  // }, [])
+
+  console.log({ message })
+
+  useEffect(() => {
+    console.log({ file, fileURI })
+    if (file && fileURI) {
+      dispatch(sendWhisper({ file, fileURI }))
+    }
+  }, [file, fileURI])
 
   useEffect(() => {
     async function fetchMetadata() {
@@ -99,10 +316,6 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
     scrollViewRef.current.scrollToEnd({ animated: true })
   }, [messages.length])
 
-  const onPressMic = () => {
-    setOpenRecordingModal(true)
-    startRecording()
-  }
 
   const submitMessage = () => {
     dispatch(addUserMessage({ message, lessonId: lesson.id }))
@@ -111,9 +324,9 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
     Keyboard.dismiss()
   }
 
-  const handleTranscribe = async (file) => {
-    console.log({ file })
-    file && dispatch(transcribeAudio(file))
+  const handleSetMessage = (message) => {
+    console.log("handleSetMessage", message)
+    setMessage(message)
   }
 
   const isTypeVideo = lesson.material.type === "video"
@@ -121,34 +334,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
 
   return (
     <View style={{ flex: 1, height: "100%" }}>
-      <Portal>
-        <Modal
-          visible={openRecordingModal}
-          onDismiss={() => setOpenRecordingModal(false)}
-          contentContainerStyle={{
-            backgroundColor: 'white',
-            padding: 20,
-            margin: 20,
-            borderRadius: 20,
-            height: 300,
-          }}
-        >
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <TouchableOpacity
-              onPress={() => {
-                stopRecording()
-                setOpenRecordingModal(false)
-                if (file) {
-                  handleTranscribe(file)
-                }
-              }}>
-              <View style={{ width: 64, height: 64, borderRadius: 64, backgroundColor: "red", justifyContent: "center", alignItems: "center" }}>
-                <Ionicons name="square" size={28} color="#fff" />
-              </View>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      </Portal>
+
       <View style={styles.menuTalkMode}>
         <View style={{ flexDirection: "row", paddingVertical: 8 }}>
           {/* {isTypeVideo ? <WebView
@@ -194,110 +380,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
           }
         </ScrollView>
       </View>
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={64} contentContainerStyle={{ borderTopColor: "#f4f4f4", borderTopWidth: 1 }}>
-        <>
-          {helper && (
-            <View
-              style={{
-                paddingVertical: 8,
-                paddingHorizontal: 64,
-                backgroundColor: "#fff",
-                flexDirection: "column",
-                flexGrow: 1,
-                borderBottomWidth: 1,
-                borderBottomColor: "#f4f4f4",
-                width: "100%",
-              }}
-            >
-              <Text style={{ fontSize: 12, fontWeight: "bold", color: "lightgray" }}>Saved vocabs</Text>
-              <ScrollView horizontal style={{ backgroundColor: "#fff", paddingVertical: 12 }}>
-                {vocab.map((vocab) => <View style={{ marginRight: 8, backgroundColor: "#fff", }}><CardVocabXS vocab={vocab} /></View>)}
-              </ScrollView>
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <TouchableOpacity onPress={() => setHelper(null)}>
-                  <Ionicons name="chevron-down-outline" size={24} color="lightgray" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-
-          <View
-            style={{
-              justifyContent: "center",
-              width: "100%",
-              paddingTop: 18,
-              paddingBottom: 8,
-              backgroundColor: "#fff",
-              flexDirection: "column",
-              flexGrow: 1,
-            }}
-          >
-            {/* <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={{
-                width: "100%",
-                flexGrow: 1,
-                paddingHorizontal: 22,
-              }}
-              contentContainerStyle={{
-                flexGrow: 1,
-                width: "100%",
-                alignItems: "center",
-                marginBottom: 8,
-              }}
-            >
-              <TouchableOpacity onPress={() => setHelper(TalkHelper.Vocab)}>
-                <View style={{ width: 120, height: 32, backgroundColor: "#f4f4f4", borderRadius: 20, alignItems: "center", justifyContent: "center", marginRight: 4 }}>
-                  <Text>
-                    Saved vocabs
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setHelper(TalkHelper.Phrase)}>
-                <View style={{ width: 120, height: 32, backgroundColor: "#f4f4f4", borderRadius: 20, alignItems: "center", justifyContent: "center", marginRight: 4 }}>
-                  <Text>
-                    Phrase
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setHelper(TalkHelper.WhatToSay)}>
-                <View style={{ width: 120, height: 32, backgroundColor: "#f4f4f4", borderRadius: 20, alignItems: "center", justifyContent: "center", marginRight: 4 }}>
-                  <Text>
-                    What to say?
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </ScrollView> */}
-
-            <View style={styles.footer}>
-              <View
-                style={[styles.textInputWrapper]}
-              >
-                <TouchableOpacity onPress={onPressMic}>
-                  <Ionicons name="mic" size={24} color="#FB4D3D" />
-                </TouchableOpacity>
-                <TextInput
-                  style={[styles.messageTextInput]}
-                  // multiline
-                  dense
-                  mode="flat"
-                  underlineColor='transparent'
-                  selectionColor='#9FD1D5'
-                  activeUnderlineColor='transparent'
-                  value={message}
-                  onChangeText={(value) => {
-                    setMessage(value)
-                  }}
-                />
-                <TouchableOpacity onPress={submitMessage} disabled={disabledSubmit}>
-                  <Ionicons name="send" size={21} color="#9FD1D5" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </>
-      </KeyboardAvoidingView>
+      <VoiceTest handleSetMessage={handleSetMessage} message={message} submitMessage={submitMessage} />
     </View>
   )
 }

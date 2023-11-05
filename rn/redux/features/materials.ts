@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { uniqBy } from 'lodash';
 import axios from 'axios';
+import qs from 'qs';
 // Define the type for the material
 interface Material {
   id: number;
@@ -68,7 +69,8 @@ const materialsSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchMaterials.fulfilled, (state, action) => {
-        state.items = action.payload || [];
+        const newMaterials = action.payload || [];
+        state.items = uniqBy([...state.items, ...newMaterials], 'id');
         state.loading = false;
         state.error = null;
       })
@@ -123,7 +125,8 @@ interface FetchMaterialsParams {
   category: string,
   date: string,
   offset: number,
-  limit: number
+  limit: number,
+  publisherIds: string[],
 }
 
 // Define the fetchMaterials async thunk
@@ -131,8 +134,13 @@ export const fetchMaterials = createAsyncThunk<Material[], void>(
   'materials/fetchMaterials',
   async (params: FetchMaterialsParams, { rejectWithValue }) => {
     try {
+      console.log({ params })
       const response = await axios(`${ROOT_URL}/api/materials`, {
-        params: params
+        params: params,
+        paramsSerializer: params => {
+          console.log(qs.stringify(params, { arrayFormat: 'repeat' }))
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        }
       }); // Replace with your API endpoint
 
       const data = response.data;
@@ -184,9 +192,7 @@ export const fetchVocabs = createAsyncThunk(
   'materials/fetchVocabs',
   async ({ materialId }: FetchCaptionArgs, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${ROOT_URL}/api/materials/${materialId}/vocabs`, {
-        materialId
-      })
+      const response = await axios.get(`${ROOT_URL}/api/materials/${materialId}/vocabs`)
 
       const { vocabs } = response.data;
 
@@ -250,7 +256,6 @@ async function getSummariesByLevel(params: { url: string, levels: string[] }) {
   )
 
   const result = await response.json()
-  console.log({ result })
 
   if (!response.ok) {
     console.log({ result })

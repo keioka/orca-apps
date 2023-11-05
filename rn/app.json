@@ -2,7 +2,7 @@
   "expo": {
     "name": "orca - AI English tutor",
     "slug": "orcatalk",
-    "version": "0.5.4",
+    "version": "0.6.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,31 +16,49 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.koka0828us.orcatalk"
+      "bundleIdentifier": "com.koka0828us.orcatalk",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "This app uses the photo library to save photos for your profile."
+      }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
       "package": "com.koka0828us.orcatalk"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
         "projectId": "8b85890b-bb8f-41ab-b32a-df79d5291cb8"
       }
+    }
+  },
+  "android": {
+    "adaptiveIcon": {
+      "foregroundImage": "./assets/adaptive-icon.png",
+      "backgroundColor": "#ffffff"
     },
-    "plugins": [
-      "@logrocket/react-native",
-      [
-        "expo-av",
-        {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
-        }
-      ]
+    "package": "com.koka0828us.orcatalk"
+  },
+  "web": {
+    "favicon": "./assets/favicon.png"
+  },
+  "extra": {
+    "eas": {
+      "projectId": "8b85890b-bb8f-41ab-b32a-df79d5291cb8"
+    }
+  },
+  "plugins": [
+    "@logrocket/react-native",
+    [
+      "@react-native-voice/voice",
+      {
+        "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+        "speechRecognitionPermission": "CUSTOM: Allow $(PRODUCT_NAME) to securely recognize user speech"
+      }
+    ],
+    [
+      "expo-av",
+      {
+        "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+      }
     ]
-  }
+  ]
 }

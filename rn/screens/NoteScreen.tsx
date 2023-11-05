@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, ScrollView, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native';
 import { CardVocab } from '../components/CardVocab';
 import { vocab, phrases, grammar } from '../helpers/dummy';
 import { CardPhrase } from '../components/CardPhrase';
 import { CardGrammar } from '../components/CardGrammar';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchSavedVocab, fetchSavedParaphrases } from '../redux/features/note';
+import { Text } from '../components/Text';
 
 enum NoteTab {
   Vocabulary = 'vocabulary',
@@ -26,28 +27,25 @@ export function NoteScreen() {
     dispatch(fetchSavedParaphrases({}))
   }, [])
 
-
-  console.log({ savedParaphrases })
-
   return (
     <View style={styles.container}>
       <View style={styles.menu}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <TouchableOpacity onPress={() => setTab(NoteTab.Vocabulary)}>
             <View style={[styles.button, tab === NoteTab.Vocabulary ? styles.menuButtonActive : null]}>
-              <Text style={[styles.textMenu, tab === NoteTab.Vocabulary ? styles.textMenuActive : null]}>Vocabulary</Text>
+              <Text style={[styles.textMenu, tab === NoteTab.Vocabulary ? styles.textMenuActive : null]} weight='SemiBold'>Vocabulary</Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => setTab(NoteTab.Phrase)}>
             <View style={[styles.button, tab === NoteTab.Phrase ? styles.menuButtonActive : null]}>
-              <Text style={[styles.textMenu, tab === NoteTab.Phrase ? styles.textMenuActive : null]}>Phrase</Text>
+              <Text style={[styles.textMenu, tab === NoteTab.Phrase ? styles.textMenuActive : null]} weight='SemiBold'>Phrase</Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => setTab(NoteTab.Grammar)}>
             <View style={[styles.button, tab === NoteTab.Grammar ? styles.menuButtonActive : null]}>
-              <Text style={[styles.textMenu, tab === NoteTab.Grammar ? styles.textMenuActive : null]}>Grammar</Text>
+              <Text style={[styles.textMenu, tab === NoteTab.Grammar ? styles.textMenuActive : null]} weight='SemiBold'>Grammar</Text>
             </View>
           </TouchableOpacity>
 
@@ -71,7 +69,6 @@ export function NoteScreen() {
         {tab === NoteTab.Vocabulary && (
           <View style={{ width: "100%" }}>
             {savedVocabularies.map((item, index) => {
-              console.log(item)
               const vocab = item.vocabulary
               return (
                 <View key={`vocab_${vocab.id}`} style={styles.cardWrapper}>
@@ -88,7 +85,6 @@ export function NoteScreen() {
         {tab === NoteTab.Phrase && (
           <View style={{ width: "100%" }}>
             {savedParaphrases.map((item, index) => {
-              console.log(item)
               return (
                 <View key={`phrase_${item.id}`} style={styles.cardWrapper}>
                   <CardPhrase

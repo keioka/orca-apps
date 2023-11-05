@@ -8,6 +8,7 @@ type noteData = {
   vocabularies: Vocabulary[];
   paraphrases: Paraphrase[];
   grammarMistakes: GrammarMistake[];
+  isSavedVocab: boolean;
 };
 
 export type Vocabulary = {
@@ -53,69 +54,78 @@ const initialState: noteData = {
   vocabularies: [],
   paraphrases: [],
   grammarMistakes: [],
+  isSavedVocab: false,
+  isSavedParaphrase: false,
+  errors: {
+    saveVocabulary: null,
+    saveParaphrase: null,
+    saveGrammarMistakes: null,
+  }
 };
 
 const noteDataSlice = createSlice({
   name: 'note',
   initialState,
+  reducers: {
+    clearIsSavedVocab: (state) => {
+      state.isSavedVocab = false;
+    },
+    clearErrorSaveVocab: (state) => {
+      state.errors.saveVocab = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(saveVocab.pending, (state) => {
         state.savingVocab = true;
-        state.error = null;
+        state.errors.saveVocabulary = null;
+        state.isSavedVocab = false;
       })
       .addCase(saveVocab.fulfilled, (state, action) => {
         state.vocabularies = [...state.vocabularies, action.payload];
         state.savingVocab = false;
-        state.error = null;
+        state.errors.saveVocabulary = null;
+        state.isSavedVocab = true;
       })
       .addCase(saveVocab.rejected, (state, action) => {
         state.savingVocab = false;
-        state.error = action.payload as string;
+        state.errors.saveVocabulary = action.payload || "Failed to save vocabulary"
+        state.isSavedVocab = false;
       })
       .addCase(fetchSavedVocab.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchSavedVocab.fulfilled, (state, action) => {
         state.vocabularies = uniqBy([...state.vocabularies, ...action.payload], "id")
         state.loading = false;
-        state.error = null;
       })
       .addCase(fetchSavedVocab.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
       })
       .addCase(saveParaphrase.pending, (state) => {
         state.savingParaphrase = true;
-        state.error = null;
       })
       .addCase(saveParaphrase.fulfilled, (state, action) => {
         state.paraphrases = [...state.paraphrases, action.payload.savedPhraseInfo];
         state.savingParaphrase = false;
-        state.error = null;
       })
       .addCase(saveParaphrase.rejected, (state, action) => {
         state.savingParaphrase = false;
-        state.error = action.payload as string;
       })
       .addCase(fetchSavedParaphrases.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchSavedParaphrases.fulfilled, (state, action) => {
         state.paraphrases = uniqBy([...state.paraphrases, ...action.payload.savedParaphrases], "id")
         state.loading = false;
-        state.error = null;
       })
       .addCase(fetchSavedParaphrases.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
       })
   },
 });
 
-export const { saveParaphrases, saveGrammarMistakes, toggleArchive } = noteDataSlice.actions;
+export const { saveParaphrases, saveGrammarMistakes, toggleArchive, clearIsSavedVocab, clearErrorSaveVocab } = noteDataSlice.actions;
 
 const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
@@ -154,7 +164,6 @@ export const saveParaphrase = createAsyncThunk(`note/saveParaphrase`, async ({ p
     const state = getState()
     const token = validateSessionAndToken(state);
 
-    console.log({ token })
     const response = await axios.post(
       `${ROOT_URL}/api/paraphrases/${paraphraseId}/save`,
       null,

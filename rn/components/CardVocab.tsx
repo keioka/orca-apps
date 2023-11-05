@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Card, Button, Tab, TabView, ActivityIndicator } from 'react-native-paper';
-import { BsArrowRightCircleFill, BsArrowLeftCircleFill } from 'react-icons/bs'; // Note: you need to find alternative icons that work with React Native, react-icons won't work
-import axios from 'axios';
 import * as Speech from 'expo-speech';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import PreviewMaterial from './PreviewMaterial';
+import { Text } from './Text';
+import { Audio } from 'expo-av';
 
 export const CardVocab = ({
   vocab: {
@@ -18,6 +18,7 @@ export const CardVocab = ({
     material
   },
   onClickSave,
+  isSaved,
 }: {
   vocab: {
     word: string;
@@ -30,16 +31,36 @@ export const CardVocab = ({
     translation: {
       content: string;
     }
-  }
+  },
+  isSaved?: boolean,
+  onClickSave?: () => void
 }) => {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  useEffect(() => {
+    Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
+  }, [])
 
   const handlePressSpeak = () => {
-    console.log("------- speak -------------")
+    if (isSpeaking) {
+      Speech.stop()
+      setIsSpeaking(false)
+      return
+    }
+
     Speech.speak(word, {
+      volume: 1,
       language: 'en',
       pitch: 1,
       rate: 0.75,
-      voice: 'com.apple.ttsbundle.Samantha-compact'
+      voice: 'com.apple.ttsbundle.Samantha-compact',
+      onStart: () => {
+        setIsSpeaking(true)
+      },
+      onDone: () => {
+        setIsSpeaking(false)
+      },
+
     });
   };
 
@@ -53,25 +74,25 @@ export const CardVocab = ({
             <Text>{pronounce}</Text>
           </View>
 
-          <TouchableOpacity onPress={handlePressSpeak} >
-            <View style={styles.buttonSpeak}>
+          <TouchableOpacity onPress={handlePressSpeak} disabled={isSpeaking}>
+            {!isSpeaking && <View style={styles.buttonSpeak}>
               <Ionicons name="volume-medium-outline" size={18} color="#242424" />
-            </View>
+            </View>}
           </TouchableOpacity>
 
         </View>
         <View style={styles.sectionMeaning}>
-          <Text style={styles.meaningTrans}>{translation ? translation[0].content : null}</Text>
+          <Text style={styles.meaningTrans} weight='Bold'>{translation ? translation[0].content : null}</Text>
           <Text style={styles.meaning}>{meaning}</Text>
         </View>
 
         <View style={{ marginTop: 16 }}>
           <View style={styles.sectionExample}>
-            <Text style={styles.subtitle}>Sentence</Text>
-            <Text style={styles.sentence}>{example}</Text>
+            <Text style={styles.subtitle} weight='Bold'>Sentence</Text>
+            <Text style={styles.sentence} weight='Medium' italic>"{example}"</Text>
           </View>
           <View style={styles.sectionExample}>
-            <Text style={styles.subtitle}>Example</Text>
+            <Text style={styles.subtitle} weight='Bold'>Example</Text>
             <Text style={styles.meaning}>{sentence}</Text>
           </View>
         </View>
@@ -79,7 +100,7 @@ export const CardVocab = ({
         {
           material && (
             <View style={{ marginTop: 16 }}>
-              <Text style={styles.subtitle}>Source</Text>
+              <Text style={styles.subtitle} weight='Bold'>Source</Text>
               <PreviewMaterial material={material} />
             </View>
           )
@@ -87,7 +108,21 @@ export const CardVocab = ({
       </Card.Content>
 
       <Card.Actions style={styles.cardContent}>
-        {!!onClickSave && <Button textColor='#545454' style={{ backgroundColor: "#f4f4f4", borderColor: "#d4d4d4" }} onPress={onClickSave}>Save</Button>}
+        {!!onClickSave &&
+          <Button
+            style={{
+              backgroundColor: isSaved ? "#fff" : "#f4f4f4",
+              borderColor: isSaved ? "orange" : "#d4d4d4",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={onClickSave}
+            disabled={isSaved}
+          >
+            <Ionicons name={isSaved ? "bookmark" : "bookmark-outline"} size={16} color={isSaved ? "orange" : "#242424"} />
+            <Text>{isSaved ? "Saved" : "Save"}</Text>
+          </Button>
+        }
         {/* <Button textColor='#545454' style={{ backgroundColor: "#f4f4f4", borderColor: "#d4d4d4" }}>Back to the original</Button> */}
       </Card.Actions>
     </Card>
@@ -141,6 +176,7 @@ const styles = StyleSheet.create({
   card: {
     width: '100%',
     // border: '1px solid #f4f4f4',
+    elevation: 0,
     paddingVertical: 24
   },
   cardContent: {
