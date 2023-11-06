@@ -2,7 +2,7 @@
   "expo": {
     "name": "orca - AI English tutor",
     "slug": "orcatalk",
-    "version": "0.6.3",
+    "version": "0.6.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -28,6 +28,13 @@
       "eas": {
         "projectId": "8b85890b-bb8f-41ab-b32a-df79d5291cb8"
       }
+    },
+    "plugins": [
+      "sentry-expo"
+    ],
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/8b85890b-bb8f-41ab-b32a-df79d5291cb8"
     }
   },
   "android": {
@@ -45,8 +52,20 @@
       "projectId": "8b85890b-bb8f-41ab-b32a-df79d5291cb8"
     }
   },
+  "hooks": {
+    "postPublish": [
+      {
+        "file": "sentry-expo/upload-sourcemaps",
+        "config": {
+          "organization": "taiheyyo-inc",
+          "project": "orca-prod"
+        }
+      }
+    ]
+  },
   "plugins": [
     "@logrocket/react-native",
+    "sentry-expo",
     [
       "@react-native-voice/voice",
       {

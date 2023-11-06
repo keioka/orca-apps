@@ -19,7 +19,7 @@ export function CategoryScreen({ navigation }) {
   const [selectedCategory, setSelectedCategory] = useState();
   const publishers = useAppSelector((state) => state.publisher.publishers);
   const hasSuccessCreateFollow = useAppSelector((state) => state.publisher.hasSuccessCreateFollow);
-  const followIds = useAppSelector((state) => state.publisher.followIds);
+  const followIds = useAppSelector((state) => state.publisher.followPublishers);
   const [selectedPublisherIds, setSelectedPublisherIds] = useState([]);
 
   useEffect(() => {
@@ -27,7 +27,9 @@ export function CategoryScreen({ navigation }) {
   }, [])
 
   useEffect(() => {
-    setSelectedPublisherIds(unionBy([...selectedPublisherIds, ...followIds], (id) => id))
+    if (!followIds) return
+    const followPublisherIds = followIds.map((followPublisher) => followPublisher.publisherId)
+    setSelectedPublisherIds(unionBy([...selectedPublisherIds, ...followPublisherIds], (id) => id))
   }, [followIds])
 
   useEffect(() => {
@@ -162,7 +164,7 @@ export function CategoryScreen({ navigation }) {
         labelStyle={{ fontSize: 16, fontWeight: "bold" }}
         style={{
           width: "100%",
-          backgroundColor: "blue",
+          backgroundColor: "#2FABE8",
           borderRadius: 0,
           height: 64,
           alignItems: "center",

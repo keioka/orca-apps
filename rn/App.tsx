@@ -27,11 +27,15 @@ import { Snackbar } from 'react-native-paper';
 import NetworkLogger from 'react-native-network-logger';
 import LogRocket from '@logrocket/react-native';
 import 'react-native-url-polyfill/auto';
-import "./googleAuth.ts"
+// import "./googleAuth.ts"
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import ErrorBoundary from 'react-native-error-boundary'
+import { ErrorScreen } from './screens/ErrorScreen';
+import * as Sentry from 'sentry-expo';
 
 SplashScreen.preventAutoHideAsync();
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -182,6 +186,7 @@ const fonts = {
   'NotoSans-Thin': require('./assets/fonts/NotoSans/NotoSans-Thin.ttf'),
   'NotoSans-ThinItalic': require('./assets/fonts/NotoSans/NotoSans-ThinItalic.ttf'),
 }
+
 const Root = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState);
@@ -266,26 +271,39 @@ const theme = {
     primary: '#3498db',
     accent: '#f1c40f',
   },
+
 };
 
-export default function App() {
+Sentry.init({
+  dsn: "https://e25048ab84e9c5d338110cc22f6fb409@o4506180296966144.ingest.sentry.io/4506180298735616",
+  // enableInExpoDevelopment: true,
+});
 
+function App() {
   useEffect(() => {
-    LogRocket.init('pacifica-tech/orca-l3pnt');
+    console.log(process.env)
+    if (process.env.NODE_ENV !== 'development') {
+      LogRocket.init('pacifica-tech/orca-l3pnt');
+    }
   }, [])
 
   return (
-    <PaperProvider theme={theme}>
-      <Provider store={store}>
-        <View style={styles.container}>
-          <NavigationContainer>
-            <Root />
-          </NavigationContainer>
-        </View>
-      </Provider>
-    </PaperProvider >
+    <Sentry.React.ErrorBoundary fallback={ErrorScreen}>
+      <PaperProvider theme={theme}>
+        <Provider store={store}>
+          <View style={styles.container}>
+            <NavigationContainer>
+              <Root />
+            </NavigationContainer>
+          </View>
+        </Provider>
+      </PaperProvider >
+    </Sentry.React.ErrorBoundary>
   );
 }
+
+export default Sentry.Native.wrap(App);
+
 
 const styles = StyleSheet.create({
   container: {

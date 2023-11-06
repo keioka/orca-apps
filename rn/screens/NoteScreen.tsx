@@ -43,7 +43,7 @@ export function NoteScreen() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => setTab(NoteTab.Grammar)}>
+          {/* <TouchableOpacity onPress={() => setTab(NoteTab.Grammar)}>
             <View style={[styles.button, tab === NoteTab.Grammar ? styles.menuButtonActive : null]}>
               <Text style={[styles.textMenu, tab === NoteTab.Grammar ? styles.textMenuActive : null]} weight='SemiBold'>Grammar</Text>
             </View>
@@ -53,7 +53,7 @@ export function NoteScreen() {
             <View style={[styles.button, tab === NoteTab.FrequentlyUsed ? styles.menuButtonActive : null]}>
               <Text style={[styles.textMenu, tab === NoteTab.FrequentlyUsed ? styles.textMenuActive : null]}>Frequently used</Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </ScrollView>
       </View>
       <ScrollView

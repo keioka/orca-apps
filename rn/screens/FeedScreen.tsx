@@ -14,7 +14,6 @@ import { Text } from '../components/Text';
 
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
-  const { feed, status, error } = useAppSelector((state) => state.feed);
   const { lessons, creating, createdLessonId, error: errorLesson } = useAppSelector((state) => state.lesson);
   const { items } = useAppSelector((state) => state.material);
   const session = useAppSelector((state) => state.auth.session)
@@ -31,6 +30,7 @@ export function FeedScreen({ navigation }) {
   useEffect(() => {
     if (!followPublishers) return
     const followPublisherIds = followPublishers.map((publisher) => publisher.publisherId)
+    if (followPublisherIds.length === 0) return
     dispatch(fetchMaterials({
       offset,
       limit: 50,
@@ -230,10 +230,10 @@ export function FeedScreen({ navigation }) {
         </ScrollView>
       </View>
       <Snackbar
-        visible={!!error || !!errorLesson}
+        visible={!!errorLesson}
         onDismiss={handleClearAllErrors}
       >
-        {error || errorLesson}
+        {errorLesson}
       </Snackbar>
     </SafeAreaView >
   );
