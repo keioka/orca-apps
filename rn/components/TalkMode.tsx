@@ -223,7 +223,7 @@ class VoiceTest extends Component {
                     activeUnderlineColor='transparent'
                     value={this.props.message}
                     onChangeText={(value) => {
-                      this.props.setMessage(value)
+                      this.props.handleSetMessage(value)
                     }}
                   />
                   <TouchableOpacity onPress={this.props.submitMessage} disabled={this.props.disabledSubmit}>
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     flexDirection: "row",
-    height: 48,
+    height: 64,
     paddingLeft: 42,
     paddingRight: 42,
   },

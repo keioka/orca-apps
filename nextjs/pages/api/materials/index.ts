@@ -35,13 +35,16 @@ async function parseAndCreateMaterial({ publisherId, category }: { publisherId: 
 
     const title = item.title.trim()
     const url = item.link?.trim()
+
+    const sitedata = await fetchAndParseWebsite(url)
+
     const data = {
       title,
       type: 'article', // You can modify this based on your needs
       category,
       categoryExternal: item.categories && typeof item.categories[0] === 'string' ? item.categories[0].trim().toLowerCase() : category,
       url,
-      imageUrl: item.image && typeof item.image === 'string' ? item.image.trim() : "",
+      imageUrl: item.image && typeof item.image === 'string' ? item.image.trim() : sitedata?.imageUrl,
       publishedAt,
       publisher: {
         connect: {
@@ -50,10 +53,6 @@ async function parseAndCreateMaterial({ publisherId, category }: { publisherId: 
       },
     }
 
-    const sitedata = await fetchAndParseWebsite(url)
-
-
-    console.log({ description: sitedata?.description, keywords: sitedata?.keywords, title: sitedata?.title, publisher: sitedata?.publisher, imageUrl: sitedata?.imageUrl, url: sitedata?.url, publisherName: sitedata?.publisherName, locale: sitedata?.locale, domain: sitedata?.domain })
 
 
     try {

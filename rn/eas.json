@@ -11,7 +11,8 @@
       },
       "env": {
         "EXPO_PUBLIC_API_ROOT": "http://192.168.1.2:3000"
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
@@ -20,7 +21,8 @@
       },
       "env": {
         "EXPO_PUBLIC_API_ROOT": "https://orca-fullstack.vercel.app"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "developmentClient": false,
@@ -29,7 +31,8 @@
       },
       "env": {
         "EXPO_PUBLIC_API_ROOT": "https://orca-fullstack.vercel.app"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {

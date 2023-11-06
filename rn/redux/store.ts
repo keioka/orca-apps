@@ -1,5 +1,4 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import feed from './features/feed';
 import message from './features/messages';
 import auth from './features/auth'
 import material from './features/materials';
@@ -19,7 +18,6 @@ const logger = (storeAPI: any) => (next: any) => (action: any) => {
 export const store = configureStore({
   reducer: {
     auth: auth,
-    feed: feed,
     material: material,
     message: message,
     lesson: lesson,
@@ -30,6 +28,18 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
+
+function initAppState() {
+  store.dispatch({ type: 'auth/init' });
+  store.dispatch({ type: 'feed/init' });
+  store.dispatch({ type: 'material/init' });
+  store.dispatch({ type: 'message/init' });
+  store.dispatch({ type: 'lesson/init' });
+  store.dispatch({ type: 'transcribe/init' });
+  store.dispatch({ type: 'videoInfo/init' });
+  store.dispatch({ type: 'note/init' });
+  store.dispatch({ type: 'publisher/init' });
+}
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

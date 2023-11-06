@@ -30,8 +30,6 @@ export const validateToken = async (req: NextApiRequest, res: NextApiResponse) =
   try {
     // Extract the token from the request headers
     const token = req.headers.authorization?.split('Bearer ')[1];
-    console.log({ token })
-    console.log(req.headers.authorization)
     if (!token) {
       throw new Error('Invalid token')
     }
