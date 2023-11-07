@@ -31,7 +31,6 @@ export const store = configureStore({
 
 function initAppState() {
   store.dispatch({ type: 'auth/init' });
-  store.dispatch({ type: 'feed/init' });
   store.dispatch({ type: 'material/init' });
   store.dispatch({ type: 'message/init' });
   store.dispatch({ type: 'lesson/init' });

@@ -107,6 +107,17 @@ const materialsSlice = createSlice({
       .addCase(fetchSummaries.rejected, (state, action) => {
         state.isFetchingSummary = false
       })
+      .addMatcher(
+        (action) => action.type === "global/RESET_STATE",
+        (state) => {
+          state.items = []
+          state.loading = false
+          state.isFetchingSummary = false
+          state.isFetchingVocabs = false
+          state.error = null
+          state.vocabs = {}
+          state.summaries = {}
+        })
   },
 });
 

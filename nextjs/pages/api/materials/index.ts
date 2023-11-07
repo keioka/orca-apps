@@ -71,15 +71,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ message: 'Date must be a string' });
     }
 
-    if (publisherIds && typeof publisherIds !== 'string') {
-      for (const publisherId of publisherIds) {
-        await parseAndCreateMaterial({ publisherId, category: category as string })
-        console.log("done")
-      }
-    } else if (publisherIds && typeof publisherIds === 'string') {
-      await parseAndCreateMaterial({ publisherId: publisherIds, category: category as string })
-      console.log("done")
-    }
+    // if (publisherIds && typeof publisherIds !== 'string') {
+    //   for (const publisherId of publisherIds) {
+    //     await parseAndCreateMaterial({ publisherId, category: category as string })
+    //     console.log("done")
+    //   }
+    // } else if (publisherIds && typeof publisherIds === 'string') {
+    //   await parseAndCreateMaterial({ publisherId: publisherIds, category: category as string })
+    //   console.log("done")
+    // }
 
     try {
       const material = await getMaterials({

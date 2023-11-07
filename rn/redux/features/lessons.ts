@@ -55,7 +55,6 @@ const lessonSlice = createSlice({
     // Define the async thunk to fetch the lesson
     builder.addCase(fetchLesson.fulfilled, (state, action) => {
       const updatedLesson = action.payload;
-      console.log({ a: action.payload })
       const index = state.lessons.findIndex((lesson) => lesson.id === updatedLesson.id);
       if (index !== -1) {
         state.lessons[index] = updatedLesson;
@@ -94,6 +93,16 @@ const lessonSlice = createSlice({
       state.creating = false;
       state.error = action.error.message || 'Failed to fetch lesson';
     });
+
+    builder.addMatcher(
+      (action) => action.type === "global/RESET_STATE",
+      (state) => {
+        state.lessons = []
+        state.loading = false
+        state.creating = false
+        state.createdLessonId = null
+        state.error = null
+      })
   },
 });
 
@@ -117,6 +126,40 @@ export const fetchLesson = createAsyncThunk(
       }
 
       const response = await axios.get(`${ROOT_URL}/api/lessons/${lessonId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      });
+
+      // data is the server's response
+      const data = response.data;
+
+      return data;
+
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+
+export const fetchLessonByMaterialId = createAsyncThunk(
+  'lesson/fetchLessonByMaterialId',
+  async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
+    try {
+      const { auth } = getState()
+      const { session } = auth
+      if (!session) {
+        return rejectWithValue('No session found')
+      }
+
+      const token = session?.accessToken
+      if (!token) {
+        return rejectWithValue('No session found')
+      }
+
+      const response = await axios.get(`${ROOT_URL}/api/lessons?`, {
         headers: {
           Authorization: `Bearer ${token}`
         },

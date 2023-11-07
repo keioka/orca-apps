@@ -122,6 +122,21 @@ const noteDataSlice = createSlice({
       .addCase(fetchSavedParaphrases.rejected, (state, action) => {
         state.loading = false;
       })
+      .addMatcher(
+        (action) => action.type === "global/RESET_STATE",
+        (state) => {
+          state.vocabularies = []
+          state.paraphrases = []
+          state.grammarMistakes = []
+          state.isSavedVocab = false
+          state.isSavedParaphrase = false
+          state.errors = {
+            saveVocabulary: null,
+            saveParaphrase: null,
+            saveGrammarMistakes: null,
+          }
+        })
+
   },
 });
 

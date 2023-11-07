@@ -331,6 +331,20 @@ const messageSlice = createSlice({
         state.isSendingWhisper = false;
         state.error = action.error.message || 'Failed to send whisper';
       })
+      .addMatcher(
+        (action) => action.type === "global/RESET_STATE",
+        (state) => {
+          state.messageMap = {}
+          state.paraphraseMap = {}
+          state.translationMap = {}
+          state.status = LoadingStatus.IDLE
+          state.addingMessage = false
+          state.isFetchingParaphrases = false
+          state.isFetchingTranslation = false
+          state.isSendingWhisper = false
+          state.messageInputSpeech = null
+          state.error = null
+        })
   },
 });
 

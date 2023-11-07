@@ -17,6 +17,7 @@ export default async function handler(
     await validateToken(req, res)
     await setCurrentUser(req, res)
   } catch (err) {
+    console.error(err)
     return res.status(401).json({ message: 'Unauthorized' });
   }
 

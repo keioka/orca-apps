@@ -36,13 +36,13 @@ export default async function handler(
       return res.status(500).json({ message: 'Missing text' });
     }
 
-    const splitContent = splitTextBySentenceWithWordCount(text.trim(), 250)
+    const splitContent = splitTextBySentenceWithWordCount(text.replace(/\s+/g, ' ').trim(), 125)
 
     const transLangCodeCap = capitalize(transLangCode)
 
     splitContent.forEach(async (content) => {
       const { vocabs } = await getVocabsFromText({
-        text: content.trim(),
+        text: content.replace(/\s+/g, ' ').trim(),
         transLangCode: transLangCodeCap
       })
 
