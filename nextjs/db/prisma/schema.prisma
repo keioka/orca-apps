@@ -37,6 +37,7 @@ model User {
   savedGrammarMistake SavedGrammarMistake[]
   followRss           FollowRss[]
   savedVocabularies   SavedVocabularies[]
+  UserHashtag         UserFollowHashtag[]
 
   @@map("users")
 }
@@ -54,11 +55,12 @@ model Material {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  lessons      Lesson[]
-  summary      Summary[]
-  vocabularies Vocabulary[]
-  publisherId  String       @map("publisher_id")
-  publisher    Publisher    @relation(fields: [publisherId], references: [id])
+  lessons         Lesson[]
+  summary         Summary[]
+  vocabularies    Vocabulary[]
+  publisherId     String            @map("publisher_id")
+  publisher       Publisher         @relation(fields: [publisherId], references: [id])
+  MaterialHashtag MaterialHashtag[]
 
   @@map("materials")
 }
@@ -72,6 +74,8 @@ model Publisher {
   domain           String?     @unique @map("domain") @db.VarChar(255)
   category         String?     @db.VarChar(100)
   categoryExternal String?     @map("category_external") @db.VarChar(255)
+  isActive         Boolean     @default(true) @map("is_active")
+  isRecommended    Boolean     @default(false) @map("is_recommended")
   imageUrl         String?     @map("image_url")
   material         Material[]
   createdAt        DateTime    @default(now()) @map("created_at")
@@ -269,4 +273,41 @@ model FollowRss {
 
   @@unique([userId, publisherId])
   @@map("follow_rss")
+}
+
+model Hashtag {
+  id              Int                 @id @default(autoincrement())
+  name            String              @unique @db.VarChar(255)
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
+  MaterialHashtag MaterialHashtag[]
+  UserHashtag     UserFollowHashtag[]
+
+  @@map("hashtags")
+}
+
+model MaterialHashtag {
+  id         Int      @id @default(autoincrement())
+  materialId String   @map("material_id") @db.Char(36)
+  material   Material @relation(fields: [materialId], references: [id])
+  hashtagId  Int      @map("hashtag_id")
+  hashtag    Hashtag  @relation(fields: [hashtagId], references: [id])
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([materialId, hashtagId])
+  @@map("material_hashtags")
+}
+
+model UserFollowHashtag {
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id") @db.Char(36)
+  user      User     @relation(fields: [userId], references: [id])
+  hashtagId Int      @map("hashtag_id")
+  hashtag   Hashtag  @relation(fields: [hashtagId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, hashtagId])
+  @@map("user_follow_hashtags")
 }

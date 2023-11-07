@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, StyleSheet, View, } from 'react-native'
+import { Alert, StyleSheet, View, Button } from 'react-native'
 import LottieView from 'lottie-react-native';
+import * as Updates from 'expo-updates';
+import { NativeModules } from "react-native";
+
+
 
 export function ErrorScreen() {
 
@@ -13,6 +17,16 @@ export function ErrorScreen() {
         style={{
           width: 400,
           height: 400,
+        }}
+      />
+      <Button
+        title="Reload the app"
+        onPress={() => {
+          if (process.env.NODE_ENV === 'development') {
+            NativeModules.DevSettings.reload();
+          } else {
+            Updates.reloadAsync();
+          }
         }}
       />
     </View>

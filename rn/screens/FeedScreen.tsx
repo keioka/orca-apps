@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, SafeAreaView, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { Modal, Portal, Snackbar, Button } from 'react-native-paper';
+import { Modal, Portal, Snackbar, Button, Menu } from 'react-native-paper';
 import { CardArticle } from '../components/CardArticle';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -11,6 +11,8 @@ import { signOut } from '../redux/features/auth';
 import { clearHasSuccessCreateFollow, fetchFollowPublishers } from '../redux/features/publishers';
 import { categories } from '../helpers/categories';
 import { Text } from '../components/Text';
+import { fetchLessons } from '../redux/features/lessons';
+import * as Updates from 'expo-updates';
 
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
@@ -19,15 +21,19 @@ export function FeedScreen({ navigation }) {
   const session = useAppSelector((state) => state.auth.session)
   const [selectedCategory, setActiveCategory] = useState("all")
   const [refreshing, setRefreshing] = useState(false);
+  const [shouldShowMenu, setShouldShowMenu] = useState(false);
   const [offset, setOffset] = useState(0);
   const followPublishers = useAppSelector((state) => state.publisher.followPublishers)
   const followCategories = useAppSelector((state) => state.publisher.followCategories)
 
   useEffect(() => {
+    console.log("-----------------------")
+    dispatch(fetchLessons())
     dispatch(fetchFollowPublishers())
   }, [])
 
   useEffect(() => {
+    console.log("rerender followPublishers", followPublishers)
     if (!followPublishers) return
     const followPublisherIds = followPublishers.map((publisher) => publisher.publisherId)
     if (followPublisherIds.length === 0) return
@@ -93,9 +99,6 @@ export function FeedScreen({ navigation }) {
     navigation.navigate('Auth')
   }
 
-  const handlePress = () => {
-    session ? handleSignOut() : navigation.navigate('Auth')
-  }
 
   const onPressStart = ({ materialId, url, lessonId }: { materialId: string, url: string, lessonId: string }) => {
     if (!lessonId) {
@@ -148,17 +151,35 @@ export function FeedScreen({ navigation }) {
       >
         <View style={styles.header}>
           <Text style={styles.headerDateText} weight='Bold'>{getToday()}</Text>
-          <TouchableOpacity onPress={handlePress}>
-            {session ? <View>
-              {/* <Text style={styles.headerDateText}>s</Text> */}
-              {/* login */}
-              <Ionicons name="person-circle-outline" size={32} color="#4CB8C4" />
-            </View> : <View>
-              {/* <Text style={styles.headerDateText}>s</Text> */}
-              {/* login */}
-              <Ionicons name="person-circle-outline" size={32} color="#242424" />
-            </View>}
-          </TouchableOpacity>
+          <Menu
+            visible={shouldShowMenu}
+            onDismiss={() => { setShouldShowMenu(false) }}
+            contentStyle={{
+              backgroundColor: '#fff',
+              padding: 0,
+              margin: 0,
+              borderRadius: 8,
+              width: "100%",
+            }}
+            style={{
+              right: 0,
+              top: 120,
+              width: "100%",
+              paddingHorizontal: 24,
+            }}
+            anchor={
+              <TouchableOpacity onPress={() => { setShouldShowMenu(!shouldShowMenu) }}>
+                <View>
+                  <Ionicons name="person-circle-outline" size={32} color="#4CB8C4" />
+                </View>
+              </TouchableOpacity>
+            }>
+            <Menu.Item onPress={handleSignOut} title="Signout" style={{ borderBottomWidth: 1, width: "100%", paddingRight: 0, borderBottomColor: "#e4e4e4" }} />
+            <Menu.Item onPress={() => setShouldShowMenu(false)} title="Close" />
+            <View style={{ backgroundColor: "#e4e4e4", width: "100%", padding: 18 }}>
+              <Text>{Updates.createdAt ? Updates.createdAt.toString() : "No updates"}</Text>
+            </View>
+          </Menu>
         </View>
         <ScrollView
           style={styles.categoryMenu}
@@ -167,8 +188,10 @@ export function FeedScreen({ navigation }) {
           horizontal
         >
           <TouchableOpacity key="all" onPress={() => setActiveCategory("all")}>
-            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#4CB8C4" }]}>
-              <Ionicons name="star" size={24} color={selectedCategory === "all" ? "#4CB8C4" : "#242424"} />
+            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#4CB8C4" }]}>
+              <View style={{ height: 24 }}>
+                <Ionicons name="star" size={24} color={selectedCategory === "all" ? "#4CB8C4" : "#242424"} />
+              </View>
               <Text style={{ marginTop: 8, }}>All</Text>
             </View>
           </TouchableOpacity>
@@ -176,16 +199,20 @@ export function FeedScreen({ navigation }) {
           {followCategoryItems && followCategoryItems.map((category) => {
             return (
               <TouchableOpacity key={category.slug} onPress={() => handleSelectTab(category.slug)}>
-                <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.slug && { borderBottomColor: "#4CB8C4" }]}>
-                  <Ionicons name={category.icon} size={24} color={selectedCategory === category.slug ? "#4CB8C4" : "#242424"} />
+                <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.slug && { borderBottomColor: "#4CB8C4" }]}>
+                  <View style={{ height: 24 }}>
+                    <Ionicons name={category.icon} size={24} color={selectedCategory === category.slug ? "#4CB8C4" : "#242424"} />
+                  </View>
                   <Text style={{ marginTop: 8, }}>{category.title}</Text>
                 </View>
               </TouchableOpacity>
             )
           })}
           <TouchableOpacity key="category_add" onPress={handleNavigateToCategory}>
-            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 80, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }]}>
-              <Ionicons name="add-circle-outline" size={24} color="#242424" />
+            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }]}>
+              <View style={{ height: 24 }}>
+                <Ionicons name="add-circle-outline" size={24} color="#242424" />
+              </View>
               <Text style={{ marginTop: 8, }}>Add</Text>
             </View>
           </TouchableOpacity>
@@ -228,7 +255,7 @@ export function FeedScreen({ navigation }) {
             ))
           }
         </ScrollView>
-      </View>
+      </View >
       <Snackbar
         visible={!!errorLesson}
         onDismiss={handleClearAllErrors}
@@ -275,7 +302,7 @@ const styles = StyleSheet.create({
     // paddingTop: 96,
   },
   categoryMenuScrollViewContainer: {
-    // paddingTop: 96,
+    // paddingTop: 0,
   },
 });
 

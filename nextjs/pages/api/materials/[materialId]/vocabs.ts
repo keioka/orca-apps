@@ -4,7 +4,6 @@ import { getVocabsByMaterialId } from '@/models/material';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { materialId } = req.query;
 
-  console.log(req.query)
   if (req.method === 'GET') {
     try {
       if (!materialId && typeof materialId !== 'string') {

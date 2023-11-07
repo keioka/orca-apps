@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet, View, KeyboardAvoidingView } from 'react-native'
-import { supabase } from '../supabase'
-import { Button, TextInput, Text } from 'react-native-paper'
+import { Button, TextInput, Text, Portal, Modal } from 'react-native-paper'
 import { useAppSelector } from '../redux/hooks'
 import { useAppDispatch } from '../redux/hooks'
 import { signUpWithEmail, signInWithEmail } from '../redux/features/auth'
@@ -10,10 +9,12 @@ export function AuthScreen({ navigation }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
-  const [error, setError] = useState([])
-  const [loading, setLoading] = useState(false)
   const [isSignin, setSignin] = useState(false)
-  const session = useAppSelector((state) => state.auth.session)
+  const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage)
+  const errorSigninMessage = useAppSelector((state) => state.auth.errorSigninMessage)
+  const signupLoading = useAppSelector((state) => state.auth.signupLoading)
+  const singinLoading = useAppSelector((state) => state.auth.singinLoading)
+
   const dispatch = useAppDispatch()
 
   const handleSignupGoogle = async () => {
@@ -34,6 +35,15 @@ export function AuthScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Portal style={{ padding: 8 }}>
+        <Modal
+          visible={signupLoading || singinLoading}
+          dismissable={false}
+          contentContainerStyle={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}
+        >
+          <Text style={{ fontSize: 24, textAlign: "center" }}>Loading...</Text>
+        </Modal>
+      </Portal>
       <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={64} style={{ width: "90%" }} contentContainerStyle={{ borderTopColor: "#f4f4f4", borderTopWidth: 1, width: "100%", justifyContent: "center", alignItems: "center" }}>
 
         {isSignin && <>
@@ -61,11 +71,14 @@ export function AuthScreen({ navigation }) {
               style={{ backgroundColor: "#fff" }}
             />
           </View>
+          <View style={styles.sectionError}>
+            {errorSigninMessage && <Text style={styles.alert}>{errorSigninMessage}</Text>}
+          </View>
           <View style={[styles.verticallySpaced, styles.mt20]}>
-            <Button disabled={loading} onPress={handleSignin} mode="contained" disabled={isSigninDisabled}>Sign in</Button>
+            <Button disabled={singinLoading} onPress={handleSignin} mode="contained" disabled={isSigninDisabled}>Sign in</Button>
           </View>
           <View style={styles.verticallySpaced}>
-            <Button disabled={loading} onPress={() => setSignin(false)} mode="text" >Sign up</Button>
+            <Button onPress={() => setSignin(false)} mode="text" >Sign up</Button>
           </View>
         </>
         }
@@ -107,13 +120,14 @@ export function AuthScreen({ navigation }) {
             />
           </View>
           <View style={styles.sectionError}>
-            {passwordError && <Text>{passwordError}</Text>}
+            {passwordError && <Text style={styles.alert}>{passwordError}</Text>}
+            {errorSignupMessage && <Text style={styles.alert}>{errorSignupMessage}</Text>}
           </View>
           <View style={styles.verticallySpaced}>
-            <Button disabled={loading} onPress={handleSignup} mode="contained" disabled={isSignupDisabled}>Sign up</Button>
+            <Button disabled={signupLoading} onPress={handleSignup} mode="contained" disabled={isSignupDisabled}>Sign up</Button>
           </View>
           <View style={styles.verticallySpaced}>
-            <Button disabled={loading} onPress={() => setSignin(true)} mode="text">Sign in</Button>
+            <Button onPress={() => setSignin(true)} mode="text">Sign in</Button>
           </View>
         </>
         }
@@ -144,4 +158,7 @@ const styles = StyleSheet.create({
   mt20: {
     marginTop: 20,
   },
+  alert: {
+    color: "red",
+  }
 })

@@ -2,14 +2,16 @@
   "name": "orca",
   "version": "1.0.0",
   "scripts": {
-    "build": "expo prebuild; NODE_ENV=production eas build -p ios --local --clear-cache --profile production",
+    "build": "expo prebuild; eas build -p ios --clear-cache --profile production --auto-submit",
+    "build:local": "STAGE=prod expo prebuild; STAGE=prod eas build -p ios --clear-cache --profile production",
     "start": "expo start --dev-client",
-    "start:ios": "NODE_ENV=development npx expo run:ios",
+    "start:ios": "STAGE=local npx expo run:ios",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "publish:test": "",
-    "publish:update": "eas update --branch main"
+    "publish:update": "dotenv -e ./.env.update -- eas update --branch production",
+    "publish:doctor": "dotenv -e ./.env.update -- echo $FIREBASE_PUBLIC_API_KEY;",
+    "dotenv": "dotenv -e ./.env.update -p"
   },
   "dependencies": {
     "@logrocket/react-native": "^1.18.0",
@@ -73,6 +75,7 @@
     "@types/react-native": "^0.72.2",
     "@types/react-redux": "^7.1.25",
     "@types/react-speech-recognition": "^3.9.3",
+    "dotenv-cli": "^7.3.0",
     "typescript": "^4.9.4"
   },
   "private": true

@@ -133,6 +133,11 @@ export function CategoryScreen({ navigation }) {
   return (
     <>
       <View style={styles.container}>
+        <View style={{ width: "100%", justifyContent: "flex-start" }}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="close" size={32} color="black" />
+          </TouchableOpacity>
+        </View>
         <View style={styles.headerCategory}>
           <Text style={styles.headerDateText}>Follow RSS</Text>
           <View>
@@ -156,7 +161,7 @@ export function CategoryScreen({ navigation }) {
           })}
         </ScrollView>
 
-      </View>
+      </View >
       <Button
         onPress={handleSubmit}
         textColor="#fff"

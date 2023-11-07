@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { LoadingStatus } from '../types';
 import { validateSessionAndToken } from '../../helpers/validate';
+import { uniqBy } from 'lodash';
 
 interface PublishersState {
   publishers: any[];
@@ -52,7 +53,7 @@ export const createFollowPublishers = createAsyncThunk('publishers/createFollow'
         }
       }
     );
-    return response.data;
+    return response.data || [];
   } catch (error) {
     console.error(error)
     return rejectWithValue({ error: error.response.data.message })
@@ -72,7 +73,7 @@ export const fetchFollowPublishers = createAsyncThunk('publishers/fetchFollow', 
         }
       }
     );
-    return response.data;
+    return response.data || [];
   } catch (error) {
     console.error(error)
     return rejectWithValue({ error: error.response.data.message })
@@ -106,7 +107,7 @@ const publisherSlice = createSlice({
       })
       .addCase(createFollowPublishers.fulfilled, (state, action: PayloadAction<any[]>) => {
         state.isCreatingFollow = false
-        state.followIds = action.payload.publisherIds;
+        state.followPublishers = uniqBy([...state.followPublishers, ...action.payload.followPublishers], "publisherId");
         state.followCategories = action.payload.categories;
         state.hasSuccessCreateFollow = true
       })
@@ -120,13 +121,25 @@ const publisherSlice = createSlice({
       })
       .addCase(fetchFollowPublishers.fulfilled, (state, action: PayloadAction<any[]>) => {
         state.isFetchingFollow = false
-        state.followPublishers = action.payload.followPublishers;
+        state.followPublishers = uniqBy([...state.followPublishers, ...action.payload.followPublishers], "publisherId");
         state.followCategories = action.payload.categories;
       })
       .addCase(fetchFollowPublishers.rejected, (state, action: PayloadAction<string | null>) => {
         state.isFetchingFollow = false
         state.error = action.error.message;
       })
+      .addMatcher(
+        (action) => action.type === "global/RESET_STATE",
+        (state) => {
+          state.publishers = []
+          state.followPublishers = []
+          state.followCategories = []
+          state.isLoadingPublishers = false
+          state.isCreatingFollow = false
+          state.isFetchingFollow = false
+          state.error = null
+        }
+      )
 
   },
 });

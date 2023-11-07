@@ -26,9 +26,9 @@ export function init() {
 
 init()
 
-export const validateToken = async (req: NextApiRequest, res: NextApiResponse) => {
+export const validateToken = async (req: NextApiRequest, res: NextApiResponse): Promise<{ error: { code: string, message: string } | null }> => {
+  // Extract the token from the request headers
   try {
-    // Extract the token from the request headers
     const token = req.headers.authorization?.split('Bearer ')[1];
     if (!token) {
       throw new Error('Invalid token')
@@ -39,10 +39,16 @@ export const validateToken = async (req: NextApiRequest, res: NextApiResponse) =
     const authInfo = camelcaseKeys(decodedToken, { deep: true });
     req.auth = authInfo
     req.fbUid = authInfo.userId
-
+    return { error: null }
   } catch (error) {
-    console.error('Error validating Firebase token:', error);
-    // return res.status(403).json({ error: 'Invalid Token: Unauthorized' });
+    console.error(error)
+    let code = "AUTH/ERROR"
+    let message = "Invalid Token"
+    if (error.code === "auth/id-token-expired") {
+      code = "AUTH/TOKEN_EXPIRED"
+      message = "Token Expired"
+    }
+    return { error: { code: code, message: message } }
   }
 }
 

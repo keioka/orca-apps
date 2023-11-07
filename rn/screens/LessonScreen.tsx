@@ -301,9 +301,8 @@ function ArticleTab({ lesson, captions }: { materialId: string }) {
 
 function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, lesson: {} }) {
   const [tab, setTab] = useState(LearningModeTab.Article)
-  const [openArticle, setOpenArticle] = useState(true)
-
   const dispatch = useAppDispatch()
+
   const captions = useAppSelector(state => {
     if (!lesson.material) return []
     const materialId = lesson.material.id
@@ -311,9 +310,26 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
     return state.videoInfo.captions[materialId]
   })
 
+
+  // Step 1: Create input selectors
+  const getMaterialsState = state => state.material;
+  const getMaterialId = (state, materialId) => materialId;
+
+  // Step 2: Create the memoized selector using createSelector
+  const selectVocabsByMaterialId = createSelector(
+    [getMaterialsState, getMaterialId],
+    (materials, materialId) => materials.vocabs[materialId] || []
+  );
+
+  const materialId = lesson.material.id
+
+  const vocabs = useAppSelector(state => selectVocabsByMaterialId(state, materialId));
+
   useEffect(() => {
     dispatch(fetchSavedVocab())
-    dispatch(fetchVocabs({ materialId: lesson.material.id }))
+    if (vocabs.length > 0) return
+    dispatch(fetchVocabs({ materialId: materialId }))
+    dispatch(createVocabs({ materialId: materialId }))
   }, [])
 
 

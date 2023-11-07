@@ -22,7 +22,6 @@ import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setSession, refreshToken } from './redux/features/auth'
 import { firebase } from './firebase'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { fetchLessons } from './redux/features/lessons';
 import { Snackbar } from 'react-native-paper';
 import NetworkLogger from 'react-native-network-logger';
 import LogRocket from '@logrocket/react-native';
@@ -33,6 +32,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import ErrorBoundary from 'react-native-error-boundary'
 import { ErrorScreen } from './screens/ErrorScreen';
 import * as Sentry from 'sentry-expo';
+import * as Updates from 'expo-updates';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -187,6 +187,25 @@ const fonts = {
   'NotoSans-ThinItalic': require('./assets/fonts/NotoSans/NotoSans-ThinItalic.ttf'),
 }
 
+const resetStateAction = {
+  type: "global/RESET_STATE",
+  payload: null,
+}
+
+async function onFetchUpdateAsync() {
+  try {
+    const update = await Updates.checkForUpdateAsync();
+
+    if (update.isAvailable) {
+      await Updates.fetchUpdateAsync();
+      await Updates.reloadAsync();
+    }
+  } catch (error) {
+    console.error(error)
+    // You can also add an alert() to see the error message in case of an error when fetching updates.
+  }
+}
+
 const Root = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState);
@@ -204,14 +223,15 @@ const Root = () => {
       const auth = getAuth(firebase);
       console.log("============ Init onAuthStateChanged ============")
       auth.onAuthStateChanged((user) => {
+        console.log(">>>>>>>>> User <<<<<<<, user")
         if (user) {
           dispatch(setSession({
             accessToken: user.accessToken,
             uid: user.uid,
           }))
-          dispatch(fetchLessons())
         } else {
           dispatch(setSession(null))
+          dispatch(resetStateAction)
         }
       })
     } catch (error) {
@@ -230,6 +250,7 @@ const Root = () => {
         nextAppState === 'active'
       ) {
         dispatch(refreshToken())
+        onFetchUpdateAsync()
         console.log('App has come to the foreground!');
       }
 
@@ -280,11 +301,14 @@ Sentry.init({
 });
 
 function App() {
+
+
   useEffect(() => {
-    console.log(process.env)
     if (process.env.NODE_ENV !== 'development') {
+      onFetchUpdateAsync()
       LogRocket.init('pacifica-tech/orca-l3pnt');
     }
+
   }, [])
 
   return (
