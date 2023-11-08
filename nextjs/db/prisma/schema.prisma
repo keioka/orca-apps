@@ -82,6 +82,7 @@ model Publisher {
   updatedAt        DateTime    @updatedAt @map("updated_at")
   followRss        FollowRss[]
   recommended      Boolean     @default(false)
+  lastCrawledAt    DateTime?   @map("last_crawled_at")
 
   @@map("publishers")
 }

@@ -178,12 +178,9 @@ function VocabularyTab({ materialId }: { materialId: string }) {
     dispatch(clearIsSavedVocab())
   }
 
-
   const onClearError = () => {
     dispatch(clearErrorSaveVocab())
   }
-
-  console.log({ isSavedVocab, savedVocabs })
 
   return (
     <>
@@ -225,7 +222,7 @@ function VocabularyTab({ materialId }: { materialId: string }) {
   )
 }
 
-function ArticleTab({ lesson, captions }: { materialId: string }) {
+function ArticleTab({ lesson }: { lesson: {} }) {
   const [shouldShowBrowser, setShouldShowBrowser] = useState(true)
   const [shouldEmbed, setShouldEmbed] = useState(true)
 
@@ -259,7 +256,7 @@ function ArticleTab({ lesson, captions }: { materialId: string }) {
               paddingBottom: 32,
             }}
           >
-            {captions.map((caption) => (
+            {/* {captions.map((caption) => (
               <View style={{
                 backgroundColor: "#fff",
                 height: 64,
@@ -275,7 +272,7 @@ function ArticleTab({ lesson, captions }: { materialId: string }) {
                   {utc(caption.offset).format('HH:mm:ss')}: {caption.text}
                 </Text>
               </View>
-            ))}
+            ))} */}
           </ScrollView>
         </View> :
         <View style={{ height: "100%", width: "100%", alignContent: "center", justifyContent: "center" }}>
@@ -302,14 +299,6 @@ function ArticleTab({ lesson, captions }: { materialId: string }) {
 function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, lesson: {} }) {
   const [tab, setTab] = useState(LearningModeTab.Article)
   const dispatch = useAppDispatch()
-
-  const captions = useAppSelector(state => {
-    if (!lesson.material) return []
-    const materialId = lesson.material.id
-    if (!state.videoInfo.captions[materialId]) return []
-    return state.videoInfo.captions[materialId]
-  })
-
 
   // Step 1: Create input selectors
   const getMaterialsState = state => state.material;
@@ -361,7 +350,7 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
 
       {
         tab === LearningModeTab.Article &&
-        <ArticleTab lesson={lesson} captions={captions} />
+        <ArticleTab lesson={lesson} />
       }
       {
         tab === LearningModeTab.Summary && (
@@ -511,6 +500,7 @@ const styles = StyleSheet.create({
   },
   summaryView: {
     flexGrow: 1,
+    paddingBottom: 64,
     alignItems: 'center',
   },
   vocabularyView: {

@@ -1,9 +1,12 @@
 {
-  "name": "gpt4-langchain-pdf-chatbot",
+  "name": "orca",
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python3 -m flask --app api/py/bot run -p 5328 --debugger --reload",
     "next-dev": "next dev",
@@ -22,6 +25,7 @@
   },
   "dependencies": {
     "@baselime/node-opentelemetry": "^0.2.11",
+    "@defer/client": "^1.13.1",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@extractus/article-extractor": "^8.0.2",

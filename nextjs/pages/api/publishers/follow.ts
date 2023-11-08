@@ -11,21 +11,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       if (error) {
         return res.status(401).json({ error });
       }
+
       await setCurrentUser(req, res)
+      if (req.currentUser?.id === undefined) {
+        return res.status(401).json({ code: "AUTH/NOT_FOUND", error: "follow: Unauthorized" });
+      }
     } catch (error) {
       console.error(error)
-      return res.status(401).json({ code: "AUTH_NOT_FOUND", message: 'AUTH_NOT_FOUND' });
-    }
-
-    if (req.currentUser?.id === undefined) {
-      return res.status(401).json({ error: "follow: Unauthorized" });
+      return res.status(401).json({ code: "AUTH/NOT_FOUND", message: 'AUTH_NOT_FOUND' });
     }
 
     try {
       const followPublishers = await getFollowPublishers({ userId: req.currentUser?.id })
       const categories = await getFollowPublishersCategory({ userId: req.currentUser?.id })
-
-      console.log("followPublishers", followPublishers)
 
       const followPublisherInfo = followPublishers.map((followPublisher) => ({ publisherId: followPublisher.publisher.id, category: followPublisher.publisher.category }))
       const followPublisherCategories = categories.map((followPublisher) => followPublisher.category)
@@ -41,19 +39,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (!publisherIds) {
       return res.status(400).json({ error: "follow: Missing required parameters" });
     }
+
     try {
       const { error } = await validateToken(req, res)
       if (error) {
         return res.status(401).json({ error });
       }
+
       await setCurrentUser(req, res)
+      if (req.currentUser?.id === undefined) {
+        return res.status(401).json({ code: "AUTH/NOT_FOUND", error: "follow: Unauthorized" });
+      }
     } catch (error) {
       console.error(error)
       return res.status(401).json({ code: "AUTH/NOT_FOUND", message: 'AUTH_NOT_FOUND' });
-    }
-
-    if (req.currentUser?.id === undefined) {
-      return res.status(401).json({ error: "follow: Unauthorized" });
     }
 
     try {

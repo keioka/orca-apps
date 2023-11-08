@@ -89,7 +89,7 @@ export function FeedScreen({ navigation }) {
     if (selectedCategory === "all") {
       return materials
     }
-    return materials.filter((material) => material.publisher.category === selectedCategory)
+    return materials.filter((material) => material.publisher.category === selectedCategory).filter((material) => !!material)
   }, [materials, selectedCategory])
 
   const followCategoryItems = useMemo(() => {
@@ -237,8 +237,8 @@ export function FeedScreen({ navigation }) {
             )
           }
           {
-            selectedMaterials && selectedMaterials.map((item, index) => (
-              <View key={item.id} style={{ marginVertical: 2, width: "95%" }}>
+            selectedMaterials && selectedMaterials.map((item) => (
+              <View key={item.id} style={{ marginVertical: 2, width: "100%" }}>
                 <CardArticle
                   item={item}
                   onPressStart={() => onPressStart({ url: item.url, lessonId: item.lessonId, materialId: item.id, lessonId: item.lessonId })}

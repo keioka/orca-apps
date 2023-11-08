@@ -3,7 +3,7 @@ import { Alert, StyleSheet, View, Button } from 'react-native'
 import LottieView from 'lottie-react-native';
 import * as Updates from 'expo-updates';
 import { NativeModules } from "react-native";
-
+import { Text } from '../components/Text';
 
 
 export function ErrorScreen() {
@@ -19,6 +19,7 @@ export function ErrorScreen() {
           height: 400,
         }}
       />
+      <Text style={{ fontSize: 24, fontWeight: "bold" }}>Something went wrong</Text>
       <Button
         title="Reload the app"
         onPress={() => {
