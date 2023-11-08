@@ -377,6 +377,13 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
+"@defer/client@^1.13.1":
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/@defer/client/-/client-1.13.1.tgz#d7b2632331113073196be0865e582efc0a34b1f5"
+  integrity sha512-d+nxensNAHq+GsKPN8gFfDTX2cdFgz6AxPgmkJb26a3+Gp31Klr+p9nJ/uMJyCv0YJn9J+TmIlVA/KKjbDe0+A==
+  dependencies:
+    parse-duration "^1.1.0"
+
 "@emotion/babel-plugin@^11.11.0":
   version "11.11.0"
   resolved "https://registry.npmjs.org/@emotion/babel-plugin/-/babel-plugin-11.11.0.tgz"
@@ -6791,6 +6798,11 @@ parent-module@^1.0.0:
   integrity sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==
   dependencies:
     callsites "^3.0.0"
+
+parse-duration@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/parse-duration/-/parse-duration-1.1.0.tgz#5192084c5d8f2a3fd676d04a451dbd2e05a1819c"
+  integrity sha512-z6t9dvSJYaPoQq7quMzdEagSFtpGu+utzHqqxmpVWNNZRIXnvqyCvn9XsTdh7c/w0Bqmdz3RB3YnRaKtpRtEXQ==
 
 parse-json@^5.0.0, parse-json@^5.2.0:
   version "5.2.0"

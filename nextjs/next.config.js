@@ -14,6 +14,7 @@ const nextConfig = {
   },
   experimental: {
     instrumentationHook: true,
+    serverMinification: false,
   },
   typescript: {
     // !! WARN !!

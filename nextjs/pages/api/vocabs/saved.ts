@@ -4,8 +4,20 @@ import { validateToken } from '@/firebase';
 import { setCurrentUser } from '@/middleware/setCurrentUser';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await validateToken(req, res)
-  await setCurrentUser(req, res)
+  try {
+    const { error } = await validateToken(req, res)
+    if (error) {
+      return res.status(401).json({ error });
+    }
+
+    await setCurrentUser(req, res)
+    if (req.currentUser?.id === undefined) {
+      return res.status(401).json({ code: "AUTH/NOT_FOUND", error: "follow: Unauthorized" });
+    }
+  } catch (error) {
+    console.error(error)
+    return res.status(401).json({ code: "AUTH/NOT_FOUND", message: 'AUTH_NOT_FOUND' });
+  }
 
   if (req.method === 'GET') {
     try {

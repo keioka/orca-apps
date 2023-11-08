@@ -5,7 +5,7 @@
     "build": "expo prebuild; eas build -p ios --clear-cache --profile production --auto-submit",
     "build:local": "STAGE=prod expo prebuild; STAGE=prod eas build -p ios --clear-cache --profile production",
     "start": "expo start --dev-client",
-    "start:ios": "STAGE=local npx expo run:ios",
+    "start:ios": "STAGE=localdev npx expo run:ios",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
