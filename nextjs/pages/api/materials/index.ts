@@ -53,8 +53,6 @@ async function parseAndCreateMaterial({ publisherId, category }: { publisherId: 
       },
     }
 
-
-
     try {
       await upsertMaterial(data)
     } catch (err) {

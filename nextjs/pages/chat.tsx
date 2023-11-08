@@ -413,8 +413,6 @@ export default function Chat() {
 
       while (true) {
         const { done, value } = await reader.read();
-        console.log({ done, value })
-
         if (done) {
           setFinished(true)
           if (sentence !== "") {

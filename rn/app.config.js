@@ -16,7 +16,6 @@ if (process.env.STAGE) {
   );
 }
 
-// console.log("process.env.STAGE", process.env);
 // https://github.com/expo/expo/issues/23727
 module.exports = {
   "expo": {

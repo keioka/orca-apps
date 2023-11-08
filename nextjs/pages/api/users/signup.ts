@@ -20,8 +20,6 @@ export default async function handler(
       return res.status(401).json({ message: 'Failed to validate token' });
     }
 
-    console.log({ auth })
-
     const newUser = await createUser({
       providerId: auth.uid,
       providerName: auth.firebase.signInProvider,

@@ -48,7 +48,6 @@ interface PaginationResult<T> {
 export async function getMaterials(params: GetMaterialsParams): Promise<PaginationResult<MaterialWithLesson[]>> {
   const where: Prisma.MaterialWhereInput = {};
 
-  console.log({ params })
   if (params.date) {
     const startDate = new Date(params.date);
     startDate.setUTCHours(0, 0, 0, 0);

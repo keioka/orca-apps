@@ -47,7 +47,6 @@ export async function addPublishers(publishers: Publisher[], category: string) {
   try {
     const publishersData = await Promise.all(publishers.map(async (publisher) => {
       sleep(1000)
-      console.log({ publisher })
       try {
         const feed = await parser.parseURL(publisher.url);
 
@@ -70,7 +69,6 @@ export async function addPublishers(publishers: Publisher[], category: string) {
 
     const validData = publishersData.filter((publisher) => publisher)
     const result = await PublisherModel.createPublishers(validData)
-    console.log({ result })
     return result
   } catch (error) {
     console.error(error)

@@ -40,9 +40,6 @@ const prisma = new PrismaClient();
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function fetchAndStoreRSS({ url, name, category }: { url: string, name: string, category: string }) {
-  console.log("============================")
-  console.log("fetching and storing rss", { url, name })
-
   if (!url) {
     console.error('No url provided', url);
     throw new Error('No url provided');
@@ -97,8 +94,6 @@ export async function fetchAndStoreRSS({ url, name, category }: { url: string, n
           },
         },
       }
-
-      console.log(data, { publisher: publisherData })
 
       try {
         const meterial = await prisma.material.upsert({

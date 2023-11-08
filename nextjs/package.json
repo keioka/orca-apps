@@ -21,6 +21,7 @@
     "postinstall": "prisma generate --schema='./db/prisma/schema.prisma' && prisma migrate deploy --schema='./db/prisma/schema.prisma'"
   },
   "dependencies": {
+    "@baselime/node-opentelemetry": "^0.2.11",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@extractus/article-extractor": "^8.0.2",

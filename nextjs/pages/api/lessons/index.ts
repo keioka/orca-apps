@@ -57,7 +57,6 @@ async function createNewLessonHandler(
     let material;
 
     if (materialId) {
-      console.log(materialId)
       material = await getMaterialById(materialId)
     } else {
       const { material: materialByUrl, error } = await getOrCreateMaterialByUrl(url)
@@ -66,9 +65,6 @@ async function createNewLessonHandler(
       }
       material = materialByUrl
     }
-
-
-    console.log({ material, currentUser })
 
     const params = { userId: currentUser.id, materialId: material.id }
     const existingLesson = await findLessonByUserAndMaterial(params)

@@ -7,8 +7,8 @@ const openai = new OpenAI({
 interface GetVocabByWordSentenceParams { text: string, transLangCode: string }
 
 export async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
-  console.time('openai');
-  console.log({ params })
+  const timeLabel = `openai_${new Date().toISOString()}`
+  console.time(timeLabel);
   const response = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo-16k',
     temperature: 0,
@@ -72,7 +72,7 @@ export async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
     }],
     function_call: { name: "set_recipe" }
   });
-  console.timeEnd('openai'); //Prints something like that-> test: 11374.004ms
+  console.timeEnd(timeLabel); //Prints something like that-> test: 11374.004ms
 
   const generatedText = response.choices[0].message.function_call.arguments;
   const result = JSON.parse(generatedText)
