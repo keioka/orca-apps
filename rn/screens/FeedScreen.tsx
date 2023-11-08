@@ -16,8 +16,12 @@ import * as Updates from 'expo-updates';
 
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
-  const { lessons, creating, createdLessonId, error: errorLesson } = useAppSelector((state) => state.lesson);
-  const { items } = useAppSelector((state) => state.material);
+  const creating = useAppSelector((state) => state.lesson.creating);
+  const createdLessonId = useAppSelector((state) => state.lesson.createdLessonId);
+  const errorLesson = useAppSelector((state) => state.lesson.error);
+  const lessons = useAppSelector((state) => state.lesson.lessons);
+
+  const items = useAppSelector((state) => state.material.items);
   const session = useAppSelector((state) => state.auth.session)
   const [selectedCategory, setActiveCategory] = useState("all")
   const [refreshing, setRefreshing] = useState(false);
@@ -33,7 +37,6 @@ export function FeedScreen({ navigation }) {
   }, [])
 
   useEffect(() => {
-    console.log("rerender followPublishers", followPublishers)
     if (!followPublishers) return
     const followPublisherIds = followPublishers.map((publisher) => publisher.publisherId)
     if (followPublisherIds.length === 0) return
@@ -225,16 +228,6 @@ export function FeedScreen({ navigation }) {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          {/* {
-            feed.map((item, index) => (
-              <View key={index} style={{ marginVertical: 2, width: "95%" }}>
-                <CardArticle
-                  item={item}
-                  onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
-                />
-              </View>
-            ))
-          } */}
           {
             materials.length === 0 && (
               <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>

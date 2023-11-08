@@ -13,14 +13,11 @@ export async function fetchMetadata(url: string): Promise<Metadata> {
 
   const data = await urlMetadata(url)
 
-  console.log({ data })
-
   const jsonld = data.jsonld
   const publisher = jsonld?.publisher
   const date = jsonld.datePublished
 
 
-  console.log({ date })
   const sitedata = {
     title: data.title as string || data['og:title'] as string,
     description: data.description as string || data['og:description'] as string,

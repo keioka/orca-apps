@@ -137,7 +137,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       const publishersAdded = await addPublishers(publishers, category)
-      console.log(publishersAdded)
       res.status(201).json({ message: "Publishers added", publishersAdded });
     } catch (error) {
       console.error("Error adding publishers:", error);

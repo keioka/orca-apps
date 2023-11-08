@@ -60,7 +60,6 @@ export function getFollowPublishersCategory({ userId }: { userId: string }) {
 }
 
 export function createPublishers(publishers: any[]) {
-  console.log({ publishers })
   return prisma.publisher.createMany({
     data: publishers,
     skipDuplicates: true

@@ -11,14 +11,12 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    console.log("/api/chat")
     const { url, history = [], message, lessonId } = req.body;
 
     let lessonUrl = url;
     if (lessonId) {
       const lesson = await getLesson(lessonId)
       lessonUrl = lesson?.material.url ?? url;
-      console.log({ lesson })
     }
 
     const params: OpenAI.Chat.ChatCompletionCreateParams = {
