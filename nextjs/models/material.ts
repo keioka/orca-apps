@@ -71,6 +71,9 @@ export async function getMaterials(params: GetMaterialsParams): Promise<Paginati
     where,
     skip: parseInt(params.offset),
     take: parseInt(params.limit), // 'take' in Prisma acts like 'limit' in many SQL databases
+    orderBy: {
+      publishedAt: 'desc', // or 'desc' for descending order
+    },
     include: {
       publisher: true,
     },
@@ -142,29 +145,35 @@ interface Vocab {
 }
 
 export async function createVocabs({ materialId, vocabParams }: { materialId: string, vocabParams: VocabParams[] }): Promise<Vocab> {
-  // const vocabulariesToCreate = vocabParams.map(vocab => ();
-
   for (let vocabParam of vocabParams) {
-    await prisma.vocabulary.create({
-      data: {
-        word: vocabParam.word,
-        meaning: vocabParam.meaning,
-        materialId: materialId,
-        sentence: vocabParam.sentence,
-        pronounce: vocabParam.pronounce,
-        example: vocabParam.example,
-        translation: {
-          create: {
-            content: vocabParam.translation,
-            language: {
-              connect: {
-                code: vocabParam.langCode
+    try {
+      await prisma.vocabulary.create({
+        data: {
+          word: vocabParam.word,
+          meaning: vocabParam.meaning,
+          materialId: materialId,
+          sentence: vocabParam.sentence,
+          pronounce: vocabParam.pronounce,
+          example: vocabParam.example,
+          translation: {
+            create: {
+              content: vocabParam.translation,
+              language: {
+                connect: {
+                  code: vocabParam.langCode
+                }
               }
             }
           }
         }
+      })
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        console.log(`Vocab already exists: ${error.meta.target[0].name}`)
+      } else {
+        console.error(error)
       }
-    })
+    }
   }
 }
 

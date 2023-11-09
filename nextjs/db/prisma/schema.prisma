@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
 }
 
 model Auth {
@@ -37,7 +38,7 @@ model User {
   savedGrammarMistake SavedGrammarMistake[]
   followRss           FollowRss[]
   savedVocabularies   SavedVocabularies[]
-  UserHashtag         UserFollowHashtag[]
+  hashtags            UserFollowHashtag[]
 
   @@map("users")
 }
@@ -60,29 +61,30 @@ model Material {
   vocabularies    Vocabulary[]
   publisherId     String            @map("publisher_id")
   publisher       Publisher         @relation(fields: [publisherId], references: [id])
-  MaterialHashtag MaterialHashtag[]
+  materialHashtag MaterialHashtag[]
 
   @@map("materials")
 }
 
 model Publisher {
-  id               String      @id @default(uuid()) @db.Char(36)
-  name             String      @db.VarChar(255)
-  contentType      String      @map("content_type") @db.VarChar(32)
-  publisherType    String      @map("publisher_type") @db.VarChar(32)
-  rssUrl           String?     @unique @map("rss_url") @db.VarChar(255)
-  domain           String?     @unique @map("domain") @db.VarChar(255)
-  category         String?     @db.VarChar(100)
-  categoryExternal String?     @map("category_external") @db.VarChar(255)
-  isActive         Boolean     @default(true) @map("is_active")
-  isRecommended    Boolean     @default(false) @map("is_recommended")
-  imageUrl         String?     @map("image_url")
-  material         Material[]
-  createdAt        DateTime    @default(now()) @map("created_at")
-  updatedAt        DateTime    @updatedAt @map("updated_at")
-  followRss        FollowRss[]
-  recommended      Boolean     @default(false)
-  lastCrawledAt    DateTime?   @map("last_crawled_at")
+  id                String      @id @default(uuid()) @db.Char(36)
+  name              String      @db.VarChar(255)
+  contentType       String      @map("content_type") @db.VarChar(32)
+  publisherType     String      @map("publisher_type") @db.VarChar(32)
+  rssUrl            String?     @unique @map("rss_url") @db.VarChar(255)
+  domain            String?     @unique @map("domain") @db.VarChar(255)
+  category          String?     @db.VarChar(100)
+  categoryExternal  String?     @map("category_external") @db.VarChar(255)
+  isActive          Boolean     @default(true) @map("is_active")
+  isRecommended     Boolean     @default(false) @map("is_recommended")
+  imageUrl          String?     @map("image_url")
+  material          Material[]
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+  followRss         FollowRss[]
+  recommended       Boolean     @default(false)
+  lastCrawledAt     DateTime?   @map("last_crawled_at")
+  lastCrawlFailedAt DateTime?   @map("last_crawl_failed_at")
 
   @@map("publishers")
 }
@@ -281,8 +283,8 @@ model Hashtag {
   name            String              @unique @db.VarChar(255)
   createdAt       DateTime            @default(now()) @map("created_at")
   updatedAt       DateTime            @updatedAt @map("updated_at")
-  MaterialHashtag MaterialHashtag[]
-  UserHashtag     UserFollowHashtag[]
+  materialHashtag MaterialHashtag[]
+  userHashtag     UserFollowHashtag[]
 
   @@map("hashtags")
 }

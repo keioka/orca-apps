@@ -65,3 +65,38 @@ export function createPublishers(publishers: any[]) {
     skipDuplicates: true
   })
 }
+
+export function checkPublishersCrawledStatus() {
+  const anHourAgo = new Date(new Date().getTime() - 60 * 60 * 1000);
+  return prisma.publisher.findMany({
+    where: {
+      OR: [
+        { lastCrawledAt: null },
+        {
+          lastCrawledAt: {
+            lt: anHourAgo,
+          },
+        },
+      ],
+      isActive: true, // Assuming you want to check only active publishers
+    },
+  });
+}
+
+// 
+export function updatePublisherCrawledStatus({ publisherId, failed }: { publisherId: string, failed?: boolean }) {
+  const data: any = {};
+  if (failed) {
+    data.lastCrawlFailedAt = new Date();
+  } else {
+    data.lastCrawledAt = new Date()
+  }
+
+  return prisma.publisher.update({
+    where: {
+      id: publisherId,
+    },
+    data,
+  });
+}
+
