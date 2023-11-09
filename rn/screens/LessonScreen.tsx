@@ -204,14 +204,13 @@ function VocabularyTab({ materialId }: { materialId: string }) {
       >
 
         {vocabs && vocabs.map((item, index) => {
-          const isSaved = savedVocabs.some((vocab) => vocab.vocabularyId == item.id)
           return (
             <View key={`vocab_${item.id}`} style={styles.cardWrapper}>
               <CardVocab vocab={item} onClickSave={() => handleClickSave(item)} isSaved={isSavedMap[item.id]} />
             </View>
           )
         })}
-        {isFetchingVocabs && (
+        {vocabs.length === 0 || isFetchingVocabs && (
           <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
             <ActivityIndicator size="large" color="#007991" />
           </View>
