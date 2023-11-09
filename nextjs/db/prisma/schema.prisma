@@ -8,7 +8,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DATABASE_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
 }
 
 model Auth {
@@ -82,7 +82,6 @@ model Publisher {
   createdAt         DateTime    @default(now()) @map("created_at")
   updatedAt         DateTime    @updatedAt @map("updated_at")
   followRss         FollowRss[]
-  recommended       Boolean     @default(false)
   lastCrawledAt     DateTime?   @map("last_crawled_at")
   lastCrawlFailedAt DateTime?   @map("last_crawl_failed_at")
 
