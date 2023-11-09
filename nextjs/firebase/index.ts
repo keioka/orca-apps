@@ -1,7 +1,6 @@
 import admin from 'firebase-admin';
 import camelcaseKeys from 'camelcase-keys';
 
-console.log({ s: process.env })
 const serviceAccount = {
   "type": "service_account",
   "project_id": process.env.FIREBASE_PROJECT_ID,
