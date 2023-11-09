@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { TouchableOpacity, Alert, StyleSheet, View, ScrollView, Dimensions } from 'react-native'
-import { Button, TextInput, Modal, Portal, Text, PaperProvider, Checkbox } from 'react-native-paper'
+import { Button, TextInput, Modal, Portal, PaperProvider, Checkbox } from 'react-native-paper'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { fetchPublishers } from '../redux/features/publishers';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -8,7 +8,9 @@ import { capitalize } from "lodash"
 import { Image } from 'expo-image';
 import { createFollowPublishers, clearHasSuccessCreateFollow, fetchFollowPublishers } from '../redux/features/publishers';
 import { unionBy } from 'lodash';
-import { categories } from '../helpers/categories';
+import { categories, categoryBySection } from '../helpers/categories';
+import { Text } from '../components/Text';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;
 const categorySize = (screenWidth - (4 * 16)) / 2; // Adjusting for three categories per row and assuming 16 as the margin
@@ -74,7 +76,20 @@ export function CategoryScreen({ navigation }) {
 
   const selectedCategoryPublishers = useMemo(() => {
     if (selectedCategory) {
-      return publishers.filter((publisher) => publisher.category === selectedCategory.slug)
+      return publishers
+        .filter((publisher) => publisher.category === selectedCategory.slug)
+        .sort((a, b) => {
+          // If a is recommended but b is not, a should come first
+          if (a.isRecommended && !b.isRecommended) {
+            return -1;
+          }
+          // If b is recommended but a is not, b should come first
+          if (b.isRecommended && !a.isRecommended) {
+            return 1;
+          }
+          // If both are recommended or not recommended, maintain their order
+          return 0;
+        });
     }
     return []
   }, [publishers, selectedCategory])
@@ -108,7 +123,9 @@ export function CategoryScreen({ navigation }) {
                   imageUrl={publisher.imageUrl || fetchFavicon(publisher.rssUrl)}
                   onPress={() => handleSelectPublisher(publisher.id)}
                   isSelected={isSelected}
-                />)
+                  isRecommended={publisher.isRecommended}
+                />
+              )
             })
           }
         </ScrollView>
@@ -139,7 +156,7 @@ export function CategoryScreen({ navigation }) {
           </TouchableOpacity>
         </View>
         <View style={styles.headerCategory}>
-          <Text style={styles.headerDateText}>Follow RSS</Text>
+          <Text style={styles.headerDateText} weight='Bold'>Follow RSS</Text>
           <View>
             <Text><Text style={styles.countPublishers}>{selectedPublisherIds.length}</Text> feeds</Text>
             <Text>selected</Text>
@@ -147,18 +164,57 @@ export function CategoryScreen({ navigation }) {
 
         </View>
         <ScrollView contentContainerStyle={styles.list}>
-          {categories.map((category) => {
-            return (
-              <View key={category.title} style={styles.selectorWrapper}>
-                <CategorySelector
-                  title={category.title}
-                  icon={category.icon}
-                  onPress={() => handleSelectCategory(category)}
-                  selectedCount={selectedCountsByCategorySlug[category.slug] || 0}
-                />
-              </View>
-            )
-          })}
+          <View style={styles.section}>
+            <Text style={{ fontSize: 18, textAlign: "center" }}>General</Text>
+            <View style={styles.listSection}>
+              {categoryBySection['news'].map((category) => {
+                return (
+                  <View key={category.title} style={styles.selectorWrapper}>
+                    <CategorySelector
+                      title={category.title}
+                      icon={category.icon}
+                      onPress={() => handleSelectCategory(category)}
+                      selectedCount={selectedCountsByCategorySlug[category.slug] || 0}
+                    />
+                  </View>
+                )
+              })}
+            </View>
+          </View>
+          <View style={styles.section}>
+            <Text style={{ fontSize: 18, textAlign: "center" }}>Work</Text>
+            <View style={styles.listSection}>
+              {categoryBySection['work'].map((category) => {
+                return (
+                  <View key={category.title} style={styles.selectorWrapper}>
+                    <CategorySelector
+                      title={category.title}
+                      icon={category.icon}
+                      onPress={() => handleSelectCategory(category)}
+                      selectedCount={selectedCountsByCategorySlug[category.slug] || 0}
+                    />
+                  </View>
+                )
+              })}
+            </View>
+          </View>
+          <View style={styles.section}>
+            <Text style={{ fontSize: 18, textAlign: "center" }}>Fun</Text>
+            <View style={styles.listSection}>
+              {categoryBySection['fun'].map((category) => {
+                return (
+                  <View key={category.title} style={styles.selectorWrapper}>
+                    <CategorySelector
+                      title={category.title}
+                      icon={category.icon}
+                      onPress={() => handleSelectCategory(category)}
+                      selectedCount={selectedCountsByCategorySlug[category.slug] || 0}
+                    />
+                  </View>
+                )
+              })}
+            </View>
+          </View>
         </ScrollView>
 
       </View >
@@ -189,7 +245,7 @@ function CategorySelector({ title, icon, onPress, selectedCount }) {
         <Ionicons name={icon} size={32} color="black" />
         <Text>{capitalize(title)}</Text>
         {selectedCount > 0 &&
-          <View style={{ width: 24, height: 24, backgroundColor: "red", borderRadius: 24, justifyContent: "center", alignItems: "center", marginTop: 8 }}>
+          <View style={{ width: 24, height: 24, backgroundColor: "#FFD744", borderRadius: 24, justifyContent: "center", alignItems: "center", marginTop: 8 }}>
             <Text style={{ color: '#fff' }}>{`${selectedCount}`}</Text>
           </View>
         }
@@ -216,20 +272,26 @@ function fetchFavicon(url) {
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M | azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj ? j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
-function RSSSelector({ title, url, icon, imageUrl, onPress, isSelected = true }) {
+function RSSSelector({ title, url, icon, imageUrl, onPress, isSelected = true, isRecommended }) {
   return (
     <TouchableOpacity onPress={onPress} style={{ width: "100%" }}>
       <View style={styles.rssSelector}>
-        <Checkbox.Android status={isSelected ? 'checked' : 'unchecked'} />
-        <Image
-          style={styles.publisherImg}
-          source={imageUrl}
-          placeholder={blurhash}
-          contentFit="cover"
-          transition={1000}
-        />
-        <Ionicons name={icon} size={32} color="black" />
-        <Text style={{ flex: 1, flexShrink: 1, flexWrap: 'wrap' }}>{title.trim()}</Text>
+        <View style={{ flex: 10, flexDirection: "row", alignItems: "center", flexWrap: "wrap", }}>
+          <Checkbox.Android status={isSelected ? 'checked' : 'unchecked'} />
+          <Image
+            style={styles.publisherImg}
+            source={imageUrl}
+            placeholder={blurhash}
+            contentFit="cover"
+            transition={1000}
+          />
+          <Ionicons name={icon} size={32} color="black" />
+          <Text style={{ flex: 1, flexShrink: 1, flexWrap: 'wrap' }}>{title.trim()}</Text>
+        </View>
+        {isRecommended && <View style={{ flex: 2, flexDirection: "column", alignItems: "center" }}>
+          <MaterialIcons name="stars" size={18} color="#FFD744" />
+          <Text style={{ fontSize: 10 }}>Popular</Text>
+        </View>}
       </View>
     </TouchableOpacity >
   )
@@ -243,11 +305,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%"
   },
+  section: {
+    marginTop: 48,
+  },
   list: {
+  },
+  listSection: {
     flexDirection: "row",
     flexWrap: "wrap",
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
   },
   header: {
     width: "100%",
@@ -271,7 +338,7 @@ const styles = StyleSheet.create({
   categorySelector: {
     width: categorySize,
     height: categorySize,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#f8f8f8",
     alignItems: "center",
     justifyContent: "center",
     padding: 8,
@@ -281,9 +348,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     flexDirection: "row",
-    flexWrap: "wrap",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     borderRadius: 8,
     // height: 64,
     paddingVertical: 16,

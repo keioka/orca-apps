@@ -23,7 +23,7 @@ export const Browser = ({ initialUrl, onClose }) => {
         <View style={{ flexDirection: "row", paddingHorizontal: 8 }}>
           <TouchableOpacity onPress={onClose} style={{ flex: 1 }}>
             <View style={{ borderRadius: 8, justifyContent: "center", alignItems: "center", height: 42 }}>
-              <Ionicons name="ios-arrow-back" size={24} color="black" />
+              <Ionicons name="close-outline" size={24} color="black" />
             </View>
           </TouchableOpacity>
           <View style={{ flex: 7, backgroundColor: "#f4f4f4", padding: 8, borderRadius: 8, justifyContent: "center", height: 42, width: "100%" }}>

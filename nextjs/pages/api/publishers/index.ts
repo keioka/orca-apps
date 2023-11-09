@@ -22,11 +22,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       let publishers = []
 
       if (!category) {
-        publishers = await prisma.publisher.findMany();
+        publishers = await prisma.publisher.findMany({
+          where: {
+            isActive: true
+          }
+        });
       } else {
         publishers = await prisma.publisher.findMany({
           where: {
             category: category as string,
+            isActive: true
           },
         });
       }
