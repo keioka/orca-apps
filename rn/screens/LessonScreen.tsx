@@ -75,7 +75,7 @@ function SummaryTab({ materialId }: { materialId: string }) {
           {
             levels.map((level) =>
               <TouchableOpacity style={{ marginHorizontal: 16, }} onPress={() => handleOnPress(level)}>
-                <View style={[{ borderRadius: 32, padding: 8, height: 32 }, level === tabLevel ? { backgroundColor: "#007991" } : null]}>
+                <View style={[{ borderRadius: 32, padding: 8 }, level === tabLevel ? { backgroundColor: "#2852A4" } : null]}>
                   <Text style={{ color: level === tabLevel ? "#fff" : null }}>{levelsMap[level]}</Text>
                 </View>
               </TouchableOpacity>
@@ -100,7 +100,7 @@ function SummaryTab({ materialId }: { materialId: string }) {
           }
           {isFetchingSummary &&
             <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
-              <ActivityIndicator size="large" color="#007991" />
+              <ActivityIndicator size="large" color="#6BD3F4" />
             </View>
           }
         </View>
@@ -276,7 +276,7 @@ function ArticleTab({ lesson }: { lesson: {} }) {
         </View> :
         <View style={{ height: "100%", width: "100%", alignContent: "center", justifyContent: "center" }}>
           <View style={{ padding: 24 }}>
-            <Button mode="contained" onPress={() => { setShouldShowBrowser(true) }}>Go to the article page</Button>
+            <Button mode="contained" onPress={() => { setShouldShowBrowser(true) }} style={{ backgroundColor: "#2852A4" }}>Go to the article page</Button>
           </View>
           {/* {shouldEmbed && <WebView
             startInLoadingState
@@ -405,8 +405,8 @@ export function LessonScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   menu: {
     padding: 4,
-    height: 48,
-    backgroundColor: '#242424',
+    height: 56,
+    backgroundColor: '#2852A4',
     color: "#fff",
     flexDirection: 'row',
     alignItems: 'center',

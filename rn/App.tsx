@@ -44,7 +44,7 @@ const MainTab = () => (
   <Tab.Navigator
     initialRouteName="Home"
     screenOptions={({ route }) => ({
-      tabBarActiveTintColor: '#1CA6AE',
+      tabBarActiveTintColor: '#2852A4',
       tabBarIcon: ({ focused, color, size }) => {
         let iconName;
 
