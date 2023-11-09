@@ -6,6 +6,7 @@ import { WebView } from 'react-native-webview';
 import { Button } from './Button';
 import { Image } from 'expo-image';
 import { Text, Title } from './Text';
+import moment from 'moment';
 
 interface CardArticleProps {
   item: {
@@ -54,53 +55,39 @@ export const CardArticle = ({
   <Card style={styles.card} elevation={0}>
     <TouchableOpacity onPress={onPressStart}>
       <Card.Content style={styles.cardContent}>
-        {/* <View style={styles.sectionPublisher}>
-        <Image source={{ uri: item.publisher.imageUrl }} style={styles.logoPublisher} />
-        <Title style={styles.title}>{item.title}</Title>
-      </View> */}
-        {/* <Paragraph>{item.content}</Paragraph> */}
-        <Title style={styles.title}>{item.title}</Title>
-        <View style={{ flex: 2 }}>
-          {item.type === 'video' ?
-            // <WebView
-            //   style={styles.youtubeView}
-            //   javaScriptEnabled={true}
-            //   domStorageEnabled={true}
-            //   source={imageSource || { uri: item.url }}
-            // /> :
-            null :
-            <>
-              {item.imageUrl ? <Card.Cover source={{ uri: item.imageUrl }} style={styles.cardCover} /> : null}
-            </>
-          }
+        {item.publisher &&
+          <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
+            <Image
+              style={styles.publisherImg}
+              source={fetchFavicon(item.publisher.rssUrl) || item.publisher.imageUrl}
+              placeholder={blurhash}
+              contentFit="cover"
+              transition={1000}
+            />
+            <Text style={styles.textPublisherName}>{item.publisher.name}</Text>
+          </View>
+        }
+        <View style={styles.cardContentBody}>
+          <Title style={styles.title}>{item.title}</Title>
+          <View style={{ flex: 2 }}>
+            {item.type === 'video' ?
+              null :
+              <>
+                {item.imageUrl ? <Card.Cover source={{ uri: item.imageUrl }} style={styles.cardCover} /> : null}
+              </>
+            }
+          </View>
         </View>
       </Card.Content>
     </TouchableOpacity>
     <View style={styles.cardAction}>
-
-      {item.publisher && <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
-        <Image
-          style={styles.publisherImg}
-          source={fetchFavicon(item.publisher.rssUrl) || item.publisher.imageUrl}
-          placeholder={blurhash}
-          contentFit="cover"
-          transition={1000}
-        />
-        <Text style={styles.textPublisherName}>{item.publisher.name}</Text>
-      </View>}
-
+      <Text style={{ fontSize: 12 }}>{item.publishedAt ? moment(item.publishedAt).fromNow() : null}</Text>
       <View style={styles.sectionActionButtons}>
-        {/* <Button onPress={onPressStart} style={styles.btn} textColor="#fff" isGradient={!!lessonId}>{lessonId ? "Resume" : "Start"}</Button> */}
         {lessonId &&
           <Chip style={styles.containerChip} textStyle={styles.textChip} compact>
-            Already
+            Already started
           </Chip>
         }
-        {/* {!hideSaveButton &&
-          <TouchableOpacity onPress={onPressStart} style={styles.btnSave} textColor="#242424" >
-            <Ionicons name="bookmark" size={18} color="#c6c6c6" />
-          </TouchableOpacity>
-        } */}
       </View>
     </View>
   </Card>
@@ -132,8 +119,15 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
   cardContent: {
-    marginTop: -8,
+    flexDirection: 'column',
+    width: "100%",
+  },
+  cardContentBody: {
+    width: "100%",
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
   },
   cardAction: {
     paddingVertical: 8,
@@ -194,9 +188,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   publisherImg: {
-    width: 24,
-    height: 24,
-    borderRadius: 8,
+    width: 18,
+    height: 18,
+    borderRadius: 4,
     marginRight: 8,
     resizeMode: 'contain'
   },

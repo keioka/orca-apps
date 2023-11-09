@@ -28,12 +28,13 @@ model User {
   Lesson   Lesson[]
   auth     Auth?    @relation(fields: [authId], references: [id], map: "auth")
 
-  createdAt           DateTime              @default(now()) @map("created_at")
-  updatedAt           DateTime              @updatedAt @map("updated_at")
-  Message             Message[]
-  SavedParaphrase     SavedParaphrase[]
-  SavedGrammarMistake SavedGrammarMistake[]
-  FollowHashtag       FollowHashtag[]
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @updatedAt @map("updated_at")
+  messages             Message[]
+  savedVocabulary      S[]
+  savedParaphrases     SavedParaphrase[]
+  savedGrammarMistakes SavedGrammarMistake[]
+  hashtags             FollowHashtag[]
 
   @@map("users")
 }
@@ -51,12 +52,13 @@ model Material {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  lessons         Lesson[]
-  summary         Summary[]
-  vocabularies    Vocabulary[]
-  publisherId     Int               @map("publisher_id")
-  publisher       Publisher         @relation(fields: [publisherId], references: [id])
-  MaterialHashtag MaterialHashtag[]
+  lessons      Lesson[]
+  summary      Summary[]
+  vocabularies Vocabulary[]
+  hashtags     MaterialHashtag[]
+
+  publisherId Int       @map("publisher_id")
+  publisher   Publisher @relation(fields: [publisherId], references: [id])
 
   @@map("materials")
 }
@@ -95,6 +97,8 @@ model Vocabulary {
   material   Material @relation(fields: [materialId], references: [id])
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     String?
 
   @@map("vocabularies")
 }
