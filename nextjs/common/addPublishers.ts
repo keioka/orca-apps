@@ -37,16 +37,14 @@ interface RSS {
   channel: RSSChannel[];
 }
 
-const prisma = new PrismaClient();
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-interface Publisher { url: string, name: string, category: string }
+interface Publisher { url: string, name: string, category?: string, isRecommended?: boolean, domain?: string }
 
 export async function addPublishers(publishers: Publisher[], category: string) {
 
   try {
     const publishersData = await Promise.all(publishers.map(async (publisher) => {
-      sleep(1000)
       try {
         const feed = await parser.parseURL(publisher.url);
 
@@ -54,15 +52,17 @@ export async function addPublishers(publishers: Publisher[], category: string) {
           name: publisher.name || feed.title,
           rssUrl: publisher.url,
           publisherType: 'rss',
+          domain: publisher.domain ? publisher.domain : null,
           contentType: 'article',
-          category: category,
+          category: publisher.category?.toLowerCase() || category,
           categoryExternal: feed.category?.toLowerCase() || category,
           imageUrl: feed.image?.url,
+          isRecommended: publisher.isRecommended
         };
 
         return publisherData
       } catch (error) {
-        console.error(error)
+        console.error(`${error.code}-${error.message}`, publisher.url)
         return null
       }
     }))
@@ -72,7 +72,6 @@ export async function addPublishers(publishers: Publisher[], category: string) {
     return result
   } catch (error) {
     console.error(error)
-    // await prisma.$disconnect();
     return
   }
 }

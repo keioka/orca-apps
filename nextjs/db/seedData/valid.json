@@ -1,0 +1,4058 @@
+[
+  {
+    "name": "Politico",
+    "domain": "politico.com",
+    "Articles Per Week": "203 articles per week",
+    "url": "https://www.politico.com/rss/politicopicks.xml",
+    "category": "Politics",
+    "isRecommended": true
+  },
+  {
+    "name": "The Atlantic - Politics",
+    "domain": "theatlantic.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.theatlantic.com/feed/all/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "NYT - Politics",
+    "domain": "nytimes.com",
+    "Articles Per Week": "105 articles per week",
+    "url": "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/ca/section/politics/rss.xml",
+    "category": "Politics",
+    "isRecommended": true
+  },
+  {
+    "name": "US news | The Guardian",
+    "domain": "theguardian.com",
+    "Articles Per Week": "249 articles per week",
+    "url": "https://www.theguardian.com/rss",
+    "category": "Politics",
+    "isRecommended": true
+  },
+  {
+    "name": "The Intercept",
+    "domain": "theintercept.com",
+    "Articles Per Week": "18 articles per week",
+    "url": "https://theintercept.com/feeds/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "FOX news - World",
+    "domain": "https://www.foxnews.com/",
+    "Articles Per Week": "1117 articles per week",
+    "url": "https://moxie.foxnews.com/google-publisher/world.xml",
+    "category": "World",
+    "isRecommended": true
+  },
+  {
+    "name": "Politics : NPR",
+    "domain": "npr.org",
+    "Articles Per Week": "69 articles per week",
+    "url": "https://feeds.npr.org/1001/rss.xml",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Huffpost - Politics",
+    "domain": "huffpost.com",
+    "Articles Per Week": "124 articles per week",
+    "url": "https://chaski.huffpost.com/us/auto/vertical/politics",
+    "category": "Politics",
+    "isRecommended": true
+  },
+  {
+    "name": "Huffpost - Business",
+    "domain": "huffpost.com",
+    "Articles Per Week": "124 articles per week",
+    "url": "https://chaski.huffpost.com/us/auto/vertical/business",
+    "category": "Business",
+    "isRecommended": true
+  },
+  {
+    "name": "HuffPost - United States",
+    "domain": "huffpost.com",
+    "Articles Per Week": "124 articles per week",
+    "url": "https://chaski.huffpost.com/us/auto/vertical/us-news",
+    "category": "US",
+    "isRecommended": false
+  },
+  {
+    "name": "FactCheck.org",
+    "domain": "factcheck.org",
+    "Articles Per Week": "6 articles per week",
+    "url": "https://www.factcheck.org/feed/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Al Jazeera – Breaking News, World News and Video from Al Jazeera",
+    "domain": "aljazeera.com",
+    "Articles Per Week": "304 articles per week",
+    "url": "https://www.aljazeera.com/xml/rss/all.xml",
+    "category": "World",
+    "isRecommended": true
+  },
+  {
+    "name": "The Nation",
+    "domain": "thenation.com",
+    "Articles Per Week": "49 articles per week",
+    "url": "https://www.thenation.com/feed/",
+    "category": "Politics",
+    "isRecommended": true
+  },
+  {
+    "name": "The New Republic",
+    "domain": "newrepublic.com",
+    "Articles Per Week": "69 articles per week",
+    "url": "https://newrepublic.com/rss.xml",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "NBC News Politics",
+    "domain": "nbcnews.com",
+    "Articles Per Week": "373 articles per week",
+    "url": "https://feeds.nbcnews.com/nbcnews/public/news",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Bloomberg Politics",
+    "domain": "bloomberg.com",
+    "Articles Per Week": "331 articles per week",
+    "url": "https://feeds.bloomberg.com/politics/news.rss",
+    "category": "Politics",
+    "isRecommended": true
+  },
+  {
+    "name": "Just In News | The Hill",
+    "domain": "https://thehill.com/",
+    "Articles Per Week": "684 articles per week",
+    "url": "https://thehill.com/feed/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Editors’ Blog – TPM – Talking Points Memo",
+    "domain": "https://talkingpointsmemo.com/",
+    "Articles Per Week": "13 articles per week",
+    "url": "https://talkingpointsmemo.com/feed",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Jacobin",
+    "domain": "jacobin.com",
+    "Articles Per Week": "45 articles per week",
+    "url": "https://jacobin.com/feed/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Right Wing Watch",
+    "domain": "rightwingwatch.org",
+    "Articles Per Week": "15 articles per week",
+    "url": "https://www.rightwingwatch.org/feed/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Vox - All",
+    "domain": "vox.com",
+    "Articles Per Week": "40 articles per week",
+    "url": "https://www.vox.com/rss/index.xml",
+    "category": "Politics",
+    "isRecommended": true
+  },
+  {
+    "name": "Crooks and Liars",
+    "domain": "crooksandliars.com",
+    "Articles Per Week": "109 articles per week",
+    "url": "https://crooksandliars.com/feeds/latest",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "The Daily Beast Latest Articles",
+    "domain": "thedailybeast.com",
+    "Articles Per Week": "205 articles per week",
+    "url": "https://feeds.thedailybeast.com/rss/articles",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Political Wire",
+    "domain": "politicalwire.com",
+    "Articles Per Week": "297 articles per week",
+    "url": "https://politicalwire.com/feed/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "MSNBC Top Stories",
+    "domain": "msnbc.com",
+    "Articles Per Week": "130 articles per week",
+    "url": "https://www.msnbc.com/feed",
+    "category": "World",
+    "isRecommended": false
+  },
+  {
+    "name": "Wonkette",
+    "domain": "wonkette.com",
+    "Articles Per Week": "67 articles per week",
+    "url": "https://www.wonkette.com/feed",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Truthdig",
+    "domain": "truthdig.com",
+    "Articles Per Week": "20 articles per week",
+    "url": "https://www.truthdig.com/feed/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Alternet.org",
+    "domain": "alternet.org",
+    "Articles Per Week": "153 articles per week",
+    "url": "https://www.alternet.org/feeds/feed.rss",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Crooked Media",
+    "domain": "crooked.com",
+    "Articles Per Week": "21 articles per week",
+    "url": "https://crooked.com/feed",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Raw Story - Celebrating 19 Years of Independent Journalism",
+    "domain": "rawstory.com",
+    "Articles Per Week": "439 articles per week",
+    "url": "https://www.rawstory.com/feeds/feed.rss",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Politics – TIME",
+    "domain": "time.com",
+    "Articles Per Week": "16 articles per week",
+    "url": "https://time.com/feed",
+    "category": "Politics",
+    "isRecommended": true
+  },
+  {
+    "name": "Eschaton",
+    "domain": "eschatonblog.com",
+    "Articles Per Week": "58 articles per week",
+    "url": "https://www.eschatonblog.com/feeds/posts/default?alt=rss",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Truthout",
+    "domain": "truthout.org",
+    "Articles Per Week": "68 articles per week",
+    "url": "https://truthout.org/feed/?withoutcomments=1",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Balloon Juice",
+    "domain": "balloon-juice.com",
+    "Articles Per Week": "67 articles per week",
+    "url": "https://balloon-juice.com/feed/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Guido Fawkes",
+    "domain": "order-order.com",
+    "Articles Per Week": "59 articles per week",
+    "url": "https://order-order.com/feed/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "TheWeek RSS Feed",
+    "domain": "theweek.com",
+    "Articles Per Week": "153 articles per week",
+    "url": "https://theweek.com/rss.xml",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Mother Jones",
+    "domain": "motherjones.com",
+    "Articles Per Week": "30 articles per week",
+    "url": "https://www.motherjones.com/feed",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Washington Monthly",
+    "domain": "washingtonmonthly.com",
+    "Articles Per Week": "8 articles per week",
+    "url": "https://washingtonmonthly.com/feed/",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Salon.com",
+    "domain": "salon.com",
+    "Articles Per Week": "140 articles per week",
+    "url": "https://www.salon.com/feed",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Morning Joe",
+    "domain": "N/A",
+    "Articles Per Week": "55 articles per week",
+    "url": "https://feed.media.theplatform.com/f/rksNhC/nnd_18424787-nnd",
+    "category": "Politics",
+    "isRecommended": false
+  },
+  {
+    "name": "Marginal Revolution",
+    "domain": "marginalrevolution.com",
+    "Articles Per Week": "34 articles per week",
+    "url": "https://marginalrevolution.com/feed",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Econbrowser",
+    "domain": "econbrowser.com",
+    "Articles Per Week": "8 articles per week",
+    "url": "https://econbrowser.com/feed",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "The Big Picture",
+    "domain": "https://ritholtz.com/",
+    "Articles Per Week": "15 articles per week",
+    "url": "http://ritholtz.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "The Grumpy Economist",
+    "domain": "johnhcochrane.blogspot.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://johnhcochrane.blogspot.com/feeds/posts/default?alt=rss",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Naked Capitalism",
+    "domain": "nakedcapitalism.com",
+    "Articles Per Week": "37 articles per week",
+    "url": "https://www.nakedcapitalism.com/feed",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "TheMoneyIllusion",
+    "domain": "themoneyillusion.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.themoneyillusion.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Mainly macro",
+    "domain": "follow.it/mainlymacro",
+    "Articles Per Week": "1 article per week",
+    "url": "https://follow.it/feed",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Tim Harford",
+    "domain": "timharford.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://timharford.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Econlib",
+    "domain": "econlib.org",
+    "Articles Per Week": "18 articles per week",
+    "url": "https://www.econlib.org/feed",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "NYT > Paul Krugman",
+    "domain": "nytimes.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/column/paul-krugman/rss.xml",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Conservable economist",
+    "domain": "conversableeconomist.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://conversableeconomist.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Liberty Street Economics",
+    "domain": "libertystreeteconomics.newyorkfed.org",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://libertystreeteconomics.newyorkfed.org/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Calculated Risk",
+    "domain": "calculatedriskblog.com",
+    "Articles Per Week": "29 articles per week",
+    "url": "https://www.calculatedriskblog.com/feeds/posts/default?alt=rss",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Project Syndicate",
+    "domain": "project-syndicate.org",
+    "Articles Per Week": "22 articles per week",
+    "url": "https://www.project-syndicate.org/rss",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Economic Principals",
+    "domain": "economicprincipals.mystagingwebsite.com",
+    "Articles Per Week": "1 articles per week",
+    "url": "https://economicprincipals.com/feed",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "interfluidity",
+    "domain": "interfluidity.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.interfluidity.com/feed",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "The Enlightened Economist",
+    "domain": "enlightenmenteconomics.com",
+    "Articles Per Week": "1 articles per week",
+    "url": "http://enlightenmenteconomics.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Larry Summers",
+    "domain": "larrysummers.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://larrysummers.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "MacroMania",
+    "domain": "andolfatto.blogspot.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://andolfatto.blogspot.com/feeds/posts/default?alt=rss",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Finance & economics",
+    "domain": "economist.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://www.economist.com/rss",
+    "category": "Economy",
+    "isRecommended": true
+  },
+  {
+    "name": "Economics One",
+    "domain": "economicsone.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://economicsone.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Stumbling and Mumbling",
+    "domain": "stumblingandmumbling.typepad.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://stumblingandmumbling.typepad.com/stumbling_and_mumbling/rss.xml",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Bank Underground",
+    "domain": "bankunderground.co.uk",
+    "Articles Per Week": "1 article per week",
+    "url": "https://bankunderground.co.uk/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Beat the Press Archives - Center for Economic and Policy Research",
+    "domain": "cepr.net",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://cepr.net/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Microeconomic Insights",
+    "domain": "microeconomicinsights.org",
+    "Articles Per Week": "1 article per month",
+    "url": "https://microeconomicinsights.org/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Equitable Growth",
+    "domain": "equitablegrowth.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://equitablegrowth.org/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Angry Bear",
+    "domain": "angrybearblog.com",
+    "Articles Per Week": "24 articles per week",
+    "url": "https://angrybearblog.com/feed",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Steven Landsburg | The Big Questions: Tackling the Problems of Philosophy with Ideas from Mathematics, Economics, and Physics",
+    "domain": "thebigquestions.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.thebigquestions.com/feed",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Evonomics",
+    "domain": "evonomics.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://evonomics.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "FT Alphaville",
+    "domain": "ft.com",
+    "Articles Per Week": "24 articles per week",
+    "url": "https://www.ft.com/rss/home",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Uneasy Money",
+    "domain": "uneasymoney.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://uneasymoney.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "EconoSpeak",
+    "domain": "econospeak.blogspot.com",
+    "Articles Per Week": "1 article per month",
+    "url": "http://econospeak.blogspot.com/feeds/posts/default?alt=rss",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Growth Economics Blog",
+    "domain": "growthecon.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://growthecon.com/feed.xml",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Supply and Demand (in that order)",
+    "domain": "caseymulligan.blogspot.com",
+    "Articles Per Week": "1 article per week",
+    "url": "http://caseymulligan.blogspot.com/feeds/posts/default",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Real-World Economics Review Blog",
+    "domain": "rwer.wordpress.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://rwer.wordpress.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Robert Reich",
+    "domain": "robertreich.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://robertreich.org/rss",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "John Kay",
+    "domain": "johnkay.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.johnkay.com/feed/",
+    "category": "Economy",
+    "isRecommended": false
+  },
+  {
+    "name": "Forbes - Leadership",
+    "domain": "forbes.com",
+    "Articles Per Week": "336 articles per week",
+    "url": "https://www.forbes.com/leadership/feed/",
+    "category": "Leadership",
+    "isRecommended": true
+  },
+  {
+    "name": "Leading Blog",
+    "domain": "leadershipnow.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.leadershipnow.com/leadingblog/index.xml",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Leadership Freak",
+    "domain": "leadershipfreak.blog",
+    "Articles Per Week": "6 articles per week",
+    "url": "https://leadershipfreak.blog/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Let's Grow Leaders",
+    "domain": "letsgrowleaders.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://letsgrowleaders.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Lolly Daskal",
+    "domain": "lollydaskal.com",
+    "Articles Per Week": "6 articles per week",
+    "url": "https://www.lollydaskal.com/2592-2/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "LeaderChat",
+    "domain": "leaderchat.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://leaderchat.org/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "How We Lead",
+    "domain": "howwelead.org",
+    "Articles Per Week": "1 article per month",
+    "url": "https://howwelead.org/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Leadership News - SmartBrief",
+    "domain": "corp.smartbrief.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://corp.smartbrief.com/feed",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "CareyNieuwhof",
+    "domain": "careynieuwhof.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://careynieuwhof.com/feed",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Fast Company - work-life",
+    "domain": "fastcompany.com",
+    "Articles Per Week": "33 articles per week",
+    "url": "https://www.fastcompany.com/latest/rss?truncated=true",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Leading with Trust",
+    "domain": "leadingwithtrust.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://leadingwithtrust.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "ChiefExecutive.net",
+    "domain": "chiefexecutive.net",
+    "Articles Per Week": "10 articles per week",
+    "url": "https://chiefexecutive.net/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Education Blogs on Leading the Next Generation",
+    "domain": "growingleaders.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://growingleaders.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Jon Acuff",
+    "domain": "jonacuff.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://jonacuff.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "thoughtLEADERS, LLC",
+    "domain": "thoughtleadersllc.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.thoughtleadersllc.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Ron Edmondson",
+    "domain": "ronedmondson.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://ronedmondson.com/feed",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "TonyMorganLive",
+    "domain": "theunstuckgroup.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://theunstuckgroup.com/feed",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Knowledge at Wharton",
+    "domain": "knowledge.wharton.upenn.edu",
+    "Articles Per Week": "1 article per month",
+    "url": "https://knowledge.wharton.upenn.edu/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Management Blog",
+    "domain": "managementblog.org",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://managementblog.org/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Brian Dodd",
+    "domain": "briandoddonleadership.com",
+    "Articles Per Week": "6 articles per week",
+    "url": "http://feeds.feedburner.com/BrianDoddOnLeadership",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Chris LoCurto",
+    "domain": "chrislocurto.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://chrislocurto.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "N2Growth",
+    "domain": "n2growth.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.n2growth.com/web-stories/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Skip Prichard | Leadership Insights",
+    "domain": "skipprichard.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.skipprichard.com/feed",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Random Acts Of Leadership ™",
+    "domain": "randomactsofleadership.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://randomactsofleadership.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "MIT Sloan Management Review",
+    "domain": "sloanreview.mit.edu",
+    "Articles Per Week": "6 articles per week",
+    "url": "http://feeds.feedburner.com/mitsmr",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Tanveer Naseer",
+    "domain": "tanveernaseer.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://tanveernaseer.com/feed",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Eblin Group",
+    "domain": "eblingroup.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://eblingroup.com/feed",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "George Couros",
+    "domain": "georgecouros.ca",
+    "Articles Per Week": "1article per week",
+    "url": "https://georgecouros.ca/blog/feed",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Modern Servant Leader",
+    "domain": "modernservantleader.com",
+    "Articles Per Week": "1article per week",
+    "url": "https://modernservantleader.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Management Excellence by Art Petty",
+    "domain": "artpetty.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://artpetty.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Three Star Leadership",
+    "domain": "threestarleadership.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.threestarleadership.com/feed",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "CEO.com",
+    "domain": "ceo.com",
+    "Articles Per Week": "15 articles per week",
+    "url": "https://www.ceo.com/rss/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "The EntreLeadership Podcast",
+    "domain": "ramseysolutions.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.ramseysolutions.com/rss",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Lifeway Leadership",
+    "domain": "leadership.lifeway.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://leadership.lifeway.com/feed",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Dan Reiland",
+    "domain": "danreiland.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://danreiland.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Brian Tracy",
+    "domain": "briantracy.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://feeds.feedburner.com/BrianTracysBlog",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Eric Geiger – Eric Geiger, Author and Senior Pastor, Mariners Church",
+    "domain": "ericgeiger.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://ericgeiger.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Management-Issues",
+    "domain": "management-issues.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.management-issues.com/rss",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Mark Sanborn Keynote Leadership Speaker",
+    "domain": "marksanborn.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://marksanborn.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Thinkers50",
+    "domain": "thinkers50.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://thinkers50.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Pastors.com",
+    "domain": "pastors.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://pastors.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "McKinsey",
+    "domain": "mckinsey.com",
+    "Articles Per Week": "21 articles per week",
+    "url": "https://www.mckinsey.com/rss",
+    "category": "Leadership",
+    "isRecommended": true
+  },
+  {
+    "name": "ConantLeadership",
+    "domain": "conantleadership.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://conantleadership.com/feed/",
+    "category": "Leadership",
+    "isRecommended": false
+  },
+  {
+    "name": "Business Insider",
+    "domain": "businessinsider.com",
+    "Articles Per Week": "579 articles per week",
+    "url": "https://feeds.businessinsider.com/custom/all",
+    "category": "Business",
+    "isRecommended": true
+  },
+  {
+    "name": "Entrepreneur",
+    "domain": "entrepreneur.com",
+    "Articles Per Week": "145 articles per week",
+    "url": "https://www.entrepreneur.com/latest.rss",
+    "category": "Business",
+    "isRecommended": true
+  },
+  {
+    "name": "VentureBeat",
+    "domain": "venturebeat.com",
+    "Articles Per Week": "85 articles per week",
+    "url": "https://feeds.feedburner.com/venturebeat/SZYF",
+    "category": "Business",
+    "isRecommended": true
+  },
+  {
+    "name": "Seth Godin's Blog",
+    "domain": "seths.blog",
+    "Articles Per Week": "9 articles per week",
+    "url": "https://seths.blog/feed",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Fortune | FORTUNE",
+    "domain": "fortune.com",
+    "Articles Per Week": "264 articles per week",
+    "url": "https://fortune.com/feed/fortune-feeds/?id=3230629",
+    "category": "Business",
+    "isRecommended": true
+  },
+  {
+    "name": "Small Business Trends",
+    "domain": "smallbiztrends.com",
+    "Articles Per Week": "34 articles per week",
+    "url": "https://feeds.feedburner.com/SmallBusinessTrends",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "A VC",
+    "domain": "avc.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://avc.com/feed/",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "The Blog of Author Tim Ferriss",
+    "domain": "tim.blog",
+    "Articles Per Week": "1 article per week",
+    "url": "https://tim.blog/feed/",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Get Rich Slowly",
+    "domain": "getrichslowly.org",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.getrichslowly.org/feed",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Strategy business",
+    "domain": "strategy-business.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.strategy-business.com/rss",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Gigaom",
+    "domain": "gigaom.com",
+    "Articles Per Week": "2 articles per week",
+    "url": "https://gigaom.com/feed/",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "The Smart Passive Income",
+    "domain": "smartpassiveincome.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.smartpassiveincome.com/feed/",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "rediff money",
+    "domain": "rediff.com",
+    "Articles Per Week": "64 articles per week",
+    "url": "https://www.rediff.com/rss.xml",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Copyblogger",
+    "domain": "copyblogger.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://copyblogger.com/feed/",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Business of Fashion",
+    "domain": "businessoffashion.com",
+    "Articles Per Week": "58 articles per week",
+    "url": "https://www.businessoffashion.com/feed",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Stratechery by Ben Thompson",
+    "domain": "stratechery.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://stratechery.com/feed",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "The Motley Fool",
+    "domain": "fool.com",
+    "Articles Per Week": "870 articles per week",
+    "url": "https://www.fool.com/a/feeds/partner/googlechromefollow?apikey=5e092c1f-c5f9-4428-9219-908a47d2e2de",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Lessons Learned",
+    "domain": "startuplessonslearned.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.startuplessonslearned.com/feeds/posts/default?alt=rss",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Quartz",
+    "domain": "qz.com",
+    "Articles Per Week": "45 articles per week",
+    "url": "https://qz.com/rss",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Financial Post - Top Stories",
+    "domain": "financialpost.com",
+    "Articles Per Week": "39 articles per week",
+    "url": "https://financialpost.com/feed/",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Latest Business News on Fox Business",
+    "domain": "foxbusiness.com",
+    "Articles Per Week": "172 articles per week",
+    "url": "https://moxie.foxbusiness.com/google-publisher/latest.xml",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Steve Blank",
+    "domain": "steveblank.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://steveblank.com/feed/",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "Business Opportunities",
+    "domain": "business-opportunities.biz",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://www.business-opportunities.biz/feed/",
+    "category": "Business",
+    "isRecommended": false
+  },
+  {
+    "name": "TechCrunch",
+    "domain": "techcrunch.com",
+    "Articles Per Week": "214 articles per week",
+    "url": "https://techcrunch.com/feed/",
+    "category": "Business",
+    "isRecommended": true
+  },
+  {
+    "name": "The Verge",
+    "domain": "theverge.com",
+    "Articles Per Week": "170 articles per week",
+    "url": "https://www.theverge.com/rss/index.xml",
+    "category": "Technology",
+    "isRecommended": true
+  },
+  {
+    "name": "Engadget",
+    "domain": "engadget.com",
+    "Articles Per Week": "117 articles per week",
+    "url": "https://www.engadget.com/rss.xml",
+    "category": "Technology",
+    "isRecommended": true
+  },
+  {
+    "name": "Wired",
+    "domain": "wired.com",
+    "Articles Per Week": "70 articles per week",
+    "url": "https://www.wired.com/feed/rss",
+    "category": "Technology",
+    "isRecommended": true
+  },
+  {
+    "name": "Gizmodo",
+    "domain": "gizmodo.com",
+    "Articles Per Week": "186 articles per week",
+    "url": "https://gizmodo.com/rss",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Mashable",
+    "domain": "mashable.com",
+    "Articles Per Week": "251 articles per week",
+    "url": "https://mashable.com/feed",
+    "category": "Technology",
+    "isRecommended": true
+  },
+  {
+    "name": "Ars Technica - All content",
+    "domain": "arstechnica.com",
+    "Articles Per Week": "90 articles per week",
+    "url": "http://feeds.arstechnica.com/arstechnica/index",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Slashdot",
+    "domain": "slashdot.org",
+    "Articles Per Week": "135 articles per week",
+    "url": "https://rss.slashdot.org/Slashdot/slashdotMain",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Android Central RSS Feed",
+    "domain": "androidcentral.com",
+    "Articles Per Week": "89 articles per week",
+    "url": "https://www.androidcentral.com/feed",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "The Next Web",
+    "domain": "thenextweb.com",
+    "Articles Per Week": "18 articles per week",
+    "url": "https://thenextweb.com/feed",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "The Official Google Blog",
+    "domain": "blog.google",
+    "Articles Per Week": "25 articles per week",
+    "url": "https://blog.google/rss",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "MacRumors",
+    "domain": "macrumors.com",
+    "Articles Per Week": "73 articles per week",
+    "url": "https://feeds.macrumors.com/MacRumors-All",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Digital Trends",
+    "domain": "digitaltrends.com",
+    "Articles Per Week": "308 articles per week",
+    "url": "https://www.digitaltrends.com/feed/",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "CNET",
+    "domain": "cnet.com",
+    "Articles Per Week": "236 articles per week",
+    "url": "https://www.cnet.com/rss/news/",
+    "category": "Technology",
+    "isRecommended": true
+  },
+  {
+    "name": "AnandTech",
+    "domain": "anandtech.com",
+    "Articles Per Week": "8 articles per week",
+    "url": "https://www.anandtech.com/rss/",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "The Register",
+    "domain": "theregister.com",
+    "Articles Per Week": "127 articles per week",
+    "url": "https://www.theregister.com/headlines.atom",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "TechRadar - All the latest technology news",
+    "domain": "techradar.com",
+    "Articles Per Week": "257 articles per week",
+    "url": "https://www.techradar.com/rss",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "MIT Technology Review",
+    "domain": "technologyreview.com",
+    "Articles Per Week": "23 articles per week",
+    "url": "https://www.technologyreview.com/feed",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "How-To Geek",
+    "domain": "howtogeek.com",
+    "Articles Per Week": "107 articles per week",
+    "url": "https://www.howtogeek.com/feed",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Boing Boing",
+    "domain": "boingboing.net",
+    "Articles Per Week": "182 articles per week",
+    "url": "https://boingboing.net/feed",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "PCWorld",
+    "domain": "pcworld.com",
+    "Articles Per Week": "54 articles per week",
+    "url": "https://www.pcworld.com/feed",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Techdirt",
+    "domain": "techdirt.com",
+    "Articles Per Week": "39 articles per week",
+    "url": "https://www.techdirt.com/feed/",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "9to5Mac",
+    "domain": "9to5mac.com",
+    "Articles Per Week": "111 articles per week",
+    "url": "https://9to5mac.com/feed/",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Techmeme",
+    "domain": "techmeme.com",
+    "Articles Per Week": "108 articles per week",
+    "url": "https://www.techmeme.com/feed.xml",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "BGR",
+    "domain": "bgr.com",
+    "Articles Per Week": "135 articles per week",
+    "url": "https://bgr.com/feed/",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Daring Fireball",
+    "domain": "daringfireball.net",
+    "Articles Per Week": "15 articles per week",
+    "url": "https://daringfireball.net/feeds/main",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Windows Central RSS Feed",
+    "domain": "windowscentral.com",
+    "Articles Per Week": "95 articles per week",
+    "url": "https://www.windowscentral.com/rss",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "9to5Google",
+    "domain": "9to5google.com",
+    "Articles Per Week": "87 articles per week",
+    "url": "https://9to5google.com/feed/",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Android Authority",
+    "domain": "androidauthority.com",
+    "Articles Per Week": "106 articles per week",
+    "url": "https://www.androidauthority.com/feed",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Android Police",
+    "domain": "androidpolice.com",
+    "Articles Per Week": "175 articles per week",
+    "url": "https://www.androidpolice.com/feed",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "GSMArena.com - Latest articles",
+    "domain": "gsmarena.com",
+    "Articles Per Week": "85 articles per week",
+    "url": "https://www.gsmarena.com/rss-news-reviews.php3",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "DIY Projects and Ideas for Makers",
+    "domain": "makezine.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://makezine.com/feed/",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "ExtremeTech",
+    "domain": "extremetech.com",
+    "Articles Per Week": "42 articles per week",
+    "url": "https://www.extremetech.com/feed",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Digg Top Stories",
+    "domain": "digg.com",
+    "Articles Per Week": "133 articles per week",
+    "url": "https://digg.com/rss/top.rss",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "MakeUseOf",
+    "domain": "makeuseof.com",
+    "Articles Per Week": "137 articles per week",
+    "url": "https://www.makeuseof.com/feed",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "SlashGear",
+    "domain": "slashgear.com",
+    "Articles Per Week": "191 articles per week",
+    "url": "https://www.slashgear.com/feed/",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "AppleInsider News",
+    "domain": "appleinsider.com",
+    "Articles Per Week": "103 articles per week",
+    "url": "https://appleinsider.com/rss/news",
+    "category": "Technology",
+    "isRecommended": false
+  },
+  {
+    "name": "Forbes - Entrepreneurs",
+    "domain": "forbes.com",
+    "Articles Per Week": "37 articles per week",
+    "url": "https://www.forbes.com/entrepreneurs/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": true
+  },
+  {
+    "name": "Brad Feld",
+    "domain": "feld.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://feld.com/feed",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "andrewchen",
+    "domain": "andrewchen.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://andrewchen.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Essays - Benedict Evans",
+    "domain": "ben-evans.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.ben-evans.com/benedictevans?format=rss",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "For Entrepreneur",
+    "domain": "forentrepreneurs.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.forentrepreneurs.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Guy Kawasaki",
+    "domain": "guykawasaki.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://guykawasaki.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "StartupCEO.com",
+    "domain": "startupceo.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://startupceo.com/feed",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Platformonomics",
+    "domain": "platformonomics.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.platformonomics.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "takingpitches",
+    "domain": "takingpitches.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://takingpitches.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Boris Mann's Blog - Future of web, mobile, and retail",
+    "domain": "blog.bmannconsulting.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://blog.bmannconsulting.com/feed.xml",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Don Melton",
+    "domain": "donmelton.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://donmelton.com/rss.xml",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "LeoStartsUp.com",
+    "domain": "leostartsup.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://leostartsup.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "I DONE THIS",
+    "domain": "blog.idonethis.com",
+    "Articles Per Week": "15 articles per week",
+    "url": "https://blog.idonethis.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Psychohistory",
+    "domain": "adamnash.blog",
+    "Articles Per Week": "1article per month",
+    "url": "https://adamnash.blog/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Paul Graham: Essays",
+    "domain": "paulgraham.com",
+    "Articles Per Week": "1 article per month",
+    "url": "http://www.aaronsw.com/2002/feeds/pgessays.rss",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Mixergy",
+    "domain": "mixergy.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://mixergy.com/?feed=mixergy_feed",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Version One",
+    "domain": "versionone.vc",
+    "Articles Per Week": "1 article per month",
+    "url": "https://versionone.vc/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Geeking with Greg",
+    "domain": "glinden.blogspot.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://glinden.blogspot.com/feeds/posts/default?alt=rss",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Semil Shah Blog",
+    "domain": "semilshah.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://semilshah.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Continuations by Albert Wenger",
+    "domain": "continuations.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://continuations.com/rss",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Under30CEO",
+    "domain": "under30ceo.com",
+    "Articles Per Week": "33 articles per week",
+    "url": "https://www.under30ceo.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Gotham Gal",
+    "domain": "gothamgal.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "http://feeds.feedburner.com/GothamGal",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Hunter Walk",
+    "domain": "hunterwalk.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://hunterwalk.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "BuzzMachine",
+    "domain": "buzzmachine.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://buzzmachine.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Tomasz Tunguz",
+    "domain": "tomtunguz.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://tomtunguz.com/index.xml",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Kellblog",
+    "domain": "kellblog.com",
+    "Articles Per Week": "2 articles per week",
+    "url": "https://kellblog.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Jeremiah Owyang",
+    "domain": "web-strategist.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://web-strategist.com/blog/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Monday Note",
+    "domain": "mondaynote.com?source=rss----c537d80ed0a---4",
+    "Articles Per Week": "1 article per month",
+    "url": "https://mondaynote.com/feed",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Noyes Payments Blog",
+    "domain": "blog.starpointllp.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://blog.starpointllp.com/?feed=rss2",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Featured Blogs - Forrester",
+    "domain": "forrester.com",
+    "Articles Per Week": "33 articles per week",
+    "url": "https://www.forrester.com/feed",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "StartupNation",
+    "domain": "startupnation.com",
+    "Articles Per Week": "11 articles per week",
+    "url": "https://startupnation.com/feed/",
+    "category": "Entrepreneurship",
+    "isRecommended": false
+  },
+  {
+    "name": "Hubspot",
+    "domain": "blog.hubspot.com",
+    "Articles Per Week": "6 articles per week",
+    "url": "https://blog.hubspot.com/feed",
+    "category": "Marketing",
+    "isRecommended": true
+  },
+  {
+    "name": "Neil Patel",
+    "domain": "neilpatel.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://neilpatel.com/feed",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Social Media Examiner",
+    "domain": "socialmediaexaminer.com",
+    "Articles Per Week": "2 articles per week",
+    "url": "https://www.socialmediaexaminer.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Content Marketing Institute",
+    "domain": "contentmarketinginstitute.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://contentmarketinginstitute.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Quick Sprout",
+    "domain": "quicksprout.com",
+    "Articles Per Week": "11 articles per week",
+    "url": "https://www.quicksprout.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Moz",
+    "domain": "moz.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://moz.com/feeds/blog.rss",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Adweek",
+    "domain": "adweek.com",
+    "Articles Per Week": "57 articles per week",
+    "url": "https://www.adweek.com/feed",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Convince and Convert",
+    "domain": "convinceandconvert.com",
+    "Articles Per Week": "2 articles per week",
+    "url": "https://www.convinceandconvert.com/feed",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "ProBlogger",
+    "domain": "problogger.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://problogger.com/feed",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Search Engine Land",
+    "domain": "searchengineland.com",
+    "Articles Per Week": "41 articles per week",
+    "url": "https://searchengineland.com/feed",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Acumen Fund Blog",
+    "domain": "acumen.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://acumen.org/feed",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Duct Tape Marketing",
+    "domain": "ducttapemarketing.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://ducttapemarketing.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Steven Pressfield",
+    "domain": "stevenpressfield.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://stevenpressfield.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Smart Insights",
+    "domain": "smartinsights.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://stevenpressfield.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Think with Google - Discover Marketing Research & Digital Trends",
+    "domain": "thinkwithgoogle.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.thinkwithgoogle.com/rss.xml",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Lefsetz Letter",
+    "domain": "lefsetz.com/",
+    "Articles Per Week": "10 articles per week",
+    "url": "https://lefsetz.com/wordpress/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Chief Marketing Technologist",
+    "domain": "chiefmartec.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://chiefmartec.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Digiday",
+    "domain": "digiday.com",
+    "Articles Per Week": "39 articles per week",
+    "url": "https://digiday.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Social Media Marketing & Management Dashboard",
+    "domain": "blog.hootsuite.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://blog.hootsuite.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "DigitalMarketer",
+    "domain": "digitalmarketer.com",
+    "Articles Per Week": "1article per week",
+    "url": "https://www.digitalmarketer.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Search Engine Journal",
+    "domain": "searchenginejournal.com",
+    "Articles Per Week": "32 articles per week",
+    "url": "https://rss.searchenginejournal.com/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Martech Zone",
+    "domain": "martech.zone",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://martech.zone//feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Marketing Insider Group",
+    "domain": "marketinginsidergroup.com",
+    "Articles Per Week": "8 articles per week",
+    "url": "https://marketinginsidergroup.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "SEMrush",
+    "domain": "semrush.com",
+    "Articles Per Week": "19 articles per week",
+    "url": "https://www.semrush.com/blog/feed/",
+    "category": "Marketing",
+    "isRecommended": true
+  },
+  {
+    "name": "MarketingSherpa Blog",
+    "domain": "sherpablog.marketingsherpa.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://sherpablog.marketingsherpa.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "BuzzSumo",
+    "domain": "buzzsumo.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://buzzsumo.com/feed",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Jeffbullas's Blog",
+    "domain": "jeffbullas.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://www.jeffbullas.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Internet Marketing Blog by WordStream",
+    "domain": "wordstream.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.wordstream.com/feed",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Marketing Dive - Latest News",
+    "domain": "marketingdive.com",
+    "Articles Per Week": "21 articles per week",
+    "url": "https://www.marketingdive.com/feeds/news/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "swissmiss",
+    "domain": "swiss-miss.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://www.swiss-miss.com/feed",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Influential Marketing",
+    "domain": "rohitbhargava.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://rohitbhargava.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Branding Strategy Insider",
+    "domain": "brandingstrategyinsider.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://brandingstrategyinsider.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "Noah Kagan",
+    "domain": "noahkagan.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://noahkagan.com/feed/",
+    "category": "Marketing",
+    "isRecommended": false
+  },
+  {
+    "name": "The Points Guy",
+    "domain": "thepointsguy.com",
+    "Articles Per Week": "100 articles per week",
+    "url": "https://thepointsguy.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Nomadic Matt's Travel Site",
+    "domain": "nomadicmatt.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.nomadicmatt.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Adventure",
+    "domain": "adventure.com",
+    "Articles Per Week": "6 articles per week",
+    "url": "https://adventure.com/feed",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "One Mile at a Time",
+    "domain": "onemileatatime.com",
+    "Articles Per Week": "65 articles per week",
+    "url": "https://onemileatatime.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Skift",
+    "domain": "skift.com",
+    "Articles Per Week": "54 articles per week",
+    "url": "https://skift.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Million Mile Secrets",
+    "domain": "millionmilesecrets.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://millionmilesecrets.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Everything Everywhere",
+    "domain": "everything-everywhere.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://everything-everywhere.com/feed",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "View from the Wing",
+    "domain": "viewfromthewing.com",
+    "Articles Per Week": "51 articles per week",
+    "url": "https://viewfromthewing.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Atlas Obscura",
+    "domain": "atlasobscura.com",
+    "Articles Per Week": "68 articles per week",
+    "url": "https://www.atlasobscura.com/feeds/latest",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Johnny Jet",
+    "domain": "johnnyjet.com",
+    "Articles Per Week": "16 articles per week",
+    "url": "https://johnnyjet.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Matador Network",
+    "domain": "matadornetwork.com",
+    "Articles Per Week": "19 articles per week",
+    "url": "https://matadornetwork.com/feed",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Art of Non-Conformity",
+    "domain": "chrisguillebeau.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://chrisguillebeau.com/feed",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "The Flight Deal",
+    "domain": "theflightdeal.com",
+    "Articles Per Week": "95 articles per week",
+    "url": "https://www.theflightdeal.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Legal Nomads",
+    "domain": "legalnomads.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.legalnomads.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Adventurous Kate",
+    "domain": "adventurouskate.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.adventurouskate.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "LoyaltyLobby",
+    "domain": "loyaltylobby.com",
+    "Articles Per Week": "50 articles per week",
+    "url": "https://loyaltylobby.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Frequent Miler",
+    "domain": "frequentmiler.com",
+    "Articles Per Week": "38 articles per week",
+    "url": "https://frequentmiler.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Secret Flying",
+    "domain": "secretflying.com",
+    "Articles Per Week": "42 articles per week",
+    "url": "https://www.secretflying.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "The Everywhereist",
+    "domain": "everywhereist.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.everywhereist.com/home/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Frommer's",
+    "domain": "frommers.com",
+    "Articles Per Week": "6 articles per week",
+    "url": "https://www.frommers.com/feed",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Breaking Travel News",
+    "domain": "breakingtravelnews.com",
+    "Articles Per Week": "95 articles per week",
+    "url": "https://feeds.feedburner.com/breakingtravelnews",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Travel Daily News Feed",
+    "domain": "traveldailynews.com",
+    "Articles Per Week": "120 articles per week",
+    "url": "https://www.traveldailynews.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Travel",
+    "domain": "telegraph.co.uk",
+    "Articles Per Week": "6 articles per week",
+    "url": "https://www.telegraph.co.uk/rss",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Wandering Earl",
+    "domain": "wanderingearl.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.wanderingearl.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Stuck in Customs",
+    "domain": "stuckincustoms.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://stuckincustoms.com/feed",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "BoardingArea",
+    "domain": "boardingarea.com",
+    "Articles Per Week": "454 articles per week",
+    "url": "https://boardingarea.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Brand TD",
+    "domain": "traveldailymedia.com",
+    "Articles Per Week": "159 articles per week",
+    "url": "https://www.traveldailymedia.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "UPGRADE: TRAVEL BETTER",
+    "domain": "upgradetravelbetter.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.upgradetravelbetter.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Travel Weekly.co.uk",
+    "domain": "travelweekly.co.uk",
+    "Articles Per Week": "136 articles per week",
+    "url": "https://travelweekly.co.uk/rss/news.xml",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Travel Industry Wire",
+    "domain": "travelindustrywire.com",
+    "Articles Per Week": "19 articles per week",
+    "url": "https://www.travelindustrywire.com/feed.xml",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Telegraph - Travel",
+    "domain": "hotelnewsresource.com",
+    "Articles Per Week": "89 articles per week",
+    "url": "https://www.hotelnewsresource.com/feed.xml",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Loyalty Traveler",
+    "domain": "loyaltytraveler.boardingarea.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://loyaltytraveler.boardingarea.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Runway Girl",
+    "domain": "runwaygirlnetwork.com",
+    "Articles Per Week": "17 articles per week",
+    "url": "https://runwaygirlnetwork.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "LODGING Magazine",
+    "domain": "https://lodgingmagazine.com/",
+    "Articles Per Week": "17 articles per week",
+    "url": "https://lodgingmagazine.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "MileValue",
+    "domain": "milevalue.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://milevalue.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Future Travel Experience",
+    "domain": "futuretravelexperience.com",
+    "Articles Per Week": "11 articles per week",
+    "url": "https://www.futuretravelexperience.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Hospitality Net Hotel Openings",
+    "domain": "hospitalitynet.org",
+    "Articles Per Week": "34 articles per week",
+    "url": "https://www.hospitalitynet.org/news/global.xml",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "The Moodie Davitt Report",
+    "domain": "moodiedavittreport.com",
+    "Articles Per Week": "67 articles per week",
+    "url": "https://www.moodiedavittreport.com/feed",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "AIR CARGO WEEK",
+    "domain": "aircargoweek.com",
+    "Articles Per Week": "36 articles per week",
+    "url": "https://www.aircargoweek.com/feed/",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Pax RSS",
+    "domain": "pax-intl.com",
+    "Articles Per Week": "25 articles per week",
+    "url": "https://www.pax-intl.com/feed.rss",
+    "category": "Travel",
+    "isRecommended": false
+  },
+  {
+    "name": "Kotaku",
+    "domain": "kotaku.com",
+    "Articles Per Week": "75 articles per week",
+    "url": "https://kotaku.com/rss",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Polygon",
+    "domain": "polygon.com",
+    "Articles Per Week": "116 articles per week",
+    "url": "https://www.polygon.com/rss/index.xml",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "IGN",
+    "domain": "ign.com",
+    "Articles Per Week": "115 articles per week",
+    "url": "https://pk.ign.com/feed.xml",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Rock, Paper, Shotgun",
+    "domain": "rockpapershotgun.com",
+    "Articles Per Week": "71 articles per week",
+    "url": "https://www.rockpapershotgun.com/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "PlayStation.Blog",
+    "domain": "blog.playstation.com",
+    "Articles Per Week": "11 articles per week",
+    "url": "http://feeds.feedburner.com/psblog",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "IndieGames",
+    "domain": "indiegamesplus.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://indiegamesplus.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Destructoid",
+    "domain": "destructoid.com",
+    "Articles Per Week": "95 articles per week",
+    "url": "https://www.destructoid.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Eurogamer",
+    "domain": "eurogamer.net",
+    "Articles Per Week": "106 articles per week",
+    "url": "https://www.eurogamer.net/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Xbox Wire",
+    "domain": "news.xbox.com",
+    "Articles Per Week": "33 articles per week",
+    "url": "https://news.xbox.com/en-us/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Game Informer News",
+    "domain": "gameinformer.com",
+    "Articles Per Week": "23 articles per week",
+    "url": "https://www.gameinformer.com/rss.xml",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "PCGamer latest",
+    "domain": "pcgamer.com",
+    "Articles Per Week": "159 articles per week",
+    "url": "https://www.pcgamer.com/rss",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "TouchArcade",
+    "domain": "toucharcade.com",
+    "Articles Per Week": "28 articles per week",
+    "url": "https://toucharcade.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Nintendo Life | Latest Updates",
+    "domain": "nintendolife.com",
+    "Articles Per Week": "76 articles per week",
+    "url": "https://www.nintendolife.com/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "The Ancient Gaming Noob",
+    "domain": "tagn.wordpress.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://tagn.wordpress.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "VG247 Latest Articles Feed",
+    "domain": "vg247.com",
+    "Articles Per Week": "82 articles per week",
+    "url": "https://www.vg247.com/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "GamesIndustry.biz Latest Articles Feed",
+    "domain": "gamesindustry.biz",
+    "Articles Per Week": "48 articles per week",
+    "url": "https://www.gamesindustry.biz/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "GamesRadar+",
+    "domain": "gamesradar.com",
+    "Articles Per Week": "207 articles per week",
+    "url": "https://www.gamesradar.com/rss.xml",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Siliconera",
+    "domain": "siliconera.com",
+    "Articles Per Week": "111 articles per week",
+    "url": "https://www.siliconera.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Penny Arcade",
+    "domain": "penny-arcade.com",
+    "Articles Per Week": "8 articles per week",
+    "url": "https://www.penny-arcade.com/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Humble Bundle Blog",
+    "domain": "blog.humblebundle.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://blog.humblebundle.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "GOG.com News",
+    "domain": "gog.com",
+    "Articles Per Week": "27 articles per week",
+    "url": "https://www.gog.com/en/news/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Gematsu",
+    "domain": "gematsu.com",
+    "Articles Per Week": "67 articles per week",
+    "url": "https://www.gematsu.com/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "PCGamesN",
+    "domain": "pcgamesn.com",
+    "Articles Per Week": "157 articles per week",
+    "url": "https://www.pcgamesn.com/mainrss.xml",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "DualShockers",
+    "domain": "dualshockers.com",
+    "Articles Per Week": "232 articles per week",
+    "url": "https://www.dualshockers.com/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "PlayStation LifeStyle",
+    "domain": "playstationlifestyle.net",
+    "Articles Per Week": "56 articles per week",
+    "url": "https://www.playstationlifestyle.net/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Slashdot: Games",
+    "domain": "games.slashdot.org",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://rss.slashdot.org/Slashdot/slashdotDevelopers",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "MMO Champion",
+    "domain": "mmo-champion.com",
+    "Articles Per Week": "15 articles per week",
+    "url": "https://www.mmo-champion.com/external.php?do=rss&type=newcontent&sectionid=1&days=120&count=10",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "My Nintendo News",
+    "domain": "mynintendonews.com",
+    "Articles Per Week": "42 articles per week",
+    "url": "https://mynintendonews.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "MMORPG.com Latest News",
+    "domain": "mmorpg.com",
+    "Articles Per Week": "69 articles per week",
+    "url": "https://www.mmorpg.com/rss",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Nintendo Everything",
+    "domain": "nintendoeverything.com",
+    "Articles Per Week": "96 articles per week",
+    "url": "https://nintendoeverything.com/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Push Square | Latest News",
+    "domain": "pushsquare.com",
+    "Articles Per Week": "90 articles per week",
+    "url": "https://www.pushsquare.com/feed",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Tiny Cartridge 3DS",
+    "domain": "tinycartridge.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://tinycartridge.com/rss",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "TF2 Official Blog",
+    "domain": "teamfortress.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.teamfortress.com/rss.xml",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Massively Overpowered",
+    "domain": "massivelyop.com",
+    "Articles Per Week": "112 articles per week",
+    "url": "https://massivelyop.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Pocket Tactics",
+    "domain": "pockettactics.com",
+    "Articles Per Week": "47 articles per week",
+    "url": "https://massivelyop.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Latest Updates | Pocket Gamer",
+    "domain": "pocketgamer.com",
+    "Articles Per Week": "60 articles per week",
+    "url": "https://massivelyop.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Co-Optimus",
+    "domain": "co-optimus.com",
+    "Articles Per Week": "17 articles per week",
+    "url": "https://feeds.feedburner.com/Co-optimus",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Kotaku Australia",
+    "domain": "kotaku.com.au",
+    "Articles Per Week": "76 articles per week",
+    "url": "https://www.kotaku.com.au/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "Niche Gamer",
+    "domain": "nichegamer.com",
+    "Articles Per Week": "28 articles per week",
+    "url": "https://nichegamer.com/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "GuildWars2.com",
+    "domain": "guildwars2.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.guildwars2.com/en/feed/",
+    "category": "Gaming",
+    "isRecommended": false
+  },
+  {
+    "name": "The History Blog",
+    "domain": "thehistoryblog.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://www.guildwars2.com/en/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "History News Network - Front Page",
+    "domain": "hnn.us",
+    "Articles Per Week": "1 article per month",
+    "url": "https://hnn.us/rss.xml",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "History | smithsonianmag.com",
+    "domain": "smithsonianmag.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.smithsonianmag.com/rss/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Boston 1775",
+    "domain": "boston1775.blogspot.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://boston1775.blogspot.com/feeds/posts/default",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Medievalists.net",
+    "domain": "medievalists.net",
+    "Articles Per Week": "15 articles per week",
+    "url": "https://www.medievalists.net/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "History Today Feed",
+    "domain": "historytoday.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://www.historytoday.com/rss.xml",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "World History Encyclopedia",
+    "domain": "worldhistory.org",
+    "Articles Per Week": "9 articles per week",
+    "url": "https://www.worldhistory.org/rss2/?lang=en",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Archaeological Headlines - Archaeology Magazine",
+    "domain": "archaeology.org",
+    "Articles Per Week": "18 articles per week",
+    "url": "https://www.archaeology.org/feed",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "HistoryNet",
+    "domain": "historynet.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://www.archaeology.org/feed",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Ancient Origins",
+    "domain": "ancient-origins.net",
+    "Articles Per Week": "40 articles per week",
+    "url": "https://www.ancient-origins.net/feed",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Shorpy Old Photos | Framed Prints - Vintage Photographs",
+    "domain": "shorpy.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://www.shorpy.com/feed",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Medieval manuscripts blog",
+    "domain": "blogs.bl.uk",
+    "Articles Per Week": "1 article per week",
+    "url": "https://blogs.bl.uk/default_blog/rss.xml",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Journal of the American Revolution",
+    "domain": "allthingsliberty.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://allthingsliberty.com/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "The Freelance History Writer",
+    "domain": "thefreelancehistorywriter.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://thefreelancehistorywriter.com/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "WAR HISTORY ONLINE",
+    "domain": "warhistoryonline.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://www.warhistoryonline.com/feed",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Vintage Everyday",
+    "domain": "vintag.es",
+    "Articles Per Week": "34 articles per week",
+    "url": "https://www.vintag.es/feeds/posts/default?alt=rss",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Iconic Photos",
+    "domain": "iconicphotos.wordpress.com",
+    "Articles Per Week": "2 articles per week",
+    "url": "https://iconicphotos.wordpress.com/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Process: a blog for american history",
+    "domain": "processhistory.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.processhistory.org/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Ancient Civilizations News -- ScienceDaily",
+    "domain": "sciencedaily.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.sciencedaily.com/rss/all.xml",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Roman Times",
+    "domain": "ancientimes.blogspot.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://ancientimes.blogspot.com/feeds/posts/default",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Society for US Intellectual History",
+    "domain": "s-usih.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://s-usih.org/feed/atom/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "On History",
+    "domain": "blog.history.ac.uk",
+    "Articles Per Week": "1 article per week",
+    "url": "https://blog.history.ac.uk/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "The Hindu",
+    "domain": "thehindu.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.thehindu.com/rssfeeds/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "The Public Domain Review",
+    "domain": "publicdomainreview.org",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://publicdomainreview.org/rss.xml",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "A Corner of Tenth-Century Europe",
+    "domain": "tenthmedieval.wordpress.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://tenthmedieval.wordpress.com/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Omohundro Institute of Early American History & Culture",
+    "domain": "blog.oieahc.wm.edu",
+    "Articles Per Week": "1 article per month",
+    "url": "https://blog.oieahc.wm.edu/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Puratattva",
+    "domain": "puratattva.in",
+    "Articles Per Week": "1 article per month",
+    "url": "https://puratattva.in/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Articles",
+    "domain": "britishmuseum.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.britishmuseum.org/rss.xml",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "History Hit",
+    "domain": "historyhit.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.historyhit.com/feed",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Age of Revolutions",
+    "domain": "ageofrevolutions.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://ageofrevolutions.com/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "HeritageDaily – Archaeology News",
+    "domain": "https://heritagedaily.com/",
+    "Articles Per Week": "12 articles per week",
+    "url": "https://www.heritagedaily.com/feed",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "The History Chicks",
+    "domain": "thehistorychicks.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://thehistorychicks.com/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "All Things Georgian",
+    "domain": "georgianera.wordpress.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://thehistorychicks.com/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Muhlberger's World History",
+    "domain": "smuhlberger.blogspot.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://smuhlberger.blogspot.com/feeds/posts/default",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Going Medieval",
+    "domain": "going-medieval.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://going-medieval.com/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "Anglo-Saxon Archaeology Blog",
+    "domain": "anglo-saxon-archaeology-blog.blogspot.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://anglo-saxon-archaeology-blog.blogspot.com/feeds/posts/default",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "History Tech",
+    "domain": "historytech.wordpress.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://historytech.wordpress.com/feed/",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "The Anne Boleyn Files",
+    "domain": "theanneboleynfiles.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.theanneboleynfiles.com/feed",
+    "category": "History",
+    "isRecommended": false
+  },
+  {
+    "name": "I Will Teach You To Be Rich",
+    "domain": "iwillteachyoutoberich.com",
+    "Articles Per Week": "6 articles per week",
+    "url": "https://www.iwillteachyoutoberich.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Budgets Are Sexy",
+    "domain": "budgetsaresexy.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://budgetsaresexy.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Wise Bread",
+    "domain": "wisebread.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.wisebread.com/feed",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "The Financial Samurai Podcast",
+    "domain": "financialsamurai.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.financialsamurai.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "My Money Blog",
+    "domain": "mymoneyblog.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.mymoneyblog.com/feed",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Mad Fientist",
+    "domain": "madfientist.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.madfientist.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "YNAB Blog",
+    "domain": "ynab.com",
+    "Articles Per Week": "2 articles per week",
+    "url": "https://www.ynab.com/feed",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Afford Anything",
+    "domain": "affordanything.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://feeds.feedburner.com/AffordAnythingFeed",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "20SomethingFinance.com",
+    "domain": "20somethingfinance.com",
+    "Articles Per Week": "2 articles per week",
+    "url": "https://20somethingfinance.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "A Wealth of Common Sense",
+    "domain": "awealthofcommonsense.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://awealthofcommonsense.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "All Articles on Seeking Alpha",
+    "domain": "seekingalpha.com",
+    "Articles Per Week": "2168 articles per week",
+    "url": "https://seekingalpha.com/feed",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Retire by 40",
+    "domain": "retireby40.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://retireby40.org/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Abnormal Returns",
+    "domain": "abnormalreturns.com",
+    "Articles Per Week": "13 articles per week",
+    "url": "https://abnormalreturns.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "The White Coat Investor – Investing & Personal Finance for Doctors",
+    "domain": "whitecoatinvestor.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://www.whitecoatinvestor.com/feed",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Money Crashers",
+    "domain": "moneycrashers.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.moneycrashers.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Go Curry Cracker!",
+    "domain": "gocurrycracker.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.gocurrycracker.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "1500 Days to Freedom",
+    "domain": "1500days.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.1500days.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Oblivious Investor",
+    "domain": "obliviousinvestor.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://obliviousinvestor.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "The Finance Buff",
+    "domain": "thefinancebuff.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://thefinancebuff.com/feed",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Million Dollar Journey",
+    "domain": "milliondollarjourney.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://milliondollarjourney.com/feed",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "ZeroHedge News",
+    "domain": "zerohedge.com",
+    "Articles Per Week": "310 articles per week",
+    "url": "https://milliondollarjourney.com/feed",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "The Reformed Broker",
+    "domain": "thereformedbroker.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://thereformedbroker.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Monevator",
+    "domain": "monevator.com",
+    "Articles Per Week": "1 article per week",
+    "url": "http://feeds2.feedburner.com/Monevatorcom",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "MoneySense",
+    "domain": "moneysense.ca",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://www.moneysense.ca/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Musings on Markets",
+    "domain": "aswathdamodaran.blogspot.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://aswathdamodaran.blogspot.com/feeds/posts/default",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Man vs Debt",
+    "domain": "manvsdebt.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://manvsdebt.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "Early Retirement Now",
+    "domain": "earlyretirementnow.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://earlyretirementnow.com/feed/",
+    "category": "Finance",
+    "isRecommended": false
+  },
+  {
+    "name": "The Brooklyn Investor",
+    "domain": "brooklyninvestor.blogspot.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://brooklyninvestor.blogspot.com/feeds/posts/default",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "The Aleph Blog",
+    "domain": "alephblog.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://alephblog.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Safal Niveshak",
+    "domain": "safalniveshak.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.safalniveshak.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Bill Cara",
+    "domain": "billcara.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://www.billcara.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "The Intellectual Investor",
+    "domain": "investor.fm",
+    "Articles Per Week": "1 article per week",
+    "url": "https://investor.fm/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Investment Moats",
+    "domain": "investmentmoats.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://investmentmoats.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Dividend Growth Investor",
+    "domain": "dividendgrowthinvestor.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.dividendgrowthinvestor.com/feeds",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "ValueWalk",
+    "domain": "valuewalk.com",
+    "Articles Per Week": "29 articles per week",
+    "url": "https://www.valuewalk.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Pragmatic Capitalism",
+    "domain": "pragcap.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://www.pragcap.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "The Irrelevant Investor",
+    "domain": "theirrelevantinvestor.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://theirrelevantinvestor.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "value and opportunity",
+    "domain": "valueandopportunity.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://valueandopportunity.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "csinvesting",
+    "domain": "csinvesting.org",
+    "Articles Per Week": "1 article per month",
+    "url": "http://csinvesting.org/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Of Dollars And Data",
+    "domain": "ofdollarsanddata.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://ofdollarsanddata.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "The Dividend Guy Blog",
+    "domain": "thedividendguyblog.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.thedividendguyblog.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Clark Street Value",
+    "domain": "clarkstreetvalue.blogspot.com",
+    "Articles Per Week": "1 article per month",
+    "url": "https://clarkstreetvalue.blogspot.com/feeds/posts/default",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "A Trusted Singapore Personal Finance & Share Investment Educator – Dr Wealth",
+    "domain": "drwealth.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.drwealth.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Collab Fund",
+    "domain": "collabfund.com",
+    "Articles Per Week": "1 article per week",
+    "url": "http://feeds.feedburner.com/collabfund",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "freefincal",
+    "domain": "freefincal.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://freefincal.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "A Singaporean Stocks Investor (ASSI)",
+    "domain": "singaporeanstocksinvestor.blogspot.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://singaporeanstocksinvestor.blogspot.com/feeds/posts/default",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Investing",
+    "domain": "cnbc.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.cnbc.com/rss-feeds/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "The Fifth Person",
+    "domain": "fifthperson.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://fifthperson.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Intrinsic Investing",
+    "domain": "intrinsicinvesting.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://intrinsicinvesting.com/feed",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Seeking Wisdom",
+    "domain": "janav.wordpress.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://janav.wordpress.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "The Acquirer's Multiple®",
+    "domain": "acquirersmultiple.com",
+    "Articles Per Week": "21 articles per week",
+    "url": "https://acquirersmultiple.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Rakesh Jhunjhunwala",
+    "domain": "rakesh-jhunjhunwala.in",
+    "Articles Per Week": "1 article per week",
+    "url": "https://rakesh-jhunjhunwala.in/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Financial Horse",
+    "domain": "financialhorse.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://financialhorse.com/feed/",
+    "category": "Investing",
+    "isRecommended": false
+  },
+  {
+    "name": "Scientific American Content",
+    "domain": "scientificamerican.com",
+    "Articles Per Week": "43 articles per week",
+    "url": "http://rss.sciam.com/ScientificAmerican-Global",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Popular Science",
+    "domain": "popsci.com",
+    "Articles Per Week": "74 articles per week",
+    "url": "https://www.popsci.com/feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "New Scientist",
+    "domain": "newscientist.com",
+    "Articles Per Week": "50 articles per week",
+    "url": "https://feeds.newscientist.com/home",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Nature",
+    "domain": "feeds.nature.com",
+    "Articles Per Week": "86 articles per week",
+    "url": "https://www.nature.com/nature.rss",
+    "category": "Science",
+    "isRecommended": true
+  },
+  {
+    "name": "Futurity",
+    "domain": "futurity.org",
+    "Articles Per Week": "29 articles per week",
+    "url": "https://www.futurity.org/feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Space",
+    "domain": "space.com",
+    "Articles Per Week": "94 articles per week",
+    "url": "https://www.space.com/rss.xml",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Phys.org",
+    "domain": "phys.org",
+    "Articles Per Week": "505 articles per week",
+    "url": "https://phys.org/rss-feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Quanta Magazine",
+    "domain": "quantamagazine.org",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://www.quantamagazine.org/feed",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "NASA Image of the Day",
+    "domain": "nasa.gov",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://www.nasa.gov/feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Livescience",
+    "domain": "livescience.com",
+    "Articles Per Week": "59 articles per week",
+    "url": "https://www.livescience.com/rss.xml",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "ScienceAlert",
+    "domain": "sciencealert.com",
+    "Articles Per Week": "57 articles per week",
+    "url": "https://www.sciencealert.com/feed",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Information is Beautiful",
+    "domain": "informationisbeautiful.net",
+    "Articles Per Week": "1 article per week",
+    "url": "https://informationisbeautiful.net/feed",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Science-Based Medicine",
+    "domain": "sciencebasedmedicine.org",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://sciencebasedmedicine.org/feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Futurism",
+    "domain": "futurism.com",
+    "Articles Per Week": "56 articles per week",
+    "url": "https://futurism.com/feed",
+    "category": "Science",
+    "isRecommended": true
+  },
+  {
+    "name": "FlowingData",
+    "domain": "flowingdata.com",
+    "Articles Per Week": "8 articles per week",
+    "url": "http://flowingdata.com/feed",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "PLOS Biology",
+    "domain": "journals.plos.org",
+    "Articles Per Week": "8 articles per week",
+    "url": "https://plos.org/feed",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Chemical & Engineering News: Latest News",
+    "domain": "cen.acs.org",
+    "Articles Per Week": "62 articles per week",
+    "url": "https://cen.acs.org/feeds/rss/latestnews.xml",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "NeuroLogica Blog",
+    "domain": "theness.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://theness.com/index.php/feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Retraction Watch",
+    "domain": "retractionwatch.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://retractionwatch.com/feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "The Last Word On Nothing",
+    "domain": "lastwordonnothing.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.lastwordonnothing.com/feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "IEEE Spectrum",
+    "domain": "spectrum.ieee.org",
+    "Articles Per Week": "11 articles per week",
+    "url": "https://spectrum.ieee.org/feeds/feed.rss",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Why Evolution Is True",
+    "domain": "whyevolutionistrue.com",
+    "Articles Per Week": "37 articles per week",
+    "url": "https://whyevolutionistrue.com/feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Slashdot: Science",
+    "domain": "science.slashdot.org",
+    "Articles Per Week": "18 articles per week",
+    "url": "https://rss.slashdot.org/Slashdot/slashdotYourRightsOnline",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Science Blog",
+    "domain": "scienceblog.com",
+    "Articles Per Week": "43 articles per week",
+    "url": "https://scienceblog.com/feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Singularity Hub",
+    "domain": "singularityhub.com",
+    "Articles Per Week": "6 articles per week",
+    "url": "https://singularityhub.com/feed/",
+    "category": "Science",
+    "isRecommended": false
+  },
+  {
+    "name": "Cup of Jo",
+    "domain": "cupofjo.com",
+    "Articles Per Week": "8 articles per week",
+    "url": "https://cupofjo.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "The Art of Manliness",
+    "domain": "artofmanliness.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://www.artofmanliness.com/feed",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "The Everygirl",
+    "domain": "theeverygirl.com",
+    "Articles Per Week": "20 articles per week",
+    "url": "https://theeverygirl.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "A Beautiful Mess",
+    "domain": "abeautifulmess.com",
+    "Articles Per Week": "8 articles per week",
+    "url": "https://abeautifulmess.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "Camille Styles",
+    "domain": "camillestyles.com",
+    "Articles Per Week": "11 articles per week",
+    "url": "https://camillestyles.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "Mark Manson",
+    "domain": "markmanson.net",
+    "Articles Per Week": "1 article per week",
+    "url": "https://markmanson.net/feed",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "Modern Mrs Darcy",
+    "domain": "modernmrsdarcy.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://modernmrsdarcy.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "goop",
+    "domain": "goop.com",
+    "Articles Per Week": "10 articles per week",
+    "url": "https://goop.com/feed",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "The Good Men Project",
+    "domain": "goodmenproject.com",
+    "Articles Per Week": "335 articles per week",
+    "url": "https://goodmenproject.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "AskMen",
+    "domain": "askmen.com",
+    "Articles Per Week": "22 articles per week",
+    "url": "https://www.askmen.com/homepage.rss",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "Apartment Therapy| Saving the world, one room at a time",
+    "domain": "apartmenttherapy.com",
+    "Articles Per Week": "104 articles per week",
+    "url": "https://www.apartmenttherapy.com/main.rss",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "The Stripe",
+    "domain": "thestripe.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://thestripe.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "Danielle Moss",
+    "domain": "danielle-moss.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.danielle-moss.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "Uncrate",
+    "domain": "uncrate.com",
+    "Articles Per Week": "53 articles per week",
+    "url": "https://feeds.feedburner.com/uncrate",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "The Minimalists",
+    "domain": "theminimalists.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.theminimalists.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "CARLY",
+    "domain": "carlyriordan.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://carlyriordan.com/feed",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "GQ",
+    "domain": "gq.com",
+    "Articles Per Week": "59 articles per week",
+    "url": "https://www.gq.com/feed/rss",
+    "category": "Lifestyle",
+    "isRecommended": true
+  },
+  {
+    "name": "The Martha Stewart Blog",
+    "domain": "themarthablog.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://www.themarthablog.com/feed",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "The Skinny Confidential",
+    "domain": "theskinnyconfidential.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.theskinnyconfidential.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "Messy Nessy Chic",
+    "domain": "messynessychic.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://www.messynessychic.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "COOL HUNTING®",
+    "domain": "coolhunting.com",
+    "Articles Per Week": "9 articles per week",
+    "url": "https://coolhunting.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "Jess Ann Kirby",
+    "domain": "jessannkirby.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.jessannkirby.com/feed/",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "Emily Henderson",
+    "domain": "stylebyemilyhenderson.com",
+    "Articles Per Week": "7 articles per week",
+    "url": "https://stylebyemilyhenderson.com/feed",
+    "category": "Lifestyle",
+    "isRecommended": false
+  },
+  {
+    "name": "Yourstory",
+    "domain": "yourstory.com",
+    "Articles Per Week": "170 articles per week",
+    "url": "https://yourstory.com/feed",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "BetaList - Discover tomorrow's startups, today",
+    "domain": "betalist.com",
+    "Articles Per Week": "39 articles per week",
+    "url": "http://feeds.feedburner.com/BetaList",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "Tech in Asia",
+    "domain": "techinasia.com",
+    "Articles Per Week": "76 articles per week",
+    "url": "https://www.techinasia.com/feed",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "Inc42 Media",
+    "domain": "inc42.com",
+    "Articles Per Week": "121 articles per week",
+    "url": "https://inc42.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "nextbigwhat archives",
+    "domain": "nextbigwhat.com",
+    "Articles Per Week": "87 articles per week",
+    "url": "https://nextbigwhat.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "KillerStartups",
+    "domain": "killerstartups.com",
+    "Articles Per Week": "37 articles per week",
+    "url": "https://www.killerstartups.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "New Startups",
+    "domain": "new-startups.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.new-startups.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "EU-Startups",
+    "domain": "eu-startups.com",
+    "Articles Per Week": "25 articles per week",
+    "url": "https://www.eu-startups.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "Andreessen Horowitz",
+    "domain": "a16z.com",
+    "Articles Per Week": "23 articles per week",
+    "url": "https://a16z.com/feed",
+    "category": "Startup",
+    "isRecommended": true
+  },
+  {
+    "name": "Crunchbase News",
+    "domain": "news.crunchbase.com",
+    "Articles Per Week": "14 articles per week",
+    "url": "https://news.crunchbase.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "Startups.co.uk",
+    "domain": "startups.co.uk",
+    "Articles Per Week": "17 articles per week",
+    "url": "https://startups.co.uk/feed",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "SaaStr",
+    "domain": "saastr.com",
+    "Articles Per Week": "16 articles per week",
+    "url": "https://www.saastr.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "Tech.eu",
+    "domain": "tech.eu",
+    "Articles Per Week": "44 articles per week",
+    "url": "https://tech.eu/feed",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "Steve Sammartino",
+    "domain": "stevesammartino.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://stevesammartino.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "BetaKit",
+    "domain": "betakit.com",
+    "Articles Per Week": "26 articles per week",
+    "url": "https://betakit.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "The Startup Magazine",
+    "domain": "thestartupmag.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://thestartupmag.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "CB Insights Research",
+    "domain": "cbinsights.com",
+    "Articles Per Week": "5 articles per week",
+    "url": "https://www.cbinsights.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "AlleyWatch",
+    "domain": "alleywatch.com",
+    "Articles Per Week": "11 articles per week",
+    "url": "https://alleywatch.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "Tech.Co",
+    "domain": "tech.co",
+    "Articles Per Week": "22 articles per week",
+    "url": "https://www.daniellemorrill.com/feed/",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "Elad Blog",
+    "domain": "blog.eladgil.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://blog.eladgil.com/feed",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "EvolutionFM",
+    "domain": "scottbritton.substack.com",
+    "Articles Per Week": "1 article per week",
+    "url": "https://blog.scottbritton.me/feed",
+    "category": "Startup",
+    "isRecommended": false
+  },
+  {
+    "name": "NIH News Release",
+    "domain": "nih.gov",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.nih.gov/rss.xml",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "KevinMD.com",
+    "domain": "kevinmd.com",
+    "Articles Per Week": "31 articles per week",
+    "url": "https://www.kevinmd.com/feed",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "EMCrit Project",
+    "domain": "emcrit.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://emcrit.org/feed",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "The BMJ",
+    "domain": "bmj.com",
+    "Articles Per Week": "54 articles per week",
+    "url": "https://www.bmj.com/rss.xml",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "Medgadget",
+    "domain": "medgadget.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://www.medgadget.com/feed",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "Dr. Smith's ECG Blog",
+    "domain": "hqmeded-ecg.blogspot.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://hqmeded-ecg.blogspot.com/feeds/posts/default?alt=rss",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "ALiEM",
+    "domain": "aliem.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://www.aliem.com/feed/",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "WebMD Health",
+    "domain": "webmd.com",
+    "Articles Per Week": "16 articles per week",
+    "url": "https://rssfeeds.webmd.com/rss/rss.aspx?RSSSource=RSS_PUBLIC",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "2 Minute Medicine",
+    "domain": "2minutemedicine.com",
+    "Articles Per Week": "22 articles per week",
+    "url": "https://www.2minutemedicine.com/feed/",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "PulmCCM",
+    "domain": "pulmccm.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.pulmccm.org/feed",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "Cochrane",
+    "domain": "cochrane.org",
+    "Articles Per Week": "8 articles per week",
+    "url": "https://www.cochrane.org/rss",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "St.Emlyn's",
+    "domain": "stemlynsblog.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.stemlynsblog.org/feed/",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "The Medical News",
+    "domain": "news-medical.net",
+    "Articles Per Week": "236 articles per week",
+    "url": "https://www.news-medical.net/syndication.axd?format=rss",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "Canadian Medical Association Journal current issue",
+    "domain": "cmaj.ca",
+    "Articles Per Week": "12 articles per week",
+    "url": "https://www.cmaj.ca/rss.xml",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "emDOCs.net – Emergency Medicine Education",
+    "domain": "emdocs.net",
+    "Articles Per Week": "3 articles per week",
+    "url": "http://www.emdocs.net/feed/",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "Prehospital and Retrieval Medicine – THE PHARM dedicated to the memory of Dr John Hinds",
+    "domain": "prehospitalmed.com",
+    "Articles Per Week": "7articles per week",
+    "url": "https://prehospitalmed.com/feed/",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "CanadiEM",
+    "domain": "canadiem.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://canadiem.org/feed/",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "BMJ Open Current Issue",
+    "domain": "bmjopen.bmj.com",
+    "Articles Per Week": "76 articles per week",
+    "url": "https://bmjopen.bmj.com/rss.xml",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "Emergency Medicine Journal current issue",
+    "domain": "emj.bmj.com",
+    "Articles Per Week": "4 articles per week",
+    "url": "https://emj.bmj.com/rss.xml",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "Student Doctor Network",
+    "domain": "studentdoctor.net",
+    "Articles Per Week": "1 article per week",
+    "url": "https://www.studentdoctor.net/feed",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "Don't Forget the Bubbles",
+    "domain": "dontforgetthebubbles.com",
+    "Articles Per Week": "3 articles per week",
+    "url": "https://dontforgetthebubbles.com/feed/",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "Medical Xpress - latest medical and health news stories",
+    "domain": "medicalxpress.com",
+    "Articles Per Week": "436 articles per week",
+    "url": "https://medicalxpress.com/rss-feed/",
+    "category": "Medicine",
+    "isRecommended": false
+  },
+  {
+    "name": "HIV and ID Observations",
+    "domain": "blogs.jwatch.org",
+    "Articles Per Week": "1 article per week",
+    "url": "https://blogs.jwatch.org/?feed=rss2",
+    "category": "Medicine",
+    "isRecommended": false
+  }
+]

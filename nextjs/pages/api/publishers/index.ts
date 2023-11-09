@@ -1,15 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { fetchArticles } from "@/common/fetchArticles";
-
-const prisma = new PrismaClient();
+import prisma from "@/db";
+import { addPublishers } from "@/common/addPublishers";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { publisherId, } = req.body;
+    const { category, publishers } = req.body;
     try {
-      const materials = fetchArticles({ publisherId })
-      res.status(201).json({ materials });
+      const newPublishers = await addPublishers(publishers, category)
+      res.status(201).json({ publishers: newPublishers });
     } catch (error) {
       console.error("Error creating material:", error);
       res.status(500).json({ error: "Error creating material" });

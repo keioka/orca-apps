@@ -223,7 +223,7 @@ const Root = () => {
       const auth = getAuth(firebase);
       console.log("============ Init onAuthStateChanged ============")
       auth.onAuthStateChanged((user) => {
-        console.log(">>>>>>>>> User <<<<<<<, user")
+        console.log(">>>>>>>>> User <<<<<<<", user)
         if (user) {
           dispatch(setSession({
             accessToken: user.accessToken,

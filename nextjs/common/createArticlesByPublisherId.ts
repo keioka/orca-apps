@@ -85,14 +85,16 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
           publisherId: publisherId,
           materialHashtag: {
             // Use connectOrCreate for each keyword
-            create: keywords.map((keyword) => ({
-              hashtag: {
-                connectOrCreate: {
-                  where: { name: keyword },
-                  create: { name: keyword },
+            create: keywords
+              .filter(keyword => keyword.trim().length > 3)
+              .map((keyword) => ({
+                hashtag: {
+                  connectOrCreate: {
+                    where: { name: keyword.trim() },
+                    create: { name: keyword.trim() },
+                  },
                 },
-              },
-            })),
+              })),
           }
         }
 

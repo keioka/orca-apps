@@ -132,19 +132,49 @@ export function FeedScreen({ navigation }) {
     }))
     setOffset(50)
   }
+  const handleForceUpdate = () => {
+    Updates.reloadAsync()
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <Portal>
-        <Modal visible={creating} dismissable={false}>
-          <View style={{
+        <Modal
+          visible={creating}
+          dismissable={false}
+          style={{
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)'
-          }}>
-            <ActivityIndicator size="large" color="#fff" />
-            <Text style={{ color: "#fff" }}>Creating...</Text>
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            height: "100%",
+            width: "100%",
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: "100%",
+              width: "100%",
+            }}
+          >
+            <View style={{ height: "100%", width: "100%" }}>
+            </View>
+            <View>
+              <ActivityIndicator size="large" color="#fff" />
+              <View style={{ height: "100%", width: "100%", marginTop: 16 }}>
+                <Text style={{ color: "#fff", fontSize: 24, textAlign: "center" }}>Creating New Lesson</Text>
+                <View style={{ marginTop: 16, backgroundColor: "#fff", padding: 16, borderRadius: 8 }}>
+                  <Text style={{ fontSize: 22 }}>Once it is created...</Text>
+
+                  <Text style={{ fontSize: 18 }}>1. Read the new article</Text>
+                  <Text style={{ fontSize: 18 }}>2. Check the summary and vocabulary</Text>
+                  <Text style={{ fontSize: 18 }}>3. Chat with AI</Text>
+                </View>
+              </View>
+            </View>
           </View>
         </Modal>
       </Portal>
@@ -165,7 +195,7 @@ export function FeedScreen({ navigation }) {
               width: "100%",
             }}
             style={{
-              right: 0,
+              left: 0,
               top: 120,
               width: "100%",
               paddingHorizontal: 24,
@@ -178,9 +208,10 @@ export function FeedScreen({ navigation }) {
               </TouchableOpacity>
             }>
             <Menu.Item onPress={handleSignOut} title="Signout" style={{ borderBottomWidth: 1, width: "100%", paddingRight: 0, borderBottomColor: "#e4e4e4" }} />
-            <Menu.Item onPress={() => setShouldShowMenu(false)} title="Close" />
+            <Menu.Item onPress={() => setShouldShowMenu(false)} title="Close" style={{ borderBottomWidth: 1, width: "100%", paddingRight: 0, borderBottomColor: "#e4e4e4" }} />
+            <Menu.Item onPress={handleForceUpdate} title="Force update" />
             <View style={{ backgroundColor: "#e4e4e4", width: "100%", padding: 18 }}>
-              <Text>{Updates.createdAt ? Updates.createdAt.toString() : "No updates"}</Text>
+              <Text>Last updated at: {Updates.createdAt ? Updates.createdAt.toString() : "No updates"}</Text>
             </View>
           </Menu>
         </View>
