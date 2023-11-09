@@ -6,19 +6,5 @@
     "pages/api/summaryByLevel.ts": {
       "maxDuration": 60
     }
-  },
-  "crons": [
-    {
-      "path": "/api/send-slack-notification",
-      "schedule": "*/10 * * * *"
-    },
-    {
-      "path": "/api/daily-backup",
-      "schedule": "0 2 * * * *"
-    },
-    {
-      "path": "/api/hourly-onboarding-emails",
-      "schedule": "0 * * * *"
-    }
-  ]
+  }
 }
