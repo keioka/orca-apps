@@ -4,10 +4,10 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // defaults to process.env["OPENAI_API_KEY"]
 });
 
-interface GetVocabByWordSentenceParams { text: string, transLangCode: string }
+interface GetVocabByWordSentenceParams { id: string, text: string, transLangCode: string }
 
 export async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
-  const timeLabel = `openai_${new Date().toISOString()}`
+  const timeLabel = `openai_${params.id}`
   console.time(timeLabel);
   const response = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo-16k',
@@ -71,18 +71,28 @@ export async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
       }
     }],
     function_call: { name: "set_recipe" }
+  }, {
+    timeout: 60000,
+    maxRetries: 3
   });
   console.timeEnd(timeLabel); //Prints something like that-> test: 11374.004ms
 
   const generatedText = response.choices[0].message.function_call.arguments;
-  const result = JSON.parse(generatedText)
+  try {
+    const result = JSON.parse(generatedText)
 
-  if (!result || !result.vocabs) {
-    return { err: 'No response from OpenAI' }
+    if (!result || !result.vocabs) {
+      return { err: 'No response from OpenAI' }
+    }
+
+    return {
+      vocabs: result.vocabs
+    }
+  } catch (error) {
+    console.log(generatedText)
+    console.error(error)
+    return {
+      vocabs: []
+    }
   }
-
-  return {
-    vocabs: result.vocabs
-  }
-
 }

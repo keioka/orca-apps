@@ -1,8 +1,18 @@
 import { defer } from "@defer/client";
+import { checkPublishersCrawledStatus } from "@/models/publisher";
+import { createArticlesByPublisherId } from "@/common/createArticlesByPublisherId";
 
-async function fetchMaterialsEveryHour() {
+async function fetchMaterialsEveryFiveMinutes() {
   // business logic here
-  console.log("Fetching materials every hour");
+  const publishers = await checkPublishersCrawledStatus()
+  const publishersToCrawl = publishers.slice(0, 10)
+
+  await Promise.all(publishersToCrawl.map(async (publisher) => {
+    const { materials } = await createArticlesByPublisherId({ publisherId: publisher.id })
+    return materials
+  }))
+
+  console.log("Fetching materials every 5 minutes");
 }
 
-export default defer.cron(fetchMaterialsEveryHour, "0 0 * * MON");
+export default defer.cron(fetchMaterialsEveryFiveMinutes, "*/5 * * * *");

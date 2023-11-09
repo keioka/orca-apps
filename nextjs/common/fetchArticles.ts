@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import Parser from 'rss-parser';
+import { fetchMetadata } from '@/common/fetchMetadata';
+import nlp from 'compromise'
 
 const parser: Parser<CustomFeed, CustomItem> = new Parser({
   customFields: {
@@ -29,20 +31,41 @@ export async function fetchArticles({ publisherId }: { publisherId: string }) {
       throw new Error(`Feed not found: ${publisher.url}`);
     }
 
+
+
     const materials = await Promise.all(feed.items.map(async (item) => {
+
+      const metadata = await fetchMetadata(item.url as string)
+
+      const description: string = item.description || item['og:description']
+
+      let keywords = []
+      if (item['keywords']) {
+        keywords.push(...item['keywords'].split(','))
+      }
+
+      let topics = nlp(description).topics().out('array')
+      keywords.push(...topics)
+
+      const url = item.link || item['og:url']
       const data = {
         title: item.title.trim(),
-        type: 'Article', // You can modify this based on your needs
-        category: item.categories && typeof item.categories[0] === 'string' ? item.categories[0] : category,
-        url: item.link,
+        type: 'article', // You can modify this based on your needs
+        category: metadata.image,
+        url: url,
         imageUrl: item.image,
         publishedAt: new Date(item.pubDate),
         externalId: item.guid,
-        publisherId: publisherId
+        publisherId: publisherId,
+        hashtags: {
+          createMany: {
+            data: keywords.map((keyword) => ({ name: keyword }))
+          }
+        },
       }
 
       return await prisma.material.upsert({
-        where: { url: data.url },
+        where: { url: url },
         create: data,
         update: data
       });
