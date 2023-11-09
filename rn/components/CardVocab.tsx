@@ -112,14 +112,14 @@ export const CardVocab = ({
           <Button
             style={{
               backgroundColor: isSaved ? "#fff" : "#f4f4f4",
-              borderColor: isSaved ? "orange" : "#d4d4d4",
+              borderColor: isSaved ? "#FFD744" : "#d4d4d4",
               justifyContent: "center",
               alignItems: "center",
             }}
             onPress={onClickSave}
             disabled={isSaved}
           >
-            <Ionicons name={isSaved ? "bookmark" : "bookmark-outline"} size={16} color={isSaved ? "orange" : "#242424"} />
+            <Ionicons name={isSaved ? "bookmark" : "bookmark-outline"} size={16} color={isSaved ? "#FFD744" : "#242424"} />
             <Text>{isSaved ? "Saved" : "Save"}</Text>
           </Button>
         }

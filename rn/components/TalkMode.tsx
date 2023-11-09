@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { StyleSheet, ScrollView, Text, View, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard } from 'react-native';
-import { CardMessage } from '../components/CardMessage';
-import { CardVocab, CardVocabXS } from '../components/CardVocab';
+import { useState, useEffect, useMemo, useRef, Component } from 'react';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard } from 'react-native';
+import { CardMessage } from './CardMessage';
+import { CardVocab, CardVocabXS } from './CardVocab';
 // import { WebView } from 'react-native-webview';
 import { TextInput, Card, Modal, Portal, Button, } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -14,6 +14,7 @@ import { transcribeAudio } from '../redux/features/transcribe'
 import { fetchSavedParaphrases } from '../redux/features/note';
 import { Audio } from 'expo-av';
 import Voice from '@react-native-voice/voice';
+import { Text } from './Text';
 
 enum TalkHelper {
   Vocab = 'vocab',
@@ -41,9 +42,8 @@ async function getMetadata(url: string) {
   }
 }
 
-import { Component } from 'react';
 
-class VoiceTest extends Component {
+class InputChat extends Component {
 
   state: Readonly<{}>;
   constructor(props) {
@@ -211,7 +211,7 @@ class VoiceTest extends Component {
                   style={[styles.textInputWrapper]}
                 >
                   <TouchableOpacity onPress={this.onPressMic}>
-                    <Ionicons name="mic" size={24} color="#FB4D3D" />
+                    <Ionicons name="mic" size={24} color="#FF8A60" />
                   </TouchableOpacity>
                   <TextInput
                     style={[styles.messageTextInput]}
@@ -227,7 +227,7 @@ class VoiceTest extends Component {
                     }}
                   />
                   <TouchableOpacity onPress={this.props.submitMessage} disabled={this.props.disabledSubmit}>
-                    <Ionicons name="send" size={21} color="#9FD1D5" />
+                    <Ionicons name="send" size={21} color="#2FABE8" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -284,10 +284,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
   //   Voice.onSpeechResults = handleVoiceResult
   // }, [])
 
-  console.log({ message })
-
   useEffect(() => {
-    console.log({ file, fileURI })
     if (file && fileURI) {
       dispatch(sendWhisper({ file, fileURI }))
     }
@@ -380,7 +377,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
           }
         </ScrollView>
       </View>
-      <VoiceTest handleSetMessage={handleSetMessage} message={message} submitMessage={submitMessage} />
+      <InputChat handleSetMessage={handleSetMessage} message={message} submitMessage={submitMessage} />
     </View>
   )
 }
@@ -396,7 +393,7 @@ const styles = StyleSheet.create({
   },
   menuTalkMode: {
     width: "100%",
-    backgroundColor: '#242424',
+    backgroundColor: '#2852A4',
   },
   tabWrapper: {
     flex: 1,

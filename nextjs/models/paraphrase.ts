@@ -58,6 +58,7 @@ export const saveParaphrase = async ({ userId, paraphraseId }: { userId: string,
               message: {
                 select: {
                   id: true,
+                  content: true,
                   lesson: {
                     select: {
                       id: true,

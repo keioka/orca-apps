@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
     height: 22,
     padding: 0,
     margin: 0,
+    backgroundColor: "#FFD744"
   },
   textChip: {
     fontSize: 10,

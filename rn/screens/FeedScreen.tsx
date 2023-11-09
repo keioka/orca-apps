@@ -203,7 +203,7 @@ export function FeedScreen({ navigation }) {
             anchor={
               <TouchableOpacity onPress={() => { setShouldShowMenu(!shouldShowMenu) }}>
                 <View>
-                  <Ionicons name="person-circle-outline" size={32} color="#4CB8C4" />
+                  <Ionicons name="person-circle-outline" size={32} color="#2FABE8" />
                 </View>
               </TouchableOpacity>
             }>
@@ -222,9 +222,9 @@ export function FeedScreen({ navigation }) {
           horizontal
         >
           <TouchableOpacity key="all" onPress={() => setActiveCategory("all")}>
-            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#4CB8C4" }]}>
+            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#2FABE8" }]}>
               <View style={{ height: 24 }}>
-                <Ionicons name="star" size={24} color={selectedCategory === "all" ? "#4CB8C4" : "#242424"} />
+                <Ionicons name="star" size={24} color={selectedCategory === "all" ? "#2FABE8" : "#242424"} />
               </View>
               <Text style={{ marginTop: 8, }}>All</Text>
             </View>
@@ -233,9 +233,9 @@ export function FeedScreen({ navigation }) {
           {followCategoryItems && followCategoryItems.map((category) => {
             return (
               <TouchableOpacity key={category.slug} onPress={() => handleSelectTab(category.slug)}>
-                <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.slug && { borderBottomColor: "#4CB8C4" }]}>
+                <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.slug && { borderBottomColor: "#2FABE8" }]}>
                   <View style={{ height: 24 }}>
-                    <Ionicons name={category.icon} size={24} color={selectedCategory === category.slug ? "#4CB8C4" : "#242424"} />
+                    <Ionicons name={category.icon} size={24} color={selectedCategory === category.slug ? "#2FABE8" : "#242424"} />
                   </View>
                   <Text style={{ marginTop: 8, }}>{category.title}</Text>
                 </View>
