@@ -5,7 +5,7 @@ import { createArticlesByPublisherId } from "@/common/createArticlesByPublisherI
 async function fetchMaterialsEveryFiveMinutes() {
   // business logic here
   const publishers = await checkPublishersCrawledStatus()
-  const publishersToCrawl = publishers.slice(0, 10)
+  const publishersToCrawl = publishers.slice(0, 50)
 
   await Promise.all(publishersToCrawl.map((publisher) => {
     return createArticlesByPublisherId({ publisherId: publisher.id })
