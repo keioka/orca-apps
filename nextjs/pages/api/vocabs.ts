@@ -16,9 +16,8 @@ export default async function handler(
   }
 
   try {
-    await createVocabsFromUrl({ materialId, url, transLangCode });
-
-    return res.status(200).json({ status: "IN_PROGRESS" });
+    const info = await createVocabsFromUrl({ materialId, url, transLangCode });
+    return res.status(200).json({ status: "IN_PROGRESS", info });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: error.message });

@@ -5,6 +5,7 @@ import { capitalize } from 'lodash';
 import { sleep } from 'openai/core';
 
 export async function createVocabsFromUrl({ materialId, url, transLangCode }: { materialId: string, url: string, transLangCode: string }) {
+  console.log("createVocabsFromUrl start", materialId);
   try {
     let text
     if (url) {
@@ -48,6 +49,7 @@ export async function createVocabsFromUrl({ materialId, url, transLangCode }: { 
         vocabParams: mappedVocabs,
         materialId
       })
+      console.log("createVocabsFromUrl end", materialId);
 
       return mappedVocabs
     })
