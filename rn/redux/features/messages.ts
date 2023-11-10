@@ -34,6 +34,7 @@ interface MessageState {
   paraphraseMap: ParaphraseMap;
   translationMap: { [messageId: string]: string };
   status: LoadingStatus;
+  creatingMessage: boolean;
   addingMessage: boolean;
   isFetchingParaphrases: boolean;
   isFetchingTranslation: boolean;
@@ -42,7 +43,7 @@ interface MessageState {
   error: string | null;
 }
 
-const initialState: MessageState = { messageMap: {}, paraphraseMap: {}, translationMap: {}, isFetchingTranslation: false, error: null, addingMessage: false, messageInputSpeech: null };
+const initialState: MessageState = { messageMap: {}, paraphraseMap: {}, translationMap: {}, isFetchingTranslation: false, error: null, creatingMessage: false, addingMessage: false, messageInputSpeech: null };
 
 const whisperApiEndpoint = 'https://api.openai.com/v1/audio/transcriptions'
 
@@ -272,15 +273,15 @@ const messageSlice = createSlice({
         state.error = action.error.message || 'Failed to fetch messages';
       })
       .addCase(createAIMessage.pending, (state) => {
-        state.addingMessage = true;
+        state.creatingMessage = true;
       })
       .addCase(createAIMessage.fulfilled, (state, action: PayloadAction<{ lessonId: string; message: Message }>) => {
         const { lessonId, message } = action.payload;
         state.messageMap[lessonId] = [...(state.messageMap[lessonId] || []), message];
-        state.addingMessage = false;
+        state.creatingMessage = false;
       })
       .addCase(createAIMessage.rejected, (state, action) => {
-        state.addingMessage = false;
+        state.creatingMessage = false;
         state.error = action.error.message || 'Failed to create AI message';
       })
       .addCase(addUserMessage.pending, (state) => {

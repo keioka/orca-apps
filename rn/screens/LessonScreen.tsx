@@ -131,7 +131,8 @@ function SummaryTab({ materialId }: { materialId: string }) {
 
 function VocabularyTab({ materialId }: { materialId: string }) {
   const dispatch = useAppDispatch()
-
+  // const [intervalID, setIntervalID] = useState<Timer>(null)
+  const intervalID = useRef<Timer | null>(null)
   // Step 1: Create input selectors
   const getMaterialsState = state => state.material;
   const getMaterialId = (state, materialId) => materialId;
@@ -150,15 +151,19 @@ function VocabularyTab({ materialId }: { materialId: string }) {
 
   useEffect(() => {
     if (vocabs && vocabs.length > 0) return
+
     dispatch(createVocabs({ materialId }))
+
     const interval = setInterval(() => {
       console.log("fetchVocabsInterval")
       dispatch(fetchVocabs({ materialId }))
     }, 5000)
 
+    intervalID.current = interval
 
     return () => {
-      clearInterval(interval);
+      console.log("componentUnmount", intervalID)
+      clearInterval(intervalID.current);
     }
   }, [])
 

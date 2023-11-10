@@ -6,6 +6,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import PreviewMaterial from './PreviewMaterial';
 import { Text } from './Text';
 import { Audio } from 'expo-av';
+Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
 
 export const CardVocab = ({
   vocab: {
@@ -36,10 +37,6 @@ export const CardVocab = ({
   onClickSave?: () => void
 }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
-
-  useEffect(() => {
-    Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
-  }, [])
 
   const handlePressSpeak = () => {
     if (isSpeaking) {

@@ -33,6 +33,7 @@ import ErrorBoundary from 'react-native-error-boundary'
 import { ErrorScreen } from './screens/ErrorScreen';
 import * as Sentry from 'sentry-expo';
 import * as Updates from 'expo-updates';
+import moment from 'moment';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -222,11 +223,19 @@ const Root = () => {
     try {
       const auth = getAuth(firebase);
       console.log("============ Init onAuthStateChanged ============")
-      auth.onAuthStateChanged((user) => {
+      auth.onAuthStateChanged(async (user) => {
         console.log(">>>>>>>>> User <<<<<<<", user)
+
         if (user) {
+          let accessToken = user.accessToken
+          const hasPastedOneHour = moment().diff(moment(session?.lastUpdatedAt), 'hours') > 1
+          if (session?.lastUpdatedAt && hasPastedOneHour) {
+            console.warn("hasPastedOneHour", { hasPastedOneHour })
+            accessToken = await auth.currentUser?.getIdToken()
+          }
+
           dispatch(setSession({
-            accessToken: user.accessToken,
+            accessToken: accessToken,
             uid: user.uid,
           }))
         } else {
