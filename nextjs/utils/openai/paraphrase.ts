@@ -15,7 +15,8 @@ export async function getParaphrase(params: GetVocabByWordSentenceParams) {
       {
         role: "system",
         content: `
-          As an English teacher, Can you give me 5 paraphrases of this sentence
+          As an English teacher, can you give me 5 paraphrases of this sentence with different tones (Casual, Neutral, Formal, Young, Adult)?
+          All of them should be grammatically correct and spoken modern American English.
 
           """
           sentence: ${params.sentence}
@@ -36,6 +37,10 @@ export async function getParaphrase(params: GetVocabByWordSentenceParams) {
                 sentence: {
                   type: "string",
                   description: "sentence from the content"
+                },
+                tone: {
+                  type: "string",
+                  description: "sentence tone"
                 },
               }
             }
