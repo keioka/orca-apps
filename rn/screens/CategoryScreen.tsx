@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     padding: 12,
     justifyContent: "center",
     alignItems: "center",
-    width: "100%"
+    width: "100%",
   },
   section: {
     marginTop: 48,

@@ -58,7 +58,6 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
         }
 
         let topics = nlp(description).topics().out('array')
-        console.log({ topics, description })
         keywords.push(...topics)
 
         // const materialHashtag = await Promise.all(keywords.map(async (keyword) => {
@@ -98,6 +97,7 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
           }
         }
 
+        console.log({ data })
         const result = await prisma.material.upsert({
           where: { url: url },
           create: data,

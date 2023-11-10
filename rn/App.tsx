@@ -210,6 +210,7 @@ async function onFetchUpdateAsync() {
 const Root = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState);
+  const tokenRefreshInterval = useRef<Timer>(null)
   const [session, errorSession] = useAppSelector((state) => [state.auth.session, state.auth.error])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -219,16 +220,15 @@ const Root = () => {
 
   useEffect(() => {
     setIsLoading(true)
+    const hasPastedOneHour = moment().diff(moment(session?.lastUpdatedAt), 'hours') > 1
 
     try {
       const auth = getAuth(firebase);
       console.log("============ Init onAuthStateChanged ============")
       auth.onAuthStateChanged(async (user) => {
         console.log(">>>>>>>>> User <<<<<<<", user)
-
         if (user) {
           let accessToken = user.accessToken
-          const hasPastedOneHour = moment().diff(moment(session?.lastUpdatedAt), 'hours') > 1
           if (session?.lastUpdatedAt && hasPastedOneHour) {
             console.warn("hasPastedOneHour", { hasPastedOneHour })
             accessToken = await auth.currentUser?.getIdToken()
@@ -250,6 +250,17 @@ const Root = () => {
       setIsLoading(false)
     }
 
+    const mins30 = 1800000
+
+    const refreshInterval = setInterval(() => {
+      dispatch(refreshToken())
+    }, mins30)
+
+    tokenRefreshInterval.current = refreshInterval
+
+    return () => {
+      clearInterval(tokenRefreshInterval.current)
+    }
   }, [])
 
   useEffect(() => {

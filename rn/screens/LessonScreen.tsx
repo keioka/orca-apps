@@ -187,6 +187,8 @@ function VocabularyTab({ materialId }: { materialId: string }) {
     dispatch(clearErrorSaveVocab())
   }
 
+  console.log({ vocabs })
+
   return (
     <>
       <Snackbar
@@ -208,16 +210,17 @@ function VocabularyTab({ materialId }: { materialId: string }) {
         showsVerticalScrollIndicator={false}
       >
 
-        {vocabs && vocabs.map((item, index) => {
+        {/* {vocabs && vocabs.map((item, index) => {
           return (
             <View key={`vocab_${item.id}`} style={styles.cardWrapper}>
               <CardVocab vocab={item} onClickSave={() => handleClickSave(item)} isSaved={isSavedMap[item.id]} />
             </View>
           )
-        })}
+        })} */}
         {vocabs.length === 0 || isFetchingVocabs && (
           <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
             <ActivityIndicator size="large" color="#007991" />
+            <Text style={{ marginTop: 16 }}>Loading...</Text>
           </View>
         )}
 
@@ -327,7 +330,7 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
 
 
   return (
-    <View style={{ width: "100%", height: "100%" }}>
+    <View style={{ width: "100%", height: "100%", backgroundColor: "#fff" }}>
       <View style={styles.menu}>
         <View style={[styles.tabWrapper]}>
           <TouchableOpacity onPress={() => setTab(LearningModeTab.Article)}>

@@ -15,7 +15,6 @@ import { fetchSavedParaphrases } from '../redux/features/note';
 import { Audio } from 'expo-av';
 import Voice from '@react-native-voice/voice';
 import { Text } from './Text';
-Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
 import * as Speech from 'expo-speech';
 
 enum TalkHelper {
@@ -246,11 +245,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
   const dispatch = useAppDispatch()
   const messages = useAppSelector(state => { return state.message.messageMap[lesson.id] || [] })
   const [message, setMessage] = useState()
-  const [newsTitle, setNewsTitle] = useState("Loading");
-  const [newsImageUrl, setNewsImageUrl] = useState(null);
-  const [loadingMetadata, setLoadingMetadata] = useState(false)
   const { startRecording, stopRecording, file, fileURI } = useAudio();
-  const [openRecordingModal, setOpenRecordingModal] = useState(false);
   const isAddingMessage = useAppSelector(state => { return state.message.addingMessage })
   const isCreatingMessage = useAppSelector(state => { return state.message.creatingMessage })
 
@@ -281,19 +276,22 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
 
   useEffect(() => {
     async function speakLastMessage() {
+      console.log(">>>>>> speakLastMessage>>>>>>>>")
       const lastMessage = messages[messages.length - 1]
-
       if (!lastMessage) return
-      if (lastMessage.role === "user") return
+      if (lastMessage.type === "user") return
 
       const voices = await Speech.getAvailableVoicesAsync()
       console.log({ lastMessage, voices })
       let voice = voices.find((voice) => voice.identifier === 'com.apple.ttsbundle.siri_Aaron_en-US_compact')
       if (!voice) {
-        voice = voices.find((voice) => voice.identifier === 'com.apple.ttsbundle.Samantha-compact')
+        voice = voices.find((voice) => voice.identifier === 'com.apple.ttsbundle.Samantha-compact' || voice.identifier === 'com.apple.voice.compact.en-US.Samantha')
       }
 
+      console.log({ voice })
+
       try {
+        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
         Speech.speak(lastMessage.content, {
           volume: 1,
           language: 'en',
@@ -324,6 +322,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
 
   const isTypeVideo = lesson.material.type === "video"
   const disabledSubmit = !message || message === "" || isAddingMessage
+
 
   return (
     <View style={{ flex: 1, height: "100%" }}>
@@ -366,10 +365,13 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
           ))}
 
           {
-            isCreatingMessage && <CardMessage loading message={{
-              content: "",
-              type: "ai",
-            }} />
+            isCreatingMessage && (
+              <CardMessage loading
+                message={{
+                  content: "",
+                  type: "ai",
+                }} />
+            )
           }
         </ScrollView>
       </View>
@@ -415,7 +417,7 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     flexGrow: 1,
-    backgroundColor: '#f4f4f4',
+    backgroundColor: '#f8f8f8',
     height: "100%"
   },
   textInputWrapper: {

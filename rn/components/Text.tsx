@@ -40,7 +40,8 @@ export function Title({ style, weight = 'SemiBold', italic = false, ...props }: 
 
 const styles = StyleSheet.create({
   font: {
-    color: '#36454F',
+    // color: '#36454F',
+    color: "#0D160B"
     // You can set default styles for your text here
   },
 });
