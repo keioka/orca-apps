@@ -51,47 +51,55 @@ export const CardArticle = ({
   lessonId
 }:
   CardArticleProps
-) => (
-  <Card style={styles.card} elevation={0}>
-    <TouchableOpacity onPress={onPressStart}>
-      <Card.Content style={styles.cardContent}>
-        {item.publisher &&
-          <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
-            <Image
-              style={styles.publisherImg}
-              source={fetchFavicon(item.publisher.rssUrl) || item.publisher.imageUrl}
-              placeholder={blurhash}
-              contentFit="cover"
-              transition={1000}
-            />
-            <Text style={styles.textPublisherName}>{item.publisher.name}</Text>
+) => {
+  if (!item) {
+    console.log(item)
+    console.error('CardArticle: item is null')
+    return null
+  }
+
+  return (
+    <Card style={styles.card} elevation={0}>
+      <TouchableOpacity onPress={onPressStart}>
+        <Card.Content style={styles.cardContent}>
+          {item.publisher &&
+            <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
+              <Image
+                style={styles.publisherImg}
+                source={fetchFavicon(item.publisher.rssUrl) || item.publisher.imageUrl}
+                placeholder={blurhash}
+                contentFit="cover"
+                transition={1000}
+              />
+              <Text style={styles.textPublisherName}>{item.publisher.name}</Text>
+            </View>
+          }
+          <View style={styles.cardContentBody}>
+            <Title style={styles.title}>{item.title}</Title>
+            <View style={{ flex: 2 }}>
+              {item.type === 'video' ?
+                null :
+                <>
+                  {item.imageUrl ? <Card.Cover source={{ uri: item.imageUrl }} style={styles.cardCover} /> : null}
+                </>
+              }
+            </View>
           </View>
-        }
-        <View style={styles.cardContentBody}>
-          <Title style={styles.title}>{item.title}</Title>
-          <View style={{ flex: 2 }}>
-            {item.type === 'video' ?
-              null :
-              <>
-                {item.imageUrl ? <Card.Cover source={{ uri: item.imageUrl }} style={styles.cardCover} /> : null}
-              </>
-            }
-          </View>
+        </Card.Content>
+      </TouchableOpacity>
+      <View style={styles.cardAction}>
+        <Text style={{ fontSize: 12 }}>{item.publishedAt ? moment(item.publishedAt).fromNow() : null}</Text>
+        <View style={styles.sectionActionButtons}>
+          {lessonId &&
+            <Chip style={styles.containerChip} textStyle={styles.textChip} compact>
+              Already started
+            </Chip>
+          }
         </View>
-      </Card.Content>
-    </TouchableOpacity>
-    <View style={styles.cardAction}>
-      <Text style={{ fontSize: 12 }}>{item.publishedAt ? moment(item.publishedAt).fromNow() : null}</Text>
-      <View style={styles.sectionActionButtons}>
-        {lessonId &&
-          <Chip style={styles.containerChip} textStyle={styles.textChip} compact>
-            Already started
-          </Chip>
-        }
       </View>
-    </View>
-  </Card>
-);
+    </Card>
+  )
+}
 
 const styles = StyleSheet.create({
   card: {

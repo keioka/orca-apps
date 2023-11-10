@@ -15,6 +15,8 @@ import { fetchSavedParaphrases } from '../redux/features/note';
 import { Audio } from 'expo-av';
 import Voice from '@react-native-voice/voice';
 import { Text } from './Text';
+Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
+import * as Speech from 'expo-speech';
 
 enum TalkHelper {
   Vocab = 'vocab',
@@ -113,6 +115,7 @@ class InputChat extends Component {
   }
 
   render() {
+    console.log("message", this.props.message)
     return (
       <>
         <Portal>
@@ -129,7 +132,7 @@ class InputChat extends Component {
           >
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
               <View style={{ backgroundColor: "#f4f4f4", padding: 16, width: "100%", borderRadius: 8, marginBottom: 24 }}>
-                <Text>{this.props.message}</Text>
+                <Text>{this.props.message ? this.props.message : "Press red button and talk"}</Text>
               </View>
               <TouchableOpacity
                 onPress={this.state.isRecording ? this.onEndButtonPress : this.onStartButtonPress}>
@@ -240,32 +243,18 @@ class InputChat extends Component {
 }
 
 export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void, lesson: {} }) {
-  const [message, setMessage] = useState()
   const dispatch = useAppDispatch()
   const messages = useAppSelector(state => { return state.message.messageMap[lesson.id] || [] })
-  const statusCreate = useAppSelector(state => { return state.message.statusCreate })
+  const [message, setMessage] = useState()
   const [newsTitle, setNewsTitle] = useState("Loading");
   const [newsImageUrl, setNewsImageUrl] = useState(null);
   const [loadingMetadata, setLoadingMetadata] = useState(false)
   const { startRecording, stopRecording, file, fileURI } = useAudio();
   const [openRecordingModal, setOpenRecordingModal] = useState(false);
   const isAddingMessage = useAppSelector(state => { return state.message.addingMessage })
+  const isCreatingMessage = useAppSelector(state => { return state.message.creatingMessage })
 
   const scrollViewRef = useRef(null);
-
-  const messageConvert = useMemo(() => {
-    if (!messages) {
-      return []
-    }
-    return messages.map((item) => {
-      return {
-        id: item.id,
-        message: item.content,
-        role: item.type,
-        createdAt: new Date(item.createdAt)
-      }
-    })
-  }, [messages])
 
   useEffect(() => {
     if (!lesson.initMessage && messages.length === 0) {
@@ -273,16 +262,6 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
     }
   }, [])
 
-  // useEffect(() => {
-  //   Voice.onSpeechStart = function (e) {
-  //     console.log('onSpeechStart: ', e);
-  //   }
-  //   Voice.onSpeechEnd = function (e) {
-  //     setOpenRecordingModal(false)
-  //     console.log('onSpeechEnd: ', e);
-  //   }
-  //   Voice.onSpeechResults = handleVoiceResult
-  // }, [])
 
   useEffect(() => {
     if (file && fileURI) {
@@ -291,26 +270,43 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
   }, [file, fileURI])
 
   useEffect(() => {
-    async function fetchMetadata() {
-      setLoadingMetadata(true)
-      try {
-        const res = await getMetadata(lesson.material.url)
-        if (res) {
-          setNewsImageUrl(res.image)
-          setNewsTitle(res.title)
-        }
-        setLoadingMetadata(false)
-      } catch (error) {
-        console.error(error);
-      }
-    }
     dispatch(fetchSavedParaphrases({}))
-    fetchMetadata()
   }, [])
 
   useEffect(() => {
     if (!scrollViewRef.current) return
     scrollViewRef.current.scrollToEnd({ animated: true })
+  }, [messages.length])
+
+
+  useEffect(() => {
+    async function speakLastMessage() {
+      const lastMessage = messages[messages.length - 1]
+
+      if (!lastMessage) return
+      if (lastMessage.role === "user") return
+
+      const voices = await Speech.getAvailableVoicesAsync()
+      console.log({ lastMessage, voices })
+      let voice = voices.find((voice) => voice.identifier === 'com.apple.ttsbundle.siri_Aaron_en-US_compact')
+      if (!voice) {
+        voice = voices.find((voice) => voice.identifier === 'com.apple.ttsbundle.Samantha-compact')
+      }
+
+      try {
+        Speech.speak(lastMessage.content, {
+          volume: 1,
+          language: 'en',
+          pitch: 1,
+          rate: 0.75,
+          voice: voice?.identifier
+        });
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    speakLastMessage()
   }, [messages.length])
 
 
@@ -351,7 +347,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
               flexGrow: 1
             }}
           >
-            {loadingMetadata ? <Text style={styles.menuTalkModeTitle}>Loading...</Text> : <Text style={styles.menuTalkModeTitle}>{newsTitle || lesson.material.name}</Text>}
+            <Text style={styles.menuTalkModeTitle} weight='SemiBold'>{lesson.material.title}</Text>
           </View>
         </View>
       </View>
@@ -365,14 +361,14 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
           }}
           showsVerticalScrollIndicator={false}
         >
-          {messageConvert.map((item) => (
-            <CardMessage key={item.id} message={item} />
+          {messages && messages.map((message) => (
+            <CardMessage key={message.id} message={message} />
           ))}
 
           {
-            statusCreate === LoadingStatus.LOADING && <CardMessage loading message={{
-              message: "",
-              role: "ai",
+            isCreatingMessage && <CardMessage loading message={{
+              content: "",
+              type: "ai",
             }} />
           }
         </ScrollView>
