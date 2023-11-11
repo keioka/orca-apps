@@ -282,13 +282,11 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
       if (lastMessage.type === "user") return
 
       const voices = await Speech.getAvailableVoicesAsync()
-      console.log({ lastMessage, voices })
+
       let voice = voices.find((voice) => voice.identifier === 'com.apple.ttsbundle.siri_Aaron_en-US_compact')
       if (!voice) {
         voice = voices.find((voice) => voice.identifier === 'com.apple.ttsbundle.Samantha-compact' || voice.identifier === 'com.apple.voice.compact.en-US.Samantha')
       }
-
-      console.log({ voice })
 
       try {
         await Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
@@ -316,7 +314,6 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
   }
 
   const handleSetMessage = (message) => {
-    console.log("handleSetMessage", message)
     setMessage(message)
   }
 
