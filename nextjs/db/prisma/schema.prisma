@@ -72,7 +72,7 @@ model Publisher {
   contentType       String      @map("content_type") @db.VarChar(32)
   publisherType     String      @map("publisher_type") @db.VarChar(32)
   rssUrl            String?     @unique @map("rss_url") @db.VarChar(255)
-  domain            String?     @unique @map("domain") @db.VarChar(255)
+  domain            String?     @map("domain") @db.VarChar(255)
   category          String?     @db.VarChar(100)
   categoryExternal  String?     @map("category_external") @db.VarChar(255)
   isActive          Boolean     @default(true) @map("is_active")
