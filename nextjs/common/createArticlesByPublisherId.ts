@@ -97,7 +97,6 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
           }
         }
 
-        console.log({ data })
         const result = await prisma.material.upsert({
           where: { url: url },
           create: data,
