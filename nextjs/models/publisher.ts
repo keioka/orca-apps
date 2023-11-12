@@ -1,3 +1,4 @@
+import { Publisher } from '@prisma/client'; // Import Prisma and PublisherUpdateInput from Prisma client
 import prisma from '../db'
 
 export function getPublisherByDomain(domain: string) {
@@ -100,3 +101,24 @@ export function updatePublisherCrawledStatus({ publisherId, failed }: { publishe
   });
 }
 
+export function updatePublisherInfo(publisherId: string, updateData: Publisher) {
+  return prisma.publisher.update({
+    where: {
+      id: publisherId,
+    },
+    data: updateData,
+  });
+}
+
+export function deactivatePublishers(publisherIds: string[]) {
+  return prisma.publisher.updateMany({
+    where: {
+      id: {
+        in: publisherIds,
+      },
+    },
+    data: {
+      isActive: false,
+    },
+  });
+}

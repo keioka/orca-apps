@@ -7,8 +7,8 @@ async function fetchMaterialsEveryFiveMinutes() {
   const publishers = await checkPublishersCrawledStatus()
   const publishersToCrawl = publishers.slice(0, 50)
 
-  publishersToCrawl.forEach((publisher) => {
-    createArticlesByPublisherId({ publisherId: publisher.id })
+  await Promise.all(publishersToCrawl.map(async (publisher) => {
+    await createArticlesByPublisherId({ publisherId: publisher.id })
   })
 
   console.log("Fetching materials every 5 minutes");
