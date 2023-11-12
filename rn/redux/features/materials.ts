@@ -145,7 +145,6 @@ export const fetchMaterials = createAsyncThunk<Material[], void>(
   'materials/fetchMaterials',
   async (params: FetchMaterialsParams, { rejectWithValue }) => {
     try {
-      console.log({ params })
       const response = await axios(`${ROOT_URL}/api/materials`, {
         params: params,
         paramsSerializer: params => {

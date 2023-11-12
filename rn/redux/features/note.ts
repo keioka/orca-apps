@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { GMCheckItem, ParaphraseItem, VocabularyItem } from '~types';
-import { validateSessionAndToken } from '../../helpers/validate';
+import { validateSessionAndToken } from '../helpers';
 import axios from 'axios';
 import { uniqBy } from 'lodash';
 
@@ -136,7 +136,6 @@ const noteDataSlice = createSlice({
             saveGrammarMistakes: null,
           }
         })
-
   },
 });
 
@@ -144,91 +143,95 @@ export const { saveParaphrases, saveGrammarMistakes, toggleArchive, clearIsSaved
 
 const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
-export const saveVocab = createAsyncThunk(`note/saveVocab`, async ({ vocabId }: { vocabId: string }, { getState, rejectWithValue }) => {
-  try {
-    const state = getState()
-    const token = validateSessionAndToken(state);
+export const saveVocab = createAsyncThunk(
+  `note/saveVocab`,
+  async ({ vocabId }: { vocabId: string }, { getState, rejectWithValue, dispatch }) => {
+    try {
+      const state = getState()
+      const token = await validateSessionAndToken(state, dispatch);
 
-    const response = await axios.post(
-      `${ROOT_URL}/api/vocabs/${vocabId}/save`,
-      null,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const response = await axios.post(
+        `${ROOT_URL}/api/vocabs/${vocabId}/save`,
+        null,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         }
+      );
+
+      if (response.status !== 200) {
+        return rejectWithValue('Failed to create message')
       }
-    );
 
-    if (response.status !== 200) {
-      return rejectWithValue('Failed to create message')
+      const saveInfo = response.data
+
+      return saveInfo;
+    } catch (error) {
+      console.error(error)
+      const errorMessage = error.response.data.message
+      return rejectWithValue(errorMessage)
     }
-
-    const saveInfo = response.data
-
-    return saveInfo;
-  } catch (error) {
-    console.error(error)
-    const errorMessage = error.response.data.message
-    return rejectWithValue(errorMessage)
-  }
-});
+  });
 
 
-export const saveParaphrase = createAsyncThunk(`note/saveParaphrase`, async ({ paraphraseId }: { paraphraseId: number }, { getState, rejectWithValue }) => {
-  try {
-    const state = getState()
-    const token = validateSessionAndToken(state);
+export const saveParaphrase = createAsyncThunk(`note/saveParaphrase`,
+  async ({ paraphraseId }: { paraphraseId: number }, { getState, rejectWithValue, dispatch }) => {
+    try {
+      const state = getState()
+      const token = validateSessionAndToken(state, dispatch);
 
-    const response = await axios.post(
-      `${ROOT_URL}/api/paraphrases/${paraphraseId}/save`,
-      null,
-      {
+      const response = await axios.post(
+        `${ROOT_URL}/api/paraphrases/${paraphraseId}/save`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.status !== 200) {
+        return rejectWithValue('Failed to create message')
+      }
+
+      const { savedPhraseInfo } = response.data
+
+      return { savedPhraseInfo };
+    } catch (error) {
+      console.error(error)
+      const errorMessage = error.response.data.message
+      return rejectWithValue(errorMessage)
+    }
+  });
+
+export const fetchSavedVocab = createAsyncThunk(`note/fetchSavedVocab`,
+  async (_, { getState, rejectWithValue, dispatch }) => {
+    try {
+      const state = getState()
+      const token = await validateSessionAndToken(state, dispatch);
+
+      const response = await axios.get(`${ROOT_URL}/api/vocabs/saved`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      }
-    );
+      });
 
-    if (response.status !== 200) {
-      return rejectWithValue('Failed to create message')
+      return response.data.vocabs
+    } catch (error) {
+      console.error(error)
+      const errorMessage = error.response.data.message
+      return rejectWithValue(errorMessage)
     }
-
-    const { savedPhraseInfo } = response.data
-
-    return { savedPhraseInfo };
-  } catch (error) {
-    console.error(error)
-    const errorMessage = error.response.data.message
-    return rejectWithValue(errorMessage)
-  }
-});
-
-export const fetchSavedVocab = createAsyncThunk(`note/fetchSavedVocab`, async (_, { getState, rejectWithValue }) => {
-  try {
-    const state = getState()
-    const token = validateSessionAndToken(state);
-
-    const response = await axios.get(`${ROOT_URL}/api/vocabs/saved`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    return response.data.vocabs
-  } catch (error) {
-    console.error(error)
-    const errorMessage = error.response.data.message
-    return rejectWithValue(errorMessage)
-  }
-})
+  })
 
 export const fetchSavedParaphrases = createAsyncThunk(`note/fetchSavedParaphrases`, async (
   { messageId, sentenceIndex }: { messageId?: string; sentenceIndex?: string },
-  { getState, rejectWithValue }
+  { getState, rejectWithValue, dispatch }
 ) => {
   try {
     const state = getState();
-    const token = validateSessionAndToken(state);
+    const token = await validateSessionAndToken(state, dispatch);
 
     let baseUrl = `${ROOT_URL}/api/paraphrases/saved`;
     const queryParams: string[] = [];

@@ -25,6 +25,7 @@ export function FeedScreen({ navigation }) {
   const session = useAppSelector((state) => state.auth.session)
   const [selectedCategory, setActiveCategory] = useState("all")
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshingEnd, setRefreshingEnd] = useState(false);
   const [shouldShowMenu, setShouldShowMenu] = useState(false);
   const [offset, setOffset] = useState(0);
   const followPublishers = useAppSelector((state) => state.publisher.followPublishers)
@@ -62,26 +63,45 @@ export function FeedScreen({ navigation }) {
     setRefreshing(true);
     dispatch(fetchMaterials({
       // category: selectedCategory === "all" ? null : categories[selectedCategory].slug,
-      offset,
+      offset: 0,
       limit: 50,
       publisherIds: followPublisherIds
     }))
-    setOffset(offset + 50)
+    // setOffset(offset + 50)
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
 
 
+  const handleEndRefresh = useCallback(() => {
+    const followPublisherIds = followPublishers.filter((publisher) => publisher.category === selectedCategory).map((publisher) => publisher.publisherId)
+    setRefreshingEnd(true);
+    dispatch(fetchMaterials({
+      // category: selectedCategory === "all" ? null : categories[selectedCategory].slug,
+      offset,
+      limit: 50,
+      publisherIds: followPublisherIds
+    }))
+    setOffset(offset + 50)
+    setTimeout(() => {
+      setRefreshingEnd(false);
+    }, 2000);
+  }, []);
+
   const materials = useMemo(() => {
     if (!items) return []
-    return items.map((item) => {
-      const lesson = lessons.find((lesson) => lesson.materialId === item.id)
-      return {
-        ...item,
-        lessonId: lesson?.id
-      }
-    })
+    return items
+      .map((item) => {
+        const lesson = lessons.find((lesson) => lesson.materialId === item.id)
+        return {
+          ...item,
+          lessonId: lesson?.id
+        }
+      }).sort((a, b) => {
+
+        return new Date(b.publishedAt) - new Date(a.publishedAt);
+      })
   }, [items, lessons])
 
   const selectedMaterials = useMemo(() => {
@@ -258,6 +278,7 @@ export function FeedScreen({ navigation }) {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+          onMomentumScrollEnd={handleEndRefresh}
         >
           {
             materials.length === 0 && (
@@ -277,6 +298,13 @@ export function FeedScreen({ navigation }) {
                 />
               </View>
             ))
+          }
+          {
+            refreshingEnd && (
+              <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator size="large" color="#242424" />
+              </View>
+            )
           }
         </ScrollView>
       </View >

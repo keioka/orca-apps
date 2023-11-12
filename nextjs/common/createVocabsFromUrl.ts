@@ -24,13 +24,12 @@ export async function createVocabsFromUrl({ materialId, url, transLangCode }: { 
     }
 
     const cleanedText = text.replace(/\s+/g, ' ').trim()
-    console.log({ cleanedText })
+
     const splitContent = splitTextBySentenceWithWordCount(cleanedText, 125)
 
     const transLangCodeCap = capitalize(transLangCode)
 
     splitContent.forEach(async (content, index) => {
-      await sleep(1000)
       const { vocabs } = await getVocabsFromText({
         id: `${materialId}_${index}`,
         text: content.replace(/\s+/g, ' ').trim(),
