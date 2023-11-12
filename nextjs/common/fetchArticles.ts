@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/db';
 import Parser from 'rss-parser';
 import { fetchMetadata } from '@/common/fetchMetadata';
 import nlp from 'compromise'
@@ -10,8 +10,6 @@ const parser: Parser<CustomFeed, CustomItem> = new Parser({
 });
 
 export async function fetchArticles({ publisherId }: { publisherId: string }) {
-
-  const prisma = new PrismaClient();
 
   try {
 

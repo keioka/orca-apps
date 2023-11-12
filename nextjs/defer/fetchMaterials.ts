@@ -7,11 +7,12 @@ async function fetchMaterialsEveryFiveMinutes() {
   console.log("Fetching materials every 5 minutes starts");
   const publishers = await checkPublishersCrawledStatus()
   const publishersToCrawl = publishers.slice(0, 50)
-  console.log({
-    createArticlesByPublisherId
-  })
   await Promise.all(publishersToCrawl.map(async (publisher) => {
-    await createArticlesByPublisherId({ publisherId: publisher.id })
+    try {
+      await createArticlesByPublisherId({ publisherId: publisher.id })
+    } catch (error) {
+      console.error(`Error createArticlesByPublisherId: ${publisher.id}`, error)
+    }
   }))
 
   console.log("Fetching materials every 5 minute ends");
