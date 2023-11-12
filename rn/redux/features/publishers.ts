@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { LoadingStatus } from '../types';
-import { validateSessionAndToken } from '../../helpers/validate';
+import { validateSessionAndToken } from '../helpers';
 import { uniqBy } from 'lodash';
 
 interface PublishersState {
@@ -19,9 +19,9 @@ const initialState: PublishersState = { publishers: [], followPublishers: [], is
 
 const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
-export const fetchPublishers = createAsyncThunk('publishers/fetch', async (_, { getState, rejectWithValue }) => {
+export const fetchPublishers = createAsyncThunk('publishers/fetch', async (_, { getState, rejectWithValue, dispatch }) => {
   const state = getState()
-  const token = validateSessionAndToken(state);
+  const token = await validateSessionAndToken(state, dispatch);
 
   try {
     const response = await axios.get(
@@ -39,9 +39,9 @@ export const fetchPublishers = createAsyncThunk('publishers/fetch', async (_, { 
   }
 });
 
-export const createFollowPublishers = createAsyncThunk('publishers/createFollow', async (publisherIds: string[], { getState, rejectWithValue }) => {
+export const createFollowPublishers = createAsyncThunk('publishers/createFollow', async (publisherIds: string[], { getState, rejectWithValue, dispatch }) => {
   const state = getState()
-  const token = validateSessionAndToken(state);
+  const token = await validateSessionAndToken(state, dispatch);
 
   try {
     const response = await axios.post(
@@ -60,9 +60,9 @@ export const createFollowPublishers = createAsyncThunk('publishers/createFollow'
   }
 })
 
-export const fetchFollowPublishers = createAsyncThunk('publishers/fetchFollow', async (_, { getState, rejectWithValue }) => {
+export const fetchFollowPublishers = createAsyncThunk('publishers/fetchFollow', async (_, { getState, rejectWithValue, dispatch }) => {
   const state = getState()
-  const token = validateSessionAndToken(state);
+  const token = await validateSessionAndToken(state, dispatch);
 
   try {
     const response = await axios.get(

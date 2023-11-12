@@ -122,7 +122,7 @@ const HomeStack = () => (
       name="Lesson"
       component={LessonScreen}
       options={{
-        tabBarLabel: 'Lesson',
+        tabBarLabel: 'dd',
       }}
     />
     <Tab.Screen

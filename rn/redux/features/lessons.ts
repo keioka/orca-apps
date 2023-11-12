@@ -3,6 +3,8 @@ import { Lesson } from "../../types/lesson";
 import axios from 'axios';
 import { setLessonIdToMaterial } from './materials';
 import { unionBy } from 'lodash';
+import { validateSessionAndToken } from '../helpers';
+
 // Define the lesson state
 interface LessonState {
   lessons: Lesson[];
@@ -113,18 +115,10 @@ const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 export const fetchLesson = createAsyncThunk(
   'lesson/fetchLesson',
   async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
+    const state = getState()
+    const token = await validateSessionAndToken(state, dispatch)
+
     try {
-      const { auth } = getState()
-      const { session } = auth
-      if (!session) {
-        return rejectWithValue('No session found')
-      }
-
-      const token = session?.accessToken
-      if (!token) {
-        return rejectWithValue('No session found')
-      }
-
       const response = await axios.get(`${ROOT_URL}/api/lessons/${lessonId}`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -148,16 +142,8 @@ export const fetchLessonByMaterialId = createAsyncThunk(
   'lesson/fetchLessonByMaterialId',
   async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
     try {
-      const { auth } = getState()
-      const { session } = auth
-      if (!session) {
-        return rejectWithValue('No session found')
-      }
-
-      const token = session?.accessToken
-      if (!token) {
-        return rejectWithValue('No session found')
-      }
+      const state = getState()
+      const token = await validateSessionAndToken(state, dispatch);
 
       const response = await axios.get(`${ROOT_URL}/api/lessons?`, {
         headers: {
@@ -178,18 +164,10 @@ export const fetchLessonByMaterialId = createAsyncThunk(
 );
 
 // Define the async thunk to fetch the lesson
-export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async (_, { getState, rejectWithValue }) => {
+export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async (_, { getState, rejectWithValue, dispatch }) => {
   try {
-    const { auth } = getState()
-    const { session } = auth
-    if (!session) {
-      rejectWithValue('No session found')
-    }
-
-    const token = session?.accessToken
-    if (!token) {
-      return rejectWithValue('No session found')
-    }
+    const state = getState()
+    const token = await validateSessionAndToken(state, dispatch);
 
     const response = await axios.get(`${ROOT_URL}/api/lessons`, {
       headers: {
@@ -207,18 +185,10 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async (_, {
 
 
 // Define the async thunk to fetch the lesson
-export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({ materialId }, { getState, rejectWithValue, dispatch }) => {
+export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({ materialId }, { dispatch, getState, rejectWithValue }) => {
   try {
-    const { auth } = getState()
-    const { session } = auth
-    if (!session) {
-      return rejectWithValue('No session found')
-    }
-
-    const token = session?.accessToken
-    if (!token) {
-      return rejectWithValue('No session found')
-    }
+    const state = getState()
+    const token = await validateSessionAndToken(state, dispatch);
 
     const response = await axios.post(`${ROOT_URL}/api/lessons`,
       {

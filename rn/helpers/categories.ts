@@ -105,10 +105,11 @@ export const categoryBySection = {
       icon: 'book-outline',
     },
     {
-      slug: 'science',
-      title: 'Science',
-      icon: 'flask-outline',
+      slug: 'business',
+      title: 'Business',
+      icon: 'briefcase-outline',
     },
+
     {
       slug: 'tech',
       title: 'Technology',
@@ -138,7 +139,12 @@ export const categoryBySection = {
       slug: 'investing',
       title: 'Investing',
       icon: 'cash-outline',
-    }
+    },
+    {
+      slug: 'science',
+      title: 'Science',
+      icon: 'flask-outline',
+    },
   ],
   work: [
     {

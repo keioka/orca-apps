@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { LoadingStatus } from '../types';
-import { validateSessionAndToken } from '../../helpers/validate';
+import { validateSessionAndToken } from '../helpers';
 
 const NAME = 'message'
 
@@ -48,10 +48,10 @@ const initialState: MessageState = { messageMap: {}, paraphraseMap: {}, translat
 const whisperApiEndpoint = 'https://api.openai.com/v1/audio/transcriptions'
 
 
-export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue }) => {
+export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
   try {
     const state = getState();
-    const token = validateSessionAndToken(state);
+    const token = await validateSessionAndToken(state, dispatch);
 
     const response = await axios.get(`${ROOT_URL}/api/lessons/${lessonId}/messages`, {
       headers: {
@@ -72,11 +72,11 @@ export const createAIMessage = createAsyncThunk(`${NAME}/create`, async ({
 }: {
   lessonId: string,
   message: string
-}, { getState, rejectWithValue }) => {
+}, { getState, rejectWithValue, dispatch }) => {
   try {
 
     const state = getState()
-    const token = validateSessionAndToken(state);
+    const token = await validateSessionAndToken(state, dispatch);
 
     const response = await axios.post(`${ROOT_URL}/api/lessons/${lessonId}/chat`,
       {
@@ -96,10 +96,10 @@ export const createAIMessage = createAsyncThunk(`${NAME}/create`, async ({
   }
 });
 
-export const addUserMessage = createAsyncThunk(`${NAME}/add`, async ({ lessonId, message }: { message: string, lessonId: string }, { getState, rejectWithValue }) => {
+export const addUserMessage = createAsyncThunk(`${NAME}/add`, async ({ lessonId, message }: { message: string, lessonId: string }, { getState, rejectWithValue, dispatch }) => {
   try {
     const state = getState()
-    const token = validateSessionAndToken(state);
+    const token = await validateSessionAndToken(state, dispatch);
 
     const response = await axios.post(`${ROOT_URL}/api/lessons/${lessonId}/messages`,
       {
@@ -119,10 +119,10 @@ export const addUserMessage = createAsyncThunk(`${NAME}/add`, async ({ lessonId,
   }
 });
 
-export const fetchParaphrases = createAsyncThunk(`${NAME}/fetchParaphrases`, async ({ messageId, sentence, sentenceIndex }: { messageId: string }, { getState, rejectWithValue }) => {
+export const fetchParaphrases = createAsyncThunk(`${NAME}/fetchParaphrases`, async ({ messageId, sentence, sentenceIndex }: { messageId: string }, { getState, rejectWithValue, dispatch }) => {
   try {
     const state = getState()
-    const token = validateSessionAndToken(state);
+    const token = await validateSessionAndToken(state, dispatch);
 
     if (!messageId || !sentence || sentenceIndex == null) {
       return rejectWithValue('No messageId or sentence or sentenceIndex')
@@ -159,16 +159,12 @@ export const fetchTranslation = createAsyncThunk(
   `${NAME}/fetchTranslation`,
   async (
     { messageId, text }: { messageId: string, message: string },
-    { getState, rejectWithValue }
+    { getState, rejectWithValue, dispatch }
   ) => {
     try {
       const state = getState()
+      const token = await validateSessionAndToken(state, dispatch);
 
-      if (!state.auth.session) {
-        return rejectWithValue('fetchMessages: Session is not defined')
-      }
-
-      const token = state.auth.session.accessToken;
       const response = await axios.post(`${ROOT_URL}/api/translate`,
         {
           text,

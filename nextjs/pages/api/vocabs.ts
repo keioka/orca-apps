@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import createVocabsFromUrl from '@/defer/createVocabsFromUrl';
+import { createVocabsFromUrl } from "@/common/createVocabsFromUrl";
 
 export default async function handler(
   req: NextApiRequest,
