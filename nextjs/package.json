@@ -10,8 +10,9 @@
   "scripts": {
     "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python3 -m flask --app api/py/bot run -p 5328 --debugger --reload",
     "next-dev": "next dev",
-    "dev": "next dev",
-    "dev:full": "concurrently \"pnpm run next-dev\" \"pnpm run flask-dev\"",
+    "dev": "concurrently --kill-others npm:dev:*",
+    "dev:next": "next dev",
+    "dev:trigger": "npx @trigger.dev/cli dev",
     "build": "next build",
     "start": "next start",
     "test": "jest",
@@ -21,7 +22,7 @@
     "lint": "eslint --ignore-path .gitignore \"**/*.+(ts|js|tsx)\"",
     "format": "prettier --ignore-path .gitignore \"**/*.+(ts|js|tsx)\" --write",
     "ingest": "tsx -r dotenv/config scripts/ingest-data.ts",
-    "postinstall": "prisma generate --schema='./db/prisma/schema.prisma' && prisma migrate deploy --schema='./db/prisma/schema.prisma'"
+    "postinstall": "prisma generate --schema='./db/prisma/schema.prisma' && prisma migrate deploy --schema='./db/prisma/schema.prisma' && curl -X POST https://cloud.trigger.dev/api/v1/endpoints/clowhw8mn73nwn72jt0e973bz/orca-KCpf/index/toc4gm2ax0"
   },
   "dependencies": {
     "@baselime/node-opentelemetry": "^0.2.11",
@@ -34,6 +35,10 @@
     "@mui/material": "^5.13.3",
     "@prisma/client": "4.16.2",
     "@radix-ui/react-accordion": "^1.1.1",
+    "@trigger.dev/nextjs": "^2.2.6",
+    "@trigger.dev/openai": "^2.2.6",
+    "@trigger.dev/react": "^2.2.6",
+    "@trigger.dev/sdk": "^2.2.6",
     "add": "^2.0.6",
     "axios": "^1.4.0",
     "bufferutil": "^4.0.7",
@@ -102,5 +107,8 @@
   },
   "prisma": {
     "seed": "tsx db/prisma/seed.ts"
+  },
+  "trigger.dev": {
+    "endpointId": "orca-KCpf"
   }
 }

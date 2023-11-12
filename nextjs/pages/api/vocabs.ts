@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createVocabsFromUrl } from "@/common/createVocabsFromUrl";
+import { client } from "@/trigger";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,8 +17,20 @@ export default async function handler(
   }
 
   try {
-    const info = await createVocabsFromUrl({ materialId, url, transLangCode });
-    return res.status(200).json({ status: "IN_PROGRESS", info });
+    const event = await client.sendEvent({
+      name: "openai.createVocab",
+      payload: {
+        materialId,
+        url,
+        transLangCode
+      },
+    });
+
+
+    console.log(event)
+
+    // const info = await createVocabsFromUrl({ materialId, url, transLangCode });
+    return res.status(200).json({ status: "IN_PROGRESS", event });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: error.message });

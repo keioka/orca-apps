@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import { validateToken } from '@/firebase';
 import { findUserById } from '@/models/user';
 import { createLesson, listLessons } from '@/models/lesson';
@@ -9,7 +8,6 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const prisma = new PrismaClient();
 const openai = new OpenAIApi(configuration);
 
 export default async function handler(

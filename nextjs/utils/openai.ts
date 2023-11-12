@@ -1,12 +1,12 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
+const openaiAPI = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // defaults to process.env["OPENAI_API_KEY"]
 });
 
 interface GetVocabByWordSentenceParams { id: string, text: string, transLangCode: string }
 
-export async function getVocabsFromText(params: GetVocabByWordSentenceParams) {
+export async function getVocabsFromText(params: GetVocabByWordSentenceParams, openai = openaiAPI) {
   const timeLabel = `openai_${params.id}`
   console.time(timeLabel);
   const response = await openai.chat.completions.create({
