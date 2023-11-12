@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import { validateToken } from '@/firebase';
 import { findUserById } from '@/models/user';
 import { createLesson, listLessons } from '@/models/lesson';

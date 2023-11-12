@@ -1,10 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import { validateToken } from '@/firebase';
 import { setCurrentUser } from '@/middleware/setCurrentUser';
 import * as ParaphraseModel from '@/models/paraphrase';
 
-const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,

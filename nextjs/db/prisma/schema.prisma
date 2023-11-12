@@ -11,6 +11,8 @@ datasource db {
   directUrl = env("DATABASE_DIRECT_URL")
 }
 
+// https://www.prisma.io/docs/guides/database/neon
+
 model Auth {
   id             String   @id @default(uuid()) @db.Char(36)
   thirdPartyName String   @map("third_party_name") @db.VarChar(255)

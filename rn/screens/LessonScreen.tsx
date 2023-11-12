@@ -149,6 +149,7 @@ function VocabularyTab({ materialId }: { materialId: string }) {
   const isSavedVocab = useAppSelector(state => state.note.isSavedVocab)
   const errorSaveVocab = useAppSelector(state => state.note.errors.saveVocabulary)
 
+  console.log("vocabs", vocabs)
   useEffect(() => {
     if (vocabs && vocabs.length > 0) return
 
@@ -187,8 +188,6 @@ function VocabularyTab({ materialId }: { materialId: string }) {
     dispatch(clearErrorSaveVocab())
   }
 
-  console.log({ vocabs })
-
   return (
     <>
       <Snackbar
@@ -205,19 +204,19 @@ function VocabularyTab({ materialId }: { materialId: string }) {
         {typeof errorSaveVocab === "string" ? errorSaveVocab : "Error"}
       </Snackbar>
       <ScrollView
-        style={{ height: "100%", elevation: 2 }}
+        style={{ height: "100%", elevation: 2, paddingBottom: 48 }}
         contentContainerStyle={styles.vocabularyView}
         showsVerticalScrollIndicator={false}
       >
 
-        {/* {vocabs && vocabs.map((item, index) => {
+        {vocabs && vocabs.map((item, index) => {
           return (
             <View key={`vocab_${item.id}`} style={styles.cardWrapper}>
               <CardVocab vocab={item} onClickSave={() => handleClickSave(item)} isSaved={isSavedMap[item.id]} />
             </View>
           )
-        })} */}
-        {vocabs.length === 0 || isFetchingVocabs && (
+        })}
+        {vocabs.length === 0 && (
           <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
             <ActivityIndicator size="large" color="#007991" />
             <Text style={{ marginTop: 16 }}>Loading...</Text>
@@ -513,7 +512,8 @@ const styles = StyleSheet.create({
   vocabularyView: {
     flexGrow: 1,
     alignItems: 'center',
-    paddingTop: 24,
+    paddingVertical: 24,
+    paddingBottom: 48,
   },
   cardWrapper: {
     width: "90%",
