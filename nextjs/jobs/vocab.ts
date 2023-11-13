@@ -43,9 +43,7 @@ client.defineJob({
       }
 
       const cleanedText = text.replace(/\s+/g, ' ').trim()
-
       const splitContent = splitTextBySentenceWithWordCount(cleanedText, 125)
-
       const transLangCodeCap = capitalize(transLangCode)
 
       // ================ getVocabsFromText =======================
@@ -56,7 +54,7 @@ client.defineJob({
         const response = await io.openai.backgroundCreateChatCompletion(
           `background-chat-completion-${id}`,
           {
-            model: 'gpt-3.5-turbo-16k',
+            model: 'gpt-3.5-turbo-1106',
             temperature: 0,
             messages: [
               {
@@ -146,7 +144,7 @@ client.defineJob({
       // ================ getVocabsFromText =======================
 
 
-      splitContent.forEach(async (content, index) => {
+      await Promise.all(splitContent.map(async (content, index) => {
         const { vocabs } = await getVocabsFromText({
           id: `${materialId}_${index}`,
           text: content.replace(/\s+/g, ' ').trim(),
@@ -168,7 +166,7 @@ client.defineJob({
         console.log("createVocabsFromUrl end", materialId);
 
         return mappedVocabs
-      })
+      }))
 
 
     } catch (error) {

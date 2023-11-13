@@ -214,6 +214,7 @@ const Root = () => {
   const [session, errorSession] = useAppSelector((state) => [state.auth.session, state.auth.error])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isInit, setIsInit] = useState(false)
   const isLogin = !!session
 
   const [fontsLoaded] = useFonts(fonts);
@@ -248,6 +249,7 @@ const Root = () => {
       setError(error.message)
     } finally {
       setIsLoading(false)
+      setIsInit(true)
     }
 
     const mins30 = 1800000
@@ -284,7 +286,8 @@ const Root = () => {
 
   useEffect(() => {
     async function hide() {
-      if (!isLoading && fontsLoaded) {
+      console.log("isLoading", { isLoading, isLogin })
+      if (!isLoading && isInit && fontsLoaded) {
         await SplashScreen.hideAsync();
       }
     }
