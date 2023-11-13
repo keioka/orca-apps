@@ -1,6 +1,5 @@
 // import axios from 'axios';
 // import { parseString } from 'xml2js';
-import { PrismaClient } from '@prisma/client';
 import Parser from 'rss-parser';
 import * as PublisherModel from '../models/publisher';
 
@@ -41,7 +40,7 @@ interface RSS {
 
 interface Publisher { url: string, name: string, category?: string, isRecommended?: boolean, domain?: string }
 
-export async function addPublishers(publishers: Publisher[], category: string) {
+export async function addPublishers(publishers: Publisher[], category?: string) {
 
   try {
     const publishersData = await Promise.all(publishers.map(async (publisher) => {

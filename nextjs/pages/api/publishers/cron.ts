@@ -14,12 +14,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return materials
       }))
 
-      res.status(201).json({ publishers: publishersToCrawl, size: publishers.length, materials });
+      return res.status(201).json({ publishers: publishersToCrawl, size: publishers.length, materials });
     } catch (error) {
       console.error("Error adding publishers:", error.message);
-      res.status(500).json({ error: "Error adding publishers" });
+      return res.status(500).json({ error: "Error adding publishers" });
     }
   } else {
-    res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 };

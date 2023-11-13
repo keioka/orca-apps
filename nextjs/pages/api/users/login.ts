@@ -9,8 +9,7 @@ export default async function handler(
 ) {
   //only accept post requests
   if (req.method !== 'POST') {
-    res.status(405).json({ message: 'Method not allowed' });
-    return;
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {

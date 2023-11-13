@@ -43,5 +43,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
-  res.status(405).json({ error: "Method not allowed" });
+  return res.status(405).json({ error: "Method not allowed" });
 };
