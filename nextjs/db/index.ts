@@ -4,6 +4,8 @@ const prismaClientSingleton = () => {
   return new PrismaClient()
 }
 
+// https://github.com/prisma/prisma/issues/8131
+
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>
 
 const globalForPrisma = globalThis as unknown as {
