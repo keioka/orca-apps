@@ -80,12 +80,12 @@ export default async function handler(
 
     const summaries = JSON.parse(result.content)
 
-    res.status(200).json({
+    return res.status(200).json({
       materialId,
       ...summaries
     });
   } catch (err) {
     console.error(err)
-    res.status(500).json(err);
+    return res.status(500).json(err);
   }
 };

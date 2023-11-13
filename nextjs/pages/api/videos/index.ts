@@ -37,6 +37,6 @@ export default async function handler(
 
   } catch (error: any) {
     console.log('error', error);
-    res.status(500).json({ error: error.message || 'Something went wrong' });
+    return res.status(500).json({ error: error.message || 'Something went wrong' });
   }
 }

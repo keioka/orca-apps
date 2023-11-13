@@ -8,10 +8,10 @@ export default async function deactivatePublishersByIds(req: NextApiRequest, res
   const publisherIds = req.body.publisherIds
   try {
     const ids = await deactivatePublishers(publisherIds)
-    res.status(200).json({ ids })
+    return res.status(200).json({ ids })
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: 'Something went wrong.' })
+    return res.status(500).json({ message: 'Something went wrong.' })
   }
 }
 

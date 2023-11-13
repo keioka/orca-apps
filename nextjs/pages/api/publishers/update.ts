@@ -137,12 +137,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       const publishersAdded = await addPublishers(publishers, category)
-      res.status(201).json({ message: "Publishers added", publishersAdded });
+      return res.status(201).json({ message: "Publishers added", publishersAdded });
     } catch (error) {
       console.error("Error adding publishers:", error);
-      res.status(500).json({ error: "Error adding publishers" });
+      return res.status(500).json({ error: "Error adding publishers" });
     }
   } else {
-    res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 };

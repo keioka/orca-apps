@@ -27,10 +27,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
       return res.status(200).json(lesson);
     } catch (err) {
-      res.status(500).json({ message: 'Something went wrong' });
+      return res.status(500).json({ message: 'Something went wrong' });
     }
   } else {
-    res.status(405).json({ message: 'Method not allowed' });
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 }
 

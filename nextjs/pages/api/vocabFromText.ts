@@ -101,13 +101,13 @@ export default async function handler(
   if (req.method !== 'POST') {
     console.error("Method not allowed");
     // return resJSON(400, { message: 'Method not allowed' });
-    res.status(405).json({ message: 'Method not allowed' });
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   if (!text) {
     console.error("Missing required fields");
     // return resJSON(400, { message: 'Missing required fields' });
-    res.status(400).json({ message: 'Missing required fields' });
+    return res.status(400).json({ message: 'Missing required fields' });
   }
 
   try {
@@ -119,7 +119,7 @@ export default async function handler(
     // return resJSON(200, { vocabs });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
     // return resJSON(500, { message: error.message });
   }
 }

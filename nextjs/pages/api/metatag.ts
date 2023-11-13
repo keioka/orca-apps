@@ -9,7 +9,7 @@ export default async function handler(
 
   //only accept post requests
   if (req.method !== 'GET') {
-    res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
@@ -19,9 +19,9 @@ export default async function handler(
 
   try {
     const sitedata = await fetchAndParseWebsite(url)
-    res.status(200).json(sitedata);
+    return res.status(200).json(sitedata);
   } catch (error: any) {
     console.log('error', error);
-    res.status(500).json({ error: error.message || 'Something went wrong' });
+    return res.status(500).json({ error: error.message || 'Something went wrong' });
   }
 }

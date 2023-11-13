@@ -66,9 +66,9 @@ export default async function handler(
     }
     const suggestions = JSON.parse(result.content)
 
-    res.status(200).json({ suggestions });
+    return res.status(200).json({ suggestions });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Something went wrong' });
+    return res.status(500).json({ error: 'Something went wrong' });
   }
 }

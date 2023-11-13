@@ -35,12 +35,12 @@ export default async function handler(
 
   try {
     const transcript = await YoutubeTranscript.fetchTranscript(videoId);
-    res.status(200).json({
+    return res.status(200).json({
       [materialId]: transcript,
     });
   } catch (err) {
     console.log(err)
-    res.status(500).json({ message: err.message, details: err.message });
+    return res.status(500).json({ message: err.message, details: err.message });
   }
 };
 

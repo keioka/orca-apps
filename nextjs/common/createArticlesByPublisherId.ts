@@ -82,19 +82,19 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
           imageUrl: metadata.image,
           publishedAt: metadata.publishedAt ? new Date(metadata.publishedAt) : new Date(item.pubDate),
           publisherId: publisherId,
-          materialHashtag: {
-            // Use connectOrCreate for each keyword
-            create: keywords
-              .filter(keyword => keyword.trim().length > 3)
-              .map((keyword) => ({
-                hashtag: {
-                  connectOrCreate: {
-                    where: { name: keyword.trim() },
-                    create: { name: keyword.trim() },
-                  },
-                },
-              })),
-          }
+          // materialHashtag: {
+          //   // Use connectOrCreate for each keyword
+          //   create: keywords
+          //     .filter(keyword => keyword.trim().length > 3)
+          //     .map((keyword) => ({
+          //       hashtag: {
+          //         connectOrCreate: {
+          //           where: { name: keyword.trim() },
+          //           create: { name: keyword.trim() },
+          //         },
+          //       },
+          //     })),
+          // }
         }
 
         const result = await prisma.material.upsert({
