@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useCallback, } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, SafeAreaView, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Modal, Portal, Snackbar, Button, Menu } from 'react-native-paper';
 import { CardArticle } from '../components/CardArticle';
@@ -22,7 +21,6 @@ export function FeedScreen({ navigation }) {
   const lessons = useAppSelector((state) => state.lesson.lessons);
 
   const items = useAppSelector((state) => state.material.items);
-  const session = useAppSelector((state) => state.auth.session)
   const [selectedCategory, setActiveCategory] = useState("all")
   const [refreshing, setRefreshing] = useState(false);
   const [refreshingEnd, setRefreshingEnd] = useState(false);
@@ -32,23 +30,28 @@ export function FeedScreen({ navigation }) {
   const followCategories = useAppSelector((state) => state.publisher.followCategories)
 
   useEffect(() => {
-    console.log("-----------------------")
     dispatch(fetchLessons())
     dispatch(fetchFollowPublishers())
   }, [])
 
+  const selectedFollowPublisherIds = useMemo(() => {
+    if (!followPublishers) return []
+    return followPublishers.filter((publisher) => {
+      if (selectedCategory === "all") return true
+      return publisher.category === selectedCategory
+    }).map((publisher) => publisher.publisherId)
+  }, [followPublishers, selectedCategory])
+
   useEffect(() => {
-    if (!followPublishers) return
-    const followPublisherIds = followPublishers.map((publisher) => publisher.publisherId)
-    if (followPublisherIds.length === 0) return
+    if (selectedFollowPublisherIds.length === 0) return
     dispatch(fetchMaterials({
       offset,
       limit: 50,
-      publisherIds: followPublisherIds,
+      publisherIds: selectedFollowPublisherIds,
     }))
     setOffset(offset + 50)
 
-  }, [followPublishers])
+  }, [selectedFollowPublisherIds])
 
   useEffect(() => {
     if (createdLessonId) {
@@ -57,37 +60,33 @@ export function FeedScreen({ navigation }) {
     }
   }, [creating, createdLessonId])
 
-  const onRefresh = useCallback(() => {
-    const followPublisherIds = followPublishers.filter((publisher) => publisher.category === selectedCategory).map((publisher) => publisher.publisherId)
 
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(fetchMaterials({
-      // category: selectedCategory === "all" ? null : categories[selectedCategory].slug,
       offset: 0,
       limit: 50,
-      publisherIds: followPublisherIds
+      publisherIds: selectedFollowPublisherIds
     }))
     // setOffset(offset + 50)
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-  }, []);
+  }, [selectedFollowPublisherIds]);
 
 
   const handleEndRefresh = useCallback(() => {
-    const followPublisherIds = followPublishers.filter((publisher) => publisher.category === selectedCategory).map((publisher) => publisher.publisherId)
     setRefreshingEnd(true);
     dispatch(fetchMaterials({
-      // category: selectedCategory === "all" ? null : categories[selectedCategory].slug,
       offset,
       limit: 50,
-      publisherIds: followPublisherIds
+      publisherIds: selectedFollowPublisherIds
     }))
     setOffset(offset + 50)
     setTimeout(() => {
       setRefreshingEnd(false);
     }, 2000);
-  }, []);
+  }, [selectedFollowPublisherIds]);
 
   const materials = useMemo(() => {
     if (!items) return []
@@ -141,17 +140,23 @@ export function FeedScreen({ navigation }) {
     navigation.navigate('Category')
   }
 
-  const handleSelectTab = (slug: string) => {
-    if (!followPublishers) return
+  const handleSelectTab = useCallback((slug: string) => {
     setActiveCategory(slug)
-    const followPublisherIds = followPublishers.filter((publisher) => publisher.category === slug).map((publisher) => publisher.publisherId)
+    const newSelectedFollowPublisherIds = followPublishers
+      .filter((publisher) => {
+        if (slug === "all") return true
+        return publisher.category === slug
+      })
+      .map((publisher) => publisher.publisherId)
+
     dispatch(fetchMaterials({
       offset: 0,
       limit: 50,
-      publisherIds: followPublisherIds
+      publisherIds: newSelectedFollowPublisherIds
     }))
     setOffset(50)
-  }
+  }, [])
+
   const handleForceUpdate = () => {
     Updates.reloadAsync()
   }

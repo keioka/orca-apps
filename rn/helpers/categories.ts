@@ -120,11 +120,11 @@ export const categoryBySection = {
       title: 'Economy',
       icon: 'cash-outline',
     },
-    {
-      slug: 'finance',
-      title: 'Finance',
-      icon: 'cash-outline',
-    },
+    // {
+    //   slug: 'finance',
+    //   title: 'Finance',
+    //   icon: 'cash-outline',
+    // },
     {
       slug: 'environment',
       title: 'Environment',
@@ -144,7 +144,7 @@ export const categoryBySection = {
       slug: 'science',
       title: 'Science',
       icon: 'flask-outline',
-    },
+    }
   ],
   work: [
     {
