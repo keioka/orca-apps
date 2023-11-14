@@ -34,15 +34,14 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
       throw new Error(`Feed items not found: ${publisher.rssUrl}`);
     }
 
-    const materials = await Promise.all(feed.items.map(async (item) => {
-      await sleep(2000)
+    const materials = await Promise.all(feed.items.map(async (item, index) => {
+      await sleep(1000 * index)
       const url = item.link
       let metadata = {}
       try {
         metadata = await fetchMetadata(url as string)
       } catch (error) {
         console.error(`Error fetchMetadata: ${url}`, error.message)
-        return Promise.resolve(null)
       }
 
       try {
@@ -74,13 +73,15 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
         //   return { hashtagId: hashtag.id };
         // }))
 
+        const publishedAt = item.pubDate ? new Date(item.pubDate) : new Date(metadata.publishedAt)
+
         const data = {
           title: item.title.trim(),
           type: 'article', // You can modify this based on your needs
           category: publisher.category,
-          url: url,
+          url,
           imageUrl: metadata.image,
-          publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(metadata.publishedAt),
+          publishedAt,
           publisherId: publisherId,
           // materialHashtag: {
           //   // Use connectOrCreate for each keyword
@@ -107,6 +108,12 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
       } catch (error) {
         await updatePublisherCrawledStatus({ publisherId, failed: true })
         console.error("Error: ", error.message)
+        console.log({
+          item
+        })
+        console.log({
+          metadata
+        })
         return Promise.resolve(null)
       }
     }))
