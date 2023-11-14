@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { fetchArticles } from "@/common/fetchArticles";
 import prisma from "@/db";
 import { addPublishers } from "@/common/addPublishers";
 import createArticlesByPublisherIdsDefer from "@/defer/createArticlesByPublisherIds";

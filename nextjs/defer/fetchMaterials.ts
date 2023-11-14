@@ -6,7 +6,7 @@ async function fetchMaterialsEveryFiveMinutes() {
   // business logic here
   console.log("Fetching materials every 5 minutes starts");
   const publishers = await checkPublishersCrawledStatus()
-  const publishersToCrawl = publishers.slice(0, 50)
+  const publishersToCrawl = publishers.slice(0, 20)
   const publishersChunks = chunkArray(publishersToCrawl, 10)
   await Promise.all(publishersChunks.map(async (chunk) => {
     try {
