@@ -22,7 +22,7 @@
     "lint": "eslint --ignore-path .gitignore \"**/*.+(ts|js|tsx)\"",
     "format": "prettier --ignore-path .gitignore \"**/*.+(ts|js|tsx)\" --write",
     "ingest": "tsx -r dotenv/config scripts/ingest-data.ts",
-    "postinstall": "prisma generate --schema='./db/prisma/schema.prisma' && prisma migrate deploy --schema='./db/prisma/schema.prisma' && curl -X POST https://cloud.trigger.dev/api/v1/endpoints/clowhw8mn73nwn72jt0e973bz/orca-KCpf/index/toc4gm2ax0"
+    "postinstall": "prisma generate --schema='./db/prisma/schema.prisma' && prisma migrate deploy --schema='./db/prisma/schema.prisma'"
   },
   "dependencies": {
     "@baselime/node-opentelemetry": "^0.2.11",

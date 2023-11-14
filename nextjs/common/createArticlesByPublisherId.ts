@@ -80,7 +80,7 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
           category: publisher.category,
           url: url,
           imageUrl: metadata.image,
-          publishedAt: metadata.publishedAt ? new Date(metadata.publishedAt) : new Date(item.pubDate),
+          publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(metadata.publishedAt),
           publisherId: publisherId,
           // materialHashtag: {
           //   // Use connectOrCreate for each keyword
