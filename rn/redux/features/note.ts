@@ -179,7 +179,7 @@ export const saveParaphrase = createAsyncThunk(`note/saveParaphrase`,
   async ({ paraphraseId }: { paraphraseId: number }, { getState, rejectWithValue, dispatch }) => {
     try {
       const state = getState()
-      const token = validateSessionAndToken(state, dispatch);
+      const token = await validateSessionAndToken(state, dispatch);
 
       const response = await axios.post(
         `${ROOT_URL}/api/paraphrases/${paraphraseId}/save`,
