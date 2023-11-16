@@ -17,7 +17,8 @@ interface Material {
 // Define the type for the state
 interface MaterialsState {
   items: Material[];
-  loading: boolean;
+  isInitMaterials: boolean;
+  isFetchingMaterials: boolean;
   isFetchingSummary: boolean;
   isFetchingVocabs: boolean;
   error: string | null;
@@ -35,7 +36,8 @@ const initialState: MaterialsState = {
   },
   vocabs: {},
   summaries: {},
-  loading: false,
+  isInitMaterials: false,
+  isFetchingMaterials: false,
   isFetchingSummary: false,
   isFetchingVocabs: false,
   error: null,
@@ -65,17 +67,18 @@ const materialsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMaterials.pending, (state) => {
-        state.loading = true;
+        state.isFetchingMaterials = true;
         state.error = null;
       })
       .addCase(fetchMaterials.fulfilled, (state, action) => {
         const newMaterials = action.payload || [];
         state.items = uniqBy([...state.items, ...newMaterials], 'id');
-        state.loading = false;
+        state.isFetchingMaterials = false;
+        state.isInitMaterials = true;
         state.error = null;
       })
       .addCase(fetchMaterials.rejected, (state, action) => {
-        state.loading = false;
+        state.isFetchingMaterials = false;
         state.error = action.payload as string;
       })
       .addCase(fetchVocabs.pending, (state) => {
@@ -111,7 +114,7 @@ const materialsSlice = createSlice({
         (action) => action.type === "global/RESET_STATE",
         (state) => {
           state.items = []
-          state.loading = false
+          state.isFetchingMaterials = false
           state.isFetchingSummary = false
           state.isFetchingVocabs = false
           state.error = null
@@ -128,7 +131,7 @@ export default materialsSlice.reducer;
 
 // Selectors
 export const selectMaterials = (state: RootState) => state.material.items;
-export const selectLoading = (state: RootState) => state.material.loading;
+export const selectLoading = (state: RootState) => state.material.isFetchingMaterials;
 export const selectError = (state: RootState) => state.material.error;
 
 
