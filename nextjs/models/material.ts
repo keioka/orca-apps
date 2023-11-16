@@ -1,4 +1,4 @@
-import { Material } from '@prisma/client';
+import { Material, MaterialWhereInput } from '@prisma/client';
 
 import prisma from '../db'
 
@@ -46,7 +46,11 @@ interface PaginationResult<T> {
 }
 
 export async function getMaterials(params: GetMaterialsParams): Promise<PaginationResult<MaterialWithLesson[]>> {
-  const where: Prisma.MaterialWhereInput = {};
+  const where: Prisma.MaterialWhereInput = {
+    publisher: {
+      isActive: true
+    }
+  };
 
   if (params.date) {
     const startDate = new Date(params.date);

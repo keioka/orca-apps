@@ -26,6 +26,7 @@ export function FeedScreen({ navigation }) {
   const [refreshingEnd, setRefreshingEnd] = useState(false);
   const [shouldShowMenu, setShouldShowMenu] = useState(false);
   const [offset, setOffset] = useState(0);
+  const isInitMaterials = useAppSelector((state) => state.material.isInitMaterials)
   const followPublishers = useAppSelector((state) => state.publisher.followPublishers)
   const followCategories = useAppSelector((state) => state.publisher.followCategories)
 
@@ -285,8 +286,13 @@ export function FeedScreen({ navigation }) {
           }
           onMomentumScrollEnd={handleEndRefresh}
         >
+          {!isInitMaterials && (
+            <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
+              <ActivityIndicator size="large" color="#242424" />
+            </View>
+          )}
           {
-            materials.length === 0 && (
+            isInitMaterials && materials.length === 0 && (
               <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
                 <Text style={{ color: "#242424" }}>No materials</Text>
                 <Button onPress={handleNavigateToCategory} mode="contained">Add News Feeds</Button>

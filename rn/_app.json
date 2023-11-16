@@ -1,23 +1,4 @@
-const dotenv = require("dotenv");
-const { expand } = require("dotenv-expand");
-const path = require("path");
-
-// HACK: Custom env var loading logic to support `.env.prod`
-if (process.env.STAGE) {
-  const pathToEnv = path.join(
-    __dirname,
-    ["./.env", process.env.STAGE].filter(Boolean).join(".")
-  )
-  expand(
-    dotenv.config({
-      path: pathToEnv,
-      override: true,
-    })
-  );
-}
-
-// https://github.com/expo/expo/issues/23727
-export default () => ({
+{
   "expo": {
     "name": "Orca - RSS x AI English",
     "slug": "orca",
@@ -102,4 +83,4 @@ export default () => ({
       }
     ]
   ]
-})
+}
