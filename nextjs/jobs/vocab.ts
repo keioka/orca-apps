@@ -5,6 +5,13 @@ import { getMaterialById, createVocabs } from '@/models/material';
 import { parseWebText } from '@/utils/webParser';
 import { capitalize } from 'lodash';
 
+
+const langName = {
+  'ja': 'Japanese',
+  'en': 'English',
+  'vi': 'Vietnamese',
+}
+
 const openai = new OpenAI({
   id: "openai",
   apiKey: process.env.OPENAI_API_KEY!,
@@ -48,13 +55,10 @@ client.defineJob({
 
       // ================ getVocabsFromText =======================
       async function getVocabsFromText({ id, text, transLangCode }) {
-        const timeLabel = `openai_${id}`
-        console.time(timeLabel);
-
         const response = await io.openai.backgroundCreateChatCompletion(
           `background-chat-completion-${id}`,
           {
-            model: 'gpt-3.5-turbo-1106',
+            model: 'gpt-4-1106-preview',
             temperature: 0,
             messages: [
               {
@@ -66,7 +70,7 @@ client.defineJob({
           - [pronounce]: Pronounce of the word or phrase
           - [meaning]: Meaning of the word or phrase
           - [sentence]: Sentence from the content
-          - [transMeaning${transLangCode}ByContext]: Translate meaning of the word or phrase from English to Japanese
+          - [meaningIn${langName[transLangCode.toLowerCase()]}]: Meaning of the word or phrase in Japanese
           - [example]: Give some examples of the word or phrase
           """
           ${text}
@@ -104,9 +108,9 @@ client.defineJob({
                           type: "string",
                           description: "other example for the word or phrase"
                         },
-                        [`transMeaning${transLangCode}ByContext`]: {
+                        [`meaningIn${langName[transLangCode.toLowerCase()]}`]: {
                           type: "string",
-                          description: "translation of the meaning or phrase to Japanese"
+                          description: "Meaning of the word or phrase in Japanese"
                         },
                       }
                     }
@@ -119,8 +123,6 @@ client.defineJob({
           timeout: 60000,
           maxRetries: 3
         });
-
-        console.timeEnd(timeLabel); //Prints something like that-> test: 11374.004ms
 
         const generatedText = response.choices[0].message.function_call.arguments;
         try {
@@ -154,7 +156,7 @@ client.defineJob({
         const mappedVocabs = vocabs.map((vocab) => {
           return {
             ...vocab,
-            translation: vocab[`transMeaning${transLangCodeCap}ByContext`],
+            translation: vocab[`meaningIn${langName[transLangCode.toLowerCase()]}`],
             langCode: transLangCode
           }
         })
