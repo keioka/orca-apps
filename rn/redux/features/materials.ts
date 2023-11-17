@@ -144,16 +144,33 @@ interface FetchMaterialsParams {
 }
 
 // Define the fetchMaterials async thunk
+// Define a cancel token source variable
+let cancelTokenSource: CancelTokenSource | null = null;
+
+// ...
+
+// Define the fetchMaterials async thunk
 export const fetchMaterials = createAsyncThunk<Material[], void>(
   'materials/fetchMaterials',
   async (params: FetchMaterialsParams, { rejectWithValue }) => {
     try {
+      // Cancel the previous request if it exists
+      if (cancelTokenSource) {
+        cancelTokenSource.cancel('Request canceled');
+        console.log(">>>>>>>>>>>>>>>>>> cancel >>>>>>>>>>>>>>>>>")
+        return rejectWithValue('Request canceled')
+      }
+
+      // Create a new cancel token source
+      cancelTokenSource = axios.CancelToken.source();
+
       const response = await axios(`${ROOT_URL}/api/materials`, {
         params: params,
         paramsSerializer: params => {
           console.log(qs.stringify(params, { arrayFormat: 'repeat' }))
           return qs.stringify(params, { arrayFormat: 'repeat' })
-        }
+        },
+        cancelToken: cancelTokenSource.token // Pass the cancel token to the request
       }); // Replace with your API endpoint
 
       const data = response.data;
@@ -164,8 +181,16 @@ export const fetchMaterials = createAsyncThunk<Material[], void>(
 
       return data.items;
     } catch (error) {
-      const message = error.message;
-      return rejectWithValue(message)
+      if (axios.isCancel(error)) {
+        // Request was canceled, handle accordingly
+        console.log('Request canceled:', error.message);
+      } else {
+        const message = error.message;
+        return rejectWithValue(message)
+      }
+    } finally {
+      // Reset the cancel token source
+      cancelTokenSource = null;
     }
   }
 );

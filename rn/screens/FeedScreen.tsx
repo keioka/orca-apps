@@ -33,6 +33,7 @@ export function FeedScreen({ navigation }) {
   useEffect(() => {
     dispatch(fetchLessons())
     dispatch(fetchFollowPublishers())
+    setOffset(0)
   }, [])
 
   const selectedFollowPublisherIds = useMemo(() => {
@@ -77,6 +78,7 @@ export function FeedScreen({ navigation }) {
 
 
   const handleEndRefresh = useCallback(() => {
+    if (selectedFollowPublisherIds.length === 0) return
     setRefreshingEnd(true);
     dispatch(fetchMaterials({
       offset,
@@ -143,12 +145,16 @@ export function FeedScreen({ navigation }) {
 
   const handleSelectTab = useCallback((slug: string) => {
     setActiveCategory(slug)
+
     const newSelectedFollowPublisherIds = followPublishers
       .filter((publisher) => {
         if (slug === "all") return true
         return publisher.category === slug
       })
       .map((publisher) => publisher.publisherId)
+
+    console.log({ newSelectedFollowPublisherIds, followPublishers, slug })
+    if (newSelectedFollowPublisherIds.length === 0) return
 
     dispatch(fetchMaterials({
       offset: 0,
