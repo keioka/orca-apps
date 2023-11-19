@@ -1,4 +1,4 @@
-import { Material, MaterialWhereInput } from '@prisma/client';
+import { Material } from '@prisma/client';
 
 import prisma from '../db'
 

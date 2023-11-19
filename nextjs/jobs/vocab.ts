@@ -121,7 +121,6 @@ client.defineJob({
             function_call: { name: "set_recipe" }
           }, {
           timeout: 60000,
-          maxRetries: 3
         });
 
         const generatedText = response.choices[0].message.function_call.arguments;
@@ -146,7 +145,7 @@ client.defineJob({
       // ================ getVocabsFromText =======================
 
 
-      await Promise.all(splitContent.map(async (content, index) => {
+      return await Promise.all(splitContent.map(async (content, index) => {
         const { vocabs } = await getVocabsFromText({
           id: `${materialId}_${index}`,
           text: content.replace(/\s+/g, ' ').trim(),

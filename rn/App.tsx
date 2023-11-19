@@ -16,6 +16,7 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { AuthScreen } from './screens/AuthScreen';
 import { CategoryScreen } from './screens/CategoryScreen';
+import { SelectLanguageScreen } from './screens/SelectLanguageScreen';
 // import { SplashScreen } from './screens/SplashScreen';
 import { AppState } from 'react-native';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
@@ -132,6 +133,7 @@ const HomeStack = () => (
         tabBarLabel: 'Talk',
       }}
     />
+
   </Stack.Navigator>
 )
 
@@ -149,6 +151,13 @@ const RootStack = ({ isLogin }) => (
         <Stack.Screen
           name="Category"
           component={CategoryScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Tab.Screen
+          name="SelectLanguageScreen"
+          component={SelectLanguageScreen}
           options={{
             headerShown: false,
           }}

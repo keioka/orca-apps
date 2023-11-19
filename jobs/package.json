@@ -1,0 +1,25 @@
+{
+  "name": "orca-jobs",
+  "version": "1.0.0",
+  "description": "orca-jobs",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/render-examples/orca-jobs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/render-examples/orca-jobs/issues"
+  },
+  "homepage": "https://github.com/render-examples/orca-jobs#readme",
+  "dependencies": {
+    "fastify": "^4.17.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}

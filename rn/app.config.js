@@ -22,7 +22,7 @@ export default () => ({
     "name": "Orca - RSS x AI English",
     "slug": "orca",
     "owner": "keioka",
-    "version": "0.7.3",
+    "version": "0.7.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
