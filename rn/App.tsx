@@ -42,7 +42,6 @@ import { i18n } from './locales';
 
 SplashScreen.preventAutoHideAsync();
 
-
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -344,10 +343,10 @@ async function fetchDeviceId() {
   return uuid;
 }
 
-Sentry.init({
-  dsn: "https://e25048ab84e9c5d338110cc22f6fb409@o4506180296966144.ingest.sentry.io/4506180298735616",
-  enableInExpoDevelopment: true,
-});
+// Sentry.init({
+//   dsn: "https://e25048ab84e9c5d338110cc22f6fb409@o4506180296966144.ingest.sentry.io/4506180298735616",
+//   enableInExpoDevelopment: true,
+// });
 
 function App() {
   useEffect(() => {
