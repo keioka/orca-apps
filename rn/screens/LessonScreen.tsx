@@ -17,6 +17,7 @@ import { Text } from '../components/Text';
 import { Browser } from '../components/Browser';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { fetchSavedVocab, clearIsSavedVocab, clearErrorSaveVocab } from '../redux/features/note';
+import i18n from 'i18n-js';
 
 enum LearningModeTab {
   Article = 'article',
@@ -334,7 +335,7 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
         <View style={[styles.tabWrapper]}>
           <TouchableOpacity onPress={() => setTab(LearningModeTab.Article)}>
             <View style={tab === LearningModeTab.Article ? styles.buttonActive : null}>
-              <Text style={[styles.textMenu, tab === LearningModeTab.Article ? { color: "#242424" } : null]}>Article</Text>
+              <Text style={[styles.textMenu, tab === LearningModeTab.Article ? { color: "#242424" } : null]}>{i18n.t("article")}</Text>
             </View>
           </TouchableOpacity >
         </View>

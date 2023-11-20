@@ -15,6 +15,8 @@ import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { analytics, ACTION } from '../helpers/mixpanel';
+import { Linking } from "react-native";
+import { i18n } from '../locales';
 
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
@@ -251,7 +253,7 @@ export function FeedScreen({ navigation }) {
                   <View style={{ marginRight: 8 }}>
                     <Feather name="log-out" size={24} color="black" />
                   </View>
-                  <Text>Sign out</Text>
+                  <Text>{i18n.t("signout")}</Text>
                 </View>
               }
               style={{ width: "100%", paddingRight: 0, borderBottomColor: "#e4e4e4" }}
@@ -263,7 +265,7 @@ export function FeedScreen({ navigation }) {
                   <View style={{ marginRight: 8 }}>
                     <Ionicons name="close" size={24} color="black" />
                   </View>
-                  <Text>Close</Text>
+                  <Text>{i18n.t("close")}</Text>
                 </View>
               }
               style={{ width: "100%", paddingRight: 0, borderBottomColor: "#e4e4e4" }}
@@ -275,26 +277,26 @@ export function FeedScreen({ navigation }) {
                   <View style={{ marginRight: 8 }}>
                     <MaterialIcons name="system-update" size={24} color="black" />
                   </View>
-                  <Text>Force update</Text>
+                  <Text>{i18n.t("forceUpdate")}</Text>
                 </View>
               }
             />
             <Menu.Item
-              onPress={handleForceUpdate}
+              onPress={() => Linking.openURL("https://forms.gle/QAGcTgNWnCsju5LY7")}
               title={
                 <View style={{ justifyContent: "center", flexDirection: "row", alignItems: "center" }}>
                   <View style={{ marginRight: 8 }}>
                     <MaterialIcons name="bug-report" size={24} color="black" />
                   </View>
-                  <Text>Report bug</Text>
+                  <Text>{i18n.t("reportBug")}</Text>
                 </View>
               }
             />
             <View style={{ backgroundColor: "#f2f2f2", width: "100%", padding: 18 }}>
-              <Text>Last updated at: {Updates.createdAt ? Updates.createdAt.toString() : "No updates"}</Text>
+              <Text>{i18n.t("lastUpdatedAt")}: {Updates.createdAt ? Updates.createdAt.toString() : "No updates"}</Text>
             </View>
             <View style={{ backgroundColor: "#f2f2f2", width: "100%", padding: 18 }}>
-              <Text>Update Version: {Updates.updateId ? Updates.updateId : "N/A"}</Text>
+              <Text>{i18n.t("version")}: {Updates.updateId ? Updates.updateId : "N/A"}</Text>
             </View>
 
           </Menu>

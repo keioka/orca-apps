@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, StyleSheet, View, KeyboardAvoidingView } from 'react-native'
-import { Button, TextInput, Text, Portal, Modal } from 'react-native-paper'
+import { Alert, StyleSheet, View, KeyboardAvoidingView, Image } from 'react-native'
+import { Button, TextInput, Portal, Modal } from 'react-native-paper'
 import { useAppSelector } from '../redux/hooks'
 import { useAppDispatch } from '../redux/hooks'
 import { signUpWithEmail, signInWithEmail } from '../redux/features/auth'
+import { i18n } from '../locales'
+import { Text } from '../components/Text'
 
 export function AuthScreen({ navigation }) {
   const [email, setEmail] = useState('')
@@ -35,22 +37,26 @@ export function AuthScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Portal style={{ padding: 8 }}>
+      <Portal style={{ padding: 24 }}>
         <Modal
           visible={signupLoading || singinLoading}
           dismissable={false}
           contentContainerStyle={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}
         >
-          <Text style={{ fontSize: 24, textAlign: "center" }}>Loading...</Text>
+          <Text style={{ fontSize: 12, textAlign: "center" }}>Loading...</Text>
         </Modal>
       </Portal>
+      <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 48 }}>
+        <Image source={require('../assets/logo.png')} style={{ width: 100, height: 100 }} />
+        <Text weight='Bold' style={{ fontSize: 24 }}>ORCA</Text>
+      </View>
       <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={64} style={{ width: "90%" }} contentContainerStyle={{ borderTopColor: "#f4f4f4", borderTopWidth: 1, width: "100%", justifyContent: "center", alignItems: "center" }}>
 
         {isSignin && <>
-          <Text style={{ fontSize: 24 }}>Sign in</Text>
+          <Text style={{ fontSize: 24 }}>{i18n.t("login")}</Text>
           <View style={[styles.verticallySpaced, styles.mt20]}>
             <TextInput
-              label="Email"
+              label={i18n.t("email")}
               leftIcon={{ type: 'font-awesome', name: 'envelope' }}
               onChangeText={(text) => setEmail(text)}
               value={email}
@@ -61,7 +67,7 @@ export function AuthScreen({ navigation }) {
           </View>
           <View style={styles.verticallySpaced}>
             <TextInput
-              label="Password"
+              label={i18n.t("password")}
               leftIcon={{ type: 'font-awesome', name: 'lock' }}
               onChangeText={(text) => setPassword(text)}
               value={password}
@@ -75,18 +81,18 @@ export function AuthScreen({ navigation }) {
             {errorSigninMessage && <Text style={styles.alert}>{errorSigninMessage}</Text>}
           </View>
           <View style={[styles.verticallySpaced, styles.mt20]}>
-            <Button disabled={singinLoading} onPress={handleSignin} mode="contained" disabled={isSigninDisabled}>Sign in</Button>
+            <Button disabled={singinLoading} onPress={handleSignin} mode="contained" disabled={isSigninDisabled}>{i18n.t("loginAction")}</Button>
           </View>
           <View style={styles.verticallySpaced}>
-            <Button onPress={() => setSignin(false)} mode="text" >Sign up</Button>
+            <Button onPress={() => setSignin(false)} mode="text" >{i18n.t("signupAction")}</Button>
           </View>
         </>
         }
         {!isSignin && <>
-          <Text style={{ fontSize: 24 }}>Sign up</Text>
+          <Text style={{ fontSize: 24 }}>{i18n.t("signup")}</Text>
           <View style={[styles.verticallySpaced, styles.mt20]}>
             <TextInput
-              label="Email"
+              label={i18n.t("email")}
               leftIcon={{ type: 'font-awesome', name: 'envelope' }}
               onChangeText={(text) => setEmail(text)}
               value={email}
@@ -97,7 +103,7 @@ export function AuthScreen({ navigation }) {
           </View>
           <View style={styles.verticallySpaced}>
             <TextInput
-              label="Password"
+              label={i18n.t("password")}
               leftIcon={{ type: 'font-awesome', name: 'lock' }}
               onChangeText={(text) => setPassword(text)}
               value={password}
@@ -109,7 +115,7 @@ export function AuthScreen({ navigation }) {
           </View>
           <View style={styles.verticallySpaced}>
             <TextInput
-              label="Password Confirmation"
+              label={i18n.t("confirmPassword")}
               leftIcon={{ type: 'font-awesome', name: 'lock' }}
               onChangeText={(text) => setPasswordConfirmation(text)}
               value={passwordConfirmation}
@@ -124,10 +130,10 @@ export function AuthScreen({ navigation }) {
             {errorSignupMessage && <Text style={styles.alert}>{errorSignupMessage}</Text>}
           </View>
           <View style={styles.verticallySpaced}>
-            <Button disabled={signupLoading} onPress={handleSignup} mode="contained" disabled={isSignupDisabled}>Sign up</Button>
+            <Button disabled={signupLoading} onPress={handleSignup} mode="contained" disabled={isSignupDisabled}>{i18n.t("signupAction")}</Button>
           </View>
           <View style={styles.verticallySpaced}>
-            <Button onPress={() => setSignin(true)} mode="text">Sign in</Button>
+            <Button onPress={() => setSignin(true)} mode="text">{i18n.t("loginAction")}</Button>
           </View>
         </>
         }
@@ -141,7 +147,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 40,
     padding: 12,
-    justifyContent: "center",
+    // justifyContent: "center",
+    paddingTop: 48,
     alignItems: "center",
     width: "100%"
   },
