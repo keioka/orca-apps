@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useCallback, } from 'react';
 import { StyleSheet, ScrollView, SafeAreaView, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Modal, Portal, Snackbar, Button, Menu } from 'react-native-paper';
 import { CardArticle } from '../components/CardArticle';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchMaterials, clearError } from '../redux/features/materials';
 import { createLesson, clearCreatedLessonId, clearError as clearErrorLesson } from '../redux/features/lessons';
@@ -12,6 +11,10 @@ import { categories } from '../helpers/categories';
 import { Text } from '../components/Text';
 import { fetchLessons } from '../redux/features/lessons';
 import * as Updates from 'expo-updates';
+import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { analytics, ACTION } from '../helpers/mixpanel';
 
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
@@ -128,7 +131,9 @@ export function FeedScreen({ navigation }) {
   const onPressStart = ({ materialId, url, lessonId }: { materialId: string, url: string, lessonId: string }) => {
     if (!lessonId) {
       dispatch(createLesson({ materialId }))
+      analytics.track(ACTION.startNewLesson, { materialId })
     } else {
+      analytics.track(ACTION.reVisitLesson, { materialId, lessonId })
       navigation.navigate('Lesson', { url, lessonId })
     }
   }
@@ -239,12 +244,59 @@ export function FeedScreen({ navigation }) {
                 </View>
               </TouchableOpacity>
             }>
-            <Menu.Item onPress={handleSignOut} title="Signout" style={{ borderBottomWidth: 1, width: "100%", paddingRight: 0, borderBottomColor: "#e4e4e4" }} />
-            <Menu.Item onPress={() => setShouldShowMenu(false)} title="Close" style={{ borderBottomWidth: 1, width: "100%", paddingRight: 0, borderBottomColor: "#e4e4e4" }} />
-            <Menu.Item onPress={handleForceUpdate} title="Force update" />
-            <View style={{ backgroundColor: "#e4e4e4", width: "100%", padding: 18 }}>
+            <Menu.Item
+              onPress={handleSignOut}
+              title={
+                <View style={{ justifyContent: "center", flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ marginRight: 8 }}>
+                    <Feather name="log-out" size={24} color="black" />
+                  </View>
+                  <Text>Sign out</Text>
+                </View>
+              }
+              style={{ width: "100%", paddingRight: 0, borderBottomColor: "#e4e4e4" }}
+            />
+            <Menu.Item
+              onPress={() => setShouldShowMenu(false)}
+              title={
+                <View style={{ justifyContent: "center", flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ marginRight: 8 }}>
+                    <Ionicons name="close" size={24} color="black" />
+                  </View>
+                  <Text>Close</Text>
+                </View>
+              }
+              style={{ width: "100%", paddingRight: 0, borderBottomColor: "#e4e4e4" }}
+            />
+            <Menu.Item
+              onPress={handleForceUpdate}
+              title={
+                <View style={{ justifyContent: "center", flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ marginRight: 8 }}>
+                    <MaterialIcons name="system-update" size={24} color="black" />
+                  </View>
+                  <Text>Force update</Text>
+                </View>
+              }
+            />
+            <Menu.Item
+              onPress={handleForceUpdate}
+              title={
+                <View style={{ justifyContent: "center", flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ marginRight: 8 }}>
+                    <MaterialIcons name="bug-report" size={24} color="black" />
+                  </View>
+                  <Text>Report bug</Text>
+                </View>
+              }
+            />
+            <View style={{ backgroundColor: "#f2f2f2", width: "100%", padding: 18 }}>
               <Text>Last updated at: {Updates.createdAt ? Updates.createdAt.toString() : "No updates"}</Text>
             </View>
+            <View style={{ backgroundColor: "#f2f2f2", width: "100%", padding: 18 }}>
+              <Text>Update Version: {Updates.updateId ? Updates.updateId : "N/A"}</Text>
+            </View>
+
           </Menu>
         </View>
         <ScrollView
