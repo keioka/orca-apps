@@ -38,9 +38,7 @@ import moment from 'moment';
 import { analytics } from './helpers/mixpanel';
 import * as SecureStore from 'expo-secure-store';
 import { v4 as uuidv4 } from 'uuid';
-import { polyfillWebCrypto } from "expo-standard-web-crypto";
 
-polyfillWebCrypto();
 
 SplashScreen.preventAutoHideAsync();
 
@@ -333,17 +331,17 @@ const theme = {
 };
 
 
-async function fetchDeviceId() {
-  const DEVICE_ID_KEY = 'secure_deviceid';
-  let fetchUUID = await SecureStore.getItemAsync(DEVICE_ID_KEY);
-  if (fetchUUID) {
-    console.log({ fetchUUID })
-    return fetchUUID;
-  }
-  let uuid = uuidv4();
-  await SecureStore.setItemAsync(DEVICE_ID_KEY, uuid);
-  return uuid;
-}
+// async function fetchDeviceId() {
+//   const DEVICE_ID_KEY = 'secure_deviceid';
+//   let fetchUUID = await SecureStore.getItemAsync(DEVICE_ID_KEY);
+//   if (fetchUUID) {
+//     console.log({ fetchUUID })
+//     return fetchUUID;
+//   }
+//   let uuid = uuidv4();
+//   await SecureStore.setItemAsync(DEVICE_ID_KEY, uuid);
+//   return uuid;
+// }
 
 Sentry.init({
   dsn: "https://e25048ab84e9c5d338110cc22f6fb409@o4506180296966144.ingest.sentry.io/4506180298735616",
@@ -358,18 +356,18 @@ function App() {
 
     }
 
-    async function setDeviceId() {
-      try {
-        const deviceId = await fetchDeviceId()
-        console.log("deviceId", deviceId)
-        analytics.identify(deviceId)
-      } catch (error) {
-        console.error(error)
-        throw error
-      }
-    }
+    // async function setDeviceId() {
+    //   try {
+    //     const deviceId = await fetchDeviceId()
+    //     console.log("deviceId", deviceId)
+    //     analytics.identify(deviceId)
+    //   } catch (error) {
+    //     console.error(error)
+    //     throw error
+    //   }
+    // }
 
-    setDeviceId()
+    // setDeviceId()
   }, [])
 
   return (
