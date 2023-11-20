@@ -7,6 +7,7 @@ import { Button } from './Button';
 import { Image } from 'expo-image';
 import { Text, Title } from './Text';
 import moment from 'moment';
+import { i18n } from '../locales';
 
 interface CardArticleProps {
   item: {
@@ -92,7 +93,7 @@ export const CardArticle = ({
         <View style={styles.sectionActionButtons}>
           {lessonId &&
             <Chip style={styles.containerChip} textStyle={styles.textChip} compact>
-              Already started
+              {i18n.t("alreadyStarted")}
             </Chip>
           }
         </View>

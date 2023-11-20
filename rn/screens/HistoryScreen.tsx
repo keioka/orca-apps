@@ -8,6 +8,7 @@ import { Dimensions } from "react-native";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useEffect } from 'react';
 import { fetchLessons, createLesson } from '../redux/features/lessons';
+import { i18n } from '../locales';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -91,7 +92,7 @@ export function HistoryScreen({ navigation }) {
           /> */}
         </View>
         <View style={styles.sectionSubtitle}>
-          <Text style={styles.subtitle}>Past Lessons</Text>
+          <Text style={styles.subtitle}>{i18n.t("pastLesson")}</Text>
         </View>
         {/* {feed.map((item, index) => (
           <CardArticle

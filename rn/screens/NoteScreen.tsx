@@ -8,6 +8,7 @@ import { CardGrammar } from '../components/CardGrammar';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchSavedVocab, fetchSavedParaphrases } from '../redux/features/note';
 import { Text } from '../components/Text';
+import { i18n } from '../locales';
 
 enum NoteTab {
   Vocabulary = 'vocabulary',
@@ -33,13 +34,13 @@ export function NoteScreen() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <TouchableOpacity onPress={() => setTab(NoteTab.Vocabulary)}>
             <View style={[styles.button, tab === NoteTab.Vocabulary ? styles.menuButtonActive : null]}>
-              <Text style={[styles.textMenu, tab === NoteTab.Vocabulary ? styles.textMenuActive : null]} weight='SemiBold'>Vocabulary</Text>
+              <Text style={[styles.textMenu, tab === NoteTab.Vocabulary ? styles.textMenuActive : null]} weight='SemiBold'>{i18n.t("vocabulary")}</Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => setTab(NoteTab.Phrase)}>
             <View style={[styles.button, tab === NoteTab.Phrase ? styles.menuButtonActive : null]}>
-              <Text style={[styles.textMenu, tab === NoteTab.Phrase ? styles.textMenuActive : null]} weight='SemiBold'>Phrase</Text>
+              <Text style={[styles.textMenu, tab === NoteTab.Phrase ? styles.textMenuActive : null]} weight='SemiBold'>{i18n.t("paraphrase")}</Text>
             </View>
           </TouchableOpacity>
 

@@ -10,6 +10,9 @@ defaultConfig.resolver.extraNodeModules = {
   '@shared': sharedPath
 }
 
+// defaultConfig.resolver.sourceExts.push('mjs');
+
+
 
 module.exports = {
   ...defaultConfig,
