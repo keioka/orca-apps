@@ -204,13 +204,13 @@ export function FeedScreen({ navigation }) {
             <View>
               <ActivityIndicator size="large" color="#fff" />
               <View style={{ height: "100%", width: "100%", marginTop: 16 }}>
-                <Text style={{ color: "#fff", fontSize: 24, textAlign: "center" }}>Creating New Lesson</Text>
+                <Text style={{ color: "#fff", fontSize: 24, textAlign: "center" }}>{i18n.t("navigatingToLesson")}</Text>
                 <View style={{ marginTop: 16, backgroundColor: "#fff", padding: 16, borderRadius: 8 }}>
-                  <Text style={{ fontSize: 22 }}>Once it is created...</Text>
+                  <Text style={{ fontSize: 22 }}>{i18n.t("instructionsLesson")}</Text>
 
-                  <Text style={{ fontSize: 18 }}>1. Read the new article</Text>
-                  <Text style={{ fontSize: 18 }}>2. Check the summary and vocabulary</Text>
-                  <Text style={{ fontSize: 18 }}>3. Chat with AI</Text>
+                  <Text style={{ fontSize: 18 }}>1. {i18n.t("instructionOne")}</Text>
+                  <Text style={{ fontSize: 18 }}>2. {i18n.t("instructionTwo")}</Text>
+                  <Text style={{ fontSize: 18 }}>3. {i18n.t("instructionThree")}</Text>
                 </View>
               </View>
             </View>

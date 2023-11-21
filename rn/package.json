@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "expo prebuild; eas build -p ios --clear-cache --profile production",
+    "build:preview": "expo prebuild; eas build -p ios --clear-cache --profile preview",
     "build:local": "STAGE=prod expo prebuild; STAGE=prod eas build -p ios --clear-cache --profile production",
     "start": "expo start --dev-client",
     "start:ios": "STAGE=localdev npx expo run:ios",
