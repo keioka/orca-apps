@@ -26,5 +26,13 @@
   "forceUpdate": "Force Update",
   "reportBug": "Report Bug",
   "lastUpdatedAt": "Last Updated At",
-  "version": "Version"
+  "version": "Version",
+  "K5": "Beginner (K5)",
+  "5Y": "Elementary (5Y)",
+  "A1": "Beginner (A1)",
+  "A2": "Elementary (A2)",
+  "B1": "Intermediate (B1)",
+  "B2": "Upper Intermediate (B2)",
+  "C1": "Advanced (C1)",
+  "C2": "Proficient (C2)"
 }

@@ -17,7 +17,8 @@ import { Text } from '../components/Text';
 import { Browser } from '../components/Browser';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { fetchSavedVocab, clearIsSavedVocab, clearErrorSaveVocab } from '../redux/features/note';
-import i18n from 'i18n-js';
+import { i18n } from '../locales';
+import LottieView from 'lottie-react-native';
 
 enum LearningModeTab {
   Article = 'article',
@@ -25,16 +26,16 @@ enum LearningModeTab {
   Vocabulary = 'vocabulary',
 }
 
-const levels = ['K5', '5Y', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+const levels = ['5Y', 'K5', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 const levelsMap = {
-  K5: 'Beginner (K5)',
-  '5Y': 'Elementary (5Y)',
-  A1: 'Beginner (A1)',
-  A2: 'Elementary (A2)',
-  B1: 'Intermediate (B1)',
-  B2: 'Upper Intermediate (B2)',
-  C1: 'Advanced (C1)',
-  C2: 'Proficient (C2)'
+  '5Y': i18n.t("5Y"),
+  K5: i18n.t("K5"),
+  A1: i18n.t("A1"),
+  A2: i18n.t("A2"),
+  B1: i18n.t("B1"),
+  B2: i18n.t("B2"),
+  C1: i18n.t("C1"),
+  C2: i18n.t("C2"),
 }
 
 function SummaryTab({ materialId }: { materialId: string }) {
@@ -64,9 +65,13 @@ function SummaryTab({ materialId }: { materialId: string }) {
     dispatch(fetchSummaries({ materialId, levels: [level] }))
   }
 
+  const handleRefetch = () => {
+    dispatch(fetchSummaries({ materialId, levels: [level] }))
+  }
+
   return (
     <>
-      <View style={{ height: 64, paddingHorizontal: 4, paddingTop: 24, width: "100%" }}>
+      <View style={{ paddingHorizontal: 4, paddingTop: 24, width: "100%" }}>
         <ScrollView
           style={{ flexGrow: 1, }}
           contentContainerStyle={{ flexGrow: 1, }}
@@ -93,7 +98,6 @@ function SummaryTab({ materialId }: { materialId: string }) {
       >
 
         <View style={styles.section}>
-          <Text style={styles.subtitleKeyPoints}>Summary</Text>
           {summary &&
             <CardSummary
               content={summary.content}
@@ -101,7 +105,26 @@ function SummaryTab({ materialId }: { materialId: string }) {
           }
           {isFetchingSummary &&
             <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
-              <ActivityIndicator size="large" color="#6BD3F4" />
+              <LottieView
+                source={{ uri: "https://lottie.host/f5d3cdb1-d14c-4e57-9287-df6f93f302af/1yKt5SJGbU.json" }}
+                autoPlay
+                loop
+                style={{
+                  width: 400,
+                  height: 300,
+                }}
+              />
+              <Text style={{ marginTop: 16 }} weight='Bold'>{i18n.t("creatingSummary")}</Text>
+              <Text style={{ marginTop: 16 }}>{i18n.t("creatingSummaryTime")}</Text>
+            </View>
+          }
+          {
+            !summary && !isFetchingSummary &&
+            <View style={{ width: "100%", alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+              <Text style={{ marginTop: 16 }} weight='Bold'>{i18n.t("noSummary")}</Text>
+              <View style={{ marginTop: 16 }}>
+                <Button onPress={handleRefetch} mode="contained">{i18n.t("refetchSummary")}</Button>
+              </View>
             </View>
           }
         </View>
@@ -150,7 +173,6 @@ function VocabularyTab({ materialId }: { materialId: string }) {
   const isSavedVocab = useAppSelector(state => state.note.isSavedVocab)
   const errorSaveVocab = useAppSelector(state => state.note.errors.saveVocabulary)
 
-  console.log("vocabs", vocabs)
   useEffect(() => {
     if (vocabs && vocabs.length > 0) return
 
@@ -164,7 +186,6 @@ function VocabularyTab({ materialId }: { materialId: string }) {
     intervalID.current = interval
 
     return () => {
-      console.log("componentUnmount", intervalID)
       clearInterval(intervalID.current);
     }
   }, [])
@@ -218,9 +239,18 @@ function VocabularyTab({ materialId }: { materialId: string }) {
           )
         })}
         {vocabs.length === 0 && (
-          <View style={{ width: "100%", height: 240, alignItems: 'center', justifyContent: 'center' }}>
-            <ActivityIndicator size="large" color="#007991" />
-            <Text style={{ marginTop: 16 }}>Loading...</Text>
+          <View style={{ width: "100%", alignItems: 'center', justifyContent: 'center' }}>
+            <LottieView
+              source={{ uri: "https://lottie.host/f5d3cdb1-d14c-4e57-9287-df6f93f302af/1yKt5SJGbU.json" }}
+              autoPlay
+              loop
+              style={{
+                width: 400,
+                height: 300,
+              }}
+            />
+            <Text style={{ marginTop: 16 }} weight='Bold'>{i18n.t("creatingVocabulary")}</Text>
+            <Text style={{ marginTop: 16 }}>{i18n.t("creatingVocabularyTime")}</Text>
           </View>
         )}
 
@@ -282,9 +312,19 @@ function ArticleTab({ lesson }: { lesson: {} }) {
             ))} */}
           </ScrollView>
         </View> :
-        <View style={{ height: "100%", width: "100%", alignContent: "center", justifyContent: "center" }}>
-          <View style={{ padding: 24 }}>
-            <Button mode="contained" onPress={() => { setShouldShowBrowser(true) }} style={{ backgroundColor: "#2852A4" }}>Go to the article page</Button>
+        <View style={{ height: "100%", width: "100%", alignContent: "center", padding: 24 }}>
+          <View style={{ backgroundColor: "#f6f6f6", height: 140, marginBottom: 12 }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>1</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>{i18n.t("instructionOne")}</Text>
+            <Button mode="contained" onPress={() => { setShouldShowBrowser(true) }} style={{ backgroundColor: "#2852A4" }}>{i18n.t("goToArticle")}</Button>
+          </View>
+          <View style={{ padding: 24, backgroundColor: "#f6f6f6", height: 140, marginBottom: 12 }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>2</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>{i18n.t("instructionTwo")}</Text>
+          </View>
+          <View style={{ padding: 24, backgroundColor: "#f6f6f6", height: 140 }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>3</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>{i18n.t("instructionThree")}</Text>
           </View>
           {/* {shouldEmbed && <WebView
             startInLoadingState
@@ -342,14 +382,14 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
         <View style={[styles.tabWrapper]}>
           <TouchableOpacity onPress={() => setTab(LearningModeTab.Summary)}>
             <View style={tab === LearningModeTab.Summary ? styles.buttonActive : null}>
-              <Text style={[styles.textMenu, tab === LearningModeTab.Summary ? { color: "#242424" } : null]}>Summary</Text>
+              <Text style={[styles.textMenu, tab === LearningModeTab.Summary ? { color: "#242424" } : null]}>{i18n.t("summary")}</Text>
             </View>
           </TouchableOpacity>
         </View>
         <View style={[styles.tabWrapper]}>
           <TouchableOpacity onPress={() => setTab(LearningModeTab.Vocabulary)}>
             <View style={tab === LearningModeTab.Vocabulary ? styles.buttonActive : null}>
-              <Text style={[styles.textMenu, tab === LearningModeTab.Vocabulary ? { color: "#242424" } : null]}>Vocabulary</Text>
+              <Text style={[styles.textMenu, tab === LearningModeTab.Vocabulary ? { color: "#242424" } : null]}>{i18n.t("vocabulary")}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -374,7 +414,7 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
           <View style={{ marginRight: 4 }}>
             <Ionicons name="chatbubble-ellipses" size={18} color="white" />
           </View>
-          <Text style={styles.buttonTalkMode}>Go to {Mode.Talk} Mode</Text>
+          <Text style={styles.buttonTalkMode} weight='Bold'>{i18n.t("goToTalkMode")}</Text>
         </View>
       </TouchableOpacity >
     </View >
