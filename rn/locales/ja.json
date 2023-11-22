@@ -1,6 +1,6 @@
 {
   "home": "ホーム",
-  "history": "履歴",
+  "history": "学習成果",
   "note": "ノート",
   "pastLesson": "過去のレッスン",
   "vocabulary": "単語帳",
@@ -46,5 +46,10 @@
   "B1": "中級",
   "B2": "中上級",
   "C1": "上級",
-  "C2": "熟練"
+  "C2": "熟練",
+  "progress": "学習進捗",
+  "numberOfLesson": "レッスン数",
+  "numberOfWordSpoken": "話した単語数",
+  "numberOfSavedVocabulary": "新規単語保存数",
+  "numberOfSavedParaphrase": "言い換え表現数"
 }

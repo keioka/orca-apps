@@ -58,7 +58,7 @@ client.defineJob({
         const response = await io.openai.backgroundCreateChatCompletion(
           `background-chat-completion-${id}`,
           {
-            model: 'gpt-4-1106-preview',
+            model: 'gpt-3.5-turbo-1106',
             temperature: 0,
             messages: [
               {

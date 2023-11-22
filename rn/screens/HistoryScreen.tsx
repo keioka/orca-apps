@@ -1,55 +1,25 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, ScrollView, Text, View } from 'react-native';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import { CardArticle } from '../components/CardArticle';
-import {
-  BarChart,
-} from "react-native-chart-kit";
-import { Dimensions } from "react-native";
+import { UserStats } from '../components/UserStats';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useEffect } from 'react';
 import { fetchLessons, createLesson } from '../redux/features/lessons';
+import { fetchCurrentUserStats } from '../redux/features/auth';
 import { i18n } from '../locales';
-
-const screenWidth = Dimensions.get("window").width;
-
-const chartConfig = {
-  backgroundGradientFrom: "#007991",
-  backgroundGradientFromOpacity: 1,
-  backgroundGradientTo: "#007991",
-  backgroundGradientToOpacity: 0.7,
-  decimalPlaces: 0, // optional, defaults to 2dp
-  color: (opacity = 1) => `rgba(255, 255, 255, 1)`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 1,
-  useShadowColorFromDataset: false, // optional
-  style: {
-    paddingLeft: 0,
-    borderRadius: 16,
-  },
-  propsForDots: {
-    r: "0",
-    strokeWidth: "0",
-    stroke: "#fff"
-  },
-  propsForVerticalLabels: {
-    style: {
-      paddingLeft: 0,
-    }
-  },
-  propsForHorizontalLabels: {
-    style: {
-      paddingLeft: 0,
-    }
-  },
-};
+import { Text } from '../components/Text';
+import LottieView from 'lottie-react-native';
 
 export function HistoryScreen({ navigation }) {
   const { lessons } = useAppSelector((state) => state.lesson);
+  const stats = useAppSelector((state) => state.auth.stats);
+  const fetchingCurrentUserStats = useAppSelector((state) => state.auth.fetchingCurrentUserStats);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchLessons())
+    dispatch(fetchCurrentUserStats())
   }, []);
 
   const onPressStart = ({ url, lessonId }: { url: string, lessonId: string }) => {
@@ -60,39 +30,32 @@ export function HistoryScreen({ navigation }) {
     navigation.navigate('Lesson', { url, lessonId })
   }
 
-  const data = {
-    labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-    datasets: [
-      {
-        data: [3, 2, 1, 5, 6, 3, 2]
-      }
-    ]
-  };
-
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
         {/* <View style={styles.sectionSubtitle}>
           <Text style={styles.subtitle}>Progress this week</Text>
         </View> */}
-        <View style={{ width: "90%" }}>
-          {/* <BarChart
-            style={{ marginVertical: 8, borderRadius: 16 }}
-            data={data}
-            width={screenWidth * 0.9}
-            height={220}
-            yAxisLabel=""
-            chartConfig={chartConfig}
-            verticalLabelRotation={30}
-            style={{
-              marginVertical: 0,
-              paddingLeft: 0,
-              borderRadius: 16,
-            }}
-          /> */}
-        </View>
         <View style={styles.sectionSubtitle}>
-          <Text style={styles.subtitle}>{i18n.t("pastLesson")}</Text>
+          <Text style={styles.subtitle} weight='Bold'>{i18n.t("progress")}</Text>
+        </View>
+        {fetchingCurrentUserStats && <View style={{ alignItems: "center" }}>
+          <LottieView
+            source={{ uri: "https://lottie.host/3bdc5a86-4c2b-404b-bf95-8f633427dbff/hvfRexUsjO.json" }}
+            autoPlay
+            loop
+            style={{
+              width: 400,
+              height: 200,
+            }}
+          />
+          <Text>{i18n.t("loading")}</Text>
+        </View>}
+        {!fetchingCurrentUserStats && stats && <View style={{ width: "100%" }}>
+          <UserStats stats={stats} />
+        </View>}
+        <View style={styles.sectionSubtitle}>
+          <Text style={styles.subtitle} weight='Bold'>{i18n.t("pastLesson")}</Text>
         </View>
         {/* {feed.map((item, index) => (
           <CardArticle
@@ -129,13 +92,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionSubtitle: {
-    paddingTop: 24,
-    paddingBottom: 8,
+    paddingTop: 0,
+    paddingBottom: 0,
     width: '90%',
     justifyContent: 'flex-start',
   },
   subtitle: {
     textAlign: 'left',
-    fontSize: 24,
+    fontSize: 18,
   }
 });
