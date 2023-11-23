@@ -11,11 +11,19 @@ interface PublishersState {
   isLoadingPublishers: boolean;
   isCreatingFollow: boolean;
   isFetchingFollow: boolean;
+  isInitFollowPublishers: boolean;
   hasSuccessCreateFollow: boolean;
   error: string | null;
 }
 
-const initialState: PublishersState = { publishers: [], followPublishers: [], isLoadingPublishers: false, error: null, hasSuccessCreateFollow: false };
+const initialState: PublishersState = {
+  publishers: [],
+  followPublishers: [],
+  isLoadingPublishers: false,
+  error: null,
+  hasSuccessCreateFollow: false,
+  isInitFollowPublishers: false,
+};
 
 const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
@@ -123,6 +131,7 @@ const publisherSlice = createSlice({
         state.isFetchingFollow = false
         state.followPublishers = uniqBy([...state.followPublishers, ...action.payload.followPublishers], "publisherId");
         state.followCategories = action.payload.categories;
+        state.isInitFollowPublishers = true
       })
       .addCase(fetchFollowPublishers.rejected, (state, action: PayloadAction<string | null>) => {
         state.isFetchingFollow = false
@@ -138,6 +147,7 @@ const publisherSlice = createSlice({
           state.isCreatingFollow = false
           state.isFetchingFollow = false
           state.error = null
+          state.isInitFollowPublishers = false
         }
       )
 

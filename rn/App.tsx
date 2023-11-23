@@ -39,6 +39,7 @@ import { analytics } from './helpers/mixpanel';
 import * as SecureStore from 'expo-secure-store';
 import uuid from 'react-native-uuid';
 import { i18n } from './locales';
+import { fetchCurrentUser } from './redux/features/auth';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -225,10 +226,13 @@ const Root = () => {
   const appState = useRef(AppState.currentState);
   const tokenRefreshInterval = useRef<Timer>(null)
   const [session, errorSession] = useAppSelector((state) => [state.auth.session, state.auth.error])
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
+  const isFetchingCurrentUser = useAppSelector((state) => state.auth.isFetchingCurrentUser)
+
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isInit, setIsInit] = useState(false)
-  const isLogin = !!session
+  const isLogin = !!session && !!currentUser
 
   const [fontsLoaded] = useFonts(fonts);
 
@@ -247,10 +251,12 @@ const Root = () => {
             console.warn("hasPastedOneHour", { hasPastedOneHour })
             accessToken = await auth.currentUser?.getIdToken()
           }
-
           dispatch(setSession({
             accessToken: accessToken,
             uid: user.uid,
+          }))
+          dispatch(fetchCurrentUser({
+            accessToken: accessToken,
           }))
         } else {
           dispatch(setSession(null))
@@ -299,12 +305,12 @@ const Root = () => {
 
   useEffect(() => {
     async function hide() {
-      if (!isLoading && isInit && fontsLoaded) {
+      if (!isLoading && isInit && !isFetchingCurrentUser && fontsLoaded) {
         await SplashScreen.hideAsync();
       }
     }
     hide()
-  }, [isLoading, fontsLoaded])
+  }, [isLoading, isFetchingCurrentUser, isInit, fontsLoaded])
 
   if (error) {
     return (

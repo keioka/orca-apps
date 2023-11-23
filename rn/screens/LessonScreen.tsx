@@ -66,7 +66,7 @@ function SummaryTab({ materialId }: { materialId: string }) {
   }
 
   const handleRefetch = () => {
-    dispatch(fetchSummaries({ materialId, levels: [level] }))
+    dispatch(fetchSummaries({ materialId, levels: [tabLevel] }))
   }
 
   return (

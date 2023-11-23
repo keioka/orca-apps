@@ -1,5 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { useState, useCallback } from 'react';
+import { StyleSheet, ScrollView, View, RefreshControl } from 'react-native';
 import { CardArticle } from '../components/CardArticle';
 import { UserStats } from '../components/UserStats';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -11,11 +11,11 @@ import { Text } from '../components/Text';
 import LottieView from 'lottie-react-native';
 
 export function HistoryScreen({ navigation }) {
+  const dispatch = useAppDispatch();
+  const [refreshing, setRefreshing] = useState(false);
   const { lessons } = useAppSelector((state) => state.lesson);
   const stats = useAppSelector((state) => state.auth.stats);
   const fetchingCurrentUserStats = useAppSelector((state) => state.auth.fetchingCurrentUserStats);
-
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchLessons())
@@ -30,9 +30,21 @@ export function HistoryScreen({ navigation }) {
     navigation.navigate('Lesson', { url, lessonId })
   }
 
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    dispatch(fetchLessons())
+    dispatch(fetchCurrentUserStats())
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
         {/* <View style={styles.sectionSubtitle}>
           <Text style={styles.subtitle}>Progress this week</Text>
         </View> */}

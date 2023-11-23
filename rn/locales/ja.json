@@ -11,6 +11,7 @@
   "grammar": "文法",
   "article": "記事",
   "loading": "読み込み中...",
+  "editRSSFeed": "フィードを編集",
   "navigatingToLesson": "単語帳を作成中...",
   "instructionsLesson": "学習の流れ",
   "instructionOne": "記事を読む",
@@ -51,5 +52,6 @@
   "numberOfLesson": "レッスン数",
   "numberOfWordSpoken": "話した単語数",
   "numberOfSavedVocabulary": "新規単語保存数",
-  "numberOfSavedParaphrase": "言い換え表現数"
+  "numberOfSavedParaphrase": "言い換え表現数",
+  "noData": "データがありません"
 }

@@ -9,6 +9,25 @@ export function getPublisherByDomain(domain: string) {
   })
 }
 
+export function getRecommendedPublishers() {
+  return prisma.publisher.findMany({
+    where: {
+      isRecommended: true
+    }
+  })
+}
+
+export async function followRecommnededPublishers({ userId }: { userId: string }) {
+  const publishers = await getRecommendedPublishers()
+  const data = publishers.map((publisher) => {
+    return { publisherId: publisher.id, userId: userId }
+  })
+
+  console.log(data)
+  return followPublishers({ publishers: data })
+}
+
+
 export function getPublisherById(id: string) {
   return prisma.publisher.findUnique({
     where: {
