@@ -34,6 +34,8 @@ export function FeedScreen({ navigation }) {
   const isInitMaterials = useAppSelector((state) => state.material.isInitMaterials)
   const followPublishers = useAppSelector((state) => state.publisher.followPublishers)
   const followCategories = useAppSelector((state) => state.publisher.followCategories)
+  const isInitFollowPublishers = useAppSelector((state) => state.publisher.isInitFollowPublishers)
+  const isFetchingMaterials = useAppSelector((state) => state.material.isFetchingMaterials)
 
   useEffect(() => {
     dispatch(fetchLessons())
@@ -307,6 +309,15 @@ export function FeedScreen({ navigation }) {
           showsHorizontalScrollIndicator={false}
           horizontal
         >
+          <TouchableOpacity key="category_add" onPress={handleNavigateToCategory}>
+            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent", backgroundColor: "#FFD744", borderTopRightRadius: 8, borderBottomRightRadius: 0 }]}>
+              <View style={{ height: 24 }}>
+                <Ionicons name="settings-outline" size={24} color="#242424" />
+              </View>
+              <Text style={{ marginTop: 8, fontSize: 12 }} weight='Bold'>{i18n.t("editRSSFeed")}</Text>
+            </View>
+          </TouchableOpacity>
+
           <TouchableOpacity key="all" onPress={() => setActiveCategory("all")}>
             <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#2FABE8" }]}>
               <View style={{ height: 24 }}>
@@ -328,14 +339,7 @@ export function FeedScreen({ navigation }) {
               </TouchableOpacity>
             )
           })}
-          <TouchableOpacity key="category_add" onPress={handleNavigateToCategory}>
-            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }]}>
-              <View style={{ height: 24 }}>
-                <Ionicons name="add-circle-outline" size={24} color="#242424" />
-              </View>
-              <Text style={{ marginTop: 8, }}>Add</Text>
-            </View>
-          </TouchableOpacity>
+
 
         </ScrollView>
         <ScrollView
@@ -346,13 +350,13 @@ export function FeedScreen({ navigation }) {
           }
           onMomentumScrollEnd={handleEndRefresh}
         >
-          {!isInitMaterials && (
+          {!isInitFollowPublishers && isFetchingMaterials && (
             <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
               <ActivityIndicator size="large" color="#242424" />
             </View>
           )}
           {
-            isInitMaterials && materials.length === 0 && (
+            isInitFollowPublishers && followPublishers.length === 0 && (
               <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
                 <Text style={{ color: "#242424" }}>No materials</Text>
                 <Button onPress={handleNavigateToCategory} mode="contained">Add News Feeds</Button>

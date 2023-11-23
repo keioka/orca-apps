@@ -7,202 +7,6 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { i18n } from "../locales";
 import moment from "moment";
 
-const sampleData = {
-  "lessonsByDay": [
-    {
-      "date": "2023-11-01T00:00:00.000Z",
-      "label": "11/01",
-      "value": 12
-    },
-    {
-      "date": "2023-10-30T00:00:00.000Z",
-      "label": "10/30",
-      "value": 2
-    },
-    {
-      "date": "2023-11-02T00:00:00.000Z",
-      "label": "11/02",
-      "value": 6
-    },
-    {
-      "date": "2023-11-03T00:00:00.000Z",
-      "label": "11/03",
-      "value": 1
-    },
-    {
-      "date": "2023-11-04T00:00:00.000Z",
-      "label": "11/04",
-      "value": 5
-    },
-    {
-      "date": "2023-11-05T00:00:00.000Z",
-      "label": "11/05",
-      "value": 1
-    },
-    {
-      "date": "2023-11-06T00:00:00.000Z",
-      "label": "11/06",
-      "value": 5
-    },
-    {
-      "date": "2023-11-07T00:00:00.000Z",
-      "label": "11/07",
-      "value": 13
-    },
-    {
-      "date": "2023-11-08T00:00:00.000Z",
-      "label": "11/08",
-      "value": 12
-    },
-    {
-      "date": "2023-11-09T00:00:00.000Z",
-      "label": "11/09",
-      "value": 5
-    },
-    {
-      "date": "2023-11-10T00:00:00.000Z",
-      "label": "11/10",
-      "value": 25
-    },
-    {
-      "date": "2023-11-11T00:00:00.000Z",
-      "label": "11/11",
-      "value": 16
-    },
-    {
-      "date": "2023-11-13T00:00:00.000Z",
-      "label": "11/13",
-      "value": 24
-    },
-    {
-      "date": "2023-11-15T00:00:00.000Z",
-      "label": "11/15",
-      "value": 1
-    },
-    {
-      "date": "2023-11-18T00:00:00.000Z",
-      "label": "11/18",
-      "value": 6
-    },
-    {
-      "date": "2023-11-21T00:00:00.000Z",
-      "label": "11/21",
-      "value": 2
-    },
-    {
-      "date": "2023-11-22T00:00:00.000Z",
-      "label": "11/22",
-      "value": 1
-    }
-  ],
-  "vocabulariesByDay": [
-    {
-      "date": "2023-10-30T00:00:00.000Z",
-      "label": "10/30",
-      "value": 8
-    },
-    {
-      "date": "2023-11-02T00:00:00.000Z",
-      "label": "11/02",
-      "value": 1
-    },
-    {
-      "date": "2023-11-06T00:00:00.000Z",
-      "label": "11/06",
-      "value": 15
-    },
-    {
-      "date": "2023-11-07T00:00:00.000Z",
-      "label": "11/07",
-      "value": 1
-    },
-    {
-      "date": "2023-11-10T00:00:00.000Z",
-      "label": "11/10",
-      "value": 1
-    }
-  ],
-  "paraphrasesByDay": [
-    {
-      "date": "2023-11-02T00:00:00.000Z",
-      "label": "11/02",
-      "value": 1
-    },
-    {
-      "date": "2023-11-10T00:00:00.000Z",
-      "label": "11/10",
-      "value": 2
-    },
-    {
-      "date": "2023-11-16T00:00:00.000Z",
-      "label": "11/16",
-      "value": 1
-    },
-    {
-      "date": "2023-11-22T00:00:00.000Z",
-      "label": "11/22",
-      "value": 1
-    }
-  ],
-  "wordCountByDay": [
-    {
-      "date": "2023-11-01T00:00:00.000Z",
-      "value": 2,
-      "label": "11/01"
-    },
-    {
-      "date": "2023-11-02T00:00:00.000Z",
-      "value": 30,
-      "label": "11/02"
-    },
-    {
-      "date": "2023-11-05T00:00:00.000Z",
-      "value": 34,
-      "label": "11/05"
-    },
-    {
-      "date": "2023-11-06T00:00:00.000Z",
-      "value": 6,
-      "label": "11/06"
-    },
-    {
-      "date": "2023-11-07T00:00:00.000Z",
-      "value": 1,
-      "label": "11/07"
-    },
-    {
-      "date": "2023-11-10T00:00:00.000Z",
-      "value": 22,
-      "label": "11/10"
-    },
-    {
-      "date": "2023-11-18T00:00:00.000Z",
-      "value": 23,
-      "label": "11/18"
-    },
-    {
-      "date": "2023-11-11T00:00:00.000Z",
-      "value": 9,
-      "label": "11/11"
-    },
-    {
-      "date": "2023-11-15T00:00:00.000Z",
-      "value": 5,
-      "label": "11/15"
-    },
-    {
-      "date": "2023-11-16T00:00:00.000Z",
-      "value": 9,
-      "label": "11/16"
-    },
-    {
-      "date": "2023-11-22T00:00:00.000Z",
-      "value": 5,
-      "label": "11/22",
-
-    }
-  ]
-}
 
 enum StastsTab {
   lessons = 'lessons',
@@ -232,6 +36,9 @@ const goals: { [key: StastsTab]: number } = {
 }
 
 const addMissingDates = (data, type: StastsTab) => {
+  if (!data || data.length === 0) {
+    return []
+  }
   const dataCopy = [...data]
   const sortedData = dataCopy.sort((a, b) => new Date(a.date) - new Date(b.date));
   const startDate = moment(new Date(sortedData[0].date));
@@ -272,7 +79,7 @@ const addMissingDates = (data, type: StastsTab) => {
   return result;
 };
 
-export function UserStats({ stats = sampleData }) {
+export function UserStats({ stats }) {
   const [tab, setTab] = useState(StastsTab.lessons)
 
   const dataToDisplay = useMemo(() => {
@@ -280,7 +87,6 @@ export function UserStats({ stats = sampleData }) {
     return addMissingDates(stats[key], tab)
   }, [stats, tab])
 
-  console.log("dataToDisplay", dataToDisplay)
   return (
     <View style={{ padding: 24 }}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -309,15 +115,21 @@ export function UserStats({ stats = sampleData }) {
           </View>
         </TouchableOpacity>
       </ScrollView>
-      <BarChart
-        barWidth={22}
-        noOfSections={5}
-        barBorderRadius={4}
-        frontColor="lightgray"
-        data={dataToDisplay}
-        yAxisThickness={0}
-        xAxisThickness={0}
-      />
+      {dataToDisplay.length === 0 ? (
+        <View style={{ width: "100%", height: 240, marginTop: 16, alignItems: "center", justifyContent: "center", backgroundColor: "#f4f4f4", borderRadius: 8 }}>
+          <Text>{i18n.t("noData")}</Text>
+        </View>
+      ) :
+        <BarChart
+          barWidth={22}
+          noOfSections={5}
+          barBorderRadius={4}
+          frontColor="lightgray"
+          data={dataToDisplay}
+          yAxisThickness={0}
+          xAxisThickness={0}
+        />
+      }
       {/* <View style={{ flexDirection: "row", width: "100%" }}>
         <SelectDropdown
           data={displayType}

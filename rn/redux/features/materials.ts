@@ -79,6 +79,7 @@ const materialsSlice = createSlice({
       })
       .addCase(fetchMaterials.rejected, (state, action) => {
         state.isFetchingMaterials = false;
+        state.isInitMaterials = true;
         state.error = action.payload as string;
       })
       .addCase(fetchVocabs.pending, (state) => {

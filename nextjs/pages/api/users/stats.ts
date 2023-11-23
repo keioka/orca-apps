@@ -30,7 +30,7 @@ export default async function handler(
     }
 
     const { currentUser } = req
-    const userId = currentUser.userId
+    const userId = currentUser.id
 
     try {
       // Retrieve data for each category

@@ -41,7 +41,7 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
       try {
         metadata = await fetchMetadata(url as string)
       } catch (error) {
-        console.error(`Error fetchMetadata: ${url}`, error.message)
+        console.warn(`Error fetchMetadata: ${url}`, error.message)
       }
 
       try {
@@ -73,7 +73,7 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
         //   return { hashtagId: hashtag.id };
         // }))
 
-        const publishedAt = item.pubDate ? new Date(item.pubDate) : new Date(metadata.publishedAt)
+        const publishedAt = getPublishedDate(item, metadata)
 
         const data = {
           title: item.title.trim(),
@@ -122,4 +122,28 @@ export async function createArticlesByPublisherId({ publisherId }: { publisherId
   } catch (error) {
     console.error(`Error fetching and storing RSS: ${publisherId}`, error.message);
   }
+}
+
+export function getPublishedDate(item, metadata) {
+  if (isValidDate(item.pubDate)) {
+    return new Date(item.pubDate)
+  }
+
+  if (isValidDate(metadata.isoDate)) {
+    return new Date(metadata.isoDate)
+  }
+
+  if (isValidDate(item.date)) {
+    return new Date(item.date)
+  }
+
+  if (isValidDate(metadata.publishedAt)) {
+    return new Date(metadata.publishedAt)
+  }
+
+  return new Date()
+}
+
+function isValidDate(dateStr: string) {
+  return dateStr && new Date(dateStr).toString() !== "Invalid Date"
 }

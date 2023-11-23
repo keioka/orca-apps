@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createUser, findUserByProviderId } from '@/models/user';
 import { validateToken, setCustomUserClaims } from '@/firebase';
+import { followRecommnededPublishers } from '@/models/publisher';
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -27,6 +29,12 @@ export default async function handler(
       thirdPartyId: auth.uid,
       thirdPartyName: "firebase",
     })
+
+    try {
+      await followRecommnededPublishers({ userId: newUser.id })
+    } catch (error) {
+      console.warn(error)
+    }
 
     return res.status(200).json(newUser);
   } catch (err) {

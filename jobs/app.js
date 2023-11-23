@@ -1,17 +1,19 @@
-const port = process.env.PORT || 3000;
+import fastify from 'fastify'
+
+const port = process.env.PORT || 5555;
 const host = ("RENDER" in process.env) ? `0.0.0.0` : `localhost`;
 
-const fastify = require('fastify')({
+const server = fastify({
   logger: true
 })
 
-fastify.get('/', function (request, reply) {
-  reply.type('text/html').sendJSON({ hello: 'world' })
+server.get('/', function (request, reply) {
+  reply.type("application/json").send({ hello: 'world' })
 })
 
-fastify.listen({ host: host, port: port }, function (err, address) {
+server.listen({ host: host, port: port }, function (err, address) {
   if (err) {
-    fastify.log.error(err)
+    server.log.error(err)
     process.exit(1)
   }
 })
