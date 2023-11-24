@@ -15,12 +15,15 @@
       "channel": "development"
     },
     "preview": {
+      "developmentClient": false,
       "distribution": "internal",
       "ios": {
         "resourceClass": "m1-medium"
       },
       "env": {
-        "EXPO_PUBLIC_API_ROOT": "https://orca-fullstack.vercel.app"
+        "EXPO_PUBLIC_API_ROOT": "https://orca-fullstack.vercel.app",
+        "EXPO_PUBLIC_MIXPANEL_TOKEN": "2fdf9d171ac057571c525919e780789f",
+        "EXPO_PUBLIC_APP_ENV": "preview"
       },
       "channel": "preview"
     },
@@ -30,7 +33,9 @@
         "resourceClass": "m1-medium"
       },
       "env": {
-        "EXPO_PUBLIC_API_ROOT": "https://orca-fullstack.vercel.app"
+        "EXPO_PUBLIC_API_ROOT": "https://orca-fullstack.vercel.app",
+        "EXPO_PUBLIC_MIXPANEL_TOKEN": "23cf25609bf525773992c3155a9f698a",
+        "EXPO_PUBLIC_APP_ENV": "production"
       },
       "channel": "production"
     }

@@ -15,6 +15,7 @@ import { fetchSavedParaphrases } from '../redux/features/note';
 import { Audio } from 'expo-av';
 import Voice from '@react-native-voice/voice';
 import { Text } from './Text';
+import { WordCounter } from './WordCounter';
 import * as Speech from 'expo-speech';
 
 enum TalkHelper {
@@ -114,7 +115,6 @@ class InputChat extends Component {
   }
 
   render() {
-    console.log("message", this.props.message)
     return (
       <>
         <Portal>
@@ -234,6 +234,7 @@ class InputChat extends Component {
                 </View>
               </View>
             </View>
+
           </>
         </KeyboardAvoidingView>
       </>
@@ -305,6 +306,11 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
     speakLastMessage()
   }, [messages.length])
 
+  const count = useMemo(() => {
+    return messages.filter((message) => message.type === "user").reduce((acc, message) => {
+      return acc + message.content.split(" ").length
+    }, 0)
+  })
 
   const submitMessage = () => {
     dispatch(addUserMessage({ message, lessonId: lesson.id }))
@@ -371,6 +377,14 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
             )
           }
         </ScrollView>
+      </View>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: "50%",
+          right: 0,
+        }}>
+        <WordCounter count={count} />
       </View>
       <InputChat handleSetMessage={handleSetMessage} message={message} submitMessage={submitMessage} />
     </View>
