@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect, useMemo, } from 'react';
+import { View, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { Card, Button, Tab, TabView, ActivityIndicator } from 'react-native-paper';
 import * as Speech from 'expo-speech';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import PreviewMaterial from './PreviewMaterial';
 import { Text } from './Text';
+import { Audio } from 'expo-av';
 
 export const CardVocab = ({
   vocab: {
@@ -36,11 +37,21 @@ export const CardVocab = ({
 }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  const handlePressSpeak = () => {
+  const handlePressSpeak = async () => {
     if (isSpeaking) {
       Speech.stop()
       setIsSpeaking(false)
       return
+    }
+
+    if (Platform.OS === "ios") {
+      // https://stackoverflow.com/questions/61949934/expo-speech-not-working-on-some-ios-devices/62331403#62331403
+      const soundObject = new Audio.Sound();
+      await Audio.setAudioModeAsync({
+        playsInSilentModeIOS: true,
+      });
+      await soundObject.loadAsync(require("../assets/sounds/empty.mp3"));
+      await soundObject.playAsync();
     }
 
     Speech.speak(word, {
