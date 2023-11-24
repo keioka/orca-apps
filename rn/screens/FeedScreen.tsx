@@ -298,7 +298,7 @@ export function FeedScreen({ navigation }) {
               <Text>{i18n.t("lastUpdatedAt")}: {Updates.createdAt ? Updates.createdAt.toString() : "No updates"}</Text>
             </View>
             <View style={{ backgroundColor: "#f2f2f2", width: "100%", padding: 18 }}>
-              <Text>{i18n.t("version")}: {Updates.updateId ? Updates.updateId : "N/A"}</Text>
+              <Text>{i18n.t("version")}: {Updates.updateId ? Updates.updateId + "-" + Updates.channel?.toLowerCase() : "N/A"}</Text>
             </View>
 
           </Menu>

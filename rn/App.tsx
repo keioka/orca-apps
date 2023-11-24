@@ -358,7 +358,13 @@ function App() {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') {
       onFetchUpdateAsync()
-      LogRocket.init('taiheyyo/orca-prod');
+      console.log("process.env.EXPO_PUBLIC_APP_ENV ", process.env.EXPO_PUBLIC_APP_ENV)
+      if (process.env.EXPO_PUBLIC_APP_ENV === 'production') {
+        LogRocket.init('taiheyyo/orca-prod');
+      }
+      if (process.env.EXPO_PUBLIC_APP_ENV === 'preview') {
+        LogRocket.init('taiheyyo/orca-preview');
+      }
       setDeviceId()
     }
 

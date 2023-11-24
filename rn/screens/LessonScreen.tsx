@@ -313,17 +313,17 @@ function ArticleTab({ lesson }: { lesson: {} }) {
           </ScrollView>
         </View> :
         <View style={{ height: "100%", width: "100%", alignContent: "center", padding: 24 }}>
-          <View style={{ backgroundColor: "#f6f6f6", height: 140, marginBottom: 12 }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>1</Text>
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>{i18n.t("instructionOne")}</Text>
+          <View style={{ backgroundColor: "#f6f6f6", height: 140, marginBottom: 12, justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>1</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>{i18n.t("instructionOne")}</Text>
             <Button mode="contained" onPress={() => { setShouldShowBrowser(true) }} style={{ backgroundColor: "#2852A4" }}>{i18n.t("goToArticle")}</Button>
           </View>
-          <View style={{ padding: 24, backgroundColor: "#f6f6f6", height: 140, marginBottom: 12 }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>2</Text>
+          <View style={{ padding: 24, backgroundColor: "#f6f6f6", height: 140, marginBottom: 12, justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>2</Text>
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>{i18n.t("instructionTwo")}</Text>
           </View>
-          <View style={{ padding: 24, backgroundColor: "#f6f6f6", height: 140 }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>3</Text>
+          <View style={{ padding: 24, backgroundColor: "#f6f6f6", height: 140, justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>3</Text>
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>{i18n.t("instructionThree")}</Text>
           </View>
           {/* {shouldEmbed && <WebView
