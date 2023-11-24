@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef, Component } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard, Platform } from 'react-native';
 import { CardMessage } from './CardMessage';
 import { CardVocab, CardVocabXS } from './CardVocab';
 // import { WebView } from 'react-native-webview';
@@ -290,8 +290,18 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
         voice = voices.find((voice) => voice.identifier === 'com.apple.ttsbundle.Samantha-compact' || voice.identifier === 'com.apple.voice.compact.en-US.Samantha')
       }
 
+
       try {
-        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
+        if (Platform.OS === "ios") {
+          // https://stackoverflow.com/questions/61949934/expo-speech-not-working-on-some-ios-devices/62331403#62331403
+          const soundObject = new Audio.Sound();
+          await Audio.setAudioModeAsync({
+            playsInSilentModeIOS: true,
+          });
+          await soundObject.loadAsync(require("../assets/sounds/empty.mp3"));
+          await soundObject.playAsync();
+        }
+
         Speech.speak(lastMessage.content, {
           volume: 1,
           language: 'en',
