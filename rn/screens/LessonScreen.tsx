@@ -19,6 +19,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { fetchSavedVocab, clearIsSavedVocab, clearErrorSaveVocab } from '../redux/features/note';
 import { i18n } from '../locales';
 import LottieView from 'lottie-react-native';
+import { analytics, ACTION } from '../helpers/mixpanel';
 
 enum LearningModeTab {
   Article = 'article',
@@ -191,6 +192,7 @@ function VocabularyTab({ materialId }: { materialId: string }) {
   }, [])
 
   const handleClickSave = (vocab) => {
+    analytics.track(ACTION.saveVocab, { vocab: vocab.id })
     dispatch(saveVocab({ vocabId: vocab.id }))
   }
 
@@ -373,21 +375,30 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
     <View style={{ width: "100%", height: "100%", backgroundColor: "#fff" }}>
       <View style={styles.menu}>
         <View style={[styles.tabWrapper]}>
-          <TouchableOpacity onPress={() => setTab(LearningModeTab.Article)}>
+          <TouchableOpacity onPress={() => {
+            analytics.track(ACTION.navLessonArticleTab, { lessonId: lesson.id })
+            setTab(LearningModeTab.Article)
+          }}>
             <View style={tab === LearningModeTab.Article ? styles.buttonActive : null}>
               <Text style={[styles.textMenu, tab === LearningModeTab.Article ? { color: "#242424" } : null]}>{i18n.t("article")}</Text>
             </View>
           </TouchableOpacity >
         </View>
         <View style={[styles.tabWrapper]}>
-          <TouchableOpacity onPress={() => setTab(LearningModeTab.Summary)}>
+          <TouchableOpacity onPress={() => {
+            analytics.track(ACTION.navLessonSummaryTab, { lessonId: lesson.id })
+            setTab(LearningModeTab.Summary)
+          }}>
             <View style={tab === LearningModeTab.Summary ? styles.buttonActive : null}>
               <Text style={[styles.textMenu, tab === LearningModeTab.Summary ? { color: "#242424" } : null]}>{i18n.t("summary")}</Text>
             </View>
           </TouchableOpacity>
         </View>
         <View style={[styles.tabWrapper]}>
-          <TouchableOpacity onPress={() => setTab(LearningModeTab.Vocabulary)}>
+          <TouchableOpacity onPress={() => {
+            analytics.track(ACTION.navLessonVocabTab, { lessonId: lesson.id })
+            setTab(LearningModeTab.Vocabulary)
+          }}>
             <View style={tab === LearningModeTab.Vocabulary ? styles.buttonActive : null}>
               <Text style={[styles.textMenu, tab === LearningModeTab.Vocabulary ? { color: "#242424" } : null]}>{i18n.t("vocabulary")}</Text>
             </View>

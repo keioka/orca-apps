@@ -6,6 +6,7 @@ import { useAppDispatch } from '../redux/hooks'
 import { signUpWithEmail, signInWithEmail } from '../redux/features/auth'
 import { i18n } from '../locales'
 import { Text } from '../components/Text'
+import { analytics, ACTION } from '../helpers/mixpanel'
 
 export function AuthScreen({ navigation }) {
   const [email, setEmail] = useState('')
@@ -24,10 +25,12 @@ export function AuthScreen({ navigation }) {
   }
 
   const handleSignup = async () => {
+    analytics.track(ACTION.signup)
     dispatch(signUpWithEmail({ email, password }))
   }
 
   const handleSignin = async () => {
+    analytics.track(ACTION.login)
     dispatch(signInWithEmail({ email, password }))
   }
 
