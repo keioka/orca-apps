@@ -60,3 +60,14 @@ export async function findUserByProviderId(providerId: string) {
     return null
   }
 }
+
+export async function setMpTrackingId(userId: string, mpTrackingId: string) {
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      mpTrackingId,
+    },
+  });
+}

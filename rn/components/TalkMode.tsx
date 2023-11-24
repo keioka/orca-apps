@@ -17,6 +17,7 @@ import Voice from '@react-native-voice/voice';
 import { Text } from './Text';
 import { WordCounter } from './WordCounter';
 import * as Speech from 'expo-speech';
+import { analytics, ACTION, COUNT_PROPERTIES } from '../helpers/mixpanel';
 
 enum TalkHelper {
   Vocab = 'vocab',
@@ -66,10 +67,6 @@ class InputChat extends Component {
     this.onClose = this.onClose.bind(this)
   }
 
-  onStartButtonPress(e) {
-    Voice.start('en-US');
-  }
-
   onSpeechStartHandler(e) {
     console.log('onSpeechStart: ', e);
   }
@@ -96,11 +93,13 @@ class InputChat extends Component {
   }
 
   onStartButtonPress = (e) => {
+    analytics.track(ACTION.startRecording)
     this.setState({ isRecording: true })
     Voice.start('en-US');
   }
 
   onEndButtonPress(e) {
+    analytics.track(ACTION.endRecording)
     this.setState({ isRecording: false })
     Voice.stop();
     this.setOpenRecordingModal(false)
@@ -253,8 +252,14 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
+    analytics.track(ACTION.startTalkMode, { lessonId: lesson.id })
+    dispatch(fetchSavedParaphrases({}))
     if (!lesson.initMessage && messages.length === 0) {
       dispatch(createAIMessage({ message: "Ask me a question about the news.", lessonId: lesson.id }))
+    }
+    return () => {
+      analytics.track(ACTION.endTalkMode, { lessonId: lesson.id })
+      return
     }
   }, [])
 
@@ -264,10 +269,6 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
       dispatch(sendWhisper({ file, fileURI }))
     }
   }, [file, fileURI])
-
-  useEffect(() => {
-    dispatch(fetchSavedParaphrases({}))
-  }, [])
 
   useEffect(() => {
     if (!scrollViewRef.current) return
@@ -317,6 +318,7 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
     dispatch(createAIMessage({ message, lessonId: lesson.id }))
     setMessage(null)
     Keyboard.dismiss()
+    analytics.track(ACTION.submitMessage, { lessonId: lesson.id })
   }
 
   const handleSetMessage = (message) => {

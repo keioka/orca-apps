@@ -22,13 +22,30 @@ export interface UnionDetails {
 export enum ACTION {
   signup = 'Signup',
   login = 'Login',
-  startNewLesson = "Start Lesson",
-  reVisitLesson = "Revisit Lesson",
-  endLesson = "End Lesson",
-  startChat = "Start Chat",
-  endChat = "End Chat",
-  record = "Record",
-  addMessage = "Add Message",
+  startNewLesson = "Start: Lesson",
+  reVisitLesson = "Revisit: Lesson",
+  endLesson = "End: Lesson",
+  startChat = "Start: Chat",
+  endChat = "End: Chat",
+  startTalkMode = "Start: Talk Mode",
+  endTalkMode = "End: Talk Mode",
+  startRecording = "Start: Recording Voice",
+  endRecording = "End: Recording Voice",
+  submitMessage = "Submit: Message",
+  showParaphrase = "Show: Paraphrase",
+  showTranslation = "Show: Translation",
+  replayAudio = "Replay: Message Audio",
+  saveVocab = "Save: Vocab",
+  saveParaphrase = "Save: Paraphrase",
+  navLessonArticleTab = "Nav: Lesson - Article Tab",
+  navLessonSummaryTab = "Nav: Lesson - Summary Tab",
+  navLessonVocabTab = "Nav: Lesson - Vocab Tab",
+  navNoteVocabTab = "Nav: Note - Vocab Tab",
+  navNoteParagraphTab = "Nav: Note - Paragraph Tab",
+}
+
+export enum COUNT_PROPERTIES {
+  MESSAGE_COUNT = "Message Count",
 }
 
 class AnalyticsModule {
@@ -70,6 +87,14 @@ class AnalyticsModule {
       this.analytics.track(action, properties);
     } else {
       console.log(`MixPanel: Track ${action}, ${JSON.stringify(properties)}`);
+    }
+  }
+
+  set_user_data(propertyName: COUNT_PROPERTIES, count: number): void {
+    if (this.isProd()) {
+      this.analytics.people_increment({ [propertyName]: count });
+    } else {
+      console.log(`MixPanel: Set user data`);
     }
   }
 

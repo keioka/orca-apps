@@ -39,7 +39,9 @@ import { analytics } from './helpers/mixpanel';
 import * as SecureStore from 'expo-secure-store';
 import uuid from 'react-native-uuid';
 import { i18n } from './locales';
-import { fetchCurrentUser } from './redux/features/auth';
+import { fetchCurrentUser, setMpTrackingId } from './redux/features/auth';
+import { Audio } from "expo-av";
+
 
 SplashScreen.preventAutoHideAsync();
 
@@ -239,7 +241,6 @@ const Root = () => {
   useEffect(() => {
     setIsLoading(true)
     const hasPastedOneHour = moment().diff(moment(session?.lastUpdatedAt), 'hours') > 1
-
     try {
       const auth = getAuth(firebase);
       console.log("============ Init onAuthStateChanged ============")
@@ -312,6 +313,22 @@ const Root = () => {
     hide()
   }, [isLoading, isFetchingCurrentUser, isInit, fontsLoaded])
 
+  useEffect(() => {
+    setMpTrackingIdToUser()
+  }, [currentUser])
+
+  async function setMpTrackingIdToUser() {
+    const deviceId = await fetchDeviceId()
+    if (typeof deviceId !== 'string') {
+      console.error("deviceId is not string", deviceId)
+      return
+    }
+
+    if (currentUser && (!currentUser.mpTrackingId || currentUser.mpTrackingId !== deviceId)) {
+      dispatch(setMpTrackingId({ mpTrackingId: deviceId }))
+    }
+  }
+
   if (error) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -358,7 +375,7 @@ function App() {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') {
       onFetchUpdateAsync()
-      console.log("process.env.EXPO_PUBLIC_APP_ENV ", process.env.EXPO_PUBLIC_APP_ENV)
+      console.log("env", process.env.EXPO_PUBLIC_APP_ENV)
       if (process.env.EXPO_PUBLIC_APP_ENV === 'production') {
         LogRocket.init('taiheyyo/orca-prod');
       }
@@ -378,6 +395,8 @@ function App() {
         throw error
       }
     }
+
+    Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
 
   }, [])
 
