@@ -78,10 +78,6 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
   const lesson = await prisma.lesson.findUnique({
     where: {
       id: Number(lessonId),
-    },
-    include: {
-      messages: true,
-      material: true,
     }
   });
 
