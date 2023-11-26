@@ -261,7 +261,7 @@ function VocabularyTab({ materialId }: { materialId: string }) {
   )
 }
 
-function ArticleTab({ lesson }: { lesson: {} }) {
+function ArticleTab({ lesson, handlePressSummary, handlePressVocabulary, handlePressTalkMode }: { lesson: {} }) {
   const [shouldShowBrowser, setShouldShowBrowser] = useState(true)
   const [shouldEmbed, setShouldEmbed] = useState(true)
 
@@ -316,17 +316,23 @@ function ArticleTab({ lesson }: { lesson: {} }) {
         </View> :
         <View style={{ height: "100%", width: "100%", alignContent: "center", padding: 24 }}>
           <View style={{ backgroundColor: "#f6f6f6", height: 140, marginBottom: 12, justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>1</Text>
-            <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>{i18n.t("instructionOne")}</Text>
-            <Button mode="contained" onPress={() => { setShouldShowBrowser(true) }} style={{ backgroundColor: "#2852A4" }}>{i18n.t("goToArticle")}</Button>
+            <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>1 - {i18n.t("instructionOne")}</Text>
+            <View style={{ flexDirection: "row", paddingTop: 8, justifyContent: "space-around", width: "100%" }}>
+              <Button mode="contained" onPress={() => { setShouldShowBrowser(true) }} style={{ backgroundColor: "#2852A4" }}>{i18n.t("goToArticle")}</Button>
+            </View>
           </View>
           <View style={{ padding: 24, backgroundColor: "#f6f6f6", height: 140, marginBottom: 12, justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>2</Text>
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>{i18n.t("instructionTwo")}</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>2 - {i18n.t("instructionTwo")}</Text>
+            <View style={{ flexDirection: "row", paddingTop: 8, justifyContent: "space-around", width: "100%" }}>
+              <Button mode="outlined" onPress={handlePressSummary} >{i18n.t("summary")}</Button>
+              <Button mode="outlined" onPress={handlePressVocabulary} >{i18n.t("vocabulary")}</Button>
+            </View>
           </View>
           <View style={{ padding: 24, backgroundColor: "#f6f6f6", height: 140, justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>3</Text>
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>{i18n.t("instructionThree")}</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>3 - {i18n.t("instructionThree")}</Text>
+            <View style={{ flexDirection: "row", paddingTop: 8, justifyContent: "space-around", width: "100%" }}>
+              <Button mode="contained" onPress={handlePressTalkMode} style={{ backgroundColor: "#2852A4" }}>{i18n.t("goToTalkMode")}</Button>
+            </View>
           </View>
           {/* {shouldEmbed && <WebView
             startInLoadingState
@@ -366,10 +372,19 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
   useEffect(() => {
     dispatch(fetchSavedVocab())
     if (vocabs.length > 0) return
-    dispatch(fetchVocabs({ materialId: materialId }))
     dispatch(createVocabs({ materialId: materialId }))
   }, [])
 
+  const handlePressSummary = () => {
+    analytics.track(ACTION.navLessonSummaryTab, { lessonId: lesson.id })
+    setTab(LearningModeTab.Summary)
+
+  }
+
+  const handlePressVocabulary = () => {
+    analytics.track(ACTION.navLessonVocabTab, { lessonId: lesson.id })
+    setTab(LearningModeTab.Vocabulary)
+  }
 
   return (
     <View style={{ width: "100%", height: "100%", backgroundColor: "#fff" }}>
@@ -385,20 +400,14 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
           </TouchableOpacity >
         </View>
         <View style={[styles.tabWrapper]}>
-          <TouchableOpacity onPress={() => {
-            analytics.track(ACTION.navLessonSummaryTab, { lessonId: lesson.id })
-            setTab(LearningModeTab.Summary)
-          }}>
+          <TouchableOpacity onPress={handlePressSummary}>
             <View style={tab === LearningModeTab.Summary ? styles.buttonActive : null}>
               <Text style={[styles.textMenu, tab === LearningModeTab.Summary ? { color: "#242424" } : null]}>{i18n.t("summary")}</Text>
             </View>
           </TouchableOpacity>
         </View>
         <View style={[styles.tabWrapper]}>
-          <TouchableOpacity onPress={() => {
-            analytics.track(ACTION.navLessonVocabTab, { lessonId: lesson.id })
-            setTab(LearningModeTab.Vocabulary)
-          }}>
+          <TouchableOpacity onPress={handlePressVocabulary}>
             <View style={tab === LearningModeTab.Vocabulary ? styles.buttonActive : null}>
               <Text style={[styles.textMenu, tab === LearningModeTab.Vocabulary ? { color: "#242424" } : null]}>{i18n.t("vocabulary")}</Text>
             </View>
@@ -408,7 +417,7 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
 
       {
         tab === LearningModeTab.Article &&
-        <ArticleTab lesson={lesson} />
+        <ArticleTab lesson={lesson} handlePressSummary={handlePressSummary} handlePressVocabulary={handlePressVocabulary} handlePressTalkMode={onPressToggle} />
       }
       {
         tab === LearningModeTab.Summary && (

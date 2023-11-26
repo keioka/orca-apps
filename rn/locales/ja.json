@@ -11,12 +11,17 @@
   "grammar": "文法",
   "article": "記事",
   "loading": "読み込み中...",
+  "translation": "翻訳",
+  "playSound": "再生",
+  "pressTalk": "赤いボタンを押して話す",
+  "clearInput": "入力をクリア",
+  "close": "閉じる",
   "editRSSFeed": "フィードを編集",
-  "navigatingToLesson": "単語帳を作成中...",
+  "navigatingToLesson": "記事をロード中...",
   "instructionsLesson": "学習の流れ",
   "instructionOne": "記事を読む",
   "instructionTwo": "記事を閉じて、要約や単語帳を確認",
-  "instructionThree": "AIと会話をしてアウトプット",
+  "instructionThree": "AIと会話をしてアウトプット。文法ミスや言い換え表現をチェック",
   "creatingVocabulary": "単語帳を作成中...",
   "creatingVocabularyTime": "通常30秒ー1分かかります。記事を読んでお待ちください。",
   "creatingSummary": "要約を作成中...",
@@ -53,5 +58,7 @@
   "numberOfWordSpoken": "話した単語数",
   "numberOfSavedVocabulary": "新規単語保存数",
   "numberOfSavedParaphrase": "言い換え表現数",
-  "noData": "データがありません"
+  "noData": "データがありません",
+  "checkGrammarMistake": "文法ミスを確認",
+  "checkParaphrase": "別表現を確認"
 }
