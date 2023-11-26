@@ -18,6 +18,7 @@ import { Text } from './Text';
 import { WordCounter } from './WordCounter';
 import * as Speech from 'expo-speech';
 import { analytics, ACTION, COUNT_PROPERTIES } from '../helpers/mixpanel';
+import { i18n } from '../locales';
 
 enum TalkHelper {
   Vocab = 'vocab',
@@ -130,7 +131,7 @@ class InputChat extends Component {
           >
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
               <View style={{ backgroundColor: "#f4f4f4", padding: 16, width: "100%", borderRadius: 8, marginBottom: 24 }}>
-                <Text>{this.props.message ? this.props.message : "Press red button and talk"}</Text>
+                <Text>{this.props.message ? this.props.message : i18n.t("pressTalk")}</Text>
               </View>
               <TouchableOpacity
                 onPress={this.state.isRecording ? this.onEndButtonPress : this.onStartButtonPress}>
@@ -149,7 +150,7 @@ class InputChat extends Component {
                 }}
               >
                 <Ionicons name="trash-outline" size={16} color="#242424" />
-                <Text>Clear input</Text>
+                <Text>{i18n.t("clearInput")}</Text>
               </Button>
               <Button
                 onPress={this.onClose}
@@ -162,7 +163,7 @@ class InputChat extends Component {
                 }}
               >
                 <Ionicons name="close" size={16} color="#242424" />
-                <Text>Close</Text>
+                <Text>{i18n.t("close")}</Text>
               </Button>
             </View>
           </Modal>
