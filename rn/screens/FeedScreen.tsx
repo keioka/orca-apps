@@ -350,6 +350,19 @@ export function FeedScreen({ navigation }) {
           }
           onMomentumScrollEnd={handleEndRefresh}
         >
+          <ScrollView
+            contentContainerStyle={styles.scrollViewContainer}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            onMomentumScrollEnd={handleEndRefresh}
+          >
+            <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
+              <Text style={{ color: "#242424" }}>3 minutes Digest</Text>
+              <Button onPress={handleNavigateToCategory} mode="contained">Add News Feeds</Button>
+            </View>
+          </ScrollView>
           {!isInitFollowPublishers && isFetchingMaterials && (
             <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
               <ActivityIndicator size="large" color="#242424" />
