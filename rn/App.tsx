@@ -42,7 +42,6 @@ import { i18n } from './locales';
 import { fetchCurrentUser, setMpTrackingId } from './redux/features/auth';
 import { Audio } from "expo-av";
 
-
 SplashScreen.preventAutoHideAsync();
 
 const Stack = createNativeStackNavigator();
@@ -400,8 +399,13 @@ function App() {
 
   }, [])
 
+  function handleError(error: Error, componentStack: string) {
+    console.error(error, componentStack)
+    LogRocket.captureException(error)
+  }
+
   return (
-    <Sentry.React.ErrorBoundary fallback={ErrorScreen}>
+    <Sentry.React.ErrorBoundary fallback={ErrorScreen} onError={handleError}>
       <PaperProvider theme={theme}>
         <Provider store={store}>
           <View style={styles.container}>
