@@ -401,8 +401,6 @@ export function FeedScreen({ navigation }) {
           onScroll={onScrollFeed}
         >
           <NewsCarousel />
-          <Text weight='Bold'>{JSON.stringify(offsetByCategory)}</Text>
-
           {!isInitFollowPublishers && isFetchingMaterials && (
             <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
               <ActivityIndicator size="large" color="#242424" />
