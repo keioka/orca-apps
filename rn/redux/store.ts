@@ -9,6 +9,7 @@ import note from './features/note';
 import publisher from './features/publishers';
 
 const logger = (storeAPI: any) => (next: any) => (action: any) => {
+  if (process.env.NODE_ENV === 'production') return next(action)
   console.log(`🔶 Dispatching: ${action.type}`, action)
   let result = next(action)
   console.log('🟢 Next state', storeAPI.getState())

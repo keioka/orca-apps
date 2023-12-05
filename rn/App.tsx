@@ -64,6 +64,8 @@ const MainTab = () => (
           iconName = focused ? 'ios-list' : 'ios-list-outline';
         } else if (route.name === 'Note') {
           iconName = focused ? 'ios-document' : 'ios-document-outline';
+        } else if (route.name === 'Feedback') {
+          iconName = focused ? 'ios-chatbubble' : 'ios-chatbubble-outline';
         }
 
         // You can return any component that you like here!
@@ -394,11 +396,10 @@ function App() {
     if (process.env.NODE_ENV !== 'development') {
       onFetchUpdateAsync()
       console.log("env", process.env.EXPO_PUBLIC_APP_ENV)
-      if (process.env.EXPO_PUBLIC_APP_ENV === 'production') {
-        LogRocket.init('taiheyyo/orca-prod');
-      }
       if (process.env.EXPO_PUBLIC_APP_ENV === 'preview') {
         LogRocket.init('taiheyyo/orca-preview');
+      } else {
+        LogRocket.init('taiheyyo/orca-prod');
       }
       setDeviceId()
     }

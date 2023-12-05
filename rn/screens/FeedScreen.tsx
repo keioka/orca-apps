@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, } from 'react';
+import { useRef, useState, useEffect, useMemo, useCallback, } from 'react';
 import { StyleSheet, ScrollView, SafeAreaView, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Modal, Portal, Snackbar, Button, Menu } from 'react-native-paper';
 import { CardArticle } from '../components/CardArticle';
@@ -19,6 +19,14 @@ import { Linking } from "react-native";
 import { i18n } from '../locales';
 import { NewsCarousel } from '../components/NewsCarousel';
 
+interface OffsetByCategory {
+  [key: string]: number
+}
+
+interface LoadingByCategory {
+  [key: string]: boolean
+}
+
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
   const creating = useAppSelector((state) => state.lesson.creating);
@@ -27,22 +35,24 @@ export function FeedScreen({ navigation }) {
   const lessons = useAppSelector((state) => state.lesson.lessons);
 
   const items = useAppSelector((state) => state.material.items);
-  const [selectedCategory, setActiveCategory] = useState("all")
+  const [selectedCategory, setSelectedCategory] = useState("all")
   const [refreshing, setRefreshing] = useState(false);
   const [refreshingEnd, setRefreshingEnd] = useState(false);
   const [shouldShowMenu, setShouldShowMenu] = useState(false);
-  const [offset, setOffset] = useState(0);
+  const [offsetByCategory, setOffsetByCategory] = useState<OffsetByCategory>({});
   const isInitMaterials = useAppSelector((state) => state.material.isInitMaterials)
   const followPublishers = useAppSelector((state) => state.publisher.followPublishers)
   const followCategories = useAppSelector((state) => state.publisher.followCategories)
   const isInitFollowPublishers = useAppSelector((state) => state.publisher.isInitFollowPublishers)
   const isFetchingMaterials = useAppSelector((state) => state.material.isFetchingMaterials)
 
+  const scrollViewRef = useRef();
+
   useEffect(() => {
     dispatch(fetchLessons())
     dispatch(fetchFollowPublishers())
-    setOffset(0)
   }, [])
+
 
   const selectedFollowPublisherIds = useMemo(() => {
     if (!followPublishers) return []
@@ -54,14 +64,15 @@ export function FeedScreen({ navigation }) {
 
   useEffect(() => {
     if (selectedFollowPublisherIds.length === 0) return
+
+    const offset = offsetByCategory[selectedCategory] || 0
     dispatch(fetchMaterials({
-      offset,
+      offset: offset,
       limit: 50,
       publisherIds: selectedFollowPublisherIds,
     }))
-    setOffset(offset + 50)
 
-  }, [selectedFollowPublisherIds])
+  }, [selectedFollowPublisherIds, selectedFollowPublisherIds.length])
 
   useEffect(() => {
     if (createdLessonId) {
@@ -70,6 +81,15 @@ export function FeedScreen({ navigation }) {
     }
   }, [creating, createdLessonId])
 
+  const onScrollFeed = (event) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 100;
+    if (isCloseToBottom) {
+      // You've reached the end
+      console.log('Reached the end of the content!');
+      handleEndRefresh()
+    }
+  }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -78,26 +98,59 @@ export function FeedScreen({ navigation }) {
       limit: 50,
       publisherIds: selectedFollowPublisherIds
     }))
-    // setOffset(offset + 50)
+
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-  }, [selectedFollowPublisherIds]);
+  }, [selectedFollowPublisherIds, selectedFollowPublisherIds.length]);
+
 
 
   const handleEndRefresh = useCallback(() => {
     if (selectedFollowPublisherIds.length === 0) return
+    if (refreshingEnd) return
+    console.log(">>>>>>>>>>>>>>>>>> refreshing >>>>>>>>>>>>>>>>>>")
     setRefreshingEnd(true);
+    const offset = offsetByCategory[selectedCategory] === undefined ? 0 : offsetByCategory[selectedCategory]
+    const nextOffset = offset + 50
     dispatch(fetchMaterials({
-      offset,
+      offset: nextOffset,
       limit: 50,
       publisherIds: selectedFollowPublisherIds
     }))
-    setOffset(offset + 50)
+
+    setOffsetByCategory({
+      ...offsetByCategory,
+      [selectedCategory]: nextOffset
+    })
+
     setTimeout(() => {
       setRefreshingEnd(false);
     }, 2000);
-  }, [selectedFollowPublisherIds]);
+
+  }, [refreshingEnd, selectedFollowPublisherIds, selectedCategory, offsetByCategory]);
+
+
+  const handleSelectTab = useCallback((slug: string) => {
+    setSelectedCategory(slug)
+
+    const newSelectedFollowPublisherIds = followPublishers
+      .filter((publisher) => {
+        if (slug === "all") return true
+        return publisher.category === slug
+      })
+      .map((publisher) => publisher.publisherId)
+
+    if (newSelectedFollowPublisherIds.length === 0) return
+
+    dispatch(fetchMaterials({
+      offset: 0,
+      limit: 50,
+      publisherIds: newSelectedFollowPublisherIds
+    }))
+
+  }, [followPublishers])
+
 
   const materials = useMemo(() => {
     if (!items) return []
@@ -127,11 +180,24 @@ export function FeedScreen({ navigation }) {
     return categories.filter((category) => followCategories.includes(category.slug))
   }, [followCategories])
 
+  useEffect(() => {
+    if (!followCategoryItems) return
+
+    const initOffset = followCategoryItems.reduce((acc, category) => {
+      return {
+        ...acc,
+        [category.slug]: 0
+      }
+    }, { all: 0 })
+
+    setOffsetByCategory(initOffset)
+  }, [followCategoryItems])
+
+
   const handleSignOut = async () => {
     dispatch(signOut())
     navigation.navigate('Auth')
   }
-
 
   const onPressStart = ({ materialId, url, lessonId }: { materialId: string, url: string, lessonId: string }) => {
     if (!lessonId) {
@@ -153,32 +219,10 @@ export function FeedScreen({ navigation }) {
     navigation.navigate('Category')
   }
 
-  const handleSelectTab = useCallback((slug: string) => {
-    setActiveCategory(slug)
-
-    const newSelectedFollowPublisherIds = followPublishers
-      .filter((publisher) => {
-        if (slug === "all") return true
-        return publisher.category === slug
-      })
-      .map((publisher) => publisher.publisherId)
-
-    console.log({ newSelectedFollowPublisherIds, followPublishers, slug })
-    if (newSelectedFollowPublisherIds.length === 0) return
-
-    dispatch(fetchMaterials({
-      offset: 0,
-      limit: 50,
-      publisherIds: newSelectedFollowPublisherIds
-    }))
-    setOffset(50)
-  }, [])
-
   const handleForceUpdate = () => {
     Updates.reloadAsync()
   }
 
-  console.log(process.env)
   return (
     <SafeAreaView style={styles.container}>
       <Portal>
@@ -322,7 +366,7 @@ export function FeedScreen({ navigation }) {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity key="all" onPress={() => setActiveCategory("all")}>
+          <TouchableOpacity key="all" onPress={() => setSelectedCategory("all")}>
             <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#2FABE8" }]}>
               <View style={{ height: 24 }}>
                 <Ionicons name="star" size={24} color={selectedCategory === "all" ? "#2FABE8" : "#242424"} />
@@ -347,14 +391,18 @@ export function FeedScreen({ navigation }) {
 
         </ScrollView>
         <ScrollView
+          ref={scrollViewRef}
           contentContainerStyle={styles.scrollViewContainer}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          onMomentumScrollEnd={handleEndRefresh}
+          scrollEventThrottle={1000}
+          onScroll={onScrollFeed}
         >
           <NewsCarousel />
+          <Text weight='Bold'>{JSON.stringify(offsetByCategory)}</Text>
+
           {!isInitFollowPublishers && isFetchingMaterials && (
             <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
               <ActivityIndicator size="large" color="#242424" />
@@ -383,6 +431,7 @@ export function FeedScreen({ navigation }) {
             refreshingEnd && (
               <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
                 <ActivityIndicator size="large" color="#242424" />
+                <Text style={{ color: "#242424" }}>Loading 50 more articles...</Text>
               </View>
             )
           }
