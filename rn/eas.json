@@ -17,7 +17,6 @@
       "channel": "development"
     },
     "preview": {
-      "developmentClient": false,
       "distribution": "internal",
       "ios": {
         "resourceClass": "m1-medium"
