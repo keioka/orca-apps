@@ -12,7 +12,7 @@ module.exports = function (api) {
           alias: {
             '@shared': sharedPath,
           },
-        },
+        }
       ],
     ],
   };

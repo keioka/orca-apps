@@ -10,11 +10,14 @@
         "resourceClass": "m1-medium"
       },
       "env": {
-        "EXPO_PUBLIC_API_ROOT": "http://192.168.1.2:3000"
+        "EXPO_PUBLIC_API_ROOT": "http://127.0.0.1:3000",
+        "EXPO_PUBLIC_MIXPANEL_TOKEN": "83dec18ae311d1e7071bc1e3e7d7c6a7",
+        "EXPO_PUBLIC_APP_ENV": "development"
       },
       "channel": "development"
     },
     "preview": {
+      "developmentClient": false,
       "distribution": "internal",
       "ios": {
         "resourceClass": "m1-medium"

@@ -68,7 +68,25 @@ export function NoteScreen() {
         showsVerticalScrollIndicator={false}
       >
         {tab === NoteTab.Vocabulary && (
-          <View style={{ width: "100%" }}>
+          <View style={{ width: "100%", alignItems: 'center', justifyContent: 'center' }}>
+            {savedVocabularies.length === 0 && (
+              <View style={{ width: "90%", alignItems: 'center', justifyContent: 'center', marginTop: 24 }}>
+                <Text weight='SemiBold' style={{ textAlign: 'center', marginBottom: 16 }}>{i18n.t("no_saved_vocab")}</Text>
+                <CardVocab
+                  vocab={{
+                    id: 1,
+                    word: 'Hello',
+                    pronunciation: 'hɛˈloʊ',
+                    meaning: 'Xin chào',
+                    example: 'Hello world',
+                    note: 'Hello world',
+                    image: 'https://i.pinimg.com/originals/2a/3f/6d/2a3f6d4f2f7e0f3f9d6e8a5c4e4a5e4e.jpg',
+                    isSaved: true,
+                  }}
+                  hideSaveButton
+                />
+              </View>
+            )}
             {savedVocabularies.map((item, index) => {
               const vocab = item.vocabulary
               return (
@@ -85,6 +103,11 @@ export function NoteScreen() {
 
         {tab === NoteTab.Phrase && (
           <View style={{ width: "100%" }}>
+            {savedParaphrases.length === 0 && (
+              <View style={{ width: "100%", alignItems: 'center', justifyContent: 'center', marginTop: 24 }}>
+                <Text weight='SemiBold' style={{ textAlign: 'center' }}>{i18n.t("no_saved_paraphrase")}</Text>
+              </View>
+            )}
             {savedParaphrases.map((item, index) => {
               return (
                 <View key={`phrase_${item.id}`} style={styles.cardWrapper}>
