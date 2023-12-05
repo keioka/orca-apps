@@ -41,7 +41,11 @@ export async function createContentfulEntry(
 
   try {
     const space = await client.getSpace(spaceId);
+    console.log(">>>>>>>>>  space", space)
+
     const environment = await space.getEnvironment('master'); // Assuming the 'master' environment
+    console.log(">>>>>>>>>  environment", environment)
+
     const entry = await environment.createEntry(contentTypeId, { fields: entryFields });
 
     return entry;

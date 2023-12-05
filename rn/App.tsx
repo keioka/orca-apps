@@ -41,6 +41,7 @@ import uuid from 'react-native-uuid';
 import { i18n } from './locales';
 import { fetchCurrentUser, setMpTrackingId } from './redux/features/auth';
 import { Audio } from "expo-av";
+import { WebView } from 'react-native-webview';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -99,6 +100,22 @@ const MainTab = () => (
         }
       }}
     />
+    <Tab.Screen
+      name="Feedback"
+      component={() => {
+        return (
+          <WebView
+            source={{ uri: "https://forms.gle/3pD3nbPf77CfwCDB7" }}
+          />
+        )
+      }}
+      options={{
+        tabBarLabel: i18n.t('feedback'),
+        headerStyle: {
+          shadowColor: 'transparent',
+        }
+      }}
+    />
     {
       process.env.NODE_ENV === 'development' &&
       <Tab.Screen
@@ -112,6 +129,7 @@ const MainTab = () => (
         }}
       />
     }
+
     {/* <Tab.Screen name="Settings" component={SettingsScreen} /> */}
   </Tab.Navigator>
 )
@@ -371,6 +389,7 @@ async function fetchDeviceId() {
 // });
 
 function App() {
+  console.log(process.env)
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') {
       onFetchUpdateAsync()

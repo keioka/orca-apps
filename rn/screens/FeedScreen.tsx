@@ -17,6 +17,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { analytics, ACTION } from '../helpers/mixpanel';
 import { Linking } from "react-native";
 import { i18n } from '../locales';
+import { NewsCarousel } from '../components/NewsCarousel';
 
 export function FeedScreen({ navigation }) {
   const dispatch = useAppDispatch()
@@ -177,6 +178,7 @@ export function FeedScreen({ navigation }) {
     Updates.reloadAsync()
   }
 
+  console.log(process.env)
   return (
     <SafeAreaView style={styles.container}>
       <Portal>
@@ -300,7 +302,9 @@ export function FeedScreen({ navigation }) {
             <View style={{ backgroundColor: "#f2f2f2", width: "100%", padding: 18 }}>
               <Text>{i18n.t("version")}: {Updates.updateId ? Updates.updateId + "-" + Updates.channel?.toLowerCase() : "N/A"}</Text>
             </View>
-
+            <View style={{ backgroundColor: "#f2f2f2", width: "100%", padding: 18 }}>
+              <Text>E:{process.env.EXPO_PUBLIC_APP_ENV}</Text>
+            </View>
           </Menu>
         </View>
         <ScrollView
@@ -350,19 +354,7 @@ export function FeedScreen({ navigation }) {
           }
           onMomentumScrollEnd={handleEndRefresh}
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollViewContainer}
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            onMomentumScrollEnd={handleEndRefresh}
-          >
-            <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ color: "#242424" }}>3 minutes Digest</Text>
-              <Button onPress={handleNavigateToCategory} mode="contained">Add News Feeds</Button>
-            </View>
-          </ScrollView>
+          <NewsCarousel />
           {!isInitFollowPublishers && isFetchingMaterials && (
             <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
               <ActivityIndicator size="large" color="#242424" />

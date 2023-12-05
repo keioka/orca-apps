@@ -15,7 +15,7 @@
   "playSound": "再生",
   "pressTalk": "赤いボタンを押して話す",
   "clearInput": "入力をクリア",
-  "close": "閉じる",
+  "feedback": "フィードバック",
   "editRSSFeed": "フィードを編集",
   "navigatingToLesson": "記事をロード中...",
   "instructionsLesson": "学習の流れ",
@@ -60,5 +60,7 @@
   "numberOfSavedParaphrase": "言い換え表現数",
   "noData": "データがありません",
   "checkGrammarMistake": "文法ミスを確認",
-  "checkParaphrase": "別表現を確認"
+  "checkParaphrase": "別表現を確認",
+  "no_saved_vocab": "保存された単語がありません。\n 記事ごとに自動作成された単語リストから単語を保存すると、ここに表示されます。",
+  "no_saved_paraphrase": "保存された言い換え表現がありません。\n 言い換え表現リストから言い換え表現を保存すると、ここに表示されます。",
 }

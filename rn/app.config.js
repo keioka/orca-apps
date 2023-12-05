@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 const { expand } = require("dotenv-expand");
 const path = require("path");
 
+console.log("🦊🦊🦊 Loading env vars for stage:", process.env.STAGE)
 // HACK: Custom env var loading logic to support `.env.prod`
 if (process.env.STAGE) {
   const pathToEnv = path.join(
