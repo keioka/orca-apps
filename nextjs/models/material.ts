@@ -237,3 +237,18 @@ export async function hadPreviousLesson(ids: string) {
   })
   return lesson
 }
+
+export async function search(text: string) {
+  const materials = await prisma.material.findMany({
+    where: {
+      title: {
+        search: text
+      }
+    },
+    include: {
+      publisher: true,
+    },
+  });
+
+  return materials
+}
