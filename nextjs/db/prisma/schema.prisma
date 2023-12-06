@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -316,4 +317,14 @@ model UserFollowHashtag {
 
   @@unique([userId, hashtagId])
   @@map("user_follow_hashtags")
+}
+
+model SearchTag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar(255)
+  query     String   @db.VarChar(1024)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("search_tags")
 }

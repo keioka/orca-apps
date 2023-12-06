@@ -1,25 +1,19 @@
 import type { AppProps } from 'next/app';
-import { Inter, Poppins, M_PLUS_Rounded_1c } from 'next/font/google';
+import { Crimson_Text } from 'next/font/google';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 
 import 'reset-css';
 
-const poppins = Poppins({
-  variable: '--font-poppins',
-  weight: ["300", "400", "500", "600"],
-  subsets: ['latin'],
-})
-
-const mPlusRounded1c = M_PLUS_Rounded_1c({
-  variable: '--font-m-plus-rounded-1c',
-  weight: ["300", "400", "500", "700"],
+const crimsonText = Crimson_Text({
+  variable: '--font-crimson-text',
+  weight: ["400", "600"],
   subsets: ['latin'],
 })
 
 const theme = createTheme({
   typography: {
-    fontFamily: 'var(--font-poppins)',
+    fontFamily: 'var(--font-crimson-text)',
   },
   palette: {
     primary: {
@@ -77,7 +71,7 @@ const theme = createTheme({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
-      <main className={`${poppins.variable} ${mPlusRounded1c.variable}`}>
+      <main className={`${crimsonText.className}`}>
         <Component {...pageProps} />
         {/* <BottomNavigation sx={{ zIndex: 3, width: "100%", position: "fixed", bottom: 0 }}>
           <BottomNavigationAction label="Recents" />

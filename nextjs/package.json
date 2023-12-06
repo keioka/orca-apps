@@ -26,6 +26,8 @@
   },
   "dependencies": {
     "@baselime/node-opentelemetry": "^0.2.11",
+    "@contentful/rich-text-from-markdown": "^15.16.8",
+    "@contentful/rich-text-react-renderer": "^15.19.0",
     "@defer/client": "^1.13.1",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
@@ -46,6 +48,7 @@
     "camelcase-keys": "^9.1.1",
     "cheerio": "^1.0.0-rc.12",
     "compromise": "^14.10.0",
+    "contentful": "^10.6.14",
     "cookie-parser": "^1.4.6",
     "cookies-next": "^2.1.2",
     "d3-dsv": "^3.0.1",
