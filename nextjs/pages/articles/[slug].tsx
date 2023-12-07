@@ -12,6 +12,7 @@ import { Entry } from 'contentful'
 import Link from 'next/link';
 import { renderToStaticMarkup } from 'react-dom/server'
 // import { BlogPost } from 'src/components/BlogPost'
+import { CardVocab } from '../../components/CardVocab'
 
 export const config = {
   amp: 'hybrid',
@@ -417,7 +418,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               </TransP>
             </Box>
 
-            <Box sx={{ background: "#f4f4f4", borderRadius: 2 }} p={4} mt={8}>
+            {/* <Box sx={{ background: "#f4f4f4", borderRadius: 2 }} p={4} mt={8}>
               <Grid container spacing={4}>
                 <Grid item xs={12} md={12}>
                   {author &&
@@ -459,7 +460,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                   }
                 </Grid>
               </Grid>
-            </Box>
+            </Box> */}
             {/* {relatedArticles && relatedArticles.length > 0 &&
               <Box mt={16}>
                 <Typography variant="h6">Related articles</Typography>
@@ -476,9 +477,30 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                 </Grid>
               </Box>
             } */}
+            <Box sx={{ marginBottom: 1 }}>
+              <CardVocab
+                vocab={{
+                  word: "state-owned enterprises",
+                  meaning: "国有企業",
+                  sentence: "This downgrade, the first since 2017, reflects concerns over financing troubles in local and regional governments and state-owned enterprises in China​​.",
+                  example: "state-owned enterprises in China are facing financing troubles",
+                }}
+              />
+            </Box>
+            <Box sx={{ marginBottom: 1 }}>
+              <CardVocab
+                vocab={{
+                  word: "US Stock Futures",
+                  meaning: "米国株式先物",
+                  sentence: "US Stock Futures and Interest Rates",
+                  example: "US Stock Futures are down",
+                }}
+              />
+            </Box>
+
           </Box>
         </Box>
-      </BlogLayout >
+      </BlogLayout>
     </>
 
   )
