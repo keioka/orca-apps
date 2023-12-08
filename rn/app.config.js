@@ -5,7 +5,6 @@ const path = require("path");
 console.log("🦊🦊🦊 Loading env vars for stage:", process.env.STAGE)
 // HACK: Custom env var loading logic to support `.env.prod`
 if (process.env.STAGE) {
-  console.log("before load", process.env)
   const pathToEnv = path.join(
     __dirname,
     ["./.env", process.env.STAGE].filter(Boolean).join(".")

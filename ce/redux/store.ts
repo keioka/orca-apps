@@ -54,6 +54,11 @@ const logger = (storeAPI: any) => (next: any) => (action: any) => {
   return result
 }
 
+
+const sentryReduxEnhancer = Sentry.createReduxEnhancer({
+  attachReduxState: false,
+});
+
 export const store = configureStore({
   reducer: persistedReducer,
   devTools: process.env.NODE_ENV !== 'production',
