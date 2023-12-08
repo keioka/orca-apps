@@ -385,27 +385,16 @@ async function fetchDeviceId() {
   return uuid;
 }
 
-Sentry.init({
-  dsn: "https://425e8ab9fba56def5d60e9dd1698b2a4@o4506180296966144.ingest.sentry.io/4506358424862720",
-  enableInExpoDevelopment: true,
-})
-
 function App() {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') {
       onFetchUpdateAsync()
-      console.log("env", process.env.EXPO_PUBLIC_APP_ENV)
-      if (process.env.EXPO_PUBLIC_APP_ENV === 'preview') {
-        LogRocket.init('taiheyyo/orca-preview');
-      } else {
-        LogRocket.init('taiheyyo/orca-prod');
-      }
+      LogRocket.init(process.env.EXPO_PUBLIC_LOGROCKET);
       setDeviceId()
-      // Sentry.init({
-      //   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
-      //   enableInExpoDevelopment: true,
-      // });
-
+      Sentry.init({
+        dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+        enableInExpoDevelopment: true,
+      });
     }
 
     async function setDeviceId() {
