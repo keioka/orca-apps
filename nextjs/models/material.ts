@@ -245,6 +245,10 @@ export async function search(text: string) {
         search: text
       }
     },
+    take: parseInt(100), // 'take' in Prisma acts like 'limit' in many SQL databases
+    orderBy: {
+      publishedAt: 'desc', // or 'desc' for descending order
+    },
     include: {
       publisher: true,
     },

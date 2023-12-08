@@ -64,6 +64,7 @@ export const fetchMaterials = createAsyncThunk<Material[], void>(
   }
 );
 
+
 // Create the materials slice
 const materialsSlice = createSlice({
   name: 'materials',

@@ -18,6 +18,7 @@ import { analytics, ACTION } from '../helpers/mixpanel';
 import { Linking } from "react-native";
 import { i18n } from '../locales';
 import { NewsCarousel } from '../components/NewsCarousel';
+import { SearchMaterials } from '../components/SearchMaterials';
 
 interface OffsetByCategory {
   [key: string]: number
@@ -36,6 +37,7 @@ export function FeedScreen({ navigation }) {
 
   const items = useAppSelector((state) => state.material.items);
   const [selectedCategory, setSelectedCategory] = useState("all")
+  const [isSearchMode, setIsSearchMode] = useState(false)
   const [refreshing, setRefreshing] = useState(false);
   const [refreshingEnd, setRefreshingEnd] = useState(false);
   const [shouldShowMenu, setShouldShowMenu] = useState(false);
@@ -45,7 +47,6 @@ export function FeedScreen({ navigation }) {
   const followCategories = useAppSelector((state) => state.publisher.followCategories)
   const isInitFollowPublishers = useAppSelector((state) => state.publisher.isInitFollowPublishers)
   const isFetchingMaterials = useAppSelector((state) => state.material.isFetchingMaterials)
-
   const scrollViewRef = useRef();
 
   useEffect(() => {
@@ -351,90 +352,107 @@ export function FeedScreen({ navigation }) {
             </View>
           </Menu>
         </View>
-        <ScrollView
-          style={styles.categoryMenu}
-          contentContainerStyle={styles.categoryMenuScrollViewContainer}
-          showsHorizontalScrollIndicator={false}
-          horizontal
-        >
-          <TouchableOpacity key="category_add" onPress={handleNavigateToCategory}>
-            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent", backgroundColor: "#FFD744", borderTopRightRadius: 8, borderBottomRightRadius: 0 }]}>
-              <View style={{ height: 24 }}>
-                <Ionicons name="settings-outline" size={24} color="#242424" />
-              </View>
-              <Text style={{ marginTop: 8, fontSize: 12 }} weight='Bold'>{i18n.t("editRSSFeed")}</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity key="all" onPress={() => setSelectedCategory("all")}>
-            <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#2FABE8" }]}>
-              <View style={{ height: 24 }}>
-                <Ionicons name="star" size={24} color={selectedCategory === "all" ? "#2FABE8" : "#242424"} />
-              </View>
-              <Text style={{ marginTop: 8, }}>All</Text>
-            </View>
-          </TouchableOpacity>
-
-          {followCategoryItems && followCategoryItems.map((category) => {
-            return (
-              <TouchableOpacity key={category.slug} onPress={() => handleSelectTab(category.slug)}>
-                <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.slug && { borderBottomColor: "#2FABE8" }]}>
-                  <View style={{ height: 24 }}>
-                    <Ionicons name={category.icon} size={24} color={selectedCategory === category.slug ? "#2FABE8" : "#242424"} />
-                  </View>
-                  <Text style={{ marginTop: 8, }}>{category.title}</Text>
+        {isSearchMode && (
+          <SearchMaterials onClose={() => setIsSearchMode(false)} onPressStart={onPressStart} />
+        )}
+        {!isSearchMode &&
+          <ScrollView
+            style={styles.categoryMenu}
+            contentContainerStyle={styles.categoryMenuScrollViewContainer}
+            showsHorizontalScrollIndicator={false}
+            horizontal
+          >
+            <TouchableOpacity key="category_add" onPress={handleNavigateToCategory}>
+              <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent", backgroundColor: "#FFD744", borderTopRightRadius: 8, borderBottomRightRadius: 0 }]}>
+                <View style={{ height: 24 }}>
+                  <Ionicons name="settings-outline" size={24} color="#242424" />
                 </View>
-              </TouchableOpacity>
-            )
-          })}
+                <Text style={{ marginTop: 8, fontSize: 12 }} weight='Bold'>{i18n.t("editRSSFeed")}</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity key="search" onPress={() => setIsSearchMode(true)}>
+              <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "search" && { borderBottomColor: "#2FABE8" }]}>
+                <View style={{ height: 24 }}>
+                  <Ionicons name="search" size={24} color={selectedCategory === "search" ? "#2FABE8" : "#242424"} />
+                </View>
+                <Text style={{ marginTop: 8, }}>Search</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity key="all" onPress={() => setSelectedCategory("all")}>
+              <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#2FABE8" }]}>
+                <View style={{ height: 24 }}>
+                  <Ionicons name="star" size={24} color={selectedCategory === "all" ? "#2FABE8" : "#242424"} />
+                </View>
+                <Text style={{ marginTop: 8, }}>All</Text>
+              </View>
+            </TouchableOpacity>
 
 
-        </ScrollView>
-        <ScrollView
-          ref={scrollViewRef}
-          contentContainerStyle={styles.scrollViewContainer}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          scrollEventThrottle={1000}
-          onScroll={onScrollFeed}
-        >
-          <NewsCarousel />
-          {!isInitFollowPublishers && isFetchingMaterials && (
-            <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
-              <ActivityIndicator size="large" color="#242424" />
-            </View>
-          )}
-          {
-            isInitFollowPublishers && followPublishers.length === 0 && (
-              <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
-                <Text style={{ color: "#242424" }}>No materials</Text>
-                <Button onPress={handleNavigateToCategory} mode="contained">Add News Feeds</Button>
-              </View>
-            )
-          }
-          {
-            selectedMaterials && selectedMaterials.map((item) => (
-              <View key={item.id} style={{ marginVertical: 2, width: "100%" }}>
-                <CardArticle
-                  item={item}
-                  onPressStart={() => onPressStart({ url: item.url, lessonId: item.lessonId, materialId: item.id, lessonId: item.lessonId })}
-                  lessonId={item.lessonId}
-                />
-              </View>
-            ))
-          }
-          {
-            refreshingEnd && (
+            {followCategoryItems && followCategoryItems.map((category) => {
+              return (
+                <TouchableOpacity key={category.slug} onPress={() => handleSelectTab(category.slug)}>
+                  <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === category.slug && { borderBottomColor: "#2FABE8" }]}>
+                    <View style={{ height: 24 }}>
+                      <Ionicons name={category.icon} size={24} color={selectedCategory === category.slug ? "#2FABE8" : "#242424"} />
+                    </View>
+                    <Text style={{ marginTop: 8, }}>{category.title}</Text>
+                  </View>
+                </TouchableOpacity>
+              )
+            })}
+          </ScrollView>
+        }
+
+        {!isSearchMode && (
+          <ScrollView
+            ref={scrollViewRef}
+            contentContainerStyle={styles.scrollViewContainer}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            scrollEventThrottle={1000}
+            onScroll={onScrollFeed}
+          >
+            <NewsCarousel />
+            {!isInitFollowPublishers && isFetchingMaterials && (
               <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
                 <ActivityIndicator size="large" color="#242424" />
-                <Text style={{ color: "#242424" }}>Loading 50 more articles...</Text>
               </View>
-            )
-          }
-        </ScrollView>
-      </View >
+            )}
+            {
+              isInitFollowPublishers && followPublishers.length === 0 && (
+                <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ color: "#242424" }}>No materials</Text>
+                  <Button onPress={handleNavigateToCategory} mode="contained">Add News Feeds</Button>
+                </View>
+              )
+            }
+            {
+              selectedMaterials && selectedMaterials.map((item) => (
+                <View key={item.id} style={{ marginVertical: 2, width: "100%" }}>
+                  <CardArticle
+                    item={item}
+                    onPressStart={() => onPressStart({ url: item.url, lessonId: item.lessonId, materialId: item.id, lessonId: item.lessonId })}
+                    lessonId={item.lessonId}
+                  />
+                </View>
+              ))
+            }
+            {
+              refreshingEnd && (
+                <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
+                  <ActivityIndicator size="large" color="#242424" />
+                  <Text style={{ color: "#242424" }}>Loading 50 more articles...</Text>
+                </View>
+              )
+            }
+          </ScrollView>
+        )}
+      </View>
+
       <Snackbar
         visible={!!errorLesson}
         onDismiss={handleClearAllErrors}

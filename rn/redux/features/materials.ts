@@ -17,6 +17,7 @@ interface Material {
 // Define the type for the state
 interface MaterialsState {
   items: Material[];
+  searchResult: Material[];
   isInitMaterials: boolean;
   isFetchingMaterials: boolean;
   isFetchingSummary: boolean;
@@ -29,6 +30,7 @@ interface MaterialsState {
 // Define the initial state
 const initialState: MaterialsState = {
   items: [],
+  searchResult: [],
   page: {
     totalItems: 0,
     currentPage: 0,
@@ -111,6 +113,16 @@ const materialsSlice = createSlice({
       .addCase(fetchSummaries.rejected, (state, action) => {
         state.isFetchingSummary = false
       })
+      .addCase(searchMaterials.pending, (state) => {
+        state.isFetchingMaterials = true;
+        state.error = null;
+      })
+      .addCase(searchMaterials.fulfilled, (state, action) => {
+        state.isFetchingMaterials = true;
+        state.error = null;
+        state.items.push(...state.searchResult)
+        state.searchResult = action.payload || [];
+      })
       .addMatcher(
         (action) => action.type === "global/RESET_STATE",
         (state) => {
@@ -192,6 +204,34 @@ export const fetchMaterials = createAsyncThunk<Material[], void>(
     } finally {
       // Reset the cancel token source
       cancelTokenSource = null;
+    }
+  }
+);
+
+
+interface SeachMaterialParams {
+  tag: string,
+  query: string
+}
+
+export const searchMaterials = createAsyncThunk<Material[], void>(
+  'materials/searchMaterials',
+  async (params: SeachMaterialParams, { rejectWithValue }) => {
+    try {
+      const response = await axios(`${ROOT_URL}/api/materials/search`, {
+        params: params,
+      }); // Replace with your API endpoint
+
+      const data = response.data;
+
+      if (!data || !data.materials) {
+        return rejectWithValue('Failed to search materials')
+      }
+
+      return data.materials;
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(error.message)
     }
   }
 );
