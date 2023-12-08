@@ -385,23 +385,23 @@ async function fetchDeviceId() {
   return uuid;
 }
 
-// Sentry.init({
-//   dsn: "https://e25048ab84e9c5d338110cc22f6fb409@o4506180296966144.ingest.sentry.io/4506180298735616",
-//   enableInExpoDevelopment: true,
-// });
-
 function App() {
-  console.log(process.env)
+
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') {
       onFetchUpdateAsync()
       console.log("env", process.env.EXPO_PUBLIC_APP_ENV)
-      if (process.env.EXPO_PUBLIC_APP_ENV === 'preview') {
+      if (Updates.channel === 'preview') {
         LogRocket.init('taiheyyo/orca-preview');
       } else {
         LogRocket.init('taiheyyo/orca-prod');
       }
       setDeviceId()
+
+      Sentry.init({
+        dsn: "https://e6c7a1fb1e248b14907c173f425b0617@o4506180296966144.ingest.sentry.io/4506180328947712",
+        enableInExpoDevelopment: true,
+      });
     }
 
     async function setDeviceId() {
