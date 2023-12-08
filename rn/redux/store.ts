@@ -7,9 +7,25 @@ import transcribe from './features/transcribe';
 import videoInfo from './features/videoInfo';
 import note from './features/note';
 import publisher from './features/publishers';
+import * as Sentry from "@sentry/react";
 
 const logger = (storeAPI: any) => (next: any) => (action: any) => {
-  if (process.env.NODE_ENV === 'production') return next(action)
+  if (process.env.NODE_ENV === 'production') {
+    const state = storeAPI.getState()
+    if (action.type.includes('rejected')) {
+      Sentry.configureScope(function (scope) {
+        const userId = state.auth.currentUser?.id
+        console.log({ userId })
+        scope.setUser({
+          userId,
+        });
+        scope.setExtra("action", action);
+      });
+      Sentry.captureMessage(`[Redux Action]: ${action.type}`, "error")
+    }
+    return next(action)
+  }
+
   console.log(`🔶 Dispatching: ${action.type}`, action)
   let result = next(action)
   console.log('🟢 Next state', storeAPI.getState())
@@ -28,6 +44,7 @@ export const store = configureStore({
     publisher: publisher,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+  enhancers: [Sentry.createReduxEnhancer({})],
 });
 
 function initAppState() {
