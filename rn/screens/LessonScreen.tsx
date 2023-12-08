@@ -389,30 +389,28 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
   return (
     <View style={{ width: "100%", height: "100%", backgroundColor: "#fff" }}>
       <View style={styles.menu}>
-        <View style={[styles.tabWrapper]}>
-          <TouchableOpacity onPress={() => {
+        <TouchableOpacity
+          onPress={() => {
             analytics.track(ACTION.navLessonArticleTab, { lessonId: lesson.id })
             setTab(LearningModeTab.Article)
-          }}>
-            <View style={tab === LearningModeTab.Article ? styles.buttonActive : null}>
-              <Text style={[styles.textMenu, tab === LearningModeTab.Article ? { color: "#242424" } : null]}>{i18n.t("article")}</Text>
-            </View>
-          </TouchableOpacity >
-        </View>
-        <View style={[styles.tabWrapper]}>
-          <TouchableOpacity onPress={handlePressSummary}>
-            <View style={tab === LearningModeTab.Summary ? styles.buttonActive : null}>
-              <Text style={[styles.textMenu, tab === LearningModeTab.Summary ? { color: "#242424" } : null]}>{i18n.t("summary")}</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={[styles.tabWrapper]}>
-          <TouchableOpacity onPress={handlePressVocabulary}>
-            <View style={tab === LearningModeTab.Vocabulary ? styles.buttonActive : null}>
-              <Text style={[styles.textMenu, tab === LearningModeTab.Vocabulary ? { color: "#242424" } : null]}>{i18n.t("vocabulary")}</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+          }}
+          style={[styles.tabWrapper]}
+        >
+          <View style={tab === LearningModeTab.Article ? styles.buttonActive : null}>
+            <Text style={[styles.textMenu, tab === LearningModeTab.Article ? { color: "#242424" } : null]}>{i18n.t("article")}</Text>
+          </View>
+        </TouchableOpacity >
+        <TouchableOpacity onPress={handlePressSummary} style={[styles.tabWrapper]}>
+          <View style={tab === LearningModeTab.Summary ? styles.buttonActive : null}>
+            <Text style={[styles.textMenu, tab === LearningModeTab.Summary ? { color: "#242424" } : null]}>{i18n.t("summary")}</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handlePressVocabulary} style={[styles.tabWrapper]}>
+          <View style={tab === LearningModeTab.Vocabulary ? styles.buttonActive : null}>
+            <Text style={[styles.textMenu, tab === LearningModeTab.Vocabulary ? { color: "#242424" } : null]}>{i18n.t("vocabulary")}</Text>
+          </View>
+        </TouchableOpacity>
       </View>
 
       {
@@ -473,7 +471,7 @@ export function LessonScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   menu: {
     padding: 4,
-    height: 56,
+    height: 64,
     backgroundColor: '#2852A4',
     color: "#fff",
     flexDirection: 'row',
@@ -487,6 +485,8 @@ const styles = StyleSheet.create({
   tabWrapper: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    height: "100%",
   },
   button: {
     padding: 2,
