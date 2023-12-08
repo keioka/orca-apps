@@ -1,10 +1,12 @@
 const dotenv = require("dotenv");
 const { expand } = require("dotenv-expand");
 const path = require("path");
+import Constants from 'expo-constants';
 
 console.log("🦊🦊🦊 Loading env vars for stage:", process.env.STAGE)
 // HACK: Custom env var loading logic to support `.env.prod`
 if (process.env.STAGE) {
+  console.log("before load", process.env)
   const pathToEnv = path.join(
     __dirname,
     ["./.env", process.env.STAGE].filter(Boolean).join(".")
@@ -15,7 +17,10 @@ if (process.env.STAGE) {
       override: true,
     })
   );
+  console.log("after load", process.env)
 }
+
+console.log("Constants", Constants)
 
 // https://github.com/expo/expo/issues/23727
 export default () => ({
