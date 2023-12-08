@@ -391,7 +391,7 @@ function App() {
     if (process.env.NODE_ENV !== 'development') {
       onFetchUpdateAsync()
       console.log("env", process.env.EXPO_PUBLIC_APP_ENV)
-      if (Updates.channel === 'preview') {
+      if (process.env.EXPO_PUBLIC_APP_ENV === 'preview') {
         LogRocket.init('taiheyyo/orca-preview');
       } else {
         LogRocket.init('taiheyyo/orca-prod');
