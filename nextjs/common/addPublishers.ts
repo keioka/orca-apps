@@ -41,36 +41,27 @@ interface RSS {
 interface Publisher { url: string, name: string, category?: string, isRecommended?: boolean, domain?: string }
 
 export async function addPublishers(publishers: Publisher[], category?: string) {
+  const publishersData = await Promise.all(publishers.map(async (publisher) => {
+    try {
 
-  try {
-    const publishersData = await Promise.all(publishers.map(async (publisher) => {
-      try {
-        const feed = await parser.parseURL(publisher.url);
+      const publisherData = {
+        name: publisher.name,
+        rssUrl: publisher.url,
+        publisherType: 'rss',
+        domain: publisher.domain ? publisher.domain : null,
+        contentType: 'article',
+        category: publisher.category?.toLowerCase() || category,
+        isRecommended: publisher.isRecommended
+      };
 
-        const publisherData = {
-          name: publisher.name || feed.title,
-          rssUrl: publisher.url,
-          publisherType: 'rss',
-          domain: publisher.domain ? publisher.domain : null,
-          contentType: 'article',
-          category: publisher.category?.toLowerCase() || category,
-          categoryExternal: feed.category?.toLowerCase() || category,
-          imageUrl: feed.image?.url,
-          isRecommended: publisher.isRecommended
-        };
+      return publisherData
+    } catch (error) {
+      console.error(`${error.code}-${error.message}`, publisher.url)
+      return null
+    }
+  }))
 
-        return publisherData
-      } catch (error) {
-        console.error(`${error.code}-${error.message}`, publisher.url)
-        return null
-      }
-    }))
-
-    const validData = publishersData.filter((publisher) => publisher)
-    const result = await PublisherModel.createPublishers(validData)
-    return result
-  } catch (error) {
-    console.error(error)
-    return
-  }
+  const validData = publishersData.filter((publisher) => publisher)
+  const result = await PublisherModel.createPublishers(validData)
+  return result
 }

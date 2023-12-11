@@ -5,6 +5,7 @@ import { addPublishers } from "@/common/addPublishers";
 import createArticlesByPublisherIdsDefer from "@/defer/createArticlesByPublisherIds";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  console.log("fantom!")
   if (req.method === "POST") {
     const { category, publishers } = req.body;
     try {
