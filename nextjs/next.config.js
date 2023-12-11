@@ -56,7 +56,7 @@ export default withSentryConfig(
     // Suppresses source map uploading logs during build
     silent: true,
     org: "taiheyyo-inc",
-    project: "orca-prod",
+    project: "nextjs",
   },
   {
     // For all available options, see:
