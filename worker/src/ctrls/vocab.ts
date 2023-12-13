@@ -1,9 +1,10 @@
 import { getVocabsFromText } from '../openai/vocab'
 
 export async function vocab(req, res) {
-  const { text } = req.body
+  const { paragraph } = req.body;
+
   const { vocabs } = await getVocabsFromText({
-    text,
+    text: paragraph,
     transLangCode: "ja",
     id: "1"
   })

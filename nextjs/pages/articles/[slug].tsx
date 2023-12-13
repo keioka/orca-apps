@@ -253,7 +253,8 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     p2,
     p3,
     p4,
-    p5
+    p5,
+    vocabulary,
   } = article.fields
   const contentType = heroImageInfo.file.contentType
   const hasProofreader = proofreader && proofreader.fields
@@ -365,7 +366,18 @@ export default function Article({ article, relatedArticles, body, notFound, slug
           </Box>
         </BlogHeader>
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+
           <Box p={3} sx={{ width: "100%", maxWidth: "840px", position: "relative" }}>
+            <Box>
+              {vocabulary && vocabulary.map((vocab) => (
+                <Box sx={{ marginBottom: 1 }}>
+                  <CardVocab
+                    vocab={vocab}
+                  />
+                </Box>
+              ))}
+            </Box>
+
             {body && documentToReactComponents(body, options)}
             <Box pb={3} sx={{ borderBottom: "1px solid #f2f2f2" }}>
               <Typography sx={{ py: 1, fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 3 }}>
@@ -477,26 +489,6 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                 </Grid>
               </Box>
             } */}
-            <Box sx={{ marginBottom: 1 }}>
-              <CardVocab
-                vocab={{
-                  word: "state-owned enterprises",
-                  meaning: "国有企業",
-                  sentence: "This downgrade, the first since 2017, reflects concerns over financing troubles in local and regional governments and state-owned enterprises in China​​.",
-                  example: "state-owned enterprises in China are facing financing troubles",
-                }}
-              />
-            </Box>
-            <Box sx={{ marginBottom: 1 }}>
-              <CardVocab
-                vocab={{
-                  word: "US Stock Futures",
-                  meaning: "米国株式先物",
-                  sentence: "US Stock Futures and Interest Rates",
-                  example: "US Stock Futures are down",
-                }}
-              />
-            </Box>
 
           </Box>
         </Box>
