@@ -102,15 +102,16 @@ export async function getMaterials(params: GetMaterialsParams): Promise<Paginati
 export async function createMaterial(materialData: Omit<Material, 'id'>): Promise<Material> {
   const publisherData = materialData.publisher;
 
-  let existingPublisher;
-  if (publisherData && publisherData.domain) {
-    existingPublisher = await prisma.publisher.findUnique({
+  let existingPublisherId = publisherData?.id;
+  if (!existingPublisherId && publisherData && publisherData.domain) {
+    const existingPublisher = await prisma.publisher.findUnique({
       where: { domain: publisherData.domain }
     });
+    existingPublisherId = existingPublisher?.id;
   }
 
-  const publisherAction = existingPublisher
-    ? { connect: { id: existingPublisher.id } }
+  const publisherAction = existingPublisherId
+    ? { connect: { id: existingPublisherId } }
     : { create: publisherData };
 
 

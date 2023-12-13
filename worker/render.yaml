@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: orca-jobs
+    name: work-server
     runtime: node
     plan: free
     autoDeploy: false
