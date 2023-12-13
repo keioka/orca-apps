@@ -52,7 +52,6 @@ export async function fetchAndParseWebsite(url: string): Promise<SiteData | null
   }
 }
 
-
 export async function parseWebText(url: string): Promise<string | null> {
   if (!url) {
     return null

@@ -5,7 +5,6 @@ import { getMaterialById, createVocabs } from '@/models/material';
 import { parseWebText } from '@/utils/webParser';
 import { capitalize } from 'lodash';
 
-
 const langName = {
   'ja': 'Japanese',
   'en': 'English',

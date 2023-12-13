@@ -12,7 +12,6 @@ const parser: Parser<CustomFeed, CustomItem> = new Parser({
   }
 });
 
-
 interface RSSItem {
   title: string;
   link: string;

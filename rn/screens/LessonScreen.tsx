@@ -269,7 +269,7 @@ function ArticleTab({ lesson, handlePressSummary, handlePressVocabulary, handleP
     <>
       <Portal>
         <Modal visible={shouldShowBrowser} onDismiss={() => { setShouldShowBrowser(false) }} contentContainerStyle={{ flex: 1, backgroundColor: "#fff" }}>
-          <Browser key="lesson.material.url" initialUrl={lesson.material.url} onClose={() => setShouldShowBrowser(false)} />
+          <Browser key="lesson.material.url" initialUrl={"https://orca-fullstack.vercel.app/articles/test"} onClose={() => setShouldShowBrowser(false)} />
         </Modal>
       </Portal>
       {lesson.material.type === "video" ?
@@ -277,6 +277,7 @@ function ArticleTab({ lesson, handlePressSummary, handlePressVocabulary, handleP
           <WebView
             originWhitelist={['*']}
             source={{ uri: lesson.material.url }}
+            // source={{ uri: "https://orca-fullstack.vercel.app/articles/test" }}
             style={styles.youtubeWebview}
             allowsFullscreenVideo={false}
             allowFullScreen={false}
