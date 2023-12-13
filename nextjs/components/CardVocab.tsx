@@ -136,7 +136,7 @@ export function CardVocab({
           }}
         >
           <Stack spacing={0.5} >
-            <Stack direction="row" spacing={1} sx={{ alignItems: "center", justifyContent: "center" }}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <Typography variant="h6" component="h5">
                 {vocab.word}
               </Typography>
