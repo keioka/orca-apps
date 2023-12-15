@@ -14,6 +14,7 @@ import {
   Avatar
 } from "@mui/material"
 import { HiOutlineSpeakerWave } from "react-icons/hi2"
+import { IoBookmark } from "react-icons/io5";
 
 function getPosColor(pos: string) {
   switch (pos) {
@@ -124,7 +125,7 @@ export function CardVocab({
   }
 
   return (
-    <Card sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee" }}>
+    <Card sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee", fontSize: 16 }}>
       <Stack p={3} spacing={1}>
 
         <Stack
@@ -214,8 +215,11 @@ export function CardVocab({
                     background: "#e2e2e2"
                   }
                 }}
+                startIcon={<IoBookmark color="#b6b6b6" />}
                 size="small"
-              >単語帳に保存</Button>
+              >
+                単語帳に保存
+              </Button>
             }
             {/* {!shouldHideDiscard && <Button>{"Discard"}</Button>} */}
             {/* <Button variant="outlined" size="small">Source</Button> */}
