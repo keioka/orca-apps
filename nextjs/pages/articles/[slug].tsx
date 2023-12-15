@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { renderToStaticMarkup } from 'react-dom/server'
 // import { BlogPost } from 'src/components/BlogPost'
 import { CardVocab } from '../../components/CardVocab'
+import { HiOutlineSpeakerWave } from "react-icons/hi2"
 
 export const config = {
   amp: 'hybrid',
@@ -250,6 +251,8 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     author,
     proofreader,
     p1,
+    p1AudioLink,
+    p1Vocab,
     p2,
     p3,
     p4,
@@ -369,7 +372,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
 
           <Box p={3} sx={{ width: "100%", maxWidth: "840px", position: "relative" }}>
             <Box>
-              {vocabulary && vocabulary.map((vocab) => (
+              {p1Vocab && p1Vocab.map((vocab) => (
                 <Box sx={{ marginBottom: 1 }}>
                   <CardVocab
                     vocab={vocab}
@@ -380,6 +383,21 @@ export default function Article({ article, relatedArticles, body, notFound, slug
 
             {body && documentToReactComponents(body, options)}
             <Box pb={3} sx={{ borderBottom: "1px solid #f2f2f2" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  backgroundColor: "#cbcbcb",
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                }}
+                onClick={() => { p1AudioLink && new Audio(p1AudioLink as string).play() }}
+              >
+                <HiOutlineSpeakerWave size={18} color="#fff" />
+              </Box>
               <Typography sx={{ py: 1, fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 3 }}>
                 {p1}
               </Typography>
