@@ -127,7 +127,6 @@ export function CardVocab({
   return (
     <Card sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee", fontSize: 16 }}>
       <Stack p={3} spacing={1}>
-
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -176,7 +175,6 @@ export function CardVocab({
           </Typography>
         </Stack>
         <Stack spacing={1} sx={{ paddingTop: 1 }}>
-
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <Typography variant="caption" sx={{ lineHeight: 1 }}>
               Sentence
@@ -221,13 +219,8 @@ export function CardVocab({
                 単語帳に保存
               </Button>
             }
-            {/* {!shouldHideDiscard && <Button>{"Discard"}</Button>} */}
-            {/* <Button variant="outlined" size="small">Source</Button> */}
           </Stack>
         </CardActions>
-        {/* <Typography variant="body2" component="div">
-    {vocab.audioFile}
-  </Typography> */}
       </Stack >
     </Card >
   )

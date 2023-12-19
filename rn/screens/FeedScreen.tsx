@@ -3,7 +3,7 @@ import { StyleSheet, ScrollView, SafeAreaView, View, TouchableOpacity, ActivityI
 import { Modal, Portal, Snackbar, Button, Menu } from 'react-native-paper';
 import { CardArticle } from '../components/CardArticle';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { fetchMaterials, clearError } from '../redux/features/materials';
+import { fetchMaterials, fetchOriginalMaterials, clearError } from '../redux/features/materials';
 import { createLesson, clearCreatedLessonId, clearError as clearErrorLesson } from '../redux/features/lessons';
 import { signOut } from '../redux/features/auth';
 import { clearHasSuccessCreateFollow, fetchFollowPublishers } from '../redux/features/publishers';
@@ -36,6 +36,8 @@ export function FeedScreen({ navigation }) {
   const lessons = useAppSelector((state) => state.lesson.lessons);
 
   const items = useAppSelector((state) => state.material.items);
+  const originalItems = useAppSelector((state) => state.material.originalItems);
+
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [isSearchMode, setIsSearchMode] = useState(false)
   const [refreshing, setRefreshing] = useState(false);
@@ -52,6 +54,7 @@ export function FeedScreen({ navigation }) {
   useEffect(() => {
     dispatch(fetchLessons())
     dispatch(fetchFollowPublishers())
+    dispatch(fetchOriginalMaterials())
   }, [])
 
 
@@ -380,6 +383,16 @@ export function FeedScreen({ navigation }) {
               </View>
             </TouchableOpacity>
 
+            {/* 
+            <TouchableOpacity key="search" onPress={() => setIsSearchMode(true)}>
+              <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "search" && { borderBottomColor: "#2FABE8" }]}>
+                <View style={{ height: 24 }}>
+                  <Ionicons name="search" size={24} color={selectedCategory === "original" ? "#2FABE8" : "#242424"} />
+                </View>
+                <Text style={{ marginTop: 8, }}>Original</Text>
+              </View>
+            </TouchableOpacity> */}
+
             <TouchableOpacity key="all" onPress={() => setSelectedCategory("all")}>
               <View style={[{ justifyContent: "center", alignItems: "center", width: 108, height: 64, marginVertical: 24, borderBottomWidth: 4, borderBottomColor: "transparent" }, selectedCategory === "all" && { borderBottomColor: "#2FABE8" }]}>
                 <View style={{ height: 24 }}>
@@ -416,7 +429,8 @@ export function FeedScreen({ navigation }) {
             scrollEventThrottle={1000}
             onScroll={onScrollFeed}
           >
-            <NewsCarousel />
+            {/* <Text>3 minutes news</Text>
+            <NewsCarousel news={originalItems} onPressStart={onPressStart} /> */}
             {!isInitFollowPublishers && isFetchingMaterials && (
               <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
                 <ActivityIndicator size="large" color="#242424" />
@@ -467,13 +481,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     width: '100%'
   },
   scrollView: {
     width: '100%',
     height: '100%',
+    alignItems: 'flex-start',
   },
   scrollViewContainer: {
     // alignItems: 'center',

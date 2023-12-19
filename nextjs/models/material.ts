@@ -257,3 +257,16 @@ export async function search(text: string) {
 
   return materials
 }
+
+export async function getOriginalMaterials(publisherId: string): Promise<Material[]> {
+  const materials = await prisma.material.findMany({
+    where: {
+      publisherId: process.env.ORCA_PUBLISHER_ID
+    },
+    include: {
+      publisher: true,
+    },
+  });
+
+  return materials
+}

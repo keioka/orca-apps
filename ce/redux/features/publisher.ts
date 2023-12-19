@@ -6,6 +6,7 @@ import { sendToBackground } from '@plasmohq/messaging';
 
 interface PublisherState {
   publishers: any[];
+  followIds: any[];
   isLoading: boolean;
   error: string | null;
 }
@@ -27,6 +28,8 @@ export const fetchPublishers = createAsyncThunk('publishers/fetch', async () => 
 
   return response.data;
 });
+
+
 
 
 const feedSlice = createSlice({

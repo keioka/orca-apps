@@ -56,7 +56,7 @@ export async function getLesson(lessonId: string) {
   return lesson
 }
 
-export async function setInitMessage(lessonId: string) {
+export async function setInitMessage(lessonId: number) {
   await prisma.lesson.update({
     where: {
       id: lessonId,

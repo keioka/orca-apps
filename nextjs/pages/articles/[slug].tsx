@@ -12,7 +12,7 @@ import { Entry } from 'contentful'
 import Link from 'next/link';
 import { renderToStaticMarkup } from 'react-dom/server'
 // import { BlogPost } from 'src/components/BlogPost'
-import { CardVocab } from '../../components/CardVocab'
+import { CardVocabSM } from '../../components/CardVocabSM'
 import { HiOutlineSpeakerWave } from "react-icons/hi2"
 
 export const config = {
@@ -193,7 +193,7 @@ function addArticleJsonLd({
     },
     headline: title,
     image: [
-      article.fields.heroImage.fields.file.url
+      article.fields.heroImage[localeKeys.en].fields.file.url
     ],
     description: article.fields.metaDescription,
     articleBody: article.fields.content,
@@ -228,6 +228,44 @@ function addArticleJsonLd({
   };
 }
 
+
+const localeKeys = {
+  en: 'en-US',
+  ja: 'ja-JP',
+}
+
+function getEnUS(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(getEnUS);
+  } else if (obj !== null && typeof obj === 'object') {
+    if (obj['en-US']) {
+      return obj['en-US'];
+    }
+    const newObj = {};
+    for (const key in obj) {
+      newObj[key] = getEnUS(obj[key]);
+    }
+    return newObj;
+  }
+  return obj;
+}
+
+function getJaJp(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(getJaJp);
+  } else if (obj !== null && typeof obj === 'object') {
+    if (obj['ja']) {
+      return obj['ja'];
+    }
+    const newObj = {};
+    for (const key in obj) {
+      newObj[key] = getJaJp(obj[key]);
+    }
+    return newObj;
+  }
+  return obj;
+}
+
 export default function Article({ article, relatedArticles, body, notFound, slug }: { article: Entry, relatedArticles: Entry[], body: any, notFound: boolean }) {
 
   if (notFound) {
@@ -237,12 +275,16 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   if (!article) {
     return null
   }
+  console.log(">>>>>>>>>>", { article, hero: article.fields.heroImage, heroUSA: article.fields.heroImage[localeKeys.en].fields })
 
-  const title = article.fields.title
-  const heroImageInfo = article.fields.heroImage.fields
+  const cleanedArticle = getEnUS(article)
+  const jaArticle = getJaJp(article)
 
-  const imageUrl = `https:${heroImageInfo.file.url}`
-  const { width, height } = heroImageInfo.file.details.image
+  const title = cleanedArticle.fields.title
+  const heroImageInfo = cleanedArticle.fields.heroImage.fields
+
+  const imageUrl = `https:${heroImageInfo.file[localeKeys.en].url}`
+  const { width, height } = heroImageInfo.file[localeKeys.en].details.image
   const imageAlt = heroImageInfo.description
   const {
     description,
@@ -258,13 +300,24 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     p4,
     p5,
     vocabulary,
-  } = article.fields
+  } = cleanedArticle.fields
+
+  const {
+    p1: jaP1,
+    p2: jaP2,
+    p3: jaP3,
+    p4: jaP4,
+    p5: jaP5,
+    p6: jaP6,
+  } = jaArticle.fields
+
   const contentType = heroImageInfo.file.contentType
   const hasProofreader = proofreader && proofreader.fields
+  console.log({ jaArticle, cleanedArticle })
 
-  console.log({ body })
-  // renderContent(body)
-  console.log(article?.fields)
+  return (
+    null
+  )
   return (
     <>
       <Head>
@@ -374,7 +427,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
             <Box>
               {p1Vocab && p1Vocab.map((vocab) => (
                 <Box sx={{ marginBottom: 1 }}>
-                  <CardVocab
+                  <CardVocabSM
                     vocab={vocab}
                   />
                 </Box>
@@ -403,7 +456,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               </Typography>
               <TransP>
                 <Typography>
-                  米国株と労働統計： 火曜日の米国株は午後の取引で下落した。この変化は、米労働統計局による新規雇用統計の発表後に起こった。ハイテク株は当初上昇したものの、最終的には横ばいとなった。ナスダックは特にその影響を受けた。
+                  {jaP1}
                 </Typography>
               </TransP>
             </Box>
@@ -413,7 +466,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               </Typography>
               <TransP>
                 <Typography>
-                  ダウ・ジョーンズとアップルの評価： 株式市場の上昇は複雑なシナリオを提示した。主要株価指数はメガキャップの上昇に支えられたが、小型株は後退した。ダウ平均は火曜日の取引で0.2％下落した。大きなハイライトは、アップルが3兆ドルの評価額を突破したことだ。
+                  {jaP2}
                 </Typography>
               </TransP>
             </Box>
@@ -423,7 +476,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               </Typography>
               <TransP>
                 <Typography>
-                  ナスダックとハイテク株: アップルの時価総額が再び3兆ドルを突破。さらに、国債の上昇も再開し、10年債利回りはデータが最後に入手可能になって以来の最低水準まで低下した。
+                  {jaP3}
                 </Typography>
               </TransP>
             </Box>
@@ -433,7 +486,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               </Typography>
               <TransP>
                 <Typography>
-                  米国株式先物と金利: 火曜日の米国株式先物は下落し、2日連続の赤字となった。この動きは、投資家が新たな雇用統計を待ち、金利の行方を思案しているためだ。こうした動きを主導したのはハイテク株だった。
+                  {jaP4}
                 </Typography>
               </TransP>
             </Box>
@@ -443,7 +496,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               </Typography>
               <TransP>
                 <Typography>
-                  世界株式とムーディーズの格下げ：ムーディーズによる中国の格付け引き下げを受けて、世界的に株式市場はまちまちの結果となった。この格下げは2017年以来初めてで、中国の地方・地域政府と国有企業の資金調達トラブルに対する懸念を反映している。
+                  {jaP5}
                 </Typography>
               </TransP>
             </Box>
@@ -562,7 +615,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
 
 export async function getServerSideProps({ params }) {
   const { slug } = params;
-  const res = await client.getEntries({
+  const res = await client.withAllLocales.getEntries({
     content_type: "newsArticle",
     limit: 1,
     'fields.slug': slug,
@@ -575,6 +628,8 @@ export async function getServerSideProps({ params }) {
       notFound: true,
     }
   }
+
+  console.log({ hero: article.fields.heroImage })
 
   const body = await richTextFromMarkdown(article.fields.body, (node) => {
     if (node.type === "image") {
