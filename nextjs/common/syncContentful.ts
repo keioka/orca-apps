@@ -122,22 +122,31 @@ export async function syncContentful() {
     }
   }
 
-  return Promise.all(articles.map(async (article) => {
-    const result = await formatContentfulEntry(article)
-    try {
-      return await Material.createMaterial({
-        url: result.url,
-        title: result.title,
-        category: result.category,
-        imageUrl: result.imageUrl,
-        type: "article",
-        publisher: {
-          id: "c6b7841e-12c8-4cf1-a5d3-c61724dc982c"
-        }
-      })
-    } catch (error) {
-      console.error(error)
-      return null
-    }
-  }))
+  const newArticles = await Promise.all(
+    articles.map(async (article) => {
+      try {
+        const result = await formatContentfulEntry(article)
+        console.log({ result })
+        const newArticle = await Material.createMaterial({
+          url: result.url,
+          title: result.title || "general",
+          category: result.category,
+          imageUrl: result.imageUrl,
+          type: "article",
+          publisher: {
+            id: process.env.ORCA_PUBLISHER_ID
+          }
+        })
+
+        console.log({ newArticle })
+
+        return newArticle
+      } catch (error) {
+        console.log("===== Error ======")
+        console.error(error)
+        return null
+      }
+    }))
+  console.log({ newArticles })
+  return newArticles
 }

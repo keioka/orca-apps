@@ -24,9 +24,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const updatedPublisher = await updatePublisherInfo(publisherId as string, data);
-    res.status(200).json(updatedPublisher);
+    return res.status(200).json(updatedPublisher);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Failed to update publisher information' });
+    return res.status(500).json({ message: 'Failed to update publisher information' });
   }
 }

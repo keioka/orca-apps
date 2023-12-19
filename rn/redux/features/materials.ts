@@ -18,6 +18,7 @@ interface Material {
 interface MaterialsState {
   items: Material[];
   searchResult: Material[];
+  originalItems: Material[];
   isInitMaterials: boolean;
   isFetchingMaterials: boolean;
   isFetchingSummary: boolean;
@@ -123,10 +124,25 @@ const materialsSlice = createSlice({
         state.items.push(...state.searchResult)
         state.searchResult = action.payload || [];
       })
+      .addCase(fetchOriginalMaterials.pending, (state) => {
+        state.isFetchingMaterials = true;
+        state.error = null;
+      })
+      .addCase(fetchOriginalMaterials.fulfilled, (state, action) => {
+        state.isFetchingMaterials = true;
+        state.error = null;
+        state.originalItems = action.payload || [];
+      })
+      .addCase(fetchOriginalMaterials.rejected, (state, action) => {
+        state.isFetchingMaterials = false;
+        state.error = action.payload as string;
+      })
       .addMatcher(
         (action) => action.type === "global/RESET_STATE",
         (state) => {
           state.items = []
+          state.searchResult = []
+          state.originalItems = []
           state.isFetchingMaterials = false
           state.isFetchingSummary = false
           state.isFetchingVocabs = false
@@ -208,6 +224,25 @@ export const fetchMaterials = createAsyncThunk<Material[], void>(
   }
 );
 
+export const fetchOriginalMaterials = createAsyncThunk<Material[], void>(
+  'materials/fetchOriginalMaterials',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios(`${ROOT_URL}/api/materials/original`); // Replace with your API endpoint
+
+      const data = response.data;
+
+      if (!data || !data.materials) {
+        return rejectWithValue('Failed to fetch materials')
+      }
+
+      return data.materials;
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(error.message)
+    }
+  }
+);
 
 interface SeachMaterialParams {
   tag: string,

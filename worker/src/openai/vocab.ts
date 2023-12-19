@@ -77,10 +77,20 @@ export async function getVocabsFromText({ id, text, transLangCode }) {
                   }
                 }
               }
-            }
-          }
+            },
+            required: [
+              "word",
+              "pronounce",
+              "pos",
+              "meaning",
+              "sentence",
+              "example",
+              `meaningIn${langName[transLangCode.toLowerCase()]}`
+            ],
+          },
+
         }],
-        function_call: { name: "set_recipe" }
+        function_call: { name: "set_recipe" },
       }, {
       timeout: 60000,
     });
