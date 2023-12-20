@@ -1,11 +1,29 @@
 import { client } from '../utils/apis/contentful'
 import * as Material from '../models/material'
 
-interface SysLink {
-  type: string;
-  linkType: string;
-  id: string;
+export const convertCategory = {
+  "ai": "tech",
+  "business": "business",
+  "eu_stock": "economy",
+  "fintech": "business",
+  "israel-hamas": "world_news",
+  "jp_economy": "economy",
+  "jp_news": "world_news",
+  "jp_stock": "economy",
+  "marketing": "business",
+  "metaverse": "tech",
+  "russia-ukraine": "world_news",
+  "science": "science",
+  "sdgs": "world_news",
+  "startup": "business",
+  "tech": "tech",
+  "us_stock": "economy",
+  "web3": "tech",
+  "world_economy": "economy",
+  "world_news": "world_news",
+  "general": "world_news",
 }
+
 
 interface Sys {
   space?: {
@@ -94,16 +112,16 @@ function formatContentfulEntry(article: Entry): {
 } {
   const { fields } = article
   const { title, slug, publishedDate, heroImage, category } = fields
-  const { file } = heroImage.fields
-  const { url: imageUrl } = file
+  const file = heroImage && heroImage.fields ? heroImage.fields.file : null
+  const imageUrl = file ? file.url : null
 
   return {
     title,
     url: process.env.ROOT_URL + "/articles/" + slug,
     slug,
-    category: category || "News",
-    publishedAt: new Date(publishedDate),
-    imageUrl: "https:" + imageUrl,
+    category: category || "general",
+    publishedAt: publishedDate ? new Date(publishedDate) : new Date(),
+    imageUrl: imageUrl ? "https:" + imageUrl : null,
   }
 }
 
@@ -122,23 +140,26 @@ export async function syncContentful() {
     }
   }
 
+  console.log("process.env.ORCA_PUBLISHER_ID", process.env.ORCA_PUBLISHER_ID)
   const newArticles = await Promise.all(
     articles.map(async (article) => {
       try {
         const result = await formatContentfulEntry(article)
-        console.log({ result })
-        const newArticle = await Material.createMaterial({
-          url: result.url,
+
+        const newArticle = await Material.upsertMaterial({
+          url: result.url + "?mode=embed",
           title: result.title || "general",
-          category: result.category,
+          category: convertCategory[result.category],
+          categoryExternal: result.category,
           imageUrl: result.imageUrl,
+          publishedAt: result.publishedAt,
           type: "article",
           publisher: {
-            id: process.env.ORCA_PUBLISHER_ID
-          }
+            connect: {
+              id: process.env.ORCA_PUBLISHER_ID
+            }
+          },
         })
-
-        console.log({ newArticle })
 
         return newArticle
       } catch (error) {

@@ -14,6 +14,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 // import { BlogPost } from 'src/components/BlogPost'
 import { CardVocabSM } from '../../components/CardVocabSM'
 import { HiOutlineSpeakerWave } from "react-icons/hi2"
+import { useSearchParams } from 'next/navigation'
 
 export const config = {
   amp: 'hybrid',
@@ -66,7 +67,7 @@ const H6 = ({ children }) => <Typography component="h6" sx={{
 
 const P = ({ children }) => <Typography py={1} sx={{ fontSize: "0.9rem" }}>{children}</Typography>;
 
-const TransP = ({ children }) => <Box py={1} sx={{ py: 1, fontFamily: "Crimson Text", fontSize: 18, color: "#242424", background: "#f6f6f6", padding: 3, boxSizing: "border-box", borderRadius: 1 }}>{children}</Box>;
+const TransP = ({ children }) => <Box py={1} sx={{ py: 1, fontFamily: "Crimson Text", fontSize: 18, color: "#242424", background: "#f6f6f6", padding: 2, boxSizing: "border-box", borderRadius: 1 }}>{children}</Box>;
 
 
 function renderContent(content) {
@@ -259,6 +260,9 @@ function getJaJp(obj) {
     }
     const newObj = {};
     for (const key in obj) {
+      if (key === 'en-US') {
+        return ""
+      }
       newObj[key] = getJaJp(obj[key]);
     }
     return newObj;
@@ -267,27 +271,32 @@ function getJaJp(obj) {
 }
 
 export default function Article({ article, relatedArticles, body, notFound, slug }: { article: Entry, relatedArticles: Entry[], body: any, notFound: boolean }) {
+  const searchParams = useSearchParams()
+  const mode = searchParams.get('mode')
 
   if (notFound) {
-    return <div>ho</div>
+    return <div>not found</div>
   }
 
   if (!article) {
     return null
   }
-  console.log(">>>>>>>>>>", { article, hero: article.fields.heroImage, heroUSA: article.fields.heroImage[localeKeys.en].fields })
+
+  const isEmbedMode = mode === 'embed'
 
   const cleanedArticle = getEnUS(article)
   const jaArticle = getJaJp(article)
 
-  const title = cleanedArticle.fields.title
   const heroImageInfo = cleanedArticle.fields.heroImage.fields
 
   const imageUrl = `https:${heroImageInfo.file[localeKeys.en].url}`
   const { width, height } = heroImageInfo.file[localeKeys.en].details.image
-  const imageAlt = heroImageInfo.description
+  const imageAlt = heroImageInfo.description[localeKeys.en]
+
   const {
+    title,
     description,
+    wordCount,
     metaKeywords,
     metaDescription,
     author,
@@ -296,13 +305,17 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     p1AudioLink,
     p1Vocab,
     p2,
+    p2AudioLink,
     p3,
+    p3AudioLink,
     p4,
+    p4AudioLink,
     p5,
-    vocabulary,
+    p5AudioLink,
   } = cleanedArticle.fields
 
   const {
+    title: jaTitle,
     p1: jaP1,
     p2: jaP2,
     p3: jaP3,
@@ -311,13 +324,62 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     p6: jaP6,
   } = jaArticle.fields
 
-  const contentType = heroImageInfo.file.contentType
   const hasProofreader = proofreader && proofreader.fields
-  console.log({ jaArticle, cleanedArticle })
 
-  return (
-    null
-  )
+  console.log({
+    title,
+    description,
+    wordCount,
+    metaKeywords,
+    metaDescription,
+    author,
+    proofreader,
+    p1,
+    p1AudioLink,
+    p1Vocab,
+    p2,
+    p2AudioLink,
+    p3,
+    p3AudioLink,
+    p4,
+    p4AudioLink,
+    p5,
+    p5AudioLink,
+  })
+
+  const paragraphs = [
+    {
+      en: p1,
+      ja: jaP1,
+      audioFileLink: p1AudioLink
+    }, {
+      en: p2,
+      ja: jaP2,
+      audioFileLink: p2AudioLink
+    }, {
+      en: p3,
+      ja: jaP3,
+      audioFileLink: p3AudioLink
+    }, {
+      en: p4,
+      ja: jaP4,
+      audioFileLink: p4AudioLink
+    }, {
+      en: p5,
+      ja: jaP5,
+      audioFileLink: p5AudioLink
+    }
+  ]
+
+  console.log({
+    jaTitle,
+    jaP1,
+    jaP2,
+    jaP3,
+    jaP4,
+    jaP5,
+    jaP6,
+  })
   return (
     <>
       <Head>
@@ -332,7 +394,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
         <meta property="og:image:width" content={width} />
         <meta property="og:image:height" content={height} />
         <meta property="og:image:alt" content={imageAlt} />
-        <meta property="og:image:type" content={contentType} />
+        {/* <meta property="og:image:type" content={contentType} /> */}
         <meta property="og:url" content={`https://www.oudweb.com/articles/${slug}`} />
         <meta property="og:site_name" content="oud" />
         <meta name="twitter:card" content={imageUrl} />
@@ -381,7 +443,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
           <Box sx={{ width: "100%", display: "flex", maxWidth: "840px", justifyContent: "center" }} component="section" itemProp="articleBody">
             <Box sx={{ background: "#00100B", color: "#fff", maxWidth: "840px", width: "100%" }} p={2} mt={-0.5}>
               <H1>{title}</H1>
-              <H1>月曜の取引開始早々、株価は下げに転じたが、その後は方向感に欠ける展開となっている。</H1>
+              <H1>{jaTitle}</H1>
               {/* <Typography variant="h6">{article?.fields.content}</Typography> */}
               {/* <Box display="flex" flexDirection="row" alignItems="center" gap={1} mt={1} mb={2}>
                 <Avatar alt={""} src={""} />
@@ -398,7 +460,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                 Word Count
               </Typography>
               <Typography sx={{ fontSize: 19 }}>
-                250
+                {wordCount}
               </Typography>
             </Box>
             <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2 }}>
@@ -413,10 +475,10 @@ export default function Article({ article, relatedArticles, body, notFound, slug
             </Box>
             <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2 }}>
               <Typography sx={{ fontSize: 14 }}>
-                Word Count
+                {/* Word Count */}
               </Typography>
               <Typography sx={{ fontSize: 19 }}>
-                1000
+                {/* 1000 */}
               </Typography>
             </Box>
           </Box>
@@ -425,7 +487,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
 
           <Box p={3} sx={{ width: "100%", maxWidth: "840px", position: "relative" }}>
             <Box>
-              {p1Vocab && p1Vocab.map((vocab) => (
+              {!isEmbedMode && p1Vocab && p1Vocab.map((vocab) => (
                 <Box sx={{ marginBottom: 1 }}>
                   <CardVocabSM
                     vocab={vocab}
@@ -435,71 +497,44 @@ export default function Article({ article, relatedArticles, body, notFound, slug
             </Box>
 
             {body && documentToReactComponents(body, options)}
-            <Box pb={3} sx={{ borderBottom: "1px solid #f2f2f2" }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  backgroundColor: "#cbcbcb",
-                  width: 36,
-                  height: 36,
-                  borderRadius: "50%",
-                }}
-                onClick={() => { p1AudioLink && new Audio(p1AudioLink as string).play() }}
-              >
-                <HiOutlineSpeakerWave size={18} color="#fff" />
-              </Box>
-              <Typography sx={{ py: 1, fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 3 }}>
-                {p1}
-              </Typography>
-              <TransP>
-                <Typography>
-                  {jaP1}
-                </Typography>
-              </TransP>
-            </Box>
-            <Box pb={3} sx={{ borderBottom: "1px solid #f2f2f2" }}>
-              <Typography sx={{ py: 1, fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 3 }}>
-                {p2}
-              </Typography>
-              <TransP>
-                <Typography>
-                  {jaP2}
-                </Typography>
-              </TransP>
-            </Box>
-            <Box pb={3} sx={{ borderBottom: "1px solid #f2f2f2" }}>
-              <Typography sx={{ py: 1, fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 3 }}>
-                {p3}
-              </Typography>
-              <TransP>
-                <Typography>
-                  {jaP3}
-                </Typography>
-              </TransP>
-            </Box>
-            <Box pb={3} sx={{ borderBottom: "1px solid #f2f2f2" }}>
-              <Typography sx={{ py: 1, fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 3 }}>
-                {p4}
-              </Typography>
-              <TransP>
-                <Typography>
-                  {jaP4}
-                </Typography>
-              </TransP>
-            </Box>
-            <Box my={3}>
-              <Typography sx={{ py: 1, fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 3 }}>
-                {p5}
-              </Typography>
-              <TransP>
-                <Typography>
-                  {jaP5}
-                </Typography>
-              </TransP>
-            </Box>
+            {paragraphs.map((paragraph, index) => {
+              return (
+                <Box pb={16} sx={{ borderBottom: "1px solid #f2f2f2" }}>
+                  <Stack direction="row" py={3} justifyContent="space-between" alignItems="center">
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        backgroundColor: "#cbcbcb",
+                        width: 36,
+                        height: 36,
+                        borderRadius: "50%",
+                        marginRight: 2,
+                      }}
+                      onClick={() => { p1AudioLink && new Audio(p1AudioLink as string).play() }}
+                    >
+                      <HiOutlineSpeakerWave size={18} color="#fff" />
+                    </Box>
+                    <Box style={{ backgroundColor: "#f6f6f6", padding: 8, borderRadius: 8, justifyContent: "center" }}>
+                      <Typography sx={{ fontSize: 18, textAlign: "center", fontWeight: "bold" }}>{index + 1} / {paragraphs.length}</Typography>
+                      <Typography sx={{ fontSize: 12 }}>Paragraph</Typography>
+
+                    </Box>
+
+                  </Stack>
+                  <Typography sx={{ fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 2 }}>
+                    {paragraph.en}
+                  </Typography>
+                  <TransP>
+                    <Typography>
+                      {paragraph.ja}
+                    </Typography>
+                  </TransP>
+                </Box>
+              )
+            })}
 
             {/* <Box sx={{ background: "#f4f4f4", borderRadius: 2 }} p={4} mt={8}>
               <Grid container spacing={4}>
@@ -563,7 +598,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
 
           </Box>
         </Box>
-      </BlogLayout>
+      </BlogLayout >
     </>
 
   )

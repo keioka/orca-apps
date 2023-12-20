@@ -43,6 +43,28 @@ function fetchFavicon(url) {
   }
 }
 
+const formatCategory = {
+  ai: "AI",
+  business: "Business",
+  eu_stock: "🇪🇺 EU Stock",
+  fintech: "Fintech",
+  israel_hamas: "Israel-Hamas",
+  jp_economy: "🇯🇵Japan Economy",
+  jp_news: "🇯🇵Japan News",
+  jp_stock: "🇯🇵Japan Stock",
+  marketing: "Marketing",
+  metaverse: "Metaverse",
+  russia_ukraine: "Russia-Ukraine",
+  science: "Science",
+  sdgs: "SDGs (Sustainable Development Goals)",
+  startup: "Startup",
+  tech: "Tech",
+  us_stock: "🇺🇸US Stock",
+  web3: "Web3",
+  world_economy: "🌍World Economy",
+  world_news: "🌍World News"
+};
+
 export const CardOriginalArticle = ({
   item,
   imageSource,
@@ -53,30 +75,15 @@ export const CardOriginalArticle = ({
 }:
   CardArticleProps
 ) => {
-  if (!item) {
-    console.log(item)
-    console.error('CardArticle: item is null')
-    return null
-  }
-
+  const { categoryExternal } = item
   return (
     <TouchableOpacity onPress={onPressStart}>
       <Card style={styles.card} elevation={0}>
-        {item.publisher &&
-          <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
-            <Image
-              style={styles.publisherImg}
-              source={fetchFavicon(item.publisher.rssUrl) || item.publisher.imageUrl}
-              placeholder={blurhash}
-              contentFit="cover"
-              transition={1000}
-            />
-            <Text style={styles.textPublisherName}>{item.publisher.name}</Text>
-          </View>
-        }
+        <View style={{ width: "auto", position: "absolute", top: 10, left: 10, zIndex: 2 }}>
+          <Chip style={styles.containerCategoryChip} textStyle={styles.textChip}>{formatCategory[categoryExternal] || formatCategory["world_news"]}</Chip>
+        </View>
         <Card.Cover source={{ uri: item.imageUrl }} style={styles.cardCover} />
         <Card.Content style={styles.cardContent}>
-
           <View style={styles.cardContentBody}>
             <Title style={styles.title}>{item.title}</Title>
           </View>
@@ -98,13 +105,12 @@ export const CardOriginalArticle = ({
 
 const styles = StyleSheet.create({
   card: {
+    position: 'relative',
     elevation: -1,
     shadowOpacity: 0,
     shadowColor: 'transparent',
     backgroundColor: '#fff',
-    width: '100%',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f4f4f4',
+    width: 320,
     marginTop: 16,
     paddingVertical: 8
   },
@@ -124,28 +130,29 @@ const styles = StyleSheet.create({
   cardContent: {
     flexDirection: 'column',
     width: "100%",
+    paddingHorizontal: 0
   },
   cardContentBody: {
     width: "100%",
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginTop: 8,
+    padding: 0,
+    flexWrap: 'wrap'
   },
   cardAction: {
-    paddingVertical: 8,
-    paddingHorizontal: 18,
+    // paddingHorizontal: 18,
     flexDirection: 'row',
     width: '100%',
     marginTop: 0,
     justifyContent: 'space-between',
     alignItems: 'center',
+    padding: 0
   },
   title: {
-    flex: 10,
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 18,
-    marginRight: 8
+    paddingTop: 1
   },
   textPublisherName: {
     fontSize: 12,
@@ -155,6 +162,11 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
     backgroundColor: "#FFD744"
+  },
+  containerCategoryChip: {
+    height: 22,
+    padding: 0,
+    margin: 0,
   },
   textChip: {
     fontSize: 10,

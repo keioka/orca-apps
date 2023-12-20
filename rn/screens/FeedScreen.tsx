@@ -5,7 +5,7 @@ import { CardArticle } from '../components/CardArticle';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchMaterials, fetchOriginalMaterials, clearError } from '../redux/features/materials';
 import { createLesson, clearCreatedLessonId, clearError as clearErrorLesson } from '../redux/features/lessons';
-import { signOut } from '../redux/features/auth';
+import { signOut, toggleFeatureFlag } from '../redux/features/auth';
 import { clearHasSuccessCreateFollow, fetchFollowPublishers } from '../redux/features/publishers';
 import { categories } from '../helpers/categories';
 import { Text } from '../components/Text';
@@ -19,6 +19,7 @@ import { Linking } from "react-native";
 import { i18n } from '../locales';
 import { NewsCarousel } from '../components/NewsCarousel';
 import { SearchMaterials } from '../components/SearchMaterials';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 interface OffsetByCategory {
   [key: string]: number
@@ -34,7 +35,8 @@ export function FeedScreen({ navigation }) {
   const createdLessonId = useAppSelector((state) => state.lesson.createdLessonId);
   const errorLesson = useAppSelector((state) => state.lesson.error);
   const lessons = useAppSelector((state) => state.lesson.lessons);
-
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
+  const isOnFeatureFlag = useAppSelector((state) => state.auth.isOnFeatureFlag);
   const items = useAppSelector((state) => state.material.items);
   const originalItems = useAppSelector((state) => state.material.originalItems);
 
@@ -113,7 +115,6 @@ export function FeedScreen({ navigation }) {
   const handleEndRefresh = useCallback(() => {
     if (selectedFollowPublisherIds.length === 0) return
     if (refreshingEnd) return
-    console.log(">>>>>>>>>>>>>>>>>> refreshing >>>>>>>>>>>>>>>>>>")
     setRefreshingEnd(true);
     const offset = offsetByCategory[selectedCategory] === undefined ? 0 : offsetByCategory[selectedCategory]
     const nextOffset = offset + 50
@@ -171,6 +172,22 @@ export function FeedScreen({ navigation }) {
       })
   }, [items, lessons])
 
+
+  const originalMaterials = useMemo(() => {
+    if (!originalItems) return []
+    return originalItems
+      .map((item) => {
+        const lesson = lessons.find((lesson) => lesson.materialId === item.id)
+        return {
+          ...item,
+          lessonId: lesson?.id
+        }
+      }).sort((a, b) => {
+        return new Date(b.publishedAt) - new Date(a.publishedAt);
+      })
+  }, [originalItems, lessons])
+
+
   const selectedMaterials = useMemo(() => {
     if (!materials) return []
     if (selectedCategory === "all") {
@@ -205,8 +222,8 @@ export function FeedScreen({ navigation }) {
 
   const onPressStart = ({ materialId, url, lessonId }: { materialId: string, url: string, lessonId: string }) => {
     if (!lessonId) {
-      dispatch(createLesson({ materialId }))
       analytics.track(ACTION.startNewLesson, { materialId })
+      dispatch(createLesson({ materialId }))
     } else {
       analytics.track(ACTION.reVisitLesson, { materialId, lessonId })
       navigation.navigate('Lesson', { url, lessonId })
@@ -344,6 +361,19 @@ export function FeedScreen({ navigation }) {
                 </View>
               }
             />
+            {currentUser && currentUser.isAdmin && <Menu.Item
+              onPress={() => {
+                dispatch(toggleFeatureFlag())
+              }}
+              title={
+                <View style={{ justifyContent: "center", flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ marginRight: 8 }}>
+                    <FontAwesome5 name="flag-checkered" size={18} color="black" />
+                  </View>
+                  <Text>Feature Flag</Text>
+                </View>
+              }
+            />}
             <View style={{ backgroundColor: "#f2f2f2", width: "100%", padding: 18 }}>
               <Text>{i18n.t("lastUpdatedAt")}: {Updates.createdAt ? Updates.createdAt.toString() : "No updates"}</Text>
             </View>
@@ -429,8 +459,17 @@ export function FeedScreen({ navigation }) {
             scrollEventThrottle={1000}
             onScroll={onScrollFeed}
           >
-            {/* <Text>3 minutes news</Text>
-            <NewsCarousel news={originalItems} onPressStart={onPressStart} /> */}
+            {isOnFeatureFlag &&
+              <>
+                <View style={{ marginLeft: 18, marginTop: 36 }}>
+                  <Text weight='Bold' style={{ fontSize: 18 }}>{i18n.t("originalNewsTitle")}</Text>
+                </View>
+                <NewsCarousel news={originalMaterials} onPressStart={onPressStart} />
+              </>
+            }
+            <View style={{ marginLeft: 18, marginTop: 36 }}>
+              <Text weight='Bold' style={{ fontSize: 18 }}>{i18n.t("newsFeedTitle")}</Text>
+            </View>
             {!isInitFollowPublishers && isFetchingMaterials && (
               <View style={{ width: "100%", height: 200, justifyContent: "center", alignItems: "center" }}>
                 <ActivityIndicator size="large" color="#242424" />
@@ -482,17 +521,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'flex-start',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     width: '100%'
   },
   scrollView: {
     width: '100%',
     height: '100%',
-    alignItems: 'flex-start',
   },
   scrollViewContainer: {
-    // alignItems: 'center',
-    alignItems: 'flex-start',
+    width: '100%',
   },
   header: {
     width: '100%',
