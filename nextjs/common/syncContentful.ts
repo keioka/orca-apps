@@ -140,7 +140,6 @@ export async function syncContentful() {
     }
   }
 
-  console.log("process.env.ORCA_PUBLISHER_ID", process.env.ORCA_PUBLISHER_ID)
   const newArticles = await Promise.all(
     articles.map(async (article) => {
       try {
@@ -164,6 +163,7 @@ export async function syncContentful() {
         return newArticle
       } catch (error) {
         console.log("===== Error ======")
+        console.log(process.env.ORCA_PUBLISHER_ID)
         console.error(error)
         return null
       }
