@@ -141,14 +141,14 @@ export async function syncContentful() {
     }
   }
 
-  const publisher = await Publisher.getPublisherById(process.env.ORCA_PUBLISHER_ID)
+  let publisher = await Publisher.getPublisherById(process.env.ORCA_PUBLISHER_ID)
 
   if (!publisher) {
-    console.log(process.env.ORCA_PUBLISHER_ID)
     const publishers = await Publisher.fetchAllPublishers()
-    const orca = publishers.find((publisher) => publisher.name === "Orca News")
-    console.log({ orca })
-    throw new Error("Publisher not found")
+    const publisher = publishers.find((publisher) => publisher.name === "Orca News")
+    if (!publisher) {
+      throw new Error("Orca News not found")
+    }
   }
 
   const newArticles = await Promise.all(
@@ -166,8 +166,9 @@ export async function syncContentful() {
           publishedAt: result.publishedAt,
           type: "article",
           publisher: {
-            connect: {
-              id: publisher.id
+            connectOrCreate: {
+              where: { id: process.env.ORCA_PUBLISHER_ID },
+              create: publisher
             }
           },
         })
