@@ -1,5 +1,6 @@
 import { client } from '../utils/apis/contentful'
 import * as Material from '../models/material'
+import * as Publisher from '../models/publisher'
 
 export const convertCategory = {
   "ai": "tech",
@@ -140,8 +141,18 @@ export async function syncContentful() {
     }
   }
 
+  const publisher = await Publisher.getPublisherById(process.env.ORCA_PUBLISHER_ID)
+
+  if (!publisher) {
+    console.log(process.env.ORCA_PUBLISHER_ID)
+    const publishers = await Publisher.fetchAllPublishers()
+    console.log({ publishers })
+    throw new Error("Publisher not found")
+  }
+
   const newArticles = await Promise.all(
     articles.map(async (article) => {
+
       try {
         const result = await formatContentfulEntry(article)
 
@@ -155,7 +166,7 @@ export async function syncContentful() {
           type: "article",
           publisher: {
             connect: {
-              id: process.env.ORCA_PUBLISHER_ID
+              id: publisher.id
             }
           },
         })
@@ -163,7 +174,7 @@ export async function syncContentful() {
         return newArticle
       } catch (error) {
         console.log("===== Error ======")
-        console.log(process.env.ORCA_PUBLISHER_ID)
+        console.warn({ publisher })
         console.error(error)
         return null
       }

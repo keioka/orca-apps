@@ -44,7 +44,6 @@ export default async function handler(
       });
 
       articles.forEach(article => {
-        console.log(article.fields.heroImage.fields.file.url)
         feed.addItem({
           title: article.fields.title,
           link: process.env.ROOT_URL + "/articles/" + article.fields.slug,
