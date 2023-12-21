@@ -65,7 +65,6 @@ export function getFollowPublishers({ userId }: { userId: string }) {
   })
 }
 
-
 export function getFollowPublishersCategory({ userId }: { userId: string }) {
   return prisma.publisher.groupBy({
     where: {
@@ -140,4 +139,8 @@ export function deactivatePublishers(publisherIds: string[]) {
       isActive: false,
     },
   });
+}
+
+export function fetchAllPublishers() {
+  return prisma.publisher.findMany()
 }
