@@ -146,7 +146,8 @@ export async function syncContentful() {
   if (!publisher) {
     console.log(process.env.ORCA_PUBLISHER_ID)
     const publishers = await Publisher.fetchAllPublishers()
-    console.log({ publishers })
+    const orca = publishers.find((publisher) => publisher.name === "Orca News")
+    console.log({ orca })
     throw new Error("Publisher not found")
   }
 
