@@ -145,18 +145,20 @@ export async function syncContentful() {
 
   if (!publisher) {
     const publishers = await Publisher.fetchAllPublishers()
-    const publisher = publishers.find((publisher) => publisher.name === "Orca News")
+    publisher = publishers.find((publisher) => publisher.name === "Orca News")
     if (!publisher) {
+      console.error({ publisher })
       throw new Error("Orca News not found")
     }
   }
+
 
   const newArticles = await Promise.all(
     articles.map(async (article) => {
 
       try {
         const result = await formatContentfulEntry(article)
-
+        console.log({ publisher })
         const newArticle = await Material.upsertMaterial({
           url: result.url + "?mode=embed",
           title: result.title || "general",
@@ -165,12 +167,7 @@ export async function syncContentful() {
           imageUrl: result.imageUrl,
           publishedAt: result.publishedAt,
           type: "article",
-          publisher: {
-            connectOrCreate: {
-              where: { id: process.env.ORCA_PUBLISHER_ID },
-              create: publisher
-            }
-          },
+          publisherId: process.env.ORCA_PUBLISHER_ID
         })
 
         return newArticle
