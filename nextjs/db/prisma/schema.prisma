@@ -58,9 +58,9 @@ model Material {
   url              String    @unique
   imageUrl         String?   @map("image_url")
   publishedAt      DateTime? @map("published_at")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  externalId       String?   @unique @map("external_id") @db.VarChar(255)
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
   lessons         Lesson[]
   summary         Summary[]

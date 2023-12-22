@@ -6,6 +6,17 @@ interface MaterialWithLesson extends Material {
   lessonId?: number | null
 }
 
+export async function getMaterialByExternalId(externalId: string): Promise<Material | null> {
+  return await prisma.material.findUnique({
+    where: {
+      externalId,
+    },
+    include: {
+      publisher: true,
+    },
+  });
+}
+
 export async function getMaterialById(id: string): Promise<Material | null> {
   return await prisma.material.findUnique({
     where: {
@@ -134,6 +145,14 @@ export async function upsertMaterial(materialData: Omit<Material, 'id'>): Promis
     update: materialData
   });
 }
+
+export async function updateMaterial(materialData: Omit<Material, 'id'>): Promise<Material> {
+  return await prisma.material.update({
+    where: { url: materialData.url },
+    data: materialData
+  });
+}
+
 
 interface VocabParams {
   word: string;
