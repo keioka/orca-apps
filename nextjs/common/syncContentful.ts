@@ -104,6 +104,7 @@ interface Entry {
 }
 
 function formatContentfulEntry(article: Entry): {
+  id: string;
   url: string;
   title: string;
   slug: string;
@@ -111,12 +112,13 @@ function formatContentfulEntry(article: Entry): {
   publishedAt: Date;
   imageUrl: string;
 } {
-  const { fields } = article
-  const { title, slug, publishedDate, heroImage, category } = fields
+  const { fields, sys } = article
+  const { id, title, slug, publishedDate, heroImage, category } = fields
   const file = heroImage && heroImage.fields ? heroImage.fields.file : null
   const imageUrl = file ? file.url : null
 
   return {
+    id: sys.id,
     title,
     url: process.env.ROOT_URL + "/articles/" + slug,
     slug,
@@ -152,30 +154,54 @@ export async function syncContentful() {
     }
   }
 
-
   const newArticles = await Promise.all(
     articles.map(async (article) => {
 
       try {
         const result = await formatContentfulEntry(article)
-        console.log({ publisher })
-        const newArticle = await Material.upsertMaterial({
-          url: result.url + "?mode=embed",
-          title: result.title || "general",
-          category: convertCategory[result.category],
-          categoryExternal: result.category,
-          imageUrl: result.imageUrl,
-          publishedAt: result.publishedAt,
-          type: "article",
-          publisherId: process.env.ORCA_PUBLISHER_ID
-        })
+
+        const material = await Material.getMaterialByExternalId(result.id)
+        let newArticle = null
+
+        console.log({ material })
+        if (material) {
+          newArticle = await Material.updateMaterial({
+            externalId: result.id,
+            url: result.url + "?mode=embed",
+            title: result.title || "general",
+            category: convertCategory[result.category],
+            categoryExternal: result.category,
+            imageUrl: result.imageUrl,
+            publishedAt: result.publishedAt,
+            type: "article",
+            publisher: {
+              connect: {
+                id: process.env.ORCA_PUBLISHER_ID
+              }
+            }
+          })
+        } else {
+          newArticle = await Material.createMaterial({
+            externalId: result.id,
+            url: result.url + "?mode=embed",
+            title: result.title || "general",
+            category: convertCategory[result.category],
+            categoryExternal: result.category,
+            imageUrl: result.imageUrl,
+            publishedAt: result.publishedAt,
+            type: "article",
+            publisher: {
+              id: process.env.ORCA_PUBLISHER_ID
+            }
+          })
+        }
 
         return newArticle
       } catch (error) {
         console.log("===== Error ======")
         console.warn({ publisher })
         console.error(error)
-        return null
+        return { error }
       }
     }))
   console.log({ newArticles })
