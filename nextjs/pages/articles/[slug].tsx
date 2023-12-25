@@ -306,12 +306,16 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     p1Vocab,
     p2,
     p2AudioLink,
+    p2Vocab,
     p3,
     p3AudioLink,
+    p3Vocab,
     p4,
     p4AudioLink,
+    p4Vocab,
     p5,
     p5AudioLink,
+    p5Vocab
   } = cleanedArticle.fields
 
   const {
@@ -339,35 +343,44 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     p1Vocab,
     p2,
     p2AudioLink,
+    p2Vocab,
     p3,
     p3AudioLink,
+    p3Vocab,
     p4,
     p4AudioLink,
+    p4Vocab,
     p5,
     p5AudioLink,
+    p5Vocab
   })
 
   const paragraphs = [
     {
       en: p1,
       ja: jaP1,
-      audioFileLink: p1AudioLink
+      audioFileLink: p1AudioLink,
+      vocab: p1Vocab
     }, {
       en: p2,
       ja: jaP2,
-      audioFileLink: p2AudioLink
+      audioFileLink: p2AudioLink,
+      vocab: p2Vocab
     }, {
       en: p3,
       ja: jaP3,
-      audioFileLink: p3AudioLink
+      audioFileLink: p3AudioLink,
+      vocab: p3Vocab
     }, {
       en: p4,
       ja: jaP4,
-      audioFileLink: p4AudioLink
+      audioFileLink: p4AudioLink,
+      vocab: p4Vocab
     }, {
       en: p5,
       ja: jaP5,
-      audioFileLink: p5AudioLink
+      audioFileLink: p5AudioLink,
+      vocab: p5Vocab
     }
   ]
 
@@ -486,20 +499,20 @@ export default function Article({ article, relatedArticles, body, notFound, slug
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
 
           <Box p={3} sx={{ width: "100%", maxWidth: "840px", position: "relative" }}>
-            <Box>
-              {!isEmbedMode && p1Vocab && p1Vocab.map((vocab) => (
-                <Box sx={{ marginBottom: 1 }}>
-                  <CardVocabSM
-                    vocab={vocab}
-                  />
-                </Box>
-              ))}
-            </Box>
 
             {body && documentToReactComponents(body, options)}
             {paragraphs.map((paragraph, index) => {
               return (
                 <Box pb={16} sx={{ borderBottom: "1px solid #f2f2f2" }}>
+                  <Box>
+                    {!isEmbedMode && paragraph.vocab && paragraph.vocab.map((vocab) => (
+                      <Box sx={{ marginBottom: 1 }}>
+                        <CardVocabSM
+                          vocab={vocab}
+                        />
+                      </Box>
+                    ))}
+                  </Box>
                   <Stack direction="row" py={3} justifyContent="space-between" alignItems="center">
                     <Box
                       sx={{
@@ -513,7 +526,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                         borderRadius: "50%",
                         marginRight: 2,
                       }}
-                      onClick={() => { p1AudioLink && new Audio(p1AudioLink as string).play() }}
+                      onClick={() => { paragraph.audioFileLink && new Audio(paragraph.audioFileLink as string).play() }}
                     >
                       <HiOutlineSpeakerWave size={18} color="#fff" />
                     </Box>
