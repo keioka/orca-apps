@@ -20,6 +20,30 @@ export const config = {
   amp: 'hybrid',
 };
 
+
+const formatCategory = {
+  ai: "AI",
+  business: "Business",
+  eu_stock: "🇪🇺 EU Stock",
+  fintech: "Fintech",
+  israel_hamas: "Israel-Hamas",
+  jp_economy: "🇯🇵Japan | Economy",
+  jp_news: "🇯🇵Japan | News",
+  jp_stock: "🇯🇵Japan | Stock",
+  marketing: "Marketing",
+  metaverse: "Metaverse",
+  russia_ukraine: "Russia-Ukraine",
+  science: "Science",
+  sdgs: "SDGs (Sustainable Development Goals)",
+  startup: "Startup",
+  tech: "Tech",
+  us_stock: "🇺🇸US Stock",
+  web3: "Web3",
+  world_economy: "🌍World Economy",
+  world_news: "🌍World News"
+};
+
+
 const Bold = ({ children }) => <Typography sx={{ fontWeight: "600", display: "inline" }}>{children}</Typography>;
 
 const Text = ({ children }) => <Typography>{children}</Typography>;
@@ -295,6 +319,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
 
   const {
     title,
+    category,
     description,
     wordCount,
     metaKeywords,
@@ -315,9 +340,13 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     p4Vocab,
     p5,
     p5AudioLink,
-    p5Vocab
+    p5Vocab,
+    publishedDate
   } = cleanedArticle.fields
 
+  console.log({
+    cleanedArticle
+  })
   const {
     title: jaTitle,
     p1: jaP1,
@@ -442,6 +471,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
         }}
       >
         <BlogHeader component="header" sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+
           <img
             alt={String(title)}
             src={imageUrl}
@@ -470,28 +500,36 @@ export default function Article({ article, relatedArticles, body, notFound, slug
           <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
             <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2, paddingY: 2 }}>
               <Typography sx={{ fontSize: 14 }}>
+                Published Date
+              </Typography>
+              <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
+                {new Date(publishedDate).toLocaleDateString()}
+              </Typography>
+            </Box>
+            <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2, paddingY: 2 }}>
+              <Typography sx={{ fontSize: 14 }}>
                 Word Count
               </Typography>
-              <Typography sx={{ fontSize: 19 }}>
+              <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
                 {wordCount}
               </Typography>
             </Box>
-            <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2 }}>
+            {/* <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2 }}>
               <Typography sx={{ fontSize: 14 }}>
                 Level
               </Typography>
               <Box py={0.1} px={1} sx={{ background: "#fac6c6", borderRadius: 1 }}>
-                <Typography sx={{ fontSize: 19 }}>
+                <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
                   Advanced
                 </Typography>
               </Box>
-            </Box>
-            <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2 }}>
+            </Box> */}
+            <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2, paddingY: 2 }}>
               <Typography sx={{ fontSize: 14 }}>
-                {/* Word Count */}
+                Category
               </Typography>
-              <Typography sx={{ fontSize: 19 }}>
-                {/* 1000 */}
+              <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
+                {formatCategory[category]}
               </Typography>
             </Box>
           </Box>
@@ -504,6 +542,11 @@ export default function Article({ article, relatedArticles, body, notFound, slug
             {paragraphs.map((paragraph, index) => {
               return (
                 <Box pb={16} sx={{ borderBottom: "1px solid #f2f2f2" }}>
+                  <Box style={{ backgroundColor: "#f6f6f6", padding: 8, borderRadius: 8, justifyContent: "center", alignItems: "center", marginBottom: 16 }}>
+                    <Typography sx={{ fontSize: 18, textAlign: "center", fontWeight: "bold" }}>{index + 1} / {paragraphs.length}</Typography>
+                    <Typography sx={{ fontSize: 12, textAlign: "center" }}>Paragraph</Typography>
+                  </Box>
+
                   <Box>
                     {!isEmbedMode && paragraph.vocab && paragraph.vocab.map((vocab) => (
                       <Box sx={{ marginBottom: 1 }}>
@@ -530,11 +573,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                     >
                       <HiOutlineSpeakerWave size={18} color="#fff" />
                     </Box>
-                    <Box style={{ backgroundColor: "#f6f6f6", padding: 8, borderRadius: 8, justifyContent: "center" }}>
-                      <Typography sx={{ fontSize: 18, textAlign: "center", fontWeight: "bold" }}>{index + 1} / {paragraphs.length}</Typography>
-                      <Typography sx={{ fontSize: 12 }}>Paragraph</Typography>
 
-                    </Box>
 
                   </Stack>
                   <Typography sx={{ fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 2 }}>
