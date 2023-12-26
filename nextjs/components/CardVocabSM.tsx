@@ -39,6 +39,9 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
     {...props}
   />
 ))(({ theme }) => ({
+  padding: 0,
+  margin: 0,
+  minHeight: 16,
   backgroundColor: "#fff",
   flexDirection: 'row-reverse',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
@@ -46,7 +49,17 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
   },
   '& .MuiAccordionSummary-content': {
     marginLeft: theme.spacing(1),
+    margin: 0,
+    padding: "8px 16px",
   },
+  '&:root': {
+    margin: 0,
+    padding: 0,
+    minHeight: 16,
+  },
+  '& .MuiAccordionSummary-root': {
+    // Add your styles here
+  }
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
@@ -165,72 +178,72 @@ export function CardVocabSM({
   return (
     <Card sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee", fontSize: 16 }}>
       <Accordion>
-        <AccordionSummary>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={2}
-            sx={{
-              width: "100%",
-            }}
-          >
-            <Stack spacing={2} direction="row" alignItems="center">
-              <Stack sx={{ borderRight: "1px solid #f0f0f0", paddingRight: 2 }}>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                  <Typography variant="h6" component="h5">
-                    {vocab.word}
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      backgroundColor: "#cbcbcb",
-                      width: 24,
-                      height: 24,
-                      borderRadius: "50%",
-                    }}
-                  // onClick={handlePlayAudio}
-                  >
-                    <HiOutlineSpeakerWave size={14} color="#fff" />
-                  </Box>
-                </Stack>
-                <Typography variant="body2" component="span">
-                  {vocab.pronounce}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          spacing={2}
+          sx={{
+            width: "100%",
+          }}
+        >
+          <Stack spacing={2} direction="row" alignItems="center">
+            <Stack sx={{ borderRight: "1px solid #f0f0f0", paddingRight: 2, minWidth: 160, padding: 2 }}>
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                <Typography variant="h6" component="h5">
+                  {vocab.word}
                 </Typography>
-              </Stack>
-
-              <Stack spacing={0.5}>
-                <Typography variant="body2" component="h6">
-                  {vocab.meaningInJapanese}
-                </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", background: getPosColor(vocab.pos), borderRadius: 1, py: 0, px: 1, width: 48 }}>
-                  <Typography variant="caption" component="span" sx={{ color: "#fff", fontSize: 11, fontWeight: "bold", textAlign: "center" }}>
-                    {convertPosIcon(vocab.pos, "en")}
-                  </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    backgroundColor: "#cbcbcb",
+                    width: 24,
+                    height: 24,
+                    borderRadius: "50%",
+                  }}
+                // onClick={handlePlayAudio}
+                >
+                  <HiOutlineSpeakerWave size={14} color="#fff" />
                 </Box>
               </Stack>
+              <Typography variant="body2" component="span">
+                {vocab.pronounce}
+              </Typography>
+
             </Stack>
-            {!shouldHideSave &&
-              <Button
-                onClick={handleClickSave}
-                variant="contained"
-                sx={{
-                  background: "#e2e2e2",
-                  "&:hover": {
-                    background: "#e2e2e2"
-                  }
-                }}
-                startIcon={<IoBookmark color="#b6b6b6" />}
-                size="small"
-              >
-                単語帳に保存
-              </Button>
-            }
+
+            <Stack spacing={0.5}>
+              <Typography variant="body2" component="h6">
+                {vocab.meaningInJapanese}
+              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", background: getPosColor(vocab.pos), borderRadius: 1, py: 0, px: 1, width: 48 }}>
+                <Typography variant="caption" component="span" sx={{ color: "#fff", fontSize: 11, fontWeight: "bold", textAlign: "center" }}>
+                  {convertPosIcon(vocab.pos, "en")}
+                </Typography>
+              </Box>
+            </Stack>
           </Stack>
-        </AccordionSummary>
+          {/* {!shouldHideSave &&
+              <Stack justifyContent="center" alignItems="center">
+                <Button
+                  onClick={handleClickSave}
+                  startIcon={<IoBookmark color="#b6b6b6" />}
+                  size="small"
+                />
+                <Typography variant="body2" component="span">
+                  hozon
+                </Typography>
+              </Stack>
+            } */}
+          {/* <AccordionSummary sx={{ fontSize: 12 }}>
+            例文
+          </AccordionSummary> */}
+        </Stack>
+
+
         <AccordionDetails>
 
           <Stack spacing={1} sx={{ paddingTop: 1 }}>
@@ -245,7 +258,7 @@ export function CardVocabSM({
 
             <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
               <Typography sx={{ lineHeight: 1 }}>
-                Sentence
+                記事中例文
               </Typography>
               <Typography sx={{ textDecoration: "italic" }} >
                 <i>{vocab.sentence}</i>
@@ -254,7 +267,7 @@ export function CardVocabSM({
 
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <Typography sx={{ lineHeight: 1 }}>
-                Example
+                その他例文
               </Typography>
               <Typography component="h6">
                 {vocab.example}
