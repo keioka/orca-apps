@@ -7,6 +7,7 @@ import { LessonScreen } from './screens/LessonScreen';
 import { HistoryScreen } from './screens/HistoryScreen';
 import { TalkScreen } from './screens/TalkScreen';
 import { NoteScreen } from './screens/NoteScreen';
+import { HashtagScreen } from './screens/HashtagScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -42,6 +43,7 @@ import { i18n } from './locales';
 import { fetchCurrentUser, setMpTrackingId } from './redux/features/auth';
 import { Audio } from "expo-av";
 import { WebView } from 'react-native-webview';
+import { fetchFeatureFlag } from './redux/features/featureFlag';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -260,6 +262,8 @@ const Root = () => {
   useEffect(() => {
     setIsLoading(true)
     const hasPastedOneHour = moment().diff(moment(session?.lastUpdatedAt), 'hours') > 1
+    dispatch(fetchFeatureFlag())
+
     try {
       const auth = getAuth(firebase);
       console.log("============ Init onAuthStateChanged ============")
@@ -278,17 +282,17 @@ const Root = () => {
           dispatch(fetchCurrentUser({
             accessToken: accessToken,
           }))
+
         } else {
           dispatch(setSession(null))
           dispatch(resetStateAction)
         }
+        setIsLoading(false)
+        setIsInit(true)
       })
     } catch (error) {
       console.error(error)
       setError(error.message)
-    } finally {
-      setIsLoading(false)
-      setIsInit(true)
     }
 
     const mins30 = 1800000

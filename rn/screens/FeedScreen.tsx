@@ -39,6 +39,7 @@ export function FeedScreen({ navigation }) {
   const isOnFeatureFlag = useAppSelector((state) => state.auth.isOnFeatureFlag);
   const items = useAppSelector((state) => state.material.items);
   const originalItems = useAppSelector((state) => state.material.originalItems);
+  const featureFlags = useAppSelector((state) => state.featureFlag.featureFlags)
 
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [isSearchMode, setIsSearchMode] = useState(false)
@@ -53,6 +54,7 @@ export function FeedScreen({ navigation }) {
   const isFetchingMaterials = useAppSelector((state) => state.material.isFetchingMaterials)
   const scrollViewRef = useRef();
 
+  console.log(featureFlags)
   useEffect(() => {
     dispatch(fetchLessons())
     dispatch(fetchFollowPublishers())
@@ -99,6 +101,7 @@ export function FeedScreen({ navigation }) {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    dispatch(fetchOriginalMaterials())
     dispatch(fetchMaterials({
       offset: 0,
       limit: 50,
@@ -459,7 +462,7 @@ export function FeedScreen({ navigation }) {
             scrollEventThrottle={1000}
             onScroll={onScrollFeed}
           >
-            {isOnFeatureFlag &&
+            {featureFlags?.originalArticles &&
               <>
                 <View style={{ marginLeft: 18, marginTop: 36 }}>
                   <Text weight='Bold' style={{ fontSize: 18 }}>{i18n.t("originalNewsTitle")}</Text>

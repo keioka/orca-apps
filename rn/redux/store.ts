@@ -7,6 +7,8 @@ import transcribe from './features/transcribe';
 import videoInfo from './features/videoInfo';
 import note from './features/note';
 import publisher from './features/publishers';
+import featureFlag from './features/featureFlag';
+
 import * as Sentry from "@sentry/react";
 
 const logger = (storeAPI: any) => (next: any) => (action: any) => {
@@ -42,6 +44,7 @@ export const store = configureStore({
     videoInfo: videoInfo,
     note: note,
     publisher: publisher,
+    featureFlag: featureFlag,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
   enhancers: [Sentry.createReduxEnhancer({})],
