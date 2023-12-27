@@ -556,7 +556,11 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                       </Box>
                     ))}
                   </Box>
-                  <Stack direction="row" py={3} justifyContent="space-between" alignItems="center">
+
+
+
+
+                  <Stack direction="row" pt={3} justifyContent="space-between" alignItems="center">
                     <Box
                       sx={{
                         display: "flex",
@@ -573,13 +577,14 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                     >
                       <HiOutlineSpeakerWave size={18} color="#fff" />
                     </Box>
-
-
                   </Stack>
                   <Typography sx={{ fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 2 }}>
                     {paragraph.en}
                   </Typography>
                   <TransP>
+                    <Typography sx={{ fontSize: 12, fontWeight: "bold", marginBottom: 1 }}>
+                      内容理解
+                    </Typography>
                     <Typography>
                       {paragraph.ja}
                     </Typography>

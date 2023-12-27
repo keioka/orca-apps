@@ -331,3 +331,14 @@ model SearchTag {
 
   @@map("search_tags")
 }
+
+model FeatureFlag {
+  id            Int      @id @default(autoincrement())
+  name          String   @unique @db.VarChar(255)
+  isActive      Boolean  @default(false) @map("is_active")
+  isReleaseProd Boolean  @default(false) @map("is_release_prod")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("feature_flags")
+}

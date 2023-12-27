@@ -17,12 +17,13 @@ export async function getVocabsFromText({ id, text, transLangCode }) {
       {
         model: 'gpt-3.5-turbo-1106',
         temperature: 0,
+        // response_format: { "type": "json_object" },
         messages: [
           {
             role: "system",
             content: `          
-            As an English teacher, can you give me vocabulary for an English learner including word, phrasal verbs and phrases as many as possible from the content below. 
-
+            As an English teacher, can you give me a list of vocabulary including word, phrasal verbs and phrases as many as possible from the content below. Please return the list in JSON format and extract vocabulary from each sentence from the content below.
+ 
             - [word]: Word, phrasal verb, or phrase. Verb, noun, adjective, adverb, preposition, conjunction, interjection, phrasal verb, idiom, proverb, slang, etc. Noun should be singular form. Verb should be in base form.
             - [pronounce]: Pronounce of the word or phrase
             - [part of speech (POS)]: Part of speech (POS) of the word or phrase
