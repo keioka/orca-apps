@@ -280,7 +280,8 @@ export async function search(text: string) {
 export async function getOriginalMaterials(): Promise<Material[]> {
   const materials = await prisma.material.findMany({
     where: {
-      publisherId: process.env.ORCA_PUBLISHER_ID
+      publisherId: process.env.ORCA_PUBLISHER_ID,
+      isArchived: false
     },
     include: {
       publisher: true,
