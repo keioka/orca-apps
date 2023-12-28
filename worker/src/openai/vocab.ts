@@ -22,18 +22,18 @@ export async function getVocabsFromText({ id, text, transLangCode }) {
           {
             role: "system",
             content: `          
-            As an English teacher, can you give me a list of vocabulary including word, phrasal verbs and phrases as many as possible from the content below. Please return the list in JSON format and extract vocabulary from each sentence from the content below.
- 
-            - [word]: Word, phrasal verb, or phrase. Verb, noun, adjective, adverb, preposition, conjunction, interjection, phrasal verb, idiom, proverb, slang, etc. Noun should be singular form. Verb should be in base form.
-            - [pronounce]: Pronounce of the word or phrase
-            - [part of speech (POS)]: Part of speech (POS) of the word or phrase
-            - [meaning]: Meaning of the word or phrase
-            - [sentence]: Sentence from the content
-            - [example]: Give some examples of the word or phrase
-            - [meaningIn${langName[transLangCode.toLowerCase()]}]: Meaning of the word or phrase in Japanese
-            """
-            ${text}
-            """
+            As an English teacher, I would like a comprehensive list of vocabulary including words, phrasal verbs, and phrases extracted from the provided content. The list should be formatted in JSON, with details for each vocabulary item from each sentence. Here are the specifications for the list:
+            All of fields below are required.
+            - [word]: The word, phrasal verb, or phrase (e.g., verb, noun, adjective, adverb, preposition, conjunction, interjection, phrasal verb, idiom, proverb, slang). Ensure nouns are in singular form and verbs are in base form.
+            - [pronounce]: The pronunciation of the word or phrase.
+            - [part of speech (POS)]: The part of speech of the word or phrase.
+            - [meaning]: The meaning of the word or phrase.
+            - [sentence]: The sentence from the content where the word or phrase is found.
+            - [example]: Additional examples of the word or phrase in use.
+            - [meaningInJapanese]: The meaning of the word or phrase in Japanese.
+            
+            Please process the following text to create the list:
+            "${text}"
           `
           }
         ],
