@@ -1,26 +1,60 @@
+import axios from 'axios';
 import { format } from 'path'
-import { client } from '../../utils/apis/contentful'
+import { client, clientPreview } from '../../utils/apis/contentful'
+
+const localeKeys = {
+  en: 'en-US',
+  ja: 'ja-JP',
+}
+
+function getEnUS(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(getEnUS);
+  } else if (obj !== null && typeof obj === 'object') {
+    if (obj['en-US']) {
+      return obj['en-US'];
+    }
+    const newObj = {};
+    for (const key in obj) {
+      newObj[key] = getEnUS(obj[key]);
+    }
+    return newObj;
+  }
+  return obj;
+}
+
+function getJaJp(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(getJaJp);
+  } else if (obj !== null && typeof obj === 'object') {
+    if (obj['ja']) {
+      return obj['ja'];
+    }
+    const newObj = {};
+    for (const key in obj) {
+      if (key === 'en-US') {
+        return ""
+      }
+      newObj[key] = getJaJp(obj[key]);
+    }
+    return newObj;
+  }
+  return obj;
+}
 
 export async function getAllArticles() {
-  const result = await client.getEntries({
+  const result = await clientPreview.getEntries({
     content_type: "newsArticle",
     limit: 200,
   })
 
-  console.log({ result })
   return result
 }
 
 
 export async function getEntry(entryId: string) {
-  const res = await client.getEntry(entryId)
-
-  console.log(res)
-  if (!res || !res.items || res.items.length === 0) {
-    return null; // Return null if the data structure is not as expected
-  }
-
-  return res.items[0]; // Return the first item from the 'items' array
+  const res = await clientPreview.getEntry(entryId)
+  return res; // Return the first item from the 'items' array
 }
 
 export async function updateContent() {
@@ -30,14 +64,34 @@ export async function updateContent() {
 }
 
 export function formatEntries(entries: any[]) {
+
+
   return entries.map((entry) => {
+
+    const cleanedArticle = getEnUS(entry)
+    const jaArticle = getJaJp(entry)
+
     return {
-      id: entry.sys.id,
-      title: entry.fields.title,
-      slug: entry.fields.slug,
-      description: entry.fields.description,
-      content: entry.fields.content,
-      publishedDate: entry.fields.publishedDate,
+      id: cleanedArticle.sys.id,
+      title: cleanedArticle.fields.title,
+      slug: cleanedArticle.fields.slug,
+      description: cleanedArticle.fields.description,
+      content: cleanedArticle.fields.content,
+      publishedDate: cleanedArticle.fields.publishedDate,
+      p1Exists: cleanedArticle.fields.p1 && cleanedArticle.fields.p1.length > 0 ? true : false,
+      p1JaExists: jaArticle.fields.p1 && jaArticle.fields.p1.length > 0 ? true : false,
+      p1AudioLink: cleanedArticle.fields.p1AudioLink,
+      p2Exists: cleanedArticle.fields.p2 && cleanedArticle.fields.p2.length > 0 ? true : false,
+      p2AudioLink: cleanedArticle.fields.p2AudioLink,
+      p2JaExists: jaArticle.fields.p2 && jaArticle.fields.p2.length > 0 ? true : false,
+      p3Exists: cleanedArticle.fields.p3 && cleanedArticle.fields.p3.length > 0 ? true : false,
+      p3AudioLink: cleanedArticle.fields.p3AudioLink,
+      p4Exists: cleanedArticle.fields.p4 && cleanedArticle.fields.p4.length > 0 ? true : false,
+      p4AudioLink: cleanedArticle.fields.p4AudioLink,
+      p5Exists: cleanedArticle.fields.p5 && cleanedArticle.fields.p5.length > 0 ? true : false,
+      p5AudioLink: cleanedArticle.fields.p5AudioLink,
+      p6Exists: cleanedArticle.fields.p6 && cleanedArticle.fields.p6.length > 0 ? true : false,
+      p6AudioLink: cleanedArticle.fields.p6AudioLink,
       // heroImage: {
       //   url: entry.fields.heroImage.fields.file.url,
       //   width: entry.fields.heroImage.fields.file.details.image.width,
@@ -45,4 +99,51 @@ export function formatEntries(entries: any[]) {
       // },
     }
   })
+}
+
+type locale = 'en-US' | 'ja-JP'
+
+type UpdateEntryParams = {
+  spaceId: string;
+  environmentId: string;
+  entryId: string;
+  cmaToken: string;
+  contentTypeId: string;
+  version: number;
+  fields: {
+    [key in locale]: any;
+  }
+};
+
+type UpdateEntryResponse = {
+  // Define the response type structure here
+};
+
+// https://www.contentful.com/developers/docs/references/content-management-api/#/reference/entries/entry/update-an-entry/console
+
+export async function updateEntry(params: UpdateEntryParams): Promise<UpdateEntryResponse> {
+
+  console.log({
+    params
+  })
+
+  const { entryId, contentTypeId, environmentId, version, fields } = params;
+  const url = `https://${process.env.NEXT_PUBLIC_CONTENTFUL_PROD_HOST}/spaces/${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}/environments/${environmentId}/entries/${entryId}`;
+  const headers = {
+    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CONTENTFUL_CMA_TOKEN}`,
+    'Content-Type': 'application/vnd.contentful.management.v1+json',
+    'X-Contentful-Content-Type': contentTypeId,
+    'X-Contentful-Version': version.toString()
+  };
+  const requestBody = {
+    fields: fields
+  };
+
+  try {
+    const response = await axios.put(url, requestBody, { headers });
+    return response.data as UpdateEntryResponse;
+  } catch (error) {
+    console.error('============================');
+    console.error('Error updating entry:', error);
+  }
 }
