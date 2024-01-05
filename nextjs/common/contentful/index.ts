@@ -51,9 +51,15 @@ export async function getAllArticles() {
   return result
 }
 
+export async function getEntryWithLocale(entryId: string) {
+  const res = await clientPreview.withAllLocales.getEntry(entryId)
+  return res; // Return the first item from the 'items' array
+}
 
 export async function getEntry(entryId: string) {
   const res = await clientPreview.getEntry(entryId)
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  console.log({ res })
   return res; // Return the first item from the 'items' array
 }
 
@@ -121,29 +127,108 @@ type UpdateEntryResponse = {
 
 // https://www.contentful.com/developers/docs/references/content-management-api/#/reference/entries/entry/update-an-entry/console
 
+type GetEntryParams = {
+  spaceId: string;
+  environmentId: string;
+  entryId: string;
+  cmaToken: string;
+};
+
+type GetEntryResponse = {
+  fields: {
+    [key: string]: {
+      [key: string]: string;
+    };
+  };
+  metadata: {
+    tags: {
+      sys: {
+        type: string;
+        linkType: string;
+        id: string;
+      };
+    }[];
+  };
+  sys: {
+    id: string;
+    type: string;
+    contentType: {
+      sys: {
+        type: string;
+        linkType: string;
+        id: string;
+      };
+    };
+    version: number;
+    space: {
+      sys: {
+        type: string;
+        linkType: string;
+        id: string;
+      };
+    };
+    environment: {
+      sys: {
+        type: string;
+        linkType: string;
+        id: string;
+      };
+    };
+    createdAt: string;
+    createdBy: {
+      sys: {
+        type: string;
+        linkType: string;
+        id: string;
+      };
+    };
+    updatedAt: string;
+    updatedBy: {
+      sys: {
+        type: string;
+        linkType: string;
+        id: string;
+      };
+    };
+  };
+};
+
+export async function getEntryRaw(entryId: string): Promise<GetEntryResponse> {
+  const url = `https://${process.env.NEXT_PUBLIC_CONTENTFUL_PROD_HOST}/spaces/${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}/environments/master/entries/${entryId}`;
+  const headers = {
+    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CONTENTFUL_CMA_TOKEN}`
+  };
+
+  try {
+    const response = await axios.get(url, { headers });
+    return response.data as GetEntryResponse;
+  } catch (error) {
+    console.error('Error retrieving entry:', error);
+    throw error;
+  }
+}
+
 export async function updateEntry(params: UpdateEntryParams): Promise<UpdateEntryResponse> {
-
-  console.log({
-    params
-  })
-
   const { entryId, contentTypeId, environmentId, version, fields } = params;
   const url = `https://${process.env.NEXT_PUBLIC_CONTENTFUL_PROD_HOST}/spaces/${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}/environments/${environmentId}/entries/${entryId}`;
   const headers = {
     'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CONTENTFUL_CMA_TOKEN}`,
     'Content-Type': 'application/vnd.contentful.management.v1+json',
     'X-Contentful-Content-Type': contentTypeId,
-    'X-Contentful-Version': version.toString()
+    'X-Contentful-Version': version
   };
   const requestBody = {
     fields: fields
   };
 
+  console.log({ requestBody })
   try {
     const response = await axios.put(url, requestBody, { headers });
     return response.data as UpdateEntryResponse;
   } catch (error) {
     console.error('============================');
-    console.error('Error updating entry:', error);
+    // console.error('Error updating entry:', error);
+    console.error("Error updating entry:", error.response.data);
+    console.error("Error updating entry details:", JSON.stringify(error.response.data.details))
   }
 }
