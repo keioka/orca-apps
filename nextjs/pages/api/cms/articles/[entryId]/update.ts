@@ -67,9 +67,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         p5: {
           "ja": p5Ja
         },
-        p6: {
-          "ja": jaData.p6
-        }
+        // p6: {
+        //   "ja": jaData.p6
+        // }
       }
     )
 
