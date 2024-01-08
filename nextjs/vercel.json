@@ -6,7 +6,7 @@
     "pages/api/summaryByLevel.ts": {
       "maxDuration": 60
     },
-    "pages/api/cms/articles/[entryId]/update": {
+    "pages/api/cms/**": {
       "maxDuration": 300
     }
   }
