@@ -11,6 +11,8 @@ function formatVocabData(data) {
   return { ja: data }
 }
 
+export const maxDuration = 300; // This function can run for a maximum of 5 seconds
+
 const retryConfig = {
   retries: 5,
   onFailedAttempt: error => {
