@@ -5,6 +5,9 @@
     },
     "pages/api/summaryByLevel.ts": {
       "maxDuration": 60
+    },
+    "pages/api/cms/articles/[entryId]/update": {
+      "maxDuration": 300
     }
   }
 }
