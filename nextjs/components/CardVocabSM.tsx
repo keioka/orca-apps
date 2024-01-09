@@ -188,25 +188,27 @@ export function CardVocabSM({
           }}
         >
           <Stack spacing={2} direction="row" alignItems="center">
-            <Stack sx={{ borderRight: "1px solid #f0f0f0", paddingRight: 2, minWidth: 160, padding: 2 }}>
+            <Stack sx={{ borderRight: "1px solid #f0f0f0", paddingRight: 2, width: 160, minWidth: 160, padding: 2 }}>
               <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                 <Typography variant="h6" component="h5">
                   {vocab.word}
                 </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    backgroundColor: "#cbcbcb",
-                    width: 24,
-                    height: 24,
-                    borderRadius: "50%",
-                  }}
-                // onClick={handlePlayAudio}
-                >
-                  <HiOutlineSpeakerWave size={14} color="#fff" />
+                <Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      cursor: "pointer",
+                      backgroundColor: "#cbcbcb",
+                      width: 24,
+                      height: 24,
+                      borderRadius: "50%",
+                    }}
+                  // onClick={handlePlayAudio}
+                  >
+                    <HiOutlineSpeakerWave size={14} color="#fff" />
+                  </Box>
                 </Box>
               </Stack>
               <Typography variant="body2" component="span">

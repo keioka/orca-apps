@@ -343,7 +343,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     p5Vocab,
     publishedDate
   } = cleanedArticle.fields
-
+  const { sys: { createdAt } } = cleanedArticle
   console.log({
     cleanedArticle
   })
@@ -358,31 +358,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   } = jaArticle.fields
 
   const hasProofreader = proofreader && proofreader.fields
-
-  console.log({
-    title,
-    description,
-    wordCount,
-    metaKeywords,
-    metaDescription,
-    author,
-    proofreader,
-    p1,
-    p1AudioLink,
-    p1Vocab,
-    p2,
-    p2AudioLink,
-    p2Vocab,
-    p3,
-    p3AudioLink,
-    p3Vocab,
-    p4,
-    p4AudioLink,
-    p4Vocab,
-    p5,
-    p5AudioLink,
-    p5Vocab
-  })
+  const publishedAt = publishedDate ? new Date(publishedDate).toLocaleDateString() : new Date(createdAt).toLocaleDateString()
 
   const paragraphs = [
     {
@@ -414,13 +390,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   ]
 
   console.log({
-    jaTitle,
-    jaP1,
-    jaP2,
-    jaP3,
-    jaP4,
-    jaP5,
-    jaP6,
+    publishedDate
   })
   return (
     <>
@@ -503,7 +473,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                 Published Date
               </Typography>
               <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
-                {new Date(publishedDate).toLocaleDateString()}
+                {publishedAt}
               </Typography>
             </Box>
             <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2, paddingY: 2 }}>
@@ -529,7 +499,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                 Category
               </Typography>
               <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
-                {formatCategory[category]}
+                {formatCategory[category] || "General"}
               </Typography>
             </Box>
           </Box>
@@ -582,9 +552,9 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                     {paragraph.en}
                   </Typography>
                   <TransP>
-                    <Typography sx={{ fontSize: 12, fontWeight: "bold", marginBottom: 1 }}>
+                    {/* <Typography sx={{ fontSize: 12, fontWeight: "bold", marginBottom: 1 }}>
                       内容理解
-                    </Typography>
+                    </Typography> */}
                     <Typography>
                       {paragraph.ja}
                     </Typography>
