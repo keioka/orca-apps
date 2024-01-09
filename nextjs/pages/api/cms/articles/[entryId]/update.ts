@@ -76,19 +76,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     )
 
     if (p1Vocab) {
-      fields.p1Vocab = formatVocabData(p1Vocab)
+      fields.p1Vocab = p1Vocab
     }
     if (p2Vocab) {
-      fields.p2Vocab = formatVocabData(p2Vocab)
+      fields.p2Vocab = p2Vocab
     }
     if (p3Vocab) {
-      fields.p3Vocab = formatVocabData(p3Vocab)
+      fields.p3Vocab = p3Vocab
     }
     if (p4Vocab) {
-      fields.p4Vocab = formatVocabData(p4Vocab)
+      fields.p4Vocab = p4Vocab
     }
     if (p5Vocab) {
-      fields.p5Vocab = formatVocabData(p5Vocab)
+      fields.p5Vocab = p5Vocab
     }
 
     if (p1AudioLink) {
