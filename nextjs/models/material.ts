@@ -169,16 +169,22 @@ interface Vocab {
 }
 
 export async function createVocabs({ materialId, vocabParams }: { materialId: string, vocabParams: VocabParams[] }): Promise<Vocab> {
+  let result = []
   for (let vocabParam of vocabParams) {
     try {
-      await prisma.vocabulary.create({
+      const vocabs = await prisma.vocabulary.create({
         data: {
           word: vocabParam.word,
           meaning: vocabParam.meaning,
-          materialId: materialId,
           sentence: vocabParam.sentence,
           pronounce: vocabParam.pronounce,
           example: vocabParam.example,
+          pos: vocabParam.pos,
+          material: {
+            connect: {
+              id: materialId
+            }
+          },
           translation: {
             create: {
               content: vocabParam.translation,
@@ -191,6 +197,9 @@ export async function createVocabs({ materialId, vocabParams }: { materialId: st
           }
         }
       })
+
+      console.log({ vocabs })
+      result.push(vocabs)
     } catch (error: any) {
       if (error.code === 'P2002') {
         console.log(`Vocab already exists: ${error.meta.target[0].name}`)
@@ -199,6 +208,7 @@ export async function createVocabs({ materialId, vocabParams }: { materialId: st
       }
     }
   }
+  return result
 }
 
 
