@@ -1,6 +1,7 @@
 import { client } from '../utils/apis/contentful'
 import * as Material from '../models/material'
 import * as Publisher from '../models/publisher'
+import { getMaterialByExternalId, createVocabs } from '@/models/material'
 
 export const convertCategory = {
   "ai": "tech",
@@ -125,6 +126,11 @@ function formatContentfulEntry(article: Entry): {
     category: category || "general",
     publishedAt: publishedDate ? new Date(publishedDate) : new Date(),
     imageUrl: imageUrl ? "https:" + imageUrl : null,
+    p1Vocab: fields.p1Vocab,
+    p2Vocab: fields.p2Vocab,
+    p3Vocab: fields.p3Vocab,
+    p4Vocab: fields.p4Vocab,
+    p5Vocab: fields.p5Vocab,
   }
 }
 
@@ -195,6 +201,37 @@ export async function syncContentful() {
             }
           })
         }
+
+        /** ADD VOCABS */
+        const p1Vocab = Array.isArray(result.p1Vocab) ? result.p1Vocab : []
+        const p2Vocab = Array.isArray(result.p2Vocab) ? result.p2Vocab : []
+        const p3Vocab = Array.isArray(result.p3Vocab) ? result.p3Vocab : []
+        const p4Vocab = Array.isArray(result.p4Vocab) ? result.p4Vocab : []
+        const p5Vocab = Array.isArray(result.p5Vocab) ? result.p5Vocab : []
+
+        const vocabs = [
+          ...p1Vocab,
+          ...p2Vocab,
+          ...p3Vocab,
+          ...p4Vocab,
+          ...p5Vocab,
+        ]
+
+        const vocabParams = vocabs.map(vocab => {
+          return {
+            ...vocab,
+            translation: vocab.meaningInJapanese,
+            langCode: 'ja',
+            materialId: newArticle.id
+          }
+        })
+
+        console.log({ vocabParams })
+
+        await createVocabs({
+          materialId: newArticle.id,
+          vocabParams
+        })
 
         return newArticle
       } catch (error) {

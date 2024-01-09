@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { TouchableOpacity, Alert, StyleSheet, View, ScrollView, Dimensions } from 'react-native'
-import { Button, TextInput, Modal, Portal, PaperProvider, Checkbox } from 'react-native-paper'
+import { Button, TextInput, Modal, Portal, PaperProvider, Checkbox, Chip } from 'react-native-paper'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { fetchPublishers } from '../redux/features/publishers';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -218,22 +218,7 @@ export function HashtagScreen({ navigation }) {
         </ScrollView>
 
       </View >
-      <Button
-        onPress={handleSubmit}
-        textColor="#fff"
-        mode="contained"
-        labelStyle={{ fontSize: 16, fontWeight: "bold" }}
-        style={{
-          width: "100%",
-          backgroundColor: "#2FABE8",
-          borderRadius: 0,
-          height: 64,
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        Complete
-      </Button>
+
     </>
   )
 }

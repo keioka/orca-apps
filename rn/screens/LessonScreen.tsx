@@ -365,13 +365,15 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
     (materials, materialId) => materials.vocabs[materialId] || []
   );
 
-  const materialId = lesson.material.id
-
+  const material = lesson.material
+  const materialId = material.id
+  const isOriginalContent = Boolean(material.externalId)
   const vocabs = useAppSelector(state => selectVocabsByMaterialId(state, materialId));
 
   useEffect(() => {
     dispatch(fetchSavedVocab())
-    if (vocabs.length > 0) return
+    dispatch(fetchVocabs({ materialId }))
+    if (isOriginalContent || vocabs.length > 0) return
     dispatch(createVocabs({ materialId: materialId }))
   }, [])
 
