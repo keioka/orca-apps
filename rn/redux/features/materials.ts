@@ -119,13 +119,13 @@ const materialsSlice = createSlice({
         state.error = null;
       })
       .addCase(searchMaterials.fulfilled, (state, action) => {
-        state.isFetchingMaterials = true;
+        state.isFetchingMaterials = false;
         state.error = null;
         state.items.push(...state.searchResult)
         state.searchResult = action.payload || [];
       })
       .addCase(fetchOriginalMaterials.pending, (state) => {
-        state.isFetchingMaterials = true;
+        state.isFetchingMaterials = false;
         state.error = null;
       })
       .addCase(fetchOriginalMaterials.fulfilled, (state, action) => {

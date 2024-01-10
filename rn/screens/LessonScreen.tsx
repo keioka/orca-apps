@@ -240,7 +240,7 @@ function VocabularyTab({ materialId }: { materialId: string }) {
             </View>
           )
         })}
-        {vocabs.length === 0 && (
+        {isFetchingVocabs && vocabs.length === 0 && (
           <View style={{ width: "100%", alignItems: 'center', justifyContent: 'center' }}>
             <LottieView
               source={{ uri: "https://lottie.host/f5d3cdb1-d14c-4e57-9287-df6f93f302af/1yKt5SJGbU.json" }}
@@ -380,7 +380,6 @@ function LearningMode({ onPressToggle, lesson }: { onPressToggle: () => void, le
   const handlePressSummary = () => {
     analytics.track(ACTION.navLessonSummaryTab, { lessonId: lesson.id })
     setTab(LearningModeTab.Summary)
-
   }
 
   const handlePressVocabulary = () => {
