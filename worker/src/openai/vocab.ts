@@ -22,18 +22,25 @@ export async function getVocabsFromText({ id, text, transLangCode }) {
           {
             role: "system",
             content: `          
-            As an English teacher, I would like a comprehensive list of vocabulary including words, phrasal verbs, and phrases extracted from the provided content. The list should be formatted in JSON, with details for each vocabulary item from each sentence. Here are the specifications for the list:
-            All of fields below are required.
-            - [word]: The word, phrasal verb, or phrase (e.g., verb, noun, adjective, adverb, preposition, conjunction, interjection, phrasal verb, idiom, proverb, slang). Ensure nouns are in singular form and verbs are in base form.
-            - [pronounce]: The pronunciation of the word or phrase.
-            - [part of speech (POS)]: The part of speech of the word or phrase.
-            - [meaning]: The meaning of the word or phrase.
-            - [sentence]: The sentence from the content where the word or phrase is found.
-            - [example]: Additional examples of the word or phrase in use.
-            - [meaningInJapanese]: The meaning of the word or phrase in Japanese.
+            You are an English teacher. Please give me a comprehensive list of vocabulary including words, phrasal verbs, and phrases extracted from the provided content. The list should be formatted in JSON, with details for each vocabulary item from each sentence. 
+            Don't include proper nouns, such as names of people, places, or companies.
+
+            Here are the specifications for the list:
+            - [word]: The word, phrasal verb, or phrase (e.g., verb, noun, adjective, adverb, preposition, conjunction, interjection, phrasal verb, idiom, proverb, slang). Ensure nouns are in singular form and verbs are in base form. Required
+            - [pronounce]: The pronunciation of the word or phrase. Required
+            - [part of speech (POS)]: The part of speech of the word or phrase. Required
+            - [meaning]: The meaning of the word or phrase. Required
+            - [sentence]: The sentence from the content where the word or phrase is found. Required
+            - [example]: Additional examples of the word or phrase in use. Required
+            - [meaningInJapanese]: The meaning of the word or phrase in Japanese. Required
             
+            All of fields below are required.
             Please process the following text to create the list:
-            "${text}"
+
+            Content:
+            """"
+            ${text}
+            """
           `
           }
         ],

@@ -287,16 +287,37 @@ export async function search(text: string) {
   return materials
 }
 
-export async function getOriginalMaterials(): Promise<Material[]> {
+export async function getOriginalMaterials(isIncludeArchived: boolean): Promise<Material[]> {
+  const where = {
+    publisherId: process.env.ORCA_PUBLISHER_ID,
+  }
+
+  if (!isIncludeArchived) {
+    where.isArchived = false
+  }
+
   const materials = await prisma.material.findMany({
-    where: {
-      publisherId: process.env.ORCA_PUBLISHER_ID,
-      isArchived: false
-    },
+    where: where,
     include: {
       publisher: true,
     },
   });
 
   return materials
+}
+
+export async function toggleArchive({ isArchived, materialId }: { materialId: string, isArchived: boolean }): Promise<Material> {
+  const material = await prisma.material.update({
+    where: {
+      id: materialId
+    },
+    data: {
+      isArchived
+    },
+    include: {
+      publisher: true,
+    },
+  });
+
+  return material
 }
