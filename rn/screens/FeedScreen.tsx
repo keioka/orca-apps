@@ -171,13 +171,14 @@ export function FeedScreen({ navigation }) {
         }
       }).sort((a, b) => {
 
-        return new Date(b.publishedAt) - new Date(a.publishedAt);
+        return new Date(a.publishedAt) - new Date(b.publishedAt);
       })
   }, [items, lessons])
 
 
   const originalMaterials = useMemo(() => {
     if (!originalItems) return []
+    console.log({ originalItems })
     return originalItems
       .map((item) => {
         const lesson = lessons.find((lesson) => lesson.materialId === item.id)
@@ -190,6 +191,7 @@ export function FeedScreen({ navigation }) {
       })
   }, [originalItems, lessons])
 
+  console.log({ originalMaterials })
 
   const selectedMaterials = useMemo(() => {
     if (!materials) return []

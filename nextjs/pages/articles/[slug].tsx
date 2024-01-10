@@ -469,18 +469,18 @@ export default function Article({ article, relatedArticles, body, notFound, slug
           </Box>
           <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
             <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2, paddingY: 2 }}>
-              <Typography sx={{ fontSize: 14 }}>
+              <Typography sx={{ fontSize: 14, textAlign: "center" }}>
                 Published Date
               </Typography>
-              <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
+              <Typography sx={{ fontSize: 18, fontWeight: "bold", textAlign: "center" }}>
                 {publishedAt}
               </Typography>
             </Box>
             <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2, paddingY: 2 }}>
-              <Typography sx={{ fontSize: 14 }}>
+              <Typography sx={{ fontSize: 14, textAlign: "center" }}>
                 Word Count
               </Typography>
-              <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
+              <Typography sx={{ fontSize: 18, fontWeight: "bold", textAlign: "center" }}>
                 {wordCount}
               </Typography>
             </Box>
@@ -495,10 +495,10 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               </Box>
             </Box> */}
             <Box sx={{ flexDirection: "column", display: "flex", justifyContent: "center", alignItems: "center", paddingX: 2, paddingY: 2 }}>
-              <Typography sx={{ fontSize: 14 }}>
+              <Typography sx={{ fontSize: 14, textAlign: "center" }}>
                 Category
               </Typography>
-              <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
+              <Typography sx={{ fontSize: 18, fontWeight: "bold", textAlign: "center" }}>
                 {formatCategory[category] || "General"}
               </Typography>
             </Box>

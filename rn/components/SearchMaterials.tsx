@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Text } from "./Text";
-import { Button, TextInput, Chip } from 'react-native-paper'
+import { Button, TextInput, Chip, ActivityIndicator } from 'react-native-paper'
 import { Ionicons } from '@expo/vector-icons';
 import { searchMaterials } from "../redux/features/materials";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -15,6 +15,7 @@ export function SearchMaterials({ onSearch, onPressStart, onClose }: { onPressSt
   const [error, setError] = useState(false);
   const dispatch = useAppDispatch();
   const searchResult = useAppSelector((state) => state.material.searchResult);
+  const isFetchingMaterials = useAppSelector((state) => state.material.isFetchingMaterials);
 
   const handleSearchMaterials = async () => {
     setLoading(true);
@@ -69,7 +70,7 @@ export function SearchMaterials({ onSearch, onPressStart, onClose }: { onPressSt
 
       </View>
 
-      <ScrollView style={styles.tagContainer} horizontal showsVerticalScrollIndicator>
+      <ScrollView style={styles.tagContainer} horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ marginHorizontal: 2 }}>
           <Chip style={{ backgroundColor: tag === "japan" ? "#FFD744" : "#f6f6f6" }} onPress={() => handleSetTag("japan")}>#Japan</Chip>
         </View>
@@ -82,13 +83,15 @@ export function SearchMaterials({ onSearch, onPressStart, onClose }: { onPressSt
         <View style={{ marginHorizontal: 2 }}>
           <Chip style={{ backgroundColor: tag === "sdgs" ? "#FFD744" : "#f6f6f6" }} onPress={() => handleSetTag("sdgs")}>#SDGs</Chip>
         </View>
-        <View style={{ marginHorizontal: 2 }}>
-          <Chip style={{ backgroundColor: tag === "japan" ? "#FFD744" : "#f6f6f6" }} onPress={() => handleSetTag("japan")}>#Healthcare</Chip>
-        </View>
       </ScrollView >
       <ScrollView style={styles.searchResult}>
+        {isFetchingMaterials &&
+          <View style={{ justifyContent: "center", alignItems: "center", height: "100%" }}>
+            <ActivityIndicator />
+          </View>
+        }
         {
-          searchResult.map((item) => (
+          !isFetchingMaterials && searchResult.map((item) => (
             <View key={item.id} style={styles.cardWrapper}>
               <CardArticle
                 item={item}
@@ -108,6 +111,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: '#fff',
     alignItems: "center",
+    marginTop: 16,
   },
   tagContainer: {
     width: "90%",
