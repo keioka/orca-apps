@@ -14,6 +14,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 // import { BlogPost } from 'src/components/BlogPost'
 import { CardVocabSM } from '../../components/CardVocabSM'
 import { HiOutlineSpeakerWave } from "react-icons/hi2"
+import { MdOutlineGTranslate } from "react-icons/md";
+import { TbVocabulary } from "react-icons/tb";
 import { useSearchParams } from 'next/navigation'
 
 export const config = {
@@ -46,7 +48,7 @@ const formatCategory = {
 
 const Bold = ({ children }) => <Typography sx={{ fontWeight: "600", display: "inline" }}>{children}</Typography>;
 
-const Text = ({ children }) => <Typography>{children}</Typography>;
+const Text = ({ children, ...props }) => <Typography {...props}>{children}</Typography>;
 
 const H1 = ({ children }) => <Typography component="h1" sx={{
   fontFamily: "Crimson Text",
@@ -454,7 +456,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
             }}
           />
           <Box sx={{ width: "100%", display: "flex", maxWidth: "840px", justifyContent: "center" }} component="section" itemProp="articleBody">
-            <Box sx={{ background: "#00100B", color: "#fff", maxWidth: "840px", width: "100%" }} p={2} mt={-0.5}>
+            <Box sx={{ background: "#191c29", color: "#fff", maxWidth: "840px", width: "100%" }} p={2} mt={-0.5}>
               <H1>{title}</H1>
               <H1>{jaTitle}</H1>
               {/* <Typography variant="h6">{article?.fields.content}</Typography> */}
@@ -506,60 +508,16 @@ export default function Article({ article, relatedArticles, body, notFound, slug
         </BlogHeader>
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
 
-          <Box p={3} sx={{ width: "100%", maxWidth: "840px", position: "relative" }}>
+          <Box sx={{ width: "100%", maxWidth: "840px", position: "relative" }}>
 
             {body && documentToReactComponents(body, options)}
             {paragraphs.map((paragraph, index) => {
               return (
-                <Box pb={16} sx={{ borderBottom: "1px solid #f2f2f2" }}>
-                  <Box style={{ backgroundColor: "#f6f6f6", padding: 8, borderRadius: 8, justifyContent: "center", alignItems: "center", marginBottom: 16 }}>
-                    <Typography sx={{ fontSize: 18, textAlign: "center", fontWeight: "bold" }}>{index + 1} / {paragraphs.length}</Typography>
-                    <Typography sx={{ fontSize: 12, textAlign: "center" }}>Paragraph</Typography>
-                  </Box>
-
-                  <Box>
-                    {!isEmbedMode && paragraph.vocab && paragraph.vocab.map((vocab) => (
-                      <Box sx={{ marginBottom: 1 }}>
-                        <CardVocabSM
-                          vocab={vocab}
-                        />
-                      </Box>
-                    ))}
-                  </Box>
-
-
-
-
-                  <Stack direction="row" pt={3} justifyContent="space-between" alignItems="center">
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        cursor: "pointer",
-                        backgroundColor: "#cbcbcb",
-                        width: 36,
-                        height: 36,
-                        borderRadius: "50%",
-                        marginRight: 2,
-                      }}
-                      onClick={() => { paragraph.audioFileLink && new Audio(paragraph.audioFileLink as string).play() }}
-                    >
-                      <HiOutlineSpeakerWave size={18} color="#fff" />
-                    </Box>
-                  </Stack>
-                  <Typography sx={{ fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 2 }}>
-                    {paragraph.en}
-                  </Typography>
-                  <TransP>
-                    {/* <Typography sx={{ fontSize: 12, fontWeight: "bold", marginBottom: 1 }}>
-                      内容理解
-                    </Typography> */}
-                    <Typography>
-                      {paragraph.ja}
-                    </Typography>
-                  </TransP>
-                </Box>
+                <Paragraph
+                  index={index}
+                  content={paragraph}
+                  totalLength={paragraphs.length}
+                />
               )
             })}
 
@@ -628,6 +586,127 @@ export default function Article({ article, relatedArticles, body, notFound, slug
       </BlogLayout >
     </>
 
+  )
+}
+
+function Paragraph({
+  content,
+  isEmbedMode,
+  index,
+  totalLength,
+}: {
+  paragraph: any,
+  isEmbedMode: boolean,
+  index: number,
+  totalLength: number,
+}) {
+  const [shouldShowVocab, setShouldShowVocab] = useState(false)
+  const [shouldShowTrans, setShouldShowTrans] = useState(false)
+
+  return (
+    <Box pb={8}>
+      <Stack direction="row" sx={{ alignItems: "center" }}>
+        <Box style={{ backgroundColor: "#191c29", padding: 8, borderTopRightRadius: 8, justifyContent: "center", alignItems: "center", width: 64, marginRight: 18 }}>
+          <Typography sx={{ fontSize: 18, textAlign: "center", fontWeight: "bold", color: "#fff" }}>{index + 1} / {totalLength}</Typography>
+          <Typography sx={{ fontSize: 12, textAlign: "center", color: "#fff" }}>Paragraph</Typography>
+        </Box>
+        <Stack sx={{
+          alignItems: "center",
+          marginRight: 2,
+          cursor: "pointer",
+        }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              cursor: "pointer",
+              backgroundColor: "#cbcbcb",
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+            }}
+            onClick={() => { content.audioFileLink && new Audio(content.audioFileLink as string).play() }}
+          >
+            <HiOutlineSpeakerWave size={18} color="#fff" />
+          </Box>
+          <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text>
+        </Stack>
+        <Stack
+          sx={{
+            alignItems: "center",
+            marginRight: 2,
+            cursor: "pointer",
+          }}
+          onClick={() => { setShouldShowTrans(!shouldShowTrans) }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              cursor: "pointer",
+              backgroundColor: shouldShowTrans ? "blue" : "#cbcbcb",
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+            }}
+          >
+            <MdOutlineGTranslate size={18} color="#fff" />
+          </Box>
+          <Text sx={{ fontSize: 12, marginTop: 0.5 }}>翻訳</Text>
+        </Stack>
+        <Stack
+          sx={{
+            alignItems: "center",
+            marginRight: 2,
+            cursor: "pointer",
+          }}
+          onClick={() => { setShouldShowVocab(!shouldShowVocab) }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: shouldShowVocab ? "blue" : "#cbcbcb",
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+            }}
+          >
+            <TbVocabulary size={18} color="#fff" />
+          </Box>
+          <Text sx={{ fontSize: 12, marginTop: 0.5 }}>単語リスト</Text>
+        </Stack>
+      </Stack>
+      <Box>
+        {!isEmbedMode && shouldShowVocab && content.vocab && content.vocab.map((vocab) => (
+          <Box sx={{ marginBottom: 1 }}>
+            <CardVocabSM
+              vocab={vocab}
+            />
+          </Box>
+        ))}
+      </Box>
+
+
+
+      {/* 
+      <Stack direction="row" pt={3} justifyContent="space-between" alignItems="center">
+
+      </Stack> */}
+      <Typography sx={{ fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 2 }}>
+        {content.en}
+      </Typography>
+      {shouldShowTrans &&
+        <TransP>
+          <Typography>
+            {content.ja}
+          </Typography>
+        </TransP>
+      }
+    </Box>
   )
 }
 
