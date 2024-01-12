@@ -561,31 +561,7 @@ function Paragraph({
           <Typography sx={{ fontSize: 12, textAlign: "center", color: "#fff" }}>Paragraph</Typography>
         </Box>
         <Stack direction="row">
-          <Stack
-            sx={{
-              alignItems: "center",
-              marginRight: 2,
-              cursor: "pointer",
-            }}
-          >
-            {/* <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                backgroundColor: "#cbcbcb",
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-              }}
-              onClick={() => { content.audioFileLink && new Audio(content.audioFileLink as string).play() }}
-            >
-              <HiOutlineSpeakerWave size={18} color="#fff" />
-            </Box> */}
-            <AudioPlayer file={content.audioFileLink} />
-            {/* <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text> */}
-          </Stack>
+
           <Stack
             sx={{
               alignItems: "center",
@@ -634,6 +610,35 @@ function Paragraph({
             <Text sx={{ fontSize: 12, marginTop: 0.5 }}>単語リスト</Text>
           </Stack>
         </Stack>
+      </Stack>
+      <Stack
+        sx={{
+          width: "100%",
+          alignItems: "center",
+          paddingX: 2,
+          paddingY: 2,
+          boxSizing: "border-box",
+          // marginRight: 2,
+          // cursor: "pointer",
+        }}
+      >
+        {/* <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                backgroundColor: "#cbcbcb",
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+              }}
+              onClick={() => { content.audioFileLink && new Audio(content.audioFileLink as string).play() }}
+            >
+              <HiOutlineSpeakerWave size={18} color="#fff" />
+            </Box> */}
+        <AudioPlayer file={content.audioFileLink} />
+        {/* <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text> */}
       </Stack>
       <Box>
         {!isEmbedMode && shouldShowVocab && content.vocab && content.vocab.map((vocab) => (

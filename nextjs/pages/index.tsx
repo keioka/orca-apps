@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Typography, Grid, Stack, Button, Chip } from '@mui/material'
 import { Header } from '../components/Header'
@@ -6,6 +7,7 @@ import styled from '@emotion/styled';
 import Head from 'next/head'
 import Link from 'next/link';
 import { client } from '../utils/apis/contentful'
+import { uniq } from 'lodash';
 
 const BlogLayout = styled(Box)`
   overflow: auto;
@@ -22,9 +24,41 @@ export const config = {
   amp: 'hybrid',
 };
 
+
+
+const formatCategory = {
+  ai: "AI",
+  business: "Business",
+  eu_stock: "🇪🇺 EU Stock",
+  fintech: "Fintech",
+  israel_hamas: "Israel-Hamas",
+  jp_economy: "🇯🇵Japan | Economy",
+  jp_news: "🇯🇵Japan | News",
+  jp_stock: "🇯🇵Japan | Stock",
+  marketing: "Marketing",
+  metaverse: "Metaverse",
+  russia_ukraine: "Russia-Ukraine",
+  science: "Science",
+  sdgs: "SDGs (Sustainable Development Goals)",
+  startup: "Startup",
+  tech: "Tech",
+  us_stock: "🇺🇸US Stock",
+  web3: "Web3",
+  world_economy: "🌍World Economy",
+  world_news: "🌍World News"
+};
+
 export default function ArticleIndex({ articles }) {
   const router = useRouter()
-  const categories = articles.filter((article) => article.fields.category).map((article) => article.fields.category)
+  const categories = useMemo(() =>
+    uniq(
+      articles
+        .filter((article) => article.fields.category)
+        .map((article) => article.fields.category)
+        .map((category) => formatCategory[category])
+    ),
+    [articles]
+  )
   console.log({ articles })
   return (
     <>
@@ -56,7 +90,7 @@ export default function ArticleIndex({ articles }) {
           key="product-jsonld"
         /> */}
       </Head>
-      <Box sx={{ minHeight: "100vh" }}>
+      <Box sx={{ minHeight: "100vh" }} px={{ xs: 1, md: 24 }}>
         <Header />
         {/* 
         <Grid container spacing={1} p={2}>
@@ -76,11 +110,11 @@ export default function ArticleIndex({ articles }) {
         <Stack direction="row" sx={{ width: "100%", paddingLeft: 2, paddingRight: 2, overflow: "scroll", boxSizing: "border-box" }}>
           {categories && categories.map((category) => (
             <Box mr={1}>
-              <Chip sx={{ fontFamily: "Crimson Text" }} label={`#${category}`} />
+              <Chip sx={{ fontFamily: "Outfit", fontSize: 18, padding: 2, lineHeight: 24 }} label={`#${category}`} />
             </Box>
           ))}
         </Stack>
-        <Grid container py={3} px={1} p={2} spacing={2}>
+        <Grid container py={3} p={2} spacing={2}>
           {articles.map((article) => (
             <Grid item xs={12} sm={6} md={4}>
               <Material article={article} />
