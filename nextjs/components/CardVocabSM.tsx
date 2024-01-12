@@ -14,7 +14,13 @@ import {
   Avatar,
   Accordion as MuiAccordion,
   AccordionSummary as MuiAccordionSummary,
-  AccordionDetails as MuiAccordionDetails
+  AccordionDetails as MuiAccordionDetails,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
 } from "@mui/material"
 import styled from "@emotion/styled";
 import ArrowForwardIosSharpIcon from 'react-icons/';
@@ -240,9 +246,9 @@ export function CardVocabSM({
                 </Typography>
               </Stack>
             } */}
-          {/* <AccordionSummary sx={{ fontSize: 12 }}>
+          <AccordionSummary sx={{ fontSize: 12 }}>
             例文
-          </AccordionSummary> */}
+          </AccordionSummary>
         </Stack>
 
 
@@ -252,30 +258,37 @@ export function CardVocabSM({
             {/* <Typography variant="body2" component="h6">
             {vocab.meaningInJapanese}
           </Typography> */}
-            <Typography component="h6">
+            {/* <Typography component="h6">
               {vocab.meaning}
-            </Typography>
+            </Typography> */}
           </Stack>
-          <Stack spacing={1} sx={{ paddingTop: 1 }}>
+          <TableContainer>
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableCell>記事中例文</TableCell>
+                  <TableCell>
+                    <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
+                      <Typography sx={{ textDecoration: "italic" }} >
+                        <i>{vocab.sentence}</i>
+                      </Typography>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>その他例文</TableCell>
 
-            <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
-              <Typography sx={{ lineHeight: 1 }}>
-                記事中例文
-              </Typography>
-              <Typography sx={{ textDecoration: "italic" }} >
-                <i>{vocab.sentence}</i>
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-              <Typography sx={{ lineHeight: 1 }}>
-                その他例文
-              </Typography>
-              <Typography component="h6">
-                {vocab.example}
-              </Typography>
-            </Stack>
-          </Stack>
+                  <TableCell>
+                    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                      <Typography component="h6">
+                        {vocab.example}
+                      </Typography>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
 
           <Box>
             {/* {

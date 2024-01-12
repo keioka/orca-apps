@@ -1,12 +1,17 @@
 import type { AppProps } from 'next/app';
-import { Crimson_Text } from 'next/font/google';
+import { Crimson_Text, Outfit } from 'next/font/google';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
-
 import 'reset-css';
 
 const crimsonText = Crimson_Text({
   variable: '--font-crimson-text',
+  weight: ["400", "600"],
+  subsets: ['latin'],
+})
+
+const outfit = Outfit({
+  variable: '--font-outfit',
   weight: ["400", "600"],
   subsets: ['latin'],
 })
@@ -71,7 +76,7 @@ const theme = createTheme({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
-      <main className={`${crimsonText.className}`}>
+      <main className={`${crimsonText.className} ${outfit.className}`}>
         <Component {...pageProps} />
         {/* <BottomNavigation sx={{ zIndex: 3, width: "100%", position: "fixed", bottom: 0 }}>
           <BottomNavigationAction label="Recents" />
