@@ -63,6 +63,7 @@
     "keyword-extractor": "^0.0.28",
     "lodash": "^4.17.21",
     "lucide-react": "^0.125.0",
+    "mixpanel-browser": "^2.48.1",
     "moment": "^2.29.4",
     "multiparty": "^4.2.3",
     "next": "^14.0.1",

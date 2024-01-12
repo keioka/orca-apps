@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
-import { Box, Typography, Grid, Stack, Button } from '@mui/material'
+import { Box, Typography, Grid, Stack, Button, Chip } from '@mui/material'
+import { Header } from '../components/Header'
 import { Material } from '../components/Material'
 import styled from '@emotion/styled';
 import Head from 'next/head'
@@ -23,7 +24,7 @@ export const config = {
 
 export default function ArticleIndex({ articles }) {
   const router = useRouter()
-
+  const categories = articles.filter((article) => article.fields.category).map((article) => article.fields.category)
   console.log({ articles })
   return (
     <>
@@ -56,6 +57,7 @@ export default function ArticleIndex({ articles }) {
         /> */}
       </Head>
       <Box sx={{ minHeight: "100vh" }}>
+        <Header />
         {/* 
         <Grid container spacing={1} p={2}>
           <Grid item xs={12} sm={8}>
@@ -68,9 +70,16 @@ export default function ArticleIndex({ articles }) {
 
 
 
-        <Box p={2}>
+        {/* <Box p={2}>
           <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "2rem" }}>Articles</Typography>
-        </Box>
+        </Box> */}
+        <Stack direction="row" sx={{ width: "100%", paddingLeft: 2, paddingRight: 2, overflow: "scroll", boxSizing: "border-box" }}>
+          {categories && categories.map((category) => (
+            <Box mr={1}>
+              <Chip sx={{ fontFamily: "Crimson Text" }} label={`#${category}`} />
+            </Box>
+          ))}
+        </Stack>
         <Grid container py={3} px={1} p={2} spacing={2}>
           {articles.map((article) => (
             <Grid item xs={12} sm={6} md={4}>

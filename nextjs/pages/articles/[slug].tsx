@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState, useMemo } from 'react'
-import { Avatar, List, ListItem, ListItemText, Box, Typography, Grid, Stack, Tab, Breadcrumbs, ButtonGroup, Button } from '@mui/material'
+import { Avatar, List, ListItem, ListItemText, Box, Typography, Grid, Stack, Tab, Breadcrumbs, ButtonGroup, Button, TextField } from '@mui/material'
 import styled from '@emotion/styled';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
@@ -17,6 +17,8 @@ import { HiOutlineSpeakerWave } from "react-icons/hi2"
 import { MdOutlineGTranslate } from "react-icons/md";
 import { TbVocabulary } from "react-icons/tb";
 import { useSearchParams } from 'next/navigation'
+import { Header } from '../../components/Header'
+import { AudioPlayer } from '../../components/AudioPlayer'
 
 export const config = {
   amp: 'hybrid',
@@ -391,9 +393,6 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     }
   ]
 
-  console.log({
-    publishedDate
-  })
   return (
     <>
       <Head>
@@ -432,6 +431,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
           key="product-jsonld"
         />
       </Head>
+      <Header />
       <BlogLayout
         component="article"
         sx={{
@@ -506,8 +506,10 @@ export default function Article({ article, relatedArticles, body, notFound, slug
             </Box>
           </Box>
         </BlogHeader>
+        {/* <Box my={3}>
+          <AudioPlayer />
+        </Box> */}
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-
           <Box sx={{ width: "100%", maxWidth: "840px", position: "relative" }}>
 
             {body && documentToReactComponents(body, options)}
@@ -521,66 +523,14 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               )
             })}
 
-            {/* <Box sx={{ background: "#f4f4f4", borderRadius: 2 }} p={4} mt={8}>
-              <Grid container spacing={4}>
-                <Grid item xs={12} md={12}>
-                  {author &&
-                    <Link href={`/profile/${author.fields.id}`}>
-                      <a style={{ textDecoration: "none", color: "inherit" }}>
-                        <Stack>
-                          <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-                            <Avatar alt={author.fields.name} src={author.fields.image.fields.file.url} sx={{ width: 48, height: 48 }} />
-                            <Stack spacing={-0.5}>
-                              <Text variant="h6">{author.fields.name}</Text>
-                              <Typography variant="caption">{author.fields.title}</Typography>
-                            </Stack>
-                          </Stack>
-
-                          <Typography variant="body2">{author.fields.shortBio}</Typography>
-                        </Stack>
-                      </a>
-                    </Link>
-                  }
-                </Grid>
-                <Grid item xs={12} md={12}>
-                  {
-                    hasProofreader &&
-                    <Link href={`/profile/${proofreader.fields.id}`}>
-                      <a style={{ textDecoration: "none", color: "inherit" }}>
-                        <Stack>
-                          <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-                            <Avatar alt={proofreader.fields.name} src={proofreader.fields.image.fields.file.url} sx={{ width: 48, height: 48 }} />
-                            <Stack spacing={-0.5}>
-                              <Text variant="h6">{proofreader.fields.name}</Text>
-                              <Typography variant="caption">{proofreader.fields.title}</Typography>
-                            </Stack>
-                          </Stack>
-
-                          <Typography variant="body2">{proofreader.fields.shortBio}</Typography>
-                        </Stack>
-                      </a>
-                    </Link>
-                  }
-                </Grid>
-              </Grid>
-            </Box> */}
-            {/* {relatedArticles && relatedArticles.length > 0 &&
-              <Box mt={16}>
-                <Typography variant="h6">Related articles</Typography>
-                <Grid container spacing={1} mt={2}>
-                  {relatedArticles && relatedArticles.map((article) => (
-                    <Grid item xs={12} sm={6} md={4}>
-                      <Box sx={{ width: "100%" }}>
-                        <BlogPost
-                          article={article}
-                        />
-                      </Box>
-                    </Grid>
-                  ))}
-                </Grid>
+            <Box sx={{ padding: 1 }}>
+              <Box sx={{ background: "#f6f6f6", padding: 2 }}>
+                <Typography>
+                  What do you think of the article?
+                </Typography>
+                <TextField sx={{ width: "100%", height: 86, background: "#fff" }} multiline />
               </Box>
-            } */}
-
+            </Box>
           </Box>
         </Box>
       </BlogLayout >
@@ -605,79 +555,84 @@ function Paragraph({
 
   return (
     <Box pb={8}>
-      <Stack direction="row" sx={{ alignItems: "center" }}>
+      <Stack direction="row" sx={{ alignItems: "center" }} justifyContent="space-between">
         <Box style={{ backgroundColor: "#191c29", padding: 8, borderTopRightRadius: 8, justifyContent: "center", alignItems: "center", width: 64, marginRight: 18 }}>
           <Typography sx={{ fontSize: 18, textAlign: "center", fontWeight: "bold", color: "#fff" }}>{index + 1} / {totalLength}</Typography>
           <Typography sx={{ fontSize: 12, textAlign: "center", color: "#fff" }}>Paragraph</Typography>
         </Box>
-        <Stack sx={{
-          alignItems: "center",
-          marginRight: 2,
-          cursor: "pointer",
-        }}>
-          <Box
+        <Stack direction="row">
+          <Stack
             sx={{
-              display: "flex",
-              justifyContent: "center",
               alignItems: "center",
+              marginRight: 2,
               cursor: "pointer",
-              backgroundColor: "#cbcbcb",
-              width: 36,
-              height: 36,
-              borderRadius: "50%",
             }}
-            onClick={() => { content.audioFileLink && new Audio(content.audioFileLink as string).play() }}
           >
-            <HiOutlineSpeakerWave size={18} color="#fff" />
-          </Box>
-          <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text>
-        </Stack>
-        <Stack
-          sx={{
-            alignItems: "center",
-            marginRight: 2,
-            cursor: "pointer",
-          }}
-          onClick={() => { setShouldShowTrans(!shouldShowTrans) }}
-        >
-          <Box
+            {/* <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                backgroundColor: "#cbcbcb",
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+              }}
+              onClick={() => { content.audioFileLink && new Audio(content.audioFileLink as string).play() }}
+            >
+              <HiOutlineSpeakerWave size={18} color="#fff" />
+            </Box> */}
+            <AudioPlayer file={content.audioFileLink} />
+            {/* <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text> */}
+          </Stack>
+          <Stack
             sx={{
-              display: "flex",
-              justifyContent: "center",
               alignItems: "center",
+              marginRight: 2,
               cursor: "pointer",
-              backgroundColor: shouldShowTrans ? "blue" : "#cbcbcb",
-              width: 36,
-              height: 36,
-              borderRadius: "50%",
             }}
+            onClick={() => { setShouldShowTrans(!shouldShowTrans) }}
           >
-            <MdOutlineGTranslate size={18} color="#fff" />
-          </Box>
-          <Text sx={{ fontSize: 12, marginTop: 0.5 }}>翻訳</Text>
-        </Stack>
-        <Stack
-          sx={{
-            alignItems: "center",
-            marginRight: 2,
-            cursor: "pointer",
-          }}
-          onClick={() => { setShouldShowVocab(!shouldShowVocab) }}
-        >
-          <Box
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                backgroundColor: shouldShowTrans ? "blue" : "#f2f3f4",
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+              }}
+            >
+              <MdOutlineGTranslate size={18} color={shouldShowTrans ? "#fff" : "#242424"} />
+            </Box>
+            <Text sx={{ fontSize: 12, marginTop: 0.5 }}>翻訳</Text>
+          </Stack>
+          <Stack
             sx={{
-              display: "flex",
-              justifyContent: "center",
               alignItems: "center",
-              backgroundColor: shouldShowVocab ? "blue" : "#cbcbcb",
-              width: 36,
-              height: 36,
-              borderRadius: "50%",
+              marginRight: 2,
+              cursor: "pointer",
             }}
+            onClick={() => { setShouldShowVocab(!shouldShowVocab) }}
           >
-            <TbVocabulary size={18} color="#fff" />
-          </Box>
-          <Text sx={{ fontSize: 12, marginTop: 0.5 }}>単語リスト</Text>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: shouldShowVocab ? "blue" : "#f2f3f4",
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+              }}
+            >
+              <TbVocabulary size={18} color={shouldShowVocab ? "#fff" : "#242424"} />
+            </Box>
+            <Text sx={{ fontSize: 12, marginTop: 0.5 }}>単語リスト</Text>
+          </Stack>
         </Stack>
       </Stack>
       <Box>
@@ -690,12 +645,6 @@ function Paragraph({
         ))}
       </Box>
 
-
-
-      {/* 
-      <Stack direction="row" pt={3} justifyContent="space-between" alignItems="center">
-
-      </Stack> */}
       <Typography sx={{ fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 2 }}>
         {content.en}
       </Typography>

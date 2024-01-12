@@ -40,6 +40,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       entry.fields.p6 ? pRetry(() => fetchVocab(entry.fields.p6), retryConfig) : null,
     ])
 
+    if (!entry.fields.p1 || !entry.fields.p2 || !entry.fields.p3 || !entry.fields.p4 || !entry.fields.p5) {
+      return res.status(400).json({ message: 'Paragraphs are not filled' });
+    }
+
     const p1AudioLink = entry.fields.p1 ? await polly({ text: removeCitations(entry.fields.p1), paragraphNumber: 1, slug: entry.fields.slug }) : null
     const p2AudioLink = entry.fields.p2 ? await polly({ text: removeCitations(entry.fields.p2), paragraphNumber: 2, slug: entry.fields.slug }) : null
     const p3AudioLink = entry.fields.p3 ? await polly({ text: removeCitations(entry.fields.p3), paragraphNumber: 3, slug: entry.fields.slug }) : null
