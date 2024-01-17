@@ -8,6 +8,7 @@ import Head from 'next/head'
 import Link from 'next/link';
 import { client } from '../utils/apis/contentful'
 import { uniq } from 'lodash';
+import { MaterialRow } from '../components/MaterialRow'
 
 const BlogLayout = styled(Box)`
   overflow: auto;
@@ -59,7 +60,32 @@ export default function ArticleIndex({ articles }) {
     ),
     [articles]
   )
-  console.log({ articles })
+
+  const articlesSorted = useMemo(() =>
+    articles.sort(
+      (a, b) => {
+        if (a.fields.publishedDate > b.fields.publishedDate) {
+          return -1
+        } else {
+          return 1
+        }
+      }),
+    [articles]
+  )
+
+  const articlesByCategory = useMemo(() =>
+    articlesSorted.reduce((acc, article) => {
+      if (!acc[article.fields.category]) {
+        acc[article.fields.category] = []
+      }
+      acc[article.fields.category].push(article)
+      return acc
+    }, {}),
+    [articlesSorted]
+  )
+
+
+  console.log({ articlesByCategory })
   return (
     <>
       <Head>
@@ -114,10 +140,17 @@ export default function ArticleIndex({ articles }) {
             </Box>
           ))}
         </Stack>
-        <Grid container py={3} p={2} spacing={2}>
-          {articles.map((article) => (
+        {/* <Grid container py={3} p={2} spacing={2}>
+          {articlesSorted.map((article) => (
             <Grid item xs={12} sm={6} md={4}>
               <Material article={article} />
+            </Grid>
+          ))}
+        </Grid> */}
+        <Grid container py={2} p={2} spacing={2}>
+          {articlesSorted.map((article) => (
+            <Grid item xs={12} sm={6} md={4}>
+              <MaterialRow article={article} />
             </Grid>
           ))}
         </Grid>
