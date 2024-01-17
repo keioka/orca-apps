@@ -81,7 +81,6 @@ export const createMessage = createAsyncThunk(`${NAME}/create`, async ({
       }
     );
 
-    console.log({ messages: response.data });
     return { [lessonId]: [...state.messages.messageMap[lessonId], response.data] };
   } catch (error) {
     console.error(error)
