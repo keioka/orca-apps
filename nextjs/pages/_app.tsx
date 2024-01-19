@@ -39,7 +39,8 @@ const theme = createTheme({
           boxShadow: 'none',
           '&:hover': {
             boxShadow: 'none',
-          }
+          },
+          fontFamily: 'var(--font-outfit)',
         }
       }
     },

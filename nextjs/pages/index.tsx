@@ -70,7 +70,7 @@ function getArticlesByPublishedDate(articles) {
   }, {})
 }
 
-function getLatestArticles(articlesByPublishedDate) {
+function getArticlesArrByDate(articlesByPublishedDate) {
   return articlesByPublishedDate &&
     Object.keys(articlesByPublishedDate)
       .sort(
@@ -82,9 +82,8 @@ function getLatestArticles(articlesByPublishedDate) {
           }
         })
       .map((publishedDate) => {
-        console.log({ publishedDate })
         return articlesByPublishedDate[publishedDate]
-      })[0]
+      })
 }
 
 
@@ -112,10 +111,6 @@ export default function ArticleIndex({ articles }) {
     [articles]
   )
 
-  const articlesByCategory = useMemo(() =>
-    getArticlesByCategory(articlesSorted),
-    [articlesSorted]
-  )
 
   const articlesByPublishedDate = useMemo(() =>
     getArticlesByPublishedDate(articlesSorted),
@@ -123,8 +118,20 @@ export default function ArticleIndex({ articles }) {
   )
 
   const latestArtciles = useMemo(() =>
-    getLatestArticles(articlesByPublishedDate),
+    getArticlesArrByDate(articlesByPublishedDate)[0],
     [articlesByPublishedDate]
+  )
+
+  const restArticles = useMemo(() =>
+    getArticlesArrByDate(articlesByPublishedDate).slice(1).flat(),
+    [articlesByPublishedDate]
+  )
+
+  console.log({ restArticles })
+
+  const articlesByCategory = useMemo(() =>
+    getArticlesByCategory(restArticles),
+    [articlesSorted]
   )
 
 
@@ -191,13 +198,19 @@ export default function ArticleIndex({ articles }) {
             </Grid>
           ))}
         </Grid>
-        <Grid container py={2} p={2} spacing={2}>
-          {articlesSorted.map((article) => (
-            <Grid item xs={12} sm={6} md={4}>
-              <MaterialRow article={article} />
+        {Object.keys(articlesByCategory).map((category) => (
+          <>
+            <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1.2rem", paddingX: 2, paddingTop: 3 }}>{category}</Typography>
+            <Grid container py={2} p={2} spacing={2}>
+              {articlesByCategory[category] && articlesByCategory[category].map((article) => (
+                <Grid item xs={12} sm={6} md={4}>
+                  <MaterialRow article={article} />
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
+          </>
+        ))}
+
       </Box>
     </>
   )

@@ -36,11 +36,11 @@ export function MaterialRow({ article }) {
             <Typography sx={{ fontSize: "0.7rem", textTransform: "uppercase" }}>{formatCategory[article.fields.category]}</Typography>
           </Box>
           <Stack direction="row" spacing={1}>
-            <Box sx={{ width: "128px", height: "64px", flexGrow: 0 }}>
+            <Box sx={{ width: "128px", height: "64px", flexGrow: 0, flexShrink: 0 }}>
               <img alt={article.fields.title} src={article.fields.heroImage ? article.fields.heroImage.fields.file.url : ""} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </Box>
             <Box sx={{ flexGrow: 0 }}>
-              <Typography sx={{ fontFamily: "Crimson Text", fontSize: "1.1rem" }} >{article.fields.title}</Typography>
+              <Typography sx={{ fontFamily: "Crimson Text", fontSize: "1.1rem", lineHeight: "1.3rem" }} >{article.fields.title}</Typography>
             </Box>
 
           </Stack>
