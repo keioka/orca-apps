@@ -552,16 +552,40 @@ function Paragraph({
 }) {
   const [shouldShowVocab, setShouldShowVocab] = useState(false)
   const [shouldShowTrans, setShouldShowTrans] = useState(false)
+  const [shouldShowPlaySound, setShouldShowPlaySound] = useState(false)
 
   return (
-    <Box pb={8}>
+    <Box pb={4}>
       <Stack direction="row" sx={{ alignItems: "center" }} justifyContent="space-between">
-        <Box style={{ backgroundColor: "#191c29", padding: 8, borderTopRightRadius: 8, justifyContent: "center", alignItems: "center", width: 64, marginRight: 18 }}>
-          <Typography sx={{ fontSize: 18, textAlign: "center", fontWeight: "bold", color: "#fff" }}>{index + 1} / {totalLength}</Typography>
-          <Typography sx={{ fontSize: 12, textAlign: "center", color: "#fff" }}>Paragraph</Typography>
+        <Box style={{ backgroundColor: "#f2f3f4", padding: 8, borderTopRightRadius: 8, justifyContent: "center", alignItems: "center", width: 64, marginRight: 18 }}>
+          <Typography sx={{ fontSize: 16, textAlign: "center", fontWeight: "bold", color: "#242424" }}>{index + 1} / {totalLength}</Typography>
+          <Typography sx={{ fontSize: 12, textAlign: "center", color: "#242424" }}>Paragraph</Typography>
         </Box>
         <Stack direction="row">
-
+          <Stack
+            sx={{
+              alignItems: "center",
+              marginRight: 2,
+              cursor: "pointer",
+            }}
+            onClick={() => { setShouldShowPlaySound(!shouldShowPlaySound) }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                backgroundColor: shouldShowPlaySound ? "blue" : "#f2f3f4",
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+              }}
+            >
+              <HiOutlineSpeakerWave size={18} color={shouldShowPlaySound ? "#fff" : "#242424"} />
+            </Box>
+            <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text>
+          </Stack>
           <Stack
             sx={{
               alignItems: "center",
@@ -611,7 +635,7 @@ function Paragraph({
           </Stack>
         </Stack>
       </Stack>
-      <Stack
+      {shouldShowPlaySound && <Stack
         sx={{
           width: "100%",
           alignItems: "center",
@@ -639,7 +663,7 @@ function Paragraph({
             </Box> */}
         <AudioPlayer file={content.audioFileLink} />
         {/* <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text> */}
-      </Stack>
+      </Stack>}
       <Box>
         {!isEmbedMode && shouldShowVocab && content.vocab && content.vocab.map((vocab) => (
           <Box sx={{ marginBottom: 1 }}>
