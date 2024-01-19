@@ -34,19 +34,19 @@ export function Material({ article }) {
         <Stack>
           <Box sx={{ position: "absolute", top: 0, left: 0 }}>
             <Box sx={{ background: "#191c29", paddingY: 0.3, paddingX: 0.5, borderRadius: 0.25 }}>
-              <Typography sx={{ fontSize: "1.2rem", color: "#fff", textTransform: "uppercase" }}>{formatCategory[article.fields.category]}</Typography>
+              <Typography sx={{ fontSize: "1rem", color: "#fff" }}>{formatCategory[article.fields.category]}</Typography>
             </Box>
           </Box>
-          <img alt={article.fields.title} src={article.fields.heroImage ? article.fields.heroImage.fields.file.url : ""} style={{ width: "100%", height: "320px", objectFit: "cover" }} />
+          <img alt={article.fields.title} src={article.fields.heroImage ? article.fields.heroImage.fields.file.url : ""} style={{ width: "100%", maxHeight: "320px", objectFit: "cover" }} />
           <Typography sx={{ fontFamily: "Crimson Text", fontSize: "1.2rem" }} mt={0.5}>{article.fields.title}</Typography>
           <Grid container justifyContent="space-between">
             <Grid item>
               <Box sx={{ paddingY: 0.3, paddingX: 0.5, borderRadius: 0.25 }}>
-                <Typography sx={{ fontFamily: "Poppins", fontSize: "0.7rem", color: "#00100B", textTransform: "uppercase" }}>{new Date(article.fields.publishedDate).toLocaleDateString()}</Typography>
+                <Typography sx={{ fontSize: "0.9rem", color: "#00100B", textTransform: "uppercase" }}>{new Date(article.fields.publishedDate).toLocaleDateString()}</Typography>
               </Box>
             </Grid>
             <Grid item>
-              <Typography sx={{ fontFamily: "Poppins", fontSize: "0.7rem", color: "gray", textTransform: "uppercase" }}>{article.fields.wordCount} words</Typography>
+              <Typography sx={{ fontSize: "0.9rem", color: "gray", textTransform: "uppercase" }}>{article.fields.wordCount} words</Typography>
             </Grid>
           </Grid>
         </Stack>

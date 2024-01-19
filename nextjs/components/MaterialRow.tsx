@@ -40,18 +40,18 @@ export function MaterialRow({ article }) {
               <img alt={article.fields.title} src={article.fields.heroImage ? article.fields.heroImage.fields.file.url : ""} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </Box>
             <Box sx={{ flexGrow: 0 }}>
-              <Typography sx={{ fontFamily: "Crimson Text", fontSize: "1rem" }} >{article.fields.title}</Typography>
+              <Typography sx={{ fontFamily: "Crimson Text", fontSize: "1.1rem" }} >{article.fields.title}</Typography>
             </Box>
 
           </Stack>
           <Grid container justifyContent="space-between">
             <Grid item>
               <Box sx={{ paddingY: 0.3, paddingX: 0.5, borderRadius: 0.25 }}>
-                <Typography sx={{ fontFamily: "Poppins", fontSize: "0.7rem", color: "#00100B", textTransform: "uppercase" }}>{new Date(article.fields.publishedDate).toLocaleDateString()}</Typography>
+                <Typography sx={{ fontSize: "0.9rem", color: "#00100B", textTransform: "uppercase" }}>{new Date(article.fields.publishedDate).toLocaleDateString()}</Typography>
               </Box>
             </Grid>
             <Grid item>
-              <Typography sx={{ fontFamily: "Poppins", fontSize: "0.7rem", color: "gray", textTransform: "uppercase" }}>{article.fields.wordCount} words</Typography>
+              <Typography sx={{ fontSize: "0.9rem", color: "gray", textTransform: "uppercase" }}>{article.fields.wordCount} words</Typography>
             </Grid>
           </Grid>
         </Stack>

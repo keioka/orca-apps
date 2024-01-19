@@ -49,6 +49,45 @@ const formatCategory = {
   world_news: "🌍World News"
 };
 
+
+function getArticlesByCategory(articles) {
+  return articles.reduce((acc, article) => {
+    if (!acc[article.fields.category]) {
+      acc[article.fields.category] = []
+    }
+    acc[article.fields.category].push(article)
+    return acc
+  }, {})
+}
+
+function getArticlesByPublishedDate(articles) {
+  return articles.reduce((acc, article) => {
+    if (!acc[article.fields.publishedDate]) {
+      acc[article.fields.publishedDate] = []
+    }
+    acc[article.fields.publishedDate].push(article)
+    return acc
+  }, {})
+}
+
+function getLatestArticles(articlesByPublishedDate) {
+  return articlesByPublishedDate &&
+    Object.keys(articlesByPublishedDate)
+      .sort(
+        (a, b) => {
+          if (a > b) {
+            return -1
+          } else {
+            return 1
+          }
+        })
+      .map((publishedDate) => {
+        console.log({ publishedDate })
+        return articlesByPublishedDate[publishedDate]
+      })[0]
+}
+
+
 export default function ArticleIndex({ articles }) {
   const router = useRouter()
   const categories = useMemo(() =>
@@ -62,7 +101,7 @@ export default function ArticleIndex({ articles }) {
   )
 
   const articlesSorted = useMemo(() =>
-    articles.sort(
+    articles.filter((article) => article.fields.publishedDate).sort(
       (a, b) => {
         if (a.fields.publishedDate > b.fields.publishedDate) {
           return -1
@@ -74,18 +113,23 @@ export default function ArticleIndex({ articles }) {
   )
 
   const articlesByCategory = useMemo(() =>
-    articlesSorted.reduce((acc, article) => {
-      if (!acc[article.fields.category]) {
-        acc[article.fields.category] = []
-      }
-      acc[article.fields.category].push(article)
-      return acc
-    }, {}),
+    getArticlesByCategory(articlesSorted),
     [articlesSorted]
   )
 
+  const articlesByPublishedDate = useMemo(() =>
+    getArticlesByPublishedDate(articlesSorted),
+    [articlesSorted]
+  )
 
-  console.log({ articlesByCategory })
+  const latestArtciles = useMemo(() =>
+    getLatestArticles(articlesByPublishedDate),
+    [articlesByPublishedDate]
+  )
+
+
+
+  console.log({ articlesByCategory, articlesByPublishedDate, latestArtciles })
   return (
     <>
       <Head>
@@ -133,20 +177,20 @@ export default function ArticleIndex({ articles }) {
         {/* <Box p={2}>
           <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "2rem" }}>Articles</Typography>
         </Box> */}
-        <Stack direction="row" sx={{ width: "100%", paddingLeft: 2, paddingRight: 2, overflow: "scroll", boxSizing: "border-box" }}>
+        {/* <Stack direction="row" sx={{ width: "100%", paddingLeft: 2, paddingRight: 2, overflow: "scroll", boxSizing: "border-box" }}>
           {categories && categories.map((category) => (
             <Box mr={1}>
               <Chip sx={{ fontFamily: "Outfit", fontSize: 18, padding: 2, lineHeight: 24 }} label={`#${category}`} />
             </Box>
           ))}
-        </Stack>
-        {/* <Grid container py={3} p={2} spacing={2}>
-          {articlesSorted.map((article) => (
+        </Stack> */}
+        <Grid container py={3} p={2} spacing={{ xs: 3, sm: 2 }}>
+          {latestArtciles.map((article) => (
             <Grid item xs={12} sm={6} md={4}>
               <Material article={article} />
             </Grid>
           ))}
-        </Grid> */}
+        </Grid>
         <Grid container py={2} p={2} spacing={2}>
           {articlesSorted.map((article) => (
             <Grid item xs={12} sm={6} md={4}>
