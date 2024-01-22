@@ -24,7 +24,7 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-  webpack(config) {
+  webpack(config, { isServer }) {
     config.module.rules.push({
       test: /\.ttf$/,
       use: ['file-loader'],
@@ -43,6 +43,16 @@ const nextConfig = {
     config.resolve.fallback = { fs: false, path: false };
 
     config.experiments = { ...config.experiments, topLevelAwait: true, };
+
+    if (!isServer) {
+      config.resolve.fallback.fs = false;
+      config.resolve.fallback.child_process = false;
+      config.resolve.fallback.request = false;
+      config.resolve.fallback.net = false;
+      config.resolve.fallback.worker_threads = false;
+      config.resolve.fallback.tls = false;
+    }
+
     return config;
   },
 }

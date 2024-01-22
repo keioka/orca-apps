@@ -4,8 +4,10 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
-import { firebase } from "../../firebase"
+import { firebase } from "../../firebase/client"
 import axios from "axios";
 import { formatThunkError, parseErrorMessageStr } from "../helpers";
 import { validateSessionAndToken } from '../helpers';
@@ -77,11 +79,6 @@ const authSlice = createSlice({
         ...action.payload,
       }
 
-      console.log({
-        stateSession: state.session,
-        newSession: action.payload
-      })
-
       if (!state.session || !state.session.lastUpdatedAt) {
         newSession.lastUpdatedAt = new Date().toISOString()
       } else if (state.session.accessToken && action.payload.accessToken && state.session.accessToken !== action.payload.accessToken) {
@@ -114,6 +111,28 @@ const authSlice = createSlice({
       state.signupLoading = false;
       state.errorSignupMessage = action.payload.error.message;
     });
+    builder.addCase(signUpWithGoogle.pending, (state) => {
+      state.signupLoading = true;
+    });
+    builder.addCase(signUpWithGoogle.fulfilled, (state, action) => {
+      state.signupLoading = false;
+      state.currentUser = action.payload;
+    })
+    builder.addCase(signUpWithGoogle.rejected, (state, action) => {
+      state.signupLoading = false;
+      state.errorSignupMessage = action.payload.error.message;
+    })
+    builder.addCase(loginWithGoogle.pending, (state) => {
+      state.singinLoading = true;
+    })
+    builder.addCase(loginWithGoogle.fulfilled, (state, action) => {
+      state.singinLoading = false;
+      state.currentUser = action.payload;
+    })
+    builder.addCase(loginWithGoogle.rejected, (state, action) => {
+      state.singinLoading = false;
+      state.errorSigninMessage = action.payload.error.message;
+    })
     builder.addCase(fetchCurrentUser.pending, (state) => {
       state.isFetchingCurrentUser = true
     })
@@ -168,7 +187,7 @@ const authSlice = createSlice({
   },
 })
 
-const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
+const ROOT_URL = "/"
 
 export const signUpWithEmail = createAsyncThunk(
   "auth/signUpWithEmail",
@@ -201,7 +220,7 @@ export const signUpWithEmail = createAsyncThunk(
 
     try {
 
-      const res = await axios(`${ROOT_URL}/api/users/signup`, {
+      const res = await axios(`/api/users/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -242,7 +261,7 @@ export const signInWithEmail = createAsyncThunk(
         rejectWithValue(formatThunkError({}, { message: "No user" }))
       }
 
-      const res = await axios(`${ROOT_URL}/api/users/login`, {
+      const res = await axios(`/api/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -280,7 +299,7 @@ export const fetchCurrentUser = createAsyncThunk(
   async ({ accessToken }: { accessToken: string }, { rejectWithValue }) => {
     try {
 
-      const res = await axios(`${ROOT_URL}/api/users/login`, {
+      const res = await axios(`/api/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -301,19 +320,26 @@ export const fetchCurrentUser = createAsyncThunk(
 export const signUpWithGoogle = createAsyncThunk(
   "auth/signUpWithGoogle",
   async (_, { getState, rejectWithValue }) => {
+    const auth = getAuth(firebase)
+    let resFb: any
     try {
-      const auth = getAuth(firebase)
-      const resFb = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-
+      const provider = new GoogleAuthProvider();
+      resFb = await signInWithPopup(auth, provider);
+      console.log({ resFb })
       if (!resFb.user) {
-        rejectWithValue("No user")
+        return rejectWithValue("No user")
+      }
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(formatThunkError(error))
+    }
+
+    try {
+      if (!resFb) {
+        return rejectWithValue("No user")
       }
 
-      const res = await axios(`${ROOT_URL}/api/users/signup`, {
+      const res = await axios(`/api/users/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -325,7 +351,58 @@ export const signUpWithGoogle = createAsyncThunk(
       return res.data;
     } catch (error) {
       console.error(error)
-      return rejectWithValue(error)
+      await firebaseSignOut(auth);
+      console.log(error.response.data.type)
+      if (error.response.data.type === "ALREADY_EXISTS") {
+        return rejectWithValue(formatThunkError(error, { message: "You already have an account. Please Login" }))
+      }
+      return rejectWithValue(formatThunkError(error))
+    }
+  }
+);
+
+export const loginWithGoogle = createAsyncThunk(
+  "auth/loginWithGoogle",
+  async (_, { getState, rejectWithValue }) => {
+    const auth = getAuth(firebase)
+    let resFb: any
+    try {
+      const provider = new GoogleAuthProvider();
+      resFb = await signInWithPopup(auth, provider);
+      console.log({ resFb })
+      if (!resFb.user) {
+        return rejectWithValue("No user")
+      }
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(formatThunkError(error))
+    }
+
+    try {
+      if (!resFb) {
+        return rejectWithValue("No user")
+      }
+
+      const res = await axios(`/api/users/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + resFb.user?.accessToken
+        },
+        data: JSON.stringify({
+          providerId: resFb.user?.uid,
+        })
+      })
+
+      return res.data;
+    } catch (error) {
+      console.error(error)
+      await firebaseSignOut(auth);
+      console.log(error.response.data.type)
+      if (error.response.data.type === "ALREADY_EXISTS") {
+        return rejectWithValue(formatThunkError(error, { message: "You already have an account. Please Login" }))
+      }
+      return rejectWithValue(formatThunkError(error))
     }
   }
 );
@@ -365,7 +442,7 @@ export const fetchCurrentUserStats = createAsyncThunk(
       const state = getState()
       const token = await validateSessionAndToken(state, dispatch);
 
-      const response = await axios.get(`${ROOT_URL}/api/users/stats`, {
+      const response = await axios.get(`/api/users/stats`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -388,7 +465,7 @@ export const setMpTrackingId = createAsyncThunk(
       const token = await validateSessionAndToken(state, dispatch);
 
       const response = await axios.post(
-        `${ROOT_URL}/api/users/setMpTrackingId`, {
+        `/api/users/setMpTrackingId`, {
         mpTrackingId
       }, {
         headers: {

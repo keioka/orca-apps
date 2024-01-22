@@ -1,5 +1,5 @@
 import { getAuth } from "firebase/auth";
-import { firebase } from "../firebase"
+import { firebase } from "../firebase/client"
 import moment from "moment";
 import { setSession } from "./features/auth";
 import { ThunkDispatch } from "redux-thunk";

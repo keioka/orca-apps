@@ -2,6 +2,9 @@ import type { AppProps } from 'next/app';
 import { Crimson_Text, Outfit } from 'next/font/google';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { Provider } from 'react-redux';
+import { store } from '../redux/store';
+
 import 'reset-css';
 
 const crimsonText = Crimson_Text({
@@ -77,14 +80,16 @@ const theme = createTheme({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
-      <main className={`${crimsonText.className} ${outfit.className}`}>
-        <Component {...pageProps} />
-        {/* <BottomNavigation sx={{ zIndex: 3, width: "100%", position: "fixed", bottom: 0 }}>
+      <Provider store={store}>
+        <main className={`${crimsonText.className} ${outfit.className}`}>
+          <Component {...pageProps} />
+          {/* <BottomNavigation sx={{ zIndex: 3, width: "100%", position: "fixed", bottom: 0 }}>
           <BottomNavigationAction label="Recents" />
           <BottomNavigationAction label="Favorites" />
           <BottomNavigationAction label="Nearby" />
         </BottomNavigation> */}
-      </main>
+        </main>
+      </Provider>
     </ThemeProvider >
   );
 }
