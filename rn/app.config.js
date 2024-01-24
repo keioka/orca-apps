@@ -48,29 +48,16 @@ export default () => ({
       "package": "com.taiheyyo.orca"
     },
     "ios": {
-      "bundleIdentifier": "com.taiheyyo.orca"
+      "bundleIdentifier": "com.taiheyyo.orca",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "This app uses the photo library to save photos for your profile.",
+        "NSSpeechRecognitionUsageDescription": "This app uses speech recognition to transcribe your voice to text.",
+        "NSMicrophoneUsageDescription": "This app uses the microphone to record your voice.",
+      }
     },
     "updates": {
       "url": "https://u.expo.dev/4aebf76e-02f3-4591-a848-7725ed175c51"
     }
-  },
-  "ios": {
-    "supportsTablet": true,
-    "bundleIdentifier": "com.taiheyyo.orca",
-    "versionCode": 1,
-    "infoPlist": {
-      "NSPhotoLibraryUsageDescription": "This app uses the photo library to save photos for your profile.",
-      "NSSpeechRecognitionUsageDescription": "This app uses speech recognition to transcribe your voice to text.",
-      "NSMicrophoneUsageDescription": "This app uses the microphone to record your voice.",
-    }
-  },
-  "android": {
-    "adaptiveIcon": {
-      "foregroundImage": "./assets/adaptive-icon.png",
-      "backgroundColor": "#ffffff"
-    },
-    "versionCode": 1,
-    "package": "com.taiheyyo.orca"
   },
   "web": {
     "favicon": "./assets/favicon.png"
