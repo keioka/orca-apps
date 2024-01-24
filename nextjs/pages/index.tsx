@@ -193,22 +193,22 @@ export default function ArticleIndex({ articles }) {
         </Stack> */}
         <Grid container py={3} p={2} spacing={{ xs: 3, sm: 2 }}>
           {latestArtciles.map((article) => (
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid key={article.id} item xs={12} sm={6} md={4}>
               <Material article={article} />
             </Grid>
           ))}
         </Grid>
         {Object.keys(articlesByCategory).map((category) => (
-          <>
+          <Box key={category}>
             <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1.2rem", paddingX: 2, paddingTop: 3 }}>{category}</Typography>
             <Grid container py={2} p={2} spacing={2}>
               {articlesByCategory[category] && articlesByCategory[category].map((article) => (
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid key={article.id} item xs={12} sm={6} md={4}>
                   <MaterialRow article={article} />
                 </Grid>
               ))}
             </Grid>
-          </>
+          </Box>
         ))}
 
       </Box>
