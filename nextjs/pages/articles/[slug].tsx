@@ -19,6 +19,7 @@ import { TbVocabulary } from "react-icons/tb";
 import { useSearchParams } from 'next/navigation'
 import { Header } from '../../components/Header'
 import { AudioPlayer } from '../../components/AudioPlayer'
+import { CardChat } from '../../components/CardChat'
 
 export const config = {
   amp: 'hybrid',
@@ -524,12 +525,17 @@ export default function Article({ article, relatedArticles, body, notFound, slug
             })}
 
             <Box sx={{ padding: 1 }}>
-              <Box sx={{ background: "#f6f6f6", padding: 2 }}>
+              <Stack sx={{ background: "#fafafa", padding: 2 }} spacing={1}>
                 <Typography>
                   What do you think of the article?
                 </Typography>
-                <TextField sx={{ width: "100%", height: 86, background: "#fff" }} multiline />
-              </Box>
+                <CardChat content='What do you think of the article?' type="ai" />
+                <CardChat content="Hello" type="human" />
+                <TextField sx={{ width: "100%", background: "#fff" }} multiline />
+                <Box>
+                  <Button variant="contained">Talk</Button>
+                </Box>
+              </Stack>
             </Box>
           </Box>
         </Box>
