@@ -127,16 +127,11 @@ export default function ArticleIndex({ articles }) {
     [articlesByPublishedDate]
   )
 
-  console.log({ restArticles })
-
   const articlesByCategory = useMemo(() =>
     getArticlesByCategory(restArticles),
     [articlesSorted]
   )
 
-
-
-  console.log({ articlesByCategory, articlesByPublishedDate, latestArtciles })
   return (
     <>
       <Head>
