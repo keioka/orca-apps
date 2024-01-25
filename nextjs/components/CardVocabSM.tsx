@@ -194,7 +194,7 @@ export function CardVocabSM({
           }}
         >
           <Stack spacing={2} direction="row" alignItems="center">
-            <Stack sx={{ borderRight: "1px solid #f0f0f0", paddingRight: 2, width: 160, minWidth: 160, padding: 2 }}>
+            <Stack sx={{ borderRight: "1px solid #f0f0f0", paddingRight: 2, width: 160, minWidth: 160, paddingY: 1, paddingX: 2 }}>
               <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                 <Typography variant="h6" component="h5">
                   {vocab.word}
@@ -220,7 +220,9 @@ export function CardVocabSM({
               <Typography variant="body2" component="span">
                 {vocab.pronounce}
               </Typography>
-
+              <AccordionSummary sx={{ fontSize: 12 }}>
+                例文
+              </AccordionSummary>
             </Stack>
 
             <Stack spacing={0.5}>
@@ -246,9 +248,7 @@ export function CardVocabSM({
                 </Typography>
               </Stack>
             } */}
-          <AccordionSummary sx={{ fontSize: 12 }}>
-            例文
-          </AccordionSummary>
+
         </Stack>
 
 

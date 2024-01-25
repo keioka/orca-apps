@@ -34,10 +34,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import styled from "@emotion/styled"
 
 const TypoEn = styled(Typography)`
-  font-size: 14px;
-  font-weight: 600;
-  color: #00232f;
-  letter-spacing: 0px;
+  font-size: 16px;
+  font-weight: 400;
 `
 
 enum Tab {
@@ -281,7 +279,7 @@ export function CardChatPure({
       direction={type === "ai" ? "row" : "row-reverse"}
       spacing={1}
     >
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           height: "auto",
@@ -290,7 +288,7 @@ export function CardChatPure({
         mb={1}
       >
         <Avatar src={type === "ai" ? "" : ""} sx={{ width: 24, height: 24 }} />
-      </Box>
+      </Box> */}
       <Card
         sx={(theme) => ({
           width: "100%",
@@ -345,6 +343,7 @@ export function CardChatPure({
                 >
                   <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.GMCheck ? "#fff" : "#787c80", fontWeight: 700 }}>
                     {/* {chrome.i18n.getMessage("chat_card_button_gm_check")} */}
+                    GM Check
                   </Typography>
                 </Button>
                 <Button
@@ -361,6 +360,7 @@ export function CardChatPure({
                 >
                   <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.Paraphrase ? "#fff" : "#787c80", fontWeight: 700 }}>
                     {/* {chrome.i18n.getMessage("chat_card_button_paraphrase")} */}
+                    Paraphrase
                   </Typography>
                 </Button>
               </Stack>

@@ -670,15 +670,17 @@ function Paragraph({
         <AudioPlayer file={content.audioFileLink} />
         {/* <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text> */}
       </Stack>}
-      <Box>
-        {!isEmbedMode && shouldShowVocab && content.vocab && content.vocab.map((vocab) => (
-          <Box sx={{ marginBottom: 1 }}>
-            <CardVocabSM
-              vocab={vocab}
-            />
-          </Box>
-        ))}
-      </Box>
+      {!isEmbedMode && shouldShowVocab && content.vocab &&
+        <Box mt={1}>
+          {content.vocab.map((vocab) => (
+            <Box sx={{ marginBottom: 1 }}>
+              <CardVocabSM
+                vocab={vocab}
+              />
+            </Box>
+          ))}
+        </Box>
+      }
 
       <Typography sx={{ fontFamily: "Crimson Text", fontSize: 18, color: "#242424", padding: 2 }}>
         {content.en}

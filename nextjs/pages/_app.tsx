@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { Provider } from 'react-redux';
 import { store } from '../redux/store';
+import "reset-css";
 
 const themeBase = {
   palette: {
