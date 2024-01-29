@@ -56,7 +56,7 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
   '& .MuiAccordionSummary-content': {
     marginLeft: theme.spacing(1),
     margin: 0,
-    padding: "8px 16px",
+    padding: "6px 8px",
   },
   '&:root': {
     margin: 0,
@@ -74,7 +74,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 function getPosColor(pos: string) {
-  switch (pos) {
+  switch (pos.trim()) {
     case 'noun':
       return '#FF6347'; // Tomato
     case 'verb':
@@ -109,13 +109,15 @@ function getPosColor(pos: string) {
       return '#FF8C00'; // Dark Orange
     case 'contraction':
       return '#FF00FF'; // Magenta
+    case 'phrasal verb':
+      return '#d16300'; // Dark Turquoise
     default:
       return '#000000'; // Black (default color)
   }
 }
 
 function convertPosIcon(pos: string, lang: string) {
-  switch (pos) {
+  switch (pos.trim()) {
     case 'noun':
       return '名詞'
     case 'verb':
@@ -150,6 +152,8 @@ function convertPosIcon(pos: string, lang: string) {
       return '表現'
     case 'contraction':
       return '短縮形'
+    case 'phrasal verb':
+      return '句動詞'
     case 'abbreviation':
       return
   }
@@ -163,19 +167,19 @@ export function CardVocabSM({
 }: { vocab: any, onSaveVocab: any, shouldHideSave?: boolean, shouldHideDiscard?: boolean }) {
 
 
-  // function handlePlayAudio() {
-  //   const voices = synth.getVoices();
-  //   const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
+  function handlePlayAudio() {
+    const voices = synth.getVoices();
+    const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
 
-  //   const utterance = new SpeechSynthesisUtterance(vocab.word);
-  //   utterance.lang = "en-US";
+    const utterance = new SpeechSynthesisUtterance(vocab.word);
+    utterance.lang = "en-US";
 
-  //   if (englishVoices.length) {
-  //     utterance.voice = englishVoices.find(voice => voice.name === 'Google US English');
-  //   }
+    if (englishVoices.length) {
+      utterance.voice = englishVoices.find(voice => voice.name === 'Google US English');
+    }
 
-  //   synth.speak(utterance);
-  // }
+    synth.speak(utterance);
+  }
 
   function handleClickSave() {
     onSaveVocab(vocab)
@@ -211,7 +215,7 @@ export function CardVocabSM({
                       height: 24,
                       borderRadius: "50%",
                     }}
-                  // onClick={handlePlayAudio}
+                    onClick={handlePlayAudio}
                   >
                     <HiOutlineSpeakerWave size={14} color="#fff" />
                   </Box>
@@ -227,7 +231,7 @@ export function CardVocabSM({
 
             <Stack spacing={0.5}>
               <Typography variant="body2" component="h6">
-                {vocab.meaningInJapanese}
+                {vocab.meaningInJapanese || vocab.meaingInJapanese}
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", background: getPosColor(vocab.pos), borderRadius: 1, py: 0, px: 1, width: 48 }}>
                 <Typography variant="caption" component="span" sx={{ color: "#fff", fontSize: 11, fontWeight: "bold", textAlign: "center" }}>
@@ -236,18 +240,19 @@ export function CardVocabSM({
               </Box>
             </Stack>
           </Stack>
-          {/* {!shouldHideSave &&
+          {!shouldHideSave &&
+            <Button
+              onClick={handleClickSave}
+              size="small"
+            >
               <Stack justifyContent="center" alignItems="center">
-                <Button
-                  onClick={handleClickSave}
-                  startIcon={<IoBookmark color="#b6b6b6" />}
-                  size="small"
-                />
+                <IoBookmark color="#b6b6b6" size={18} />
                 <Typography variant="body2" component="span">
-                  hozon
+                  保存
                 </Typography>
               </Stack>
-            } */}
+            </Button>
+          }
 
         </Stack>
 

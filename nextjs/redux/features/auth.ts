@@ -325,7 +325,6 @@ export const signUpWithGoogle = createAsyncThunk(
     try {
       const provider = new GoogleAuthProvider();
       resFb = await signInWithPopup(auth, provider);
-      console.log({ resFb })
       if (!resFb.user) {
         return rejectWithValue("No user")
       }

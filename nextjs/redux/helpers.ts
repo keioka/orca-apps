@@ -12,8 +12,8 @@ export const validateSessionAndToken = async (state: any, dispatch: ThunkDispatc
     throw new Error(SESSION_NOT_DEFINED_ERROR);
   }
   const hasPastedOneHour = moment().diff(moment(state.auth?.lastUpdatedAt), 'hours') > 1
-  if (hasPastedOneHour) {
 
+  if (hasPastedOneHour) {
     console.warn("token is expired", state.auth?.lastUpdatedAt)
     const auth = getAuth(firebase);
     const token = await auth.currentUser?.getIdToken();

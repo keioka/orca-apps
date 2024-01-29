@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState, useMemo } from 'react'
-import { Avatar, List, ListItem, ListItemText, Box, Typography, Grid, Stack, Tab, Breadcrumbs, ButtonGroup, Button, TextField } from '@mui/material'
+import { Avatar, List, ListItem, ListItemText, Box, Typography, Grid, Stack, Pagination } from '@mui/material'
 import styled from '@emotion/styled';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
@@ -19,7 +19,10 @@ import { TbVocabulary } from "react-icons/tb";
 import { useSearchParams } from 'next/navigation'
 import { Header } from '../../components/Header'
 import { AudioPlayer } from '../../components/AudioPlayer'
-import { CardChat } from '../../components/CardChat'
+import { fetchOriginalMaterial } from "@/redux/features/materials";
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { ModalAuth } from '@/components/ModalAuth';
+import { StudyPanel } from '@/components/StudyPanel';
 
 export const config = {
   amp: 'hybrid',
@@ -301,7 +304,15 @@ function getJaJp(obj) {
 
 export default function Article({ article, relatedArticles, body, notFound, slug }: { article: Entry, relatedArticles: Entry[], body: any, notFound: boolean }) {
   const searchParams = useSearchParams()
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
   const mode = searchParams.get('mode')
+  const [shouldOpenModalAuth, setShouldOpenModalAuth] = useState(false)
+
+  useEffect(() => {
+    if (currentUser) {
+      setShouldOpenModalAuth(false)
+    }
+  }, [currentUser])
 
   if (notFound) {
     return <div>not found</div>
@@ -348,9 +359,10 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     p5Vocab,
     publishedDate
   } = cleanedArticle.fields
-  const { sys: { createdAt } } = cleanedArticle
+  const { sys: { createdAt, id } } = cleanedArticle
   console.log({
-    cleanedArticle
+    cleanedArticle,
+    id
   })
   const {
     title: jaTitle,
@@ -394,6 +406,10 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     }
   ]
 
+  const handleCloseModalAuth = () => {
+    setShouldOpenModalAuth(false)
+  }
+
   return (
     <>
       <Head>
@@ -433,6 +449,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
         />
       </Head>
       <Header />
+      <ModalAuth isOpen={shouldOpenModalAuth} onClose={handleCloseModalAuth} />
       <BlogLayout
         component="article"
         sx={{
@@ -524,19 +541,11 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               )
             })}
 
-            <Box sx={{ padding: 1 }}>
-              <Stack sx={{ background: "#fafafa", padding: 2 }} spacing={1}>
-                <Typography>
-                  What do you think of the article?
-                </Typography>
-                <CardChat content='What do you think of the article?' type="ai" />
-                <CardChat content="Hello" type="human" />
-                <TextField sx={{ width: "100%", background: "#fff" }} multiline />
-                <Box>
-                  <Button variant="contained">Talk</Button>
-                </Box>
-              </Stack>
-            </Box>
+            <StudyPanel
+              article={article}
+              currentUser={currentUser}
+              setShouldOpenModalAuth={setShouldOpenModalAuth}
+            />
           </Box>
         </Box>
       </BlogLayout >
@@ -559,6 +568,25 @@ function Paragraph({
   const [shouldShowVocab, setShouldShowVocab] = useState(false)
   const [shouldShowTrans, setShouldShowTrans] = useState(false)
   const [shouldShowPlaySound, setShouldShowPlaySound] = useState(false)
+  const [vocabPageIndex, setVocabPageIndex] = useState(0)
+
+  const vocabs = useMemo(() => content.vocab.sort((a, b) => {
+    if (a.word < b.word) {
+      return -1
+    }
+    if (a.word > b.word) {
+      return 1
+    }
+    return 0
+  }), [content.vocab])
+
+  const itemsPerPage = 5
+  const vocabPage = vocabs.slice(vocabPageIndex * itemsPerPage, (vocabPageIndex + 1) * itemsPerPage)
+  const totalPages = Math.ceil(vocabs.length / itemsPerPage)
+
+  const handleChange = (_, page) => {
+    setVocabPageIndex(page - 1)
+  }
 
   return (
     <Box pb={4}>
@@ -671,11 +699,15 @@ function Paragraph({
         {/* <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text> */}
       </Stack>}
       {!isEmbedMode && shouldShowVocab && content.vocab &&
-        <Box mt={1}>
-          {content.vocab.map((vocab) => (
-            <Box sx={{ marginBottom: 1 }}>
+        <Box mt={1} p={1}>
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mb: 1 }}>
+            <Pagination count={totalPages} onChange={handleChange} />
+          </Box>
+          {vocabPage.map((vocab) => (
+            <Box key={vocab.word} sx={{ marginBottom: 1 }}>
               <CardVocabSM
                 vocab={vocab}
+                onSaveVocab={() => { }}
               />
             </Box>
           ))}
@@ -779,26 +811,26 @@ export async function getServerSideProps({ params }) {
   })
 
   const subcategories = article.fields.subcategory
-  let relatedArticles = []
+  // let relatedArticles = []
 
   const id = article.sys.id
 
-  if (subcategories && subcategories.length > 0) {
-    const relatedArticlesRes = await Promise.all(subcategories.map((subcategory) => client.getEntries({
-      content_type: "blogPost",
-      limit: 3,
-      'fields.subcategory': subcategory,
-      'sys.id[ne]': id,
-    })))
+  // if (subcategories && subcategories.length > 0) {
+  //   const relatedArticlesRes = await Promise.all(subcategories.map((subcategory) => client.getEntries({
+  //     content_type: "blogPost",
+  //     limit: 3,
+  //     'fields.subcategory': subcategory,
+  //     'sys.id[ne]': id,
+  //   })))
 
-    relatedArticles = relatedArticlesRes.map((res) => res.items).flat().filter((item) => item.sys.id !== id)
-  }
+  //   relatedArticles = relatedArticlesRes.map((res) => res.items).flat().filter((item) => item.sys.id !== id)
+  // }
 
   return {
     props: {
       slug,
       article,
-      relatedArticles,
+      // relatedArticles,
       body,
     },
   };

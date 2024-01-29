@@ -1,10 +1,15 @@
+import { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
+import "reset-css";
 import { Crimson_Text, Outfit } from 'next/font/google';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { Provider } from 'react-redux';
 import { store } from '../redux/store';
-import "reset-css";
+import { useAppDispatch } from '@/redux/hooks';
+import { getAuth } from "firebase/auth";
+import { setSession, fetchCurrentUser, resetStateAction } from '@/redux/features/auth';
+import { firebase } from '../firebase/client'
 
 const themeBase = {
   palette: {
@@ -153,18 +158,53 @@ const theme = createTheme({
   }
 })
 
+function AppCore({ Component, pageProps }: AppProps) {
+  const dispatch = useAppDispatch()
+  const [isLoading, setIsLoading] = useState(true)
+  const [isInit, setIsInit] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    try {
+      const auth = getAuth(firebase);
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          let accessToken = user.accessToken
+
+          dispatch(setSession({
+            accessToken: accessToken,
+            uid: user.uid,
+          }))
+          dispatch(fetchCurrentUser({
+            accessToken: accessToken,
+          }))
+
+        } else {
+          dispatch(setSession(null))
+          dispatch(resetStateAction())
+        }
+        setIsLoading(false)
+        setIsInit(true)
+      })
+    } catch (error) {
+      console.error(error)
+      setError(error.message)
+    }
+  }, [])
+
+  return (
+    <main className={`${crimsonText.className} ${outfit.className}`}>
+      <Component {...pageProps} />
+    </main>
+  )
+}
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <main className={`${crimsonText.className} ${outfit.className}`}>
-          <Component {...pageProps} />
-          {/* <BottomNavigation sx={{ zIndex: 3, width: "100%", position: "fixed", bottom: 0 }}>
-          <BottomNavigationAction label="Recents" />
-          <BottomNavigationAction label="Favorites" />
-          <BottomNavigationAction label="Nearby" />
-        </BottomNavigation> */}
-        </main>
+        <AppCore Component={Component} pageProps={pageProps} />
+
       </Provider>
     </ThemeProvider >
   );

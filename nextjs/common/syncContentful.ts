@@ -169,7 +169,6 @@ export async function syncContentful() {
         const material = await Material.getMaterialByExternalId(result.id)
         let newArticle = null
 
-        console.log({ material })
         if (material) {
           newArticle = await Material.updateMaterial({
             externalId: result.id,
@@ -199,38 +198,36 @@ export async function syncContentful() {
               id: process.env.ORCA_PUBLISHER_ID
             }
           })
+
+          /** ADD VOCABS */
+          const p1Vocab = Array.isArray(result.p1Vocab) ? result.p1Vocab : []
+          const p2Vocab = Array.isArray(result.p2Vocab) ? result.p2Vocab : []
+          const p3Vocab = Array.isArray(result.p3Vocab) ? result.p3Vocab : []
+          const p4Vocab = Array.isArray(result.p4Vocab) ? result.p4Vocab : []
+          const p5Vocab = Array.isArray(result.p5Vocab) ? result.p5Vocab : []
+
+          const vocabs = [
+            ...p1Vocab.map(vocab => ({ ...vocab, paragraph: 1 })),
+            ...p2Vocab.map(vocab => ({ ...vocab, paragraph: 2 })),
+            ...p3Vocab.map(vocab => ({ ...vocab, paragraph: 3 })),
+            ...p4Vocab.map(vocab => ({ ...vocab, paragraph: 4 })),
+            ...p5Vocab.map(vocab => ({ ...vocab, paragraph: 5 }))
+          ]
+
+          const vocabParams = vocabs.map(vocab => {
+            return {
+              ...vocab,
+              translation: vocab.meaningInJapanese,
+              langCode: 'ja',
+              materialId: newArticle.id
+            }
+          })
+
+          await createVocabs({
+            materialId: newArticle.id,
+            vocabParams
+          })
         }
-
-        /** ADD VOCABS */
-        const p1Vocab = Array.isArray(result.p1Vocab) ? result.p1Vocab : []
-        const p2Vocab = Array.isArray(result.p2Vocab) ? result.p2Vocab : []
-        const p3Vocab = Array.isArray(result.p3Vocab) ? result.p3Vocab : []
-        const p4Vocab = Array.isArray(result.p4Vocab) ? result.p4Vocab : []
-        const p5Vocab = Array.isArray(result.p5Vocab) ? result.p5Vocab : []
-
-        const vocabs = [
-          ...p1Vocab,
-          ...p2Vocab,
-          ...p3Vocab,
-          ...p4Vocab,
-          ...p5Vocab,
-        ]
-
-        const vocabParams = vocabs.map(vocab => {
-          return {
-            ...vocab,
-            translation: vocab.meaningInJapanese,
-            langCode: 'ja',
-            materialId: newArticle.id
-          }
-        })
-
-        console.log({ vocabParams })
-
-        await createVocabs({
-          materialId: newArticle.id,
-          vocabParams
-        })
 
         return newArticle
       } catch (error) {
