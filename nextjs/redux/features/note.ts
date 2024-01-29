@@ -151,7 +151,7 @@ export const saveVocab = createAsyncThunk(
       const token = await validateSessionAndToken(state, dispatch);
 
       const response = await axios.post(
-        `${ROOT_URL}/api/vocabs/${vocabId}/save`,
+        `/api/vocabs/${vocabId}/save`,
         null,
         {
           headers: {
@@ -182,7 +182,7 @@ export const saveParaphrase = createAsyncThunk(`note/saveParaphrase`,
       const token = await validateSessionAndToken(state, dispatch);
 
       const response = await axios.post(
-        `${ROOT_URL}/api/paraphrases/${paraphraseId}/save`,
+        `/api/paraphrases/${paraphraseId}/save`,
         null,
         {
           headers: {
@@ -211,7 +211,7 @@ export const fetchSavedVocab = createAsyncThunk(`note/fetchSavedVocab`,
       const state = getState()
       const token = await validateSessionAndToken(state, dispatch);
 
-      const response = await axios.get(`${ROOT_URL}/api/vocabs/saved`, {
+      const response = await axios.get(`/api/vocabs/saved`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -233,7 +233,7 @@ export const fetchSavedParaphrases = createAsyncThunk(`note/fetchSavedParaphrase
     const state = getState();
     const token = await validateSessionAndToken(state, dispatch);
 
-    let baseUrl = `${ROOT_URL}/api/paraphrases/saved`;
+    let baseUrl = `/api/paraphrases/saved`;
     const queryParams: string[] = [];
 
     if (messageId) {
