@@ -661,7 +661,7 @@ function Paragraph({
                 justifyContent: "center",
                 alignItems: "center",
                 cursor: "pointer",
-                backgroundColor: shouldShowPlaySound ? "blue" : "#f2f3f4",
+                backgroundColor: shouldShowPlaySound ? "#FFD744" : "#f2f3f4",
                 width: 36,
                 height: 36,
                 borderRadius: "50%",
@@ -685,7 +685,7 @@ function Paragraph({
                 justifyContent: "center",
                 alignItems: "center",
                 cursor: "pointer",
-                backgroundColor: shouldShowTrans ? "blue" : "#f2f3f4",
+                backgroundColor: shouldShowTrans ? "#FFD744" : "#f2f3f4",
                 width: 36,
                 height: 36,
                 borderRadius: "50%",
@@ -708,7 +708,7 @@ function Paragraph({
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: shouldShowVocab ? "blue" : "#f2f3f4",
+                backgroundColor: shouldShowVocab ? "#FFD744" : "#f2f3f4",
                 width: 36,
                 height: 36,
                 borderRadius: "50%",
@@ -755,7 +755,7 @@ function Paragraph({
             <Pagination count={totalPages} onChange={handleChange} />
           </Box>
           {vocabPage.map((vocab) => {
-            console.log({ savedVocabs })
+            if (!vocab.dbId) return null
             const isSaved = savedVocabs && savedVocabs.find((v) => v.vocabularyId === vocab.dbId)
             return (
               <Box key={vocab.word} sx={{ marginBottom: 1 }}>

@@ -34,7 +34,7 @@ function stringAvatar(name: string) {
       bgcolor: stringToColor(name),
       fontSize: 14,
     },
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    children: `${name[0]}`,
   };
 }
 
@@ -52,6 +52,10 @@ export function Header() {
     setAnchorEl(null);
   };
 
+  const handleModalAuthClose = () => {
+    setShouldShowModalAuth(false);
+  }
+
   const handleSignout = () => {
     dispatch(signOut());
     handleMenuClose();
@@ -60,7 +64,7 @@ export function Header() {
 
   return (
     <AppBar position="static">
-      <ModalAuth isOpen={!currentUser && shouldShowModalAuth} onClose={handleMenuClose} />
+      {shouldShowModalAuth && <ModalAuth isOpen={!currentUser && shouldShowModalAuth} onClose={handleModalAuthClose} />}
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Link href="/" style={{ textDecoration: "none" }}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: "#242424" }}>
