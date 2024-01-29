@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Modal, Button, Box, TextField, Stack, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { signUpWithGoogle, loginWithGoogle } from "@/redux/features/auth";
-import { functionsIn } from 'lodash';
 import { IoClose } from "react-icons/io5";
 
 export function ModalAuth({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
@@ -22,11 +21,19 @@ export function ModalAuth({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
     setIsSignup(!isSignup);
   }
 
+  console.log({ isOpen })
+
   return (
     <Modal
       open={isOpen}
       onClose={onClose}
-      style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 24,
+        fontFamily: "Outfit"
+      }}
     >
       <Box
         style={{
@@ -38,7 +45,9 @@ export function ModalAuth({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
           boxSizing: "border-box",
         }}
       >
-        <IoClose size={24} onClick={onClose} style={{ position: "absolute", top: 32, left: 32, cursor: "pointer" }} />
+        <Box onClick={onClose}>
+          <IoClose size={24} style={{ position: "absolute", top: 32, left: 32, cursor: "pointer" }} />
+        </Box>
         <Box padding={2}>
           {isSignup && <Stack
             style={{
@@ -70,13 +79,13 @@ export function ModalAuth({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
             <Stack spacing={1}>
               <TextField />
               <TextField />
-              <Button variant='contained' onClick={onClickGoogleLogin}>Login with Google</Button>
+              <Button variant='outlined' onClick={onClickGoogleLogin} sx={{ background: "#fff" }} size='large'>Login with Google</Button>
               <Button onClick={toggleSignup}>Create a new account</Button>
               <Typography>{errorSignupMessage}</Typography>
             </Stack>
           </Stack>}
         </Box>
       </Box>
-    </Modal>
+    </Modal >
   );
 }

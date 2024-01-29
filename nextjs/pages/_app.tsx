@@ -8,8 +8,35 @@ import { Provider } from 'react-redux';
 import { store } from '../redux/store';
 import { useAppDispatch } from '@/redux/hooks';
 import { getAuth } from "firebase/auth";
-import { setSession, fetchCurrentUser, resetStateAction } from '@/redux/features/auth';
+import { setSession, fetchCurrentUser } from '@/redux/features/auth';
 import { firebase } from '../firebase/client'
+
+const themeLang = {
+  en: {
+    typography: {
+      fontFamily: "Open Sans",
+    },
+  },
+  ja: {
+    typography: {
+      fontFamily: "ZenMaruGothic",
+    },
+  }
+}
+
+
+const crimsonText = Crimson_Text({
+  variable: '--font-crimson-text',
+  weight: ["400", "600"],
+  subsets: ['latin'],
+})
+
+const outfit = Outfit({
+  variable: '--font-outfit',
+  weight: ["400", "600"],
+  subsets: ['latin'],
+})
+
 
 const themeBase = {
   palette: {
@@ -51,6 +78,13 @@ const themeBase = {
         },
       }
     },
+    MuiModal: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'var(--font-outfit)',
+        }
+      }
+    },
     MuiInputBase: {
       styleOverrides: {
         root: {
@@ -78,35 +112,14 @@ const themeBase = {
   },
 }
 
-const themeLang = {
-  en: {
-    typography: {
-      fontFamily: "Open Sans",
-    },
-  },
-  ja: {
-    typography: {
-      fontFamily: "ZenMaruGothic",
-    },
-  }
-}
-
-
-const crimsonText = Crimson_Text({
-  variable: '--font-crimson-text',
-  weight: ["400", "600"],
-  subsets: ['latin'],
-})
-
-const outfit = Outfit({
-  variable: '--font-outfit',
-  weight: ["400", "600"],
-  subsets: ['latin'],
-})
 
 const theme = createTheme({
   typography: {
     fontFamily: 'var(--font-crimson-text)',
+    button: {
+      fontFamily: 'var(--font-outfit)',
+      fontWeight: 400,
+    },
   },
   palette: themeBase.palette,
   components: {
@@ -181,7 +194,7 @@ function AppCore({ Component, pageProps }: AppProps) {
 
         } else {
           dispatch(setSession(null))
-          dispatch(resetStateAction())
+          // dispatch(resetStateAction())
         }
         setIsLoading(false)
         setIsInit(true)
