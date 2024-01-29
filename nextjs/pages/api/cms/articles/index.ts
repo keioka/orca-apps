@@ -4,7 +4,6 @@ import { getAllArticles, formatEntries } from '@/common/contentful'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    console.log("------------------")
     const contentfulArticles = await getAllArticles()
     const items = contentfulArticles.items
     const articles = formatEntries(items)

@@ -150,7 +150,6 @@ export const fetchOrCreateLessonByMaterialId = createAsyncThunk(
     try {
       const state = getState()
       const token = await validateSessionAndToken(state, dispatch);
-      console.log({ token })
       const response = await axios.post(
         `/api/materials/${materialId}/lesson`,
         null,

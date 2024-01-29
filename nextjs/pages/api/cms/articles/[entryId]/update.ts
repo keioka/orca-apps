@@ -6,6 +6,7 @@ import { fetchVocab } from '@/common/workServer/vocab'
 import { polly } from '@/common/lambda/polly'
 import { translate } from '@/utils/apis/deepL'
 import pRetry, { AbortError } from 'p-retry';
+import { v4 as uuidv4 } from 'uuid';
 
 function formatVocabData(data) {
   return { ja: data }
@@ -50,8 +51,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const p4AudioLink = entry.fields.p4 ? await polly({ text: removeCitations(entry.fields.p4), paragraphNumber: 4, slug: entry.fields.slug }) : null
     const p5AudioLink = entry.fields.p5 ? await polly({ text: removeCitations(entry.fields.p5), paragraphNumber: 5, slug: entry.fields.slug }) : null
 
-    // const [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }] = await translate({ texts: [entry.fields.title, entry.fields.p1, entry.fields.p2, entry.fields.p3, entry.fields.p4, entry.fields.p5], targetLang: 'ja' })
-    const [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }] = [{ text: null }, { text: null }, { text: null }, { text: null }, { text: null }, { text: null }]
+    let titleJa, p1Ja, p2Ja, p3Ja, p4Ja, p5Ja
+    if (process.env.NODE_ENV === 'development') {
+      [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }] = [{ text: null }, { text: null }, { text: null }, { text: null }, { text: null }, { text: null }]
+    } else {
+      [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }] = await translate({ texts: [entry.fields.title, entry.fields.p1, entry.fields.p2, entry.fields.p3, entry.fields.p4, entry.fields.p5], targetLang: 'ja' })
+    }
     const fields = deepmerge(
       entryWithLocale.fields,
       {
@@ -76,20 +81,47 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     )
 
+    const uniqueVocabMemo = {}
+    const filteredVocab = {}
     if (p1Vocab) {
-      fields.p1Vocab = p1Vocab
+      filteredVocab.p1Vocab = p1Vocab
+      p1Vocab.forEach(vocab => {
+        if (!uniqueVocabMemo[vocab.word]) {
+          uniqueVocabMemo[vocab.word] = true
+        }
+      })
     }
     if (p2Vocab) {
-      fields.p2Vocab = p2Vocab
+      filteredVocab.p2Vocab = p2Vocab.filter(vocab => !uniqueVocabMemo[vocab.word])
+      p2Vocab.forEach(vocab => {
+        if (!uniqueVocabMemo[vocab.word]) {
+          uniqueVocabMemo[vocab.word] = true
+        }
+      })
     }
     if (p3Vocab) {
-      fields.p3Vocab = p3Vocab
+      filteredVocab.p3Vocab = p3Vocab.filter(vocab => !uniqueVocabMemo[vocab.word])
+      p3Vocab.forEach(vocab => {
+        if (!uniqueVocabMemo[vocab.word]) {
+          uniqueVocabMemo[vocab.word] = true
+        }
+      })
     }
     if (p4Vocab) {
-      fields.p4Vocab = p4Vocab
+      filteredVocab.p4Vocab = p4Vocab.filter(vocab => !uniqueVocabMemo[vocab.word])
+      p4Vocab.forEach(vocab => {
+        if (!uniqueVocabMemo[vocab.word]) {
+          uniqueVocabMemo[vocab.word] = true
+        }
+      })
     }
     if (p5Vocab) {
-      fields.p5Vocab = p5Vocab
+      filteredVocab.p5Vocab = p5Vocab.filter(vocab => !uniqueVocabMemo[vocab.word])
+      p5Vocab.forEach(vocab => {
+        if (!uniqueVocabMemo[vocab.word]) {
+          uniqueVocabMemo[vocab.word] = true
+        }
+      })
     }
 
     if (p1AudioLink) {
@@ -108,25 +140,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       fields.p5AudioLink = p5AudioLink.filePath
     }
 
-
-    delete fields.heroImage
-
     try {
-      const result = await updateEntry({
-        entryId,
-        contentTypeId,
-        environmentId,
-        version,
-        fields: fields
-      })
-
+      // const result = await updateEntry({
+      //   entryId,
+      //   contentTypeId,
+      //   environmentId,
+      //   version,
+      //   fields: fields
+      // })
       return res.status(200).json({
-        fields,
-        p1Vocab,
-        p2Vocab,
-        p3Vocab,
-        p4Vocab,
-        p5Vocab,
+        p1Vocab: addUUIDToVocab(filteredVocab.p1Vocab),
+        p2Vocab: addUUIDToVocab(filteredVocab.p2Vocab),
+        p3Vocab: addUUIDToVocab(filteredVocab.p3Vocab),
+        p4Vocab: addUUIDToVocab(filteredVocab.p4Vocab),
+        p5Vocab: addUUIDToVocab(filteredVocab.p5Vocab),
         p1AudioLink,
         p2AudioLink,
         p3AudioLink,
@@ -141,6 +168,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     } catch (error) {
       console.error(error)
+      return res.status(500).json({ message: 'Failed to update entry' });
     }
 
   } else {
@@ -156,5 +184,15 @@ function removeCitations(paragraph: string): string {
   return paragraph.replace(citationPattern, '').trim();
 }
 
+
+function addUUIDToVocab(vocabs) {
+  if (!vocabs) {
+    return []
+  }
+  return vocabs.map(vocab => {
+    vocab.id = uuidv4()
+    return vocab
+  })
+}
 
 

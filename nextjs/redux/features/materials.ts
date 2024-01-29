@@ -341,7 +341,7 @@ export const fetchVocabs = createAsyncThunk(
   'materials/fetchVocabs',
   async ({ materialId }: FetchCaptionArgs, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${ROOT_URL}/api/materials/${materialId}/vocabs`)
+      const response = await axios.get(`/api/materials/${materialId}/vocabs`)
 
       const { vocabs } = response.data;
 

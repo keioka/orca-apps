@@ -207,11 +207,11 @@ export async function syncContentful() {
           const p5Vocab = Array.isArray(result.p5Vocab) ? result.p5Vocab : []
 
           const vocabs = [
-            ...p1Vocab.map(vocab => ({ ...vocab, paragraph: 1 })),
-            ...p2Vocab.map(vocab => ({ ...vocab, paragraph: 2 })),
-            ...p3Vocab.map(vocab => ({ ...vocab, paragraph: 3 })),
-            ...p4Vocab.map(vocab => ({ ...vocab, paragraph: 4 })),
-            ...p5Vocab.map(vocab => ({ ...vocab, paragraph: 5 }))
+            ...p1Vocab.map(vocab => ({ ...vocab, paragraphNumber: 1 })),
+            ...p2Vocab.map(vocab => ({ ...vocab, paragraphNumber: 2 })),
+            ...p3Vocab.map(vocab => ({ ...vocab, paragraphNumber: 3 })),
+            ...p4Vocab.map(vocab => ({ ...vocab, paragraphNumber: 4 })),
+            ...p5Vocab.map(vocab => ({ ...vocab, paragraphNumber: 5 }))
           ]
 
           const vocabParams = vocabs.map(vocab => {

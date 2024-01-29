@@ -155,6 +155,7 @@ export async function updateMaterial(materialData: Omit<Material, 'id'>): Promis
 
 
 interface VocabParams {
+  id?: string;
   word: string;
   pronounce: string;
   meaning: string;
@@ -162,6 +163,8 @@ interface VocabParams {
   translation: string;
   langCode: string
   example: string;
+  paragraphNumber: number;
+  pos: string;
 }
 
 interface Vocab {
@@ -180,6 +183,8 @@ export async function createVocabs({ materialId, vocabParams }: { materialId: st
           pronounce: vocabParam.pronounce,
           example: vocabParam.example,
           pos: vocabParam.pos,
+          paragraphNumber: vocabParam.paragraphNumber,
+          externalId: vocabParam.id,
           material: {
             connect: {
               id: materialId

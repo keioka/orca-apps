@@ -19,10 +19,11 @@ import { TbVocabulary } from "react-icons/tb";
 import { useSearchParams } from 'next/navigation'
 import { Header } from '../../components/Header'
 import { AudioPlayer } from '../../components/AudioPlayer'
-import { fetchOriginalMaterial } from "@/redux/features/materials";
+import { fetchVocabs, fetchOriginalMaterial } from "@/redux/features/materials";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { ModalAuth } from '@/components/ModalAuth';
 import { StudyPanel } from '@/components/StudyPanel';
+import { saveVocab, fetchSavedVocab } from '@/redux/features/note';
 
 export const config = {
   amp: 'hybrid',
@@ -302,17 +303,56 @@ function getJaJp(obj) {
   return obj;
 }
 
+function mapVocab(vocabsFromDB, vocab, paragraphNumber) {
+  let vocabDB
+  if (vocab.id) {
+    vocabDB = vocabsFromDB.find((v) => v.externalId === vocab.id)
+  } else {
+    vocabDB = vocabsFromDB.find((v) => v.word === vocab.word && v.paragraphNumber === paragraphNumber)
+  }
+
+  if (vocabDB) {
+    return {
+      ...vocab,
+      dbId: vocabDB.id,
+    }
+  }
+
+  return vocab
+}
+
 export default function Article({ article, relatedArticles, body, notFound, slug }: { article: Entry, relatedArticles: Entry[], body: any, notFound: boolean }) {
+  const [shouldOpenModalAuth, setShouldOpenModalAuth] = useState(false)
+  const dispatch = useAppDispatch()
   const searchParams = useSearchParams()
   const currentUser = useAppSelector((state) => state.auth.currentUser)
+  const currentOpenedOriginalMaterial = useAppSelector((state) => state.material.currentOpenedOriginalMaterial)
+  const vocabsFromDB = useAppSelector((state) => currentOpenedOriginalMaterial ? state.material.vocabs[currentOpenedOriginalMaterial.id] || [] : [])
+  // TODO: Need to refactor this for performance
+  const savedVocabs = useAppSelector((state) => state.note.vocabularies)
+
   const mode = searchParams.get('mode')
-  const [shouldOpenModalAuth, setShouldOpenModalAuth] = useState(false)
 
   useEffect(() => {
     if (currentUser) {
       setShouldOpenModalAuth(false)
+      dispatch(fetchSavedVocab())
     }
   }, [currentUser])
+
+  useEffect(() => {
+    if (article) {
+      dispatch(fetchOriginalMaterial({ externalId: article.sys.id }))
+    }
+  }, [article])
+
+  useEffect(() => {
+    dispatch(fetchVocabs({ materialId: currentOpenedOriginalMaterial?.id }))
+  }, [currentOpenedOriginalMaterial])
+
+
+  // const savedVocabIdsInMaterial = useMemo(() => savedVocabs.filter(() => saveVocab).map((v) => v.id), [vocabsFromDB, savedVocabs])
+
 
   if (notFound) {
     return <div>not found</div>
@@ -360,10 +400,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     publishedDate
   } = cleanedArticle.fields
   const { sys: { createdAt, id } } = cleanedArticle
-  console.log({
-    cleanedArticle,
-    id
-  })
+
   const {
     title: jaTitle,
     p1: jaP1,
@@ -377,37 +414,47 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   const hasProofreader = proofreader && proofreader.fields
   const publishedAt = publishedDate ? new Date(publishedDate).toLocaleDateString() : new Date(createdAt).toLocaleDateString()
 
+  const p1VocabWithDB = useMemo(() => p1Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 1)), [p1Vocab, vocabsFromDB])
+  const p2VocabWithDB = useMemo(() => p2Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 2)), [p2Vocab, vocabsFromDB])
+  const p3VocabWithDB = useMemo(() => p3Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 3)), [p3Vocab, vocabsFromDB])
+  const p4VocabWithDB = useMemo(() => p4Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 4)), [p4Vocab, vocabsFromDB])
+  const p5VocabWithDB = useMemo(() => p5Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 5)), [p5Vocab, vocabsFromDB])
+
   const paragraphs = [
     {
       en: p1,
       ja: jaP1,
       audioFileLink: p1AudioLink,
-      vocab: p1Vocab
+      vocab: p1VocabWithDB
     }, {
       en: p2,
       ja: jaP2,
       audioFileLink: p2AudioLink,
-      vocab: p2Vocab
+      vocab: p2VocabWithDB
     }, {
       en: p3,
       ja: jaP3,
       audioFileLink: p3AudioLink,
-      vocab: p3Vocab
+      vocab: p3VocabWithDB
     }, {
       en: p4,
       ja: jaP4,
       audioFileLink: p4AudioLink,
-      vocab: p4Vocab
+      vocab: p4VocabWithDB
     }, {
       en: p5,
       ja: jaP5,
       audioFileLink: p5AudioLink,
-      vocab: p5Vocab
+      vocab: p5VocabWithDB
     }
   ]
 
   const handleCloseModalAuth = () => {
     setShouldOpenModalAuth(false)
+  }
+
+  const handleSaveVocab = (vocab) => {
+    dispatch(saveVocab({ vocabId: vocab.dbId }))
   }
 
   return (
@@ -537,6 +584,8 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                   index={index}
                   content={paragraph}
                   totalLength={paragraphs.length}
+                  onSaveVocab={handleSaveVocab}
+                  savedVocabs={savedVocabs}
                 />
               )
             })}
@@ -559,6 +608,8 @@ function Paragraph({
   isEmbedMode,
   index,
   totalLength,
+  onSaveVocab,
+  savedVocabs,
 }: {
   paragraph: any,
   isEmbedMode: boolean,
@@ -698,19 +749,24 @@ function Paragraph({
         <AudioPlayer file={content.audioFileLink} />
         {/* <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text> */}
       </Stack>}
-      {!isEmbedMode && shouldShowVocab && content.vocab &&
+      {!isEmbedMode && shouldShowVocab && vocabPage &&
         <Box mt={1} p={1}>
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mb: 1 }}>
             <Pagination count={totalPages} onChange={handleChange} />
           </Box>
-          {vocabPage.map((vocab) => (
-            <Box key={vocab.word} sx={{ marginBottom: 1 }}>
-              <CardVocabSM
-                vocab={vocab}
-                onSaveVocab={() => { }}
-              />
-            </Box>
-          ))}
+          {vocabPage.map((vocab) => {
+            console.log({ savedVocabs })
+            const isSaved = savedVocabs && savedVocabs.find((v) => v.vocabularyId === vocab.dbId)
+            return (
+              <Box key={vocab.word} sx={{ marginBottom: 1 }}>
+                <CardVocabSM
+                  vocab={vocab}
+                  onSaveVocab={() => onSaveVocab(vocab)}
+                  isSaved={isSaved}
+                />
+              </Box>
+            )
+          })}
         </Box>
       }
 
