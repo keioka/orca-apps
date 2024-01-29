@@ -53,7 +53,7 @@ export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: 
     const state = getState();
     const token = await validateSessionAndToken(state, dispatch);
 
-    const response = await axios.get(`${ROOT_URL}/api/lessons/${lessonId}/messages`, {
+    const response = await axios.get(`/api/lessons/${lessonId}/messages`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -78,7 +78,7 @@ export const createAIMessage = createAsyncThunk(`${NAME}/create`, async ({
     const state = getState()
     const token = await validateSessionAndToken(state, dispatch);
 
-    const response = await axios.post(`${ROOT_URL}/api/lessons/${lessonId}/chat`,
+    const response = await axios.post(`/api/lessons/${lessonId}/chat`,
       {
         message,
       },
@@ -96,28 +96,32 @@ export const createAIMessage = createAsyncThunk(`${NAME}/create`, async ({
   }
 });
 
-export const addUserMessage = createAsyncThunk(`${NAME}/add`, async ({ lessonId, message }: { message: string, lessonId: string }, { getState, rejectWithValue, dispatch }) => {
-  try {
-    const state = getState()
-    const token = await validateSessionAndToken(state, dispatch);
+export const addUserMessage = createAsyncThunk(`${NAME}/add`,
+  async (
+    { lessonId, message }: { message: string, lessonId: string },
+    { getState, rejectWithValue, dispatch }
+  ) => {
+    try {
+      const state = getState()
+      const token = await validateSessionAndToken(state, dispatch);
 
-    const response = await axios.post(`${ROOT_URL}/api/lessons/${lessonId}/messages`,
-      {
-        message,
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const response = await axios.post(`/api/lessons/${lessonId}/messages`,
+        {
+          message,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         }
-      }
-    );
-    const userMessage = response.data
-    return { message: userMessage, lessonId };
-  } catch (error) {
-    console.error(error)
-    rejectWithValue(error.response.data.message)
-  }
-});
+      );
+      const userMessage = response.data
+      return { message: userMessage, lessonId };
+    } catch (error) {
+      console.error(error)
+      rejectWithValue(error.response.data.message)
+    }
+  });
 
 export const fetchParaphrases = createAsyncThunk(`${NAME}/fetchParaphrases`, async ({ messageId, sentence, sentenceIndex }: { messageId: string }, { getState, rejectWithValue, dispatch }) => {
   try {
@@ -129,7 +133,7 @@ export const fetchParaphrases = createAsyncThunk(`${NAME}/fetchParaphrases`, asy
     }
 
     const response = await axios.post(
-      `${ROOT_URL}/api/messages/${messageId}/paraphrase`,
+      `/api/messages/${messageId}/paraphrase`,
       {
         sentence,
         sentenceIndex,
@@ -165,7 +169,7 @@ export const fetchTranslation = createAsyncThunk(
       const state = getState()
       const token = await validateSessionAndToken(state, dispatch);
 
-      const response = await axios.post(`${ROOT_URL}/api/translate`,
+      const response = await axios.post(`/api/translate`,
         {
           text,
           lang: "ja"
@@ -229,7 +233,7 @@ export const sendWhisper = createAsyncThunk(
       // }
 
       const response = await fetch(
-        `${ROOT_URL}/api/transcribe`,
+        `/api/transcribe`,
         {
           method: 'POST',
           body,

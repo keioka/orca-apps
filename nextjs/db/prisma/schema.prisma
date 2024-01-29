@@ -117,6 +117,7 @@ model Vocabulary {
   example           String              @db.VarChar(500)
   pos               String?             @db.VarChar(16)
   pronounce         String              @db.VarChar(255)
+  paragraphNumber   Int?                @db.SmallInt
   materialId        String              @map("material_id")
   material          Material            @relation(fields: [materialId], references: [id])
   createdAt         DateTime            @default(now()) @map("created_at")

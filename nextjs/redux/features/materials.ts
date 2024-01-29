@@ -17,6 +17,7 @@ interface Material {
 // Define the type for the state
 interface MaterialsState {
   items: Material[];
+  currentOpenedOriginalMaterial: Material | null;
   searchResult: Material[];
   originalItems: Material[];
   isInitMaterials: boolean;
@@ -32,6 +33,7 @@ interface MaterialsState {
 const initialState: MaterialsState = {
   items: [],
   searchResult: [],
+  currentOpenedOriginalMaterial: null,
   page: {
     totalItems: 0,
     currentPage: 0,
@@ -137,6 +139,19 @@ const materialsSlice = createSlice({
         state.isFetchingMaterials = false;
         state.error = action.payload as string;
       })
+      .addCase(fetchOriginalMaterial.pending, (state) => {
+        state.isFetchingMaterials = false;
+        state.error = null;
+      })
+      .addCase(fetchOriginalMaterial.fulfilled, (state, action) => {
+        state.isFetchingMaterials = true;
+        state.error = null;
+        state.currentOpenedOriginalMaterial = action.payload;
+      })
+      .addCase(fetchOriginalMaterial.rejected, (state, action) => {
+        state.isFetchingMaterials = false;
+        state.error = action.payload as string;
+      })
       .addMatcher(
         (action) => action.type === "global/RESET_STATE",
         (state) => {
@@ -237,6 +252,26 @@ export const fetchOriginalMaterials = createAsyncThunk<Material[], void>(
       }
 
       return data.materials;
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(error.message)
+    }
+  }
+);
+
+export const fetchOriginalMaterial = createAsyncThunk<Material[], void>(
+  'materials/fetchOriginalMaterial',
+  async ({ externalId }: { externalId: string }, { rejectWithValue }) => {
+    try {
+
+      const material = await getMaterialByExternalId({ id: externalId })
+
+      console.log({ material, externalId })
+      // if (!data || !data.materials) {
+      //   return rejectWithValue('Failed to fetch materials')
+      // }
+
+      return material;
     } catch (error) {
       console.error(error)
       return rejectWithValue(error.message)
@@ -356,7 +391,7 @@ export const fetchSummaries = createAsyncThunk<Material[], void>(
 async function getSummariesByLevel(params: { url: string, levels: string[] }) {
   const { url, levels } = params
 
-  const response = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/summaryByLevel`,
+  const response = await fetch(`/api/summaryByLevel`,
     {
       method: "POST",
       headers: {
@@ -378,4 +413,23 @@ async function getSummariesByLevel(params: { url: string, levels: string[] }) {
   }
 
   return { result }
+}
+
+async function getMaterialByExternalId(params: { id: string }) {
+
+  const response = await fetch(`/api/materials/original/${params.id}`,
+    {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  )
+
+  if (!response.ok) {
+    console.error("Error fetching Vocab");
+    throw new Error("Error fetching Vocab");
+  }
+
+  return await response.json()
 }

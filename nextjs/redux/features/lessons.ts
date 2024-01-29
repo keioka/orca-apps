@@ -56,14 +56,8 @@ const lessonSlice = createSlice({
 
     // Define the async thunk to fetch the lesson
     builder.addCase(fetchLesson.fulfilled, (state, action) => {
-      const updatedLesson = action.payload;
-      const index = state.lessons.findIndex((lesson) => lesson.id === updatedLesson.id);
-      if (index !== -1) {
-        state.lessons[index] = updatedLesson;
-      } else {
-        state.lessons.push(updatedLesson);
-      }
-
+      const newLesson = action.payload || []
+      state.lessons = unionBy([...state.lessons, newLesson], "id")
       state.loading = false;
       state.error = null;
     });
@@ -77,6 +71,18 @@ const lessonSlice = createSlice({
       state.loading = false;
       state.error = action.error.payload || 'Failed to fetch lesson';
     });
+
+    builder.addCase(fetchOrCreateLessonByMaterialId.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+
+    builder.addCase(fetchOrCreateLessonByMaterialId.fulfilled, (state, action) => {
+      const newLesson = action.payload || []
+      state.lessons = unionBy([...state.lessons, newLesson], "id")
+      state.loading = false;
+      state.error = null;
+    })
 
     builder.addCase(createLesson.pending, (state) => {
       state.creating = true;
@@ -119,7 +125,7 @@ export const fetchLesson = createAsyncThunk(
     const token = await validateSessionAndToken(state, dispatch)
 
     try {
-      const response = await axios.get(`${ROOT_URL}/api/lessons/${lessonId}`, {
+      const response = await axios.get(`/api/lessons/${lessonId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -138,24 +144,32 @@ export const fetchLesson = createAsyncThunk(
 );
 
 
-export const fetchLessonByMaterialId = createAsyncThunk(
-  'lesson/fetchLessonByMaterialId',
-  async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
+export const fetchOrCreateLessonByMaterialId = createAsyncThunk(
+  'lesson/fetchOrCreateLessonByMaterialId',
+  async (materialId: string, { getState, rejectWithValue, dispatch }) => {
     try {
       const state = getState()
       const token = await validateSessionAndToken(state, dispatch);
-
-      const response = await axios.get(`${ROOT_URL}/api/lessons?`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-      });
+      console.log({ token })
+      const response = await axios.post(
+        `/api/materials/${materialId}/lesson`,
+        null,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+        });
 
       // data is the server's response
+      if (response.status !== 200) {
+        return rejectWithValue('Failed to fetch lesson');
+      }
+
       const data = response.data;
-
+      if (!data) {
+        dispatch(createLesson({ materialId }))
+      }
       return data;
-
     } catch (error) {
       console.error(error)
       return rejectWithValue(error.response.data.message);
@@ -169,7 +183,7 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async (_, {
     const state = getState()
     const token = await validateSessionAndToken(state, dispatch);
 
-    const response = await axios.get(`${ROOT_URL}/api/lessons`, {
+    const response = await axios.get(`/api/lessons`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -190,7 +204,7 @@ export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({
     const state = getState()
     const token = await validateSessionAndToken(state, dispatch);
 
-    const response = await axios.post(`${ROOT_URL}/api/lessons`,
+    const response = await axios.post(`/api/lessons`,
       {
         materialId,
       },

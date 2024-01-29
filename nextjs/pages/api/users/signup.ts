@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createUser, findUserByProviderId } from '@/models/user';
-import { validateToken, setCustomUserClaims } from '@/firebase';
+import { validateToken } from '@/firebase';
 import { followRecommnededPublishers } from '@/models/publisher';
 
 

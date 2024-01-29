@@ -33,6 +33,9 @@ export async function chat({ url, history, message }: { url: string, history: an
           
           Please facilitate the conversation by asking questions and encouraging the student to respond to your context-related inquiries.
 
+          You should not speak more than 3 sentences at a time.
+
+          You should not ask more than 1 question at a time.
           """
           Conversation History: 
             ${history.map((item) => {

@@ -20,7 +20,6 @@ import {
 import { IoPlay } from "react-icons/io5"
 import { BsFillCaretLeftFill } from "react-icons/bs"
 import { BsFillCaretRightFill } from "react-icons/bs"
-
 import { LoaderBounce } from "./LoaderBounce"
 import { useSentence } from "../hooks/card"
 // import Avator from "~assets/images/ai_avatar.png"
@@ -31,6 +30,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 // import { useAppDispatch, useAppSelector } from "~redux/hooks"
 // import { toggleSubscriptionForm } from "~redux/features/ui"
 // import type { ParaphraseItem, GMCheckItem } from "~types"
+import { fetchLessonByMaterialId } from '@/redux/features/lessons';
+import { fetchParaphrases, fetchGrammarMistakes } from "@/redux/features/messages"
 import styled from "@emotion/styled"
 
 const TypoEn = styled(Typography)`
@@ -90,7 +91,6 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
 
   const dispatch = useAppDispatch()
   const { isValidSubscription } = useAppSelector((state) => state)
-
 
   useEffect(() => {
     if (type === "human" || loading || !isAutoPlay) return
