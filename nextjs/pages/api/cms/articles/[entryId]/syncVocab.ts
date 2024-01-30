@@ -36,11 +36,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const p5Vocab = Array.isArray(entry.fields.p5Vocab) ? entry.fields.p5Vocab : []
 
     const vocabs = [
-      ...p1Vocab,
-      ...p2Vocab,
-      ...p3Vocab,
-      ...p4Vocab,
-      ...p5Vocab,
+      ...p1Vocab.map(vocab => ({ ...vocab, paragraphNumber: 1 })),
+      ...p2Vocab.map(vocab => ({ ...vocab, paragraphNumber: 2 })),
+      ...p3Vocab.map(vocab => ({ ...vocab, paragraphNumber: 3 })),
+      ...p4Vocab.map(vocab => ({ ...vocab, paragraphNumber: 4 })),
+      ...p5Vocab.map(vocab => ({ ...vocab, paragraphNumber: 5 }))
     ]
 
     if (!vocabs.length) {

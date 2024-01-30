@@ -31,6 +31,7 @@
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@extractus/article-extractor": "^8.0.2",
+    "@google-cloud/vertexai": "^0.2.1",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@mozilla/readability": "^0.4.4",
     "@mui/material": "^5.13.3",

@@ -71,7 +71,7 @@ export function Header() {
             Orca News
           </Typography>
         </Link>
-        <Stack direction="row">
+        <Stack direction="row" sx={{ alignItems: "center" }}>
           <Button color="inherit" onClick={handleMenuOpen}>
             <RiGlobalLine size={18} />
             <Typography>JA</Typography>

@@ -49,6 +49,28 @@ const formatCategory = {
   world_news: "🌍World News"
 };
 
+const formatCategoryJA = {
+  ai: "AI",
+  business: "ビジネス",
+  eu_stock: "EU株",
+  fintech: "フィンテック",
+  israel_hamas: "イスラエルーハマス",
+  jp_economy: "日本経済",
+  jp_news: "日本関連全般",
+  jp_stock: "日本株",
+  marketing: "マーケティング",
+  metaverse: "メタバース",
+  russia_ukraine: "ウクライナ戦争",
+  science: "科学",
+  sdgs: "SDGs",
+  startup: "スタートアップ",
+  tech: "テクノロジー",
+  us_stock: "米国株",
+  web3: "Web3",
+  world_economy: "世界株",
+  world_news: "世界ニュース"
+};
+
 
 function getArticlesByCategory(articles) {
   return articles.reduce((acc, article) => {
@@ -86,18 +108,27 @@ function getArticlesArrByDate(articlesByPublishedDate) {
       })
 }
 
+const categoryJaOrder = [
+  "jp_news",
+  "jp_economy",
+  "jp_stock",
+  "world_news",
+  "world_economy",
+  "us_stock",
+  "eu_stock",
+  "russia_ukraine",
+  "business",
+  "marketing",
+  "tech",
+  "fintech",
+  "web3",
+  "metaverse",
+  "sdgs",
+  "science",
+]
 
 export default function ArticleIndex({ articles }) {
   const router = useRouter()
-  const categories = useMemo(() =>
-    uniq(
-      articles
-        .filter((article) => article.fields.category)
-        .map((article) => article.fields.category)
-        .map((category) => formatCategory[category])
-    ),
-    [articles]
-  )
 
   const articlesSorted = useMemo(() =>
     articles.filter((article) => article.fields.publishedDate).sort(
@@ -110,7 +141,6 @@ export default function ArticleIndex({ articles }) {
       }),
     [articles]
   )
-
 
   const articlesByPublishedDate = useMemo(() =>
     getArticlesByPublishedDate(articlesSorted),
@@ -179,13 +209,26 @@ export default function ArticleIndex({ articles }) {
         {/* <Box p={2}>
           <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "2rem" }}>Articles</Typography>
         </Box> */}
-        {/* <Stack direction="row" sx={{ width: "100%", paddingLeft: 2, paddingRight: 2, overflow: "scroll", boxSizing: "border-box" }}>
-          {categories && categories.map((category) => (
+        <Stack direction="row" sx={{ width: "100%", paddingLeft: 2, paddingRight: 2, overflow: "scroll", boxSizing: "border-box" }}>
+          <Box mr={1}>
+            <Chip sx={{ fontFamily: 'var(--font-outfit)', fontSize: 14, padding: 2, lineHeight: 24 }} label="最新" />
+          </Box>
+          {categoryJaOrder && categoryJaOrder.map((category) => (
             <Box mr={1}>
-              <Chip sx={{ fontFamily: "Outfit", fontSize: 18, padding: 2, lineHeight: 24 }} label={`#${category}`} />
+              <Chip
+                sx={{ fontFamily: 'var(--font-outfit)', fontSize: 14, padding: 2, lineHeight: 24 }}
+                label={`${formatCategoryJA[category]}`}
+                onClick={() => router.push(`#${category}`)}
+              />
             </Box>
           ))}
-        </Stack> */}
+        </Stack>
+        <Typography
+          variant="h1"
+          sx={{ fontFamily: "Crimson Text", fontSize: "1.2rem", paddingX: 2, paddingTop: 3 }}
+        >
+          最新ニュース
+        </Typography>
         <Grid container py={3} p={2} spacing={{ xs: 3, sm: 2 }}>
           {latestArtciles.map((article) => (
             <Grid key={article.id} item xs={12} sm={6} md={4}>
@@ -194,8 +237,10 @@ export default function ArticleIndex({ articles }) {
           ))}
         </Grid>
         {Object.keys(articlesByCategory).map((category) => (
-          <Box key={category}>
-            <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1.2rem", paddingX: 2, paddingTop: 3 }}>{category}</Typography>
+          <Box id={`${category}`} key={category}>
+            <Box sx={{ background: "#191c29", width: "auto", display: "flex", alignItems: "center", padding: 1, borderRadius: 1 }}>
+              <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1rem", color: "#fff" }}>{formatCategoryJA[category]}</Typography>
+            </Box>
             <Grid container py={2} p={2} spacing={2}>
               {articlesByCategory[category] && articlesByCategory[category].map((article) => (
                 <Grid key={article.id} item xs={12} sm={6} md={4}>

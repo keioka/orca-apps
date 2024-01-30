@@ -24,6 +24,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { ModalAuth } from '@/components/ModalAuth';
 import { StudyPanel } from '@/components/StudyPanel';
 import { saveVocab, fetchSavedVocab } from '@/redux/features/note';
+import { CardMaterialHistory } from '@/components/CardMaterialHistory';
 
 export const config = {
   amp: 'hybrid',
@@ -454,7 +455,11 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   }
 
   const handleSaveVocab = (vocab) => {
-    dispatch(saveVocab({ vocabId: vocab.dbId }))
+    if (currentUser) {
+      dispatch(saveVocab({ vocabId: vocab.dbId }))
+    } else {
+      setShouldOpenModalAuth(true)
+    }
   }
 
   return (
@@ -631,9 +636,11 @@ function Paragraph({
     return 0
   }), [content.vocab])
 
+  const validVocab = useMemo(() => vocabs.filter((vocab) => vocab.dbId), [vocabs])
+
   const itemsPerPage = 5
-  const vocabPage = vocabs.slice(vocabPageIndex * itemsPerPage, (vocabPageIndex + 1) * itemsPerPage)
-  const totalPages = Math.ceil(vocabs.length / itemsPerPage)
+  const vocabsOnPage = validVocab.slice(vocabPageIndex * itemsPerPage, (vocabPageIndex + 1) * itemsPerPage)
+  const totalPages = Math.ceil(validVocab.length / itemsPerPage)
 
   const handleChange = (_, page) => {
     setVocabPageIndex(page - 1)
@@ -749,13 +756,12 @@ function Paragraph({
         <AudioPlayer file={content.audioFileLink} />
         {/* <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text> */}
       </Stack>}
-      {!isEmbedMode && shouldShowVocab && vocabPage &&
+      {!isEmbedMode && shouldShowVocab && vocabsOnPage &&
         <Box mt={1} p={1}>
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mb: 1 }}>
             <Pagination count={totalPages} onChange={handleChange} />
           </Box>
-          {vocabPage.map((vocab) => {
-            if (!vocab.dbId) return null
+          {vocabsOnPage.map((vocab) => {
             const isSaved = savedVocabs && savedVocabs.find((v) => v.vocabularyId === vocab.dbId)
             return (
               <Box key={vocab.word} sx={{ marginBottom: 1 }}>
@@ -843,8 +849,6 @@ export async function getServerSideProps({ params }) {
       notFound: true,
     }
   }
-
-  console.log({ hero: article.fields.heroImage })
 
   const body = await richTextFromMarkdown(article.fields.body, (node) => {
     if (node.type === "image") {
