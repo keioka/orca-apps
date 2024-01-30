@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Typography, Grid, Stack, Button, Chip } from '@mui/material'
 import { Header } from '../components/Header'
@@ -194,29 +194,48 @@ export default function ArticleIndex({ articles }) {
       </Head>
       <Box sx={{ minHeight: "100vh" }} px={{ xs: 1, md: 24 }}>
         <Header />
-        {/* 
-        <Grid container spacing={1} p={2}>
-          <Grid item xs={12} sm={8}>
-            <SurveyBanner />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <AboutBanner />
-          </Grid>
-        </Grid> */}
-
-
-
-        {/* <Box p={2}>
-          <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "2rem" }}>Articles</Typography>
-        </Box> */}
-        <Stack direction="row" sx={{ width: "100%", paddingLeft: 2, paddingRight: 2, overflow: "scroll", boxSizing: "border-box" }}>
+        <Stack
+          direction="row"
+          sx={{
+            width: "100%",
+            paddingLeft: 2,
+            paddingRight: 2,
+            overflowX: "scroll",
+            boxSizing: "border-box",
+            "-ms-overflow-style": "none",
+            "&::-webkit-scrollbar": "none"
+          }}>
           <Box mr={1}>
-            <Chip sx={{ fontFamily: 'var(--font-outfit)', fontSize: 14, padding: 2, lineHeight: 24 }} label="最新" />
+            <Chip sx={{
+              fontFamily: 'var(--font-outfit)',
+              fontSize: 14,
+              padding: 2,
+              lineHeight: 24,
+              height: 24,
+              "& .MuiChip-label": {
+                fontSize: 14,
+                lineHeight: "24px",
+                height: 24,
+              }
+            }}
+              label="最新"
+            />
           </Box>
           {categoryJaOrder && categoryJaOrder.map((category) => (
             <Box mr={1}>
               <Chip
-                sx={{ fontFamily: 'var(--font-outfit)', fontSize: 14, padding: 2, lineHeight: 24 }}
+                sx={{
+                  fontFamily: 'var(--font-outfit)',
+                  fontSize: 14,
+                  padding: 2,
+                  lineHeight: 24,
+                  height: 24,
+                  "& .MuiChip-label": {
+                    fontSize: 14,
+                    lineHeight: "24px",
+                    height: 24,
+                  }
+                }}
                 label={`${formatCategoryJA[category]}`}
                 onClick={() => router.push(`#${category}`)}
               />
@@ -237,55 +256,57 @@ export default function ArticleIndex({ articles }) {
           ))}
         </Grid>
         {Object.keys(articlesByCategory).map((category) => (
-          <Box id={`${category}`} key={category}>
-            <Box sx={{ background: "#191c29", width: "auto", display: "flex", alignItems: "center", padding: 1, borderRadius: 1 }}>
-              <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1rem", color: "#fff" }}>{formatCategoryJA[category]}</Typography>
-            </Box>
-            <Grid container py={2} p={2} spacing={2}>
-              {articlesByCategory[category] && articlesByCategory[category].map((article) => (
-                <Grid key={article.id} item xs={12} sm={6} md={4}>
-                  <MaterialRow article={article} />
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
+          <SectionPastArticles articlesByCategory={articlesByCategory} category={category} />
         ))}
-
       </Box>
     </>
   )
 }
 
-function SurveyBanner() {
+function SectionPastArticles({ articlesByCategory, category }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const articles = articlesByCategory[category]
+
+  const articlesToShow = isExpanded ? articles : articles.slice(0, 6)
+
+  const handleExpandClick = () => {
+    setIsExpanded(!isExpanded);
+  }
+
   return (
-    <Box sx={{ borderRadius: 1, position: "relative" }}>
-      <img src="static/img/banner2.jpg" width="100%" height="320px" style={{ borderRadius: 8, objectFit: "cover", objectPosition: "center" }} />
-      <Box sx={{ position: "absolute", top: "10%", paddingX: 4 }}>
-        <Stack spacing={2} >
-          <Stack>
-            <Typography sx={{ color: "#fff", fontFamily: "Crimson Text", fontSize: "2.4rem" }}>Find out your skin type</Typography>
-            <Typography sx={{ fontSize: "1.2rem", color: "#fff", textTransform: "uppercase" }}>Take Skincare Questionnaire</Typography>
-          </Stack>
-          <Box>
-            <Link href="/quiz/skincare" passHref legacyBehavior>
-              <Button sx={{ background: "#fff", textTransform: "uppercase", color: "#00100B" }}>Start</Button>
-            </Link>
-          </Box>
-        </Stack>
+    <Box id={`${category}`} key={category}>
+      <Box sx={{ background: "#191c29", width: "auto", display: "flex", alignItems: "center", padding: 1, borderRadius: 1 }}>
+        <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1rem", color: "#fff" }}>{formatCategoryJA[category]}</Typography>
       </Box>
-    </Box>
-
-  )
-}
-
-function AboutBanner() {
-  return (
-    <Box sx={{ borderRadius: 1, position: "relative" }}>
-      <Link href="/profile" passHref legacyBehavior>
-        <a>
-          <img src="static/img/bannerAbout.jpg" width="100%" height="320px" style={{ borderRadius: 8, objectFit: "cover", objectPosition: "center" }} />
-        </a>
-      </Link>
+      <Grid container py={2} p={2} spacing={2}>
+        {articlesToShow && articlesToShow.map((article) => (
+          <Grid key={article.id} item xs={12} sm={6} md={4}>
+            <MaterialRow article={article} />
+          </Grid>
+        ))}
+      </Grid>
+      <Box
+        p={2}
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          boxSizing: "border-box",
+        }}>
+        <Button
+          variant='contained'
+          onClick={handleExpandClick}
+          sx={{
+            width: "50%",
+            background: "#d6d6d6",
+            '&:hover': {
+              background: "#c6c6c6",
+            }
+          }}
+        >
+          {isExpanded ? "閉じる" : "もっと見る"}
+        </Button>
+      </Box>
     </Box>
   )
 }
