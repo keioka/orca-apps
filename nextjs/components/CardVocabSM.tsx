@@ -167,6 +167,10 @@ export function CardVocabSM({
   isSaved,
 }: { vocab: any, onSaveVocab: any, shouldHideSave?: boolean, shouldHideDiscard?: boolean }) {
 
+  console.log({ vocab })
+  const material = vocab.material;
+
+  console.log({ material })
 
   function handlePlayAudio() {
     const voices = synth.getVoices();
@@ -211,14 +215,14 @@ export function CardVocabSM({
                       justifyContent: "center",
                       alignItems: "center",
                       cursor: "pointer",
-                      backgroundColor: "#cbcbcb",
+                      backgroundColor: "rgba(0, 0, 0, 0.08)",
                       width: 24,
                       height: 24,
                       borderRadius: "50%",
                     }}
                     onClick={handlePlayAudio}
                   >
-                    <HiOutlineSpeakerWave size={14} color="#fff" />
+                    <HiOutlineSpeakerWave size={14} />
                   </Box>
                 </Box>
               </Stack>
@@ -255,12 +259,9 @@ export function CardVocabSM({
               </Stack>
             </Button>
           }
-
         </Stack>
 
-
         <AccordionDetails>
-
           <Stack spacing={1} sx={{ paddingTop: 1 }}>
             {/* <Typography variant="body2" component="h6">
             {vocab.meaningInJapanese}
@@ -269,6 +270,20 @@ export function CardVocabSM({
               {vocab.meaning}
             </Typography> */}
           </Stack>
+          {material && (
+            <Stack
+              sx={{
+                borderTop: "1px solid #eaeaea",
+                borderBottom: "1px solid #eaeaea",
+              }}
+              direction="row"
+            >
+              <img src={material.imageUrl} style={{ width: "64px", height: "64px", objectFit: "cover" }} />
+              <Box sx={{ padding: 1 }}>
+                <Typography sx={{ fontSize: 14 }}>{material.title}</Typography>
+              </Box>
+            </Stack>
+          )}
           <TableContainer>
             <Table>
               <TableBody>
@@ -296,14 +311,6 @@ export function CardVocabSM({
               </TableBody>
             </Table>
           </TableContainer>
-
-          <Box>
-            {/* {
-            vocab.tags && vocab.tags.map((tag) => (
-              <Chip label={tag} sx={{ width: "auto", marginRight: 1 }} />
-            ))
-          } */}
-          </Box>
           <CardActions sx={{ borderTop: "1px solid #f2f2f2", padding: 0, paddingTop: 1 }}>
             <Stack direction="row" spacing={1}>
 
@@ -316,6 +323,7 @@ export function CardVocabSM({
   </Typography> */}
         </AccordionDetails>
       </Accordion>
+
     </Card >
   )
 }

@@ -1,19 +1,32 @@
 import prisma from '../db'
 
+const getVocabInclude = (langCode: string = 'ja') => {
+  return {
+    vocabulary: {
+      include: {
+        translation: {
+          where: {
+            language: {
+              code: langCode
+            },
+          },
+          include: {
+            language: true
+          }
+        },
+        material: true
+      }
+    }
+  }
+}
+
 export async function saveVocab({ userId, vocabId }: { vocabId: number, userId: string }) {
   return await prisma.savedVocabularies.create({
     data: {
       vocabularyId: vocabId,
       userId
     },
-    include: {
-      vocabulary: {
-        include: {
-          translation: true,
-          material: true
-        }
-      }
-    }
+    include: getVocabInclude()
   })
 }
 
@@ -26,19 +39,6 @@ export async function fetchSavedVocab({ userId, langCode }: { userId: string, la
     where: {
       userId
     },
-    include: {
-      vocabulary: {
-        include: {
-          translation: {
-            where: {
-              language: {
-                code: langCode
-              }
-            }
-          },
-          material: true
-        }
-      }
-    }
+    include: getVocabInclude()
   })
 }

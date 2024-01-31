@@ -25,6 +25,7 @@ import { ModalAuth } from '@/components/ModalAuth';
 import { StudyPanel } from '@/components/StudyPanel';
 import { saveVocab, fetchSavedVocab } from '@/redux/features/note';
 import { CardMaterialHistory } from '@/components/CardMaterialHistory';
+import Markdown from 'react-markdown'
 
 export const config = {
   amp: 'hybrid',
@@ -398,7 +399,8 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     p5,
     p5AudioLink,
     p5Vocab,
-    publishedDate
+    publishedDate,
+    reference
   } = cleanedArticle.fields
   const { sys: { createdAt, id } } = cleanedArticle
 
@@ -594,7 +596,11 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                 />
               )
             })}
-
+            <Box p={3}>
+              <Markdown>
+                {reference}
+              </Markdown>
+            </Box>
             <StudyPanel
               article={article}
               currentUser={currentUser}
