@@ -5,6 +5,7 @@ import { RiGlobalLine } from "react-icons/ri";
 import { ModalAuth } from "./ModalAuth";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { signOut } from "@/redux/features/auth";
+import { useRouter } from "next/router";
 
 function stringToColor(string: string) {
   let hash = 0;
@@ -43,6 +44,7 @@ export function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   const currentUser = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,6 +58,9 @@ export function Header() {
     setShouldShowModalAuth(false);
   }
 
+  const handleNavNote = () => {
+    router.push("/note")
+  }
   const handleSignout = () => {
     dispatch(signOut());
     handleMenuClose();
@@ -79,7 +84,9 @@ export function Header() {
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
           >
+            <MenuItem onClick={handleNavNote}>Note</MenuItem>
             <MenuItem onClick={handleSignout}>Signout</MenuItem>
           </Menu>
           {!currentUser &&

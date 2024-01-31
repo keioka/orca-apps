@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Box, Typography, Grid, Stack, Button, Chip } from '@mui/material'
+import { Box, Typography, Grid, Stack, Button } from '@mui/material'
 import { Header } from '../components/Header'
 import { Material } from '../components/Material'
 import styled from '@emotion/styled';
@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { client } from '../utils/apis/contentful'
 import { uniq } from 'lodash';
 import { MaterialRow } from '../components/MaterialRow'
+import { Chip } from '../components/Chip'
 
 const BlogLayout = styled(Box)`
   overflow: auto;
@@ -206,36 +207,13 @@ export default function ArticleIndex({ articles }) {
             "&::-webkit-scrollbar": "none"
           }}>
           <Box mr={1}>
-            <Chip sx={{
-              fontFamily: 'var(--font-outfit)',
-              fontSize: 14,
-              padding: 2,
-              lineHeight: 24,
-              height: 24,
-              "& .MuiChip-label": {
-                fontSize: 14,
-                lineHeight: "24px",
-                height: 24,
-              }
-            }}
+            <Chip
               label="最新"
             />
           </Box>
           {categoryJaOrder && categoryJaOrder.map((category) => (
             <Box mr={1}>
               <Chip
-                sx={{
-                  fontFamily: 'var(--font-outfit)',
-                  fontSize: 14,
-                  padding: 2,
-                  lineHeight: 24,
-                  height: 24,
-                  "& .MuiChip-label": {
-                    fontSize: 14,
-                    lineHeight: "24px",
-                    height: 24,
-                  }
-                }}
                 label={`${formatCategoryJA[category]}`}
                 onClick={() => router.push(`#${category}`)}
               />
