@@ -211,7 +211,6 @@ export const fetchMaterials = createAsyncThunk<Material[], void>(
       const response = await axios(`${ROOT_URL}/api/materials`, {
         params: params,
         paramsSerializer: params => {
-          console.log(qs.stringify(params, { arrayFormat: 'repeat' }))
           return qs.stringify(params, { arrayFormat: 'repeat' })
         },
         cancelToken: cancelTokenSource.token // Pass the cancel token to the request
@@ -266,7 +265,6 @@ export const fetchOriginalMaterial = createAsyncThunk<Material[], void>(
 
       const material = await getMaterialByExternalId({ id: externalId })
 
-      console.log({ material, externalId })
       // if (!data || !data.materials) {
       //   return rejectWithValue('Failed to fetch materials')
       // }

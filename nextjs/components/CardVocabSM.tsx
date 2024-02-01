@@ -27,6 +27,7 @@ import ArrowForwardIosSharpIcon from 'react-icons/';
 import { HiOutlineSpeakerWave } from "react-icons/hi2"
 import { IoBookmark } from "react-icons/io5";
 import { BiSolidRightArrow } from "react-icons/bi";
+import { ButtonSave } from "@/components/ButtonSave";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -167,10 +168,7 @@ export function CardVocabSM({
   isSaved,
 }: { vocab: any, onSaveVocab: any, shouldHideSave?: boolean, shouldHideDiscard?: boolean }) {
 
-  console.log({ vocab })
   const material = vocab.material;
-
-  console.log({ material })
 
   function handlePlayAudio() {
     const voices = synth.getVoices();
@@ -246,18 +244,7 @@ export function CardVocabSM({
             </Stack>
           </Stack>
           {!shouldHideSave && vocab.dbId &&
-            <Button
-              onClick={handleClickSave}
-              size="small"
-            >
-              <Stack justifyContent="center" alignItems="center">
-                {/** TODO: this should use theme color */}
-                <IoBookmark color={isSaved ? "#FFD744" : "#b6b6b6"} size={18} />
-                <Typography variant="body2" component="span" sx={{ color: "#242424" }}>
-                  保存
-                </Typography>
-              </Stack>
-            </Button>
+            <ButtonSave isSaved={isSaved} onSave={handleClickSave} />
           }
         </Stack>
 

@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import { Chip } from './Chip'
 
 interface ChipInfo {
@@ -10,12 +10,12 @@ export function ListChip({ items }: {
   items: ChipInfo[]
 }) {
   return (
-    <Box>
+    <Stack sx={{ width: "100%" }} direction="row">
       {items.map((item, index) => (
-        <Box mr={1}>
-          <Chip label={item.label} onClick={item.onClick} />
+        <Box mr={1} sx={{ cursor: "pointer" }}>
+          <Chip label={item.label} onClick={item.onClick} isActive={item.isActive} />
         </Box>
       ))}
-    </Box>
+    </Stack>
   )
 }

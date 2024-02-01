@@ -42,12 +42,13 @@ export default function Dashboard() {
   return <div>
     <Header />
     {lessons && lessons.map((item, index) => (
-      <Material
-        key={`lesson_${item.id}`}
-        item={item.material}
-        // onPressStart={() => onPressStart({ url: item.material.url, lessonId: item.id })}
-        lessonId={item.id}
-      />
+      null
+      // <Material
+      //   key={`lesson_${item.id}`}
+      //   item={item.material}
+      //   // onPressStart={() => onPressStart({ url: item.material.url, lessonId: item.id })}
+      //   lessonId={item.id}
+      // />
     ))}
     Dashboard
   </div>;

@@ -235,11 +235,12 @@ export const fetchSavedParaphrases = createAsyncThunk(`note/fetchSavedParaphrase
 
     let baseUrl = `/api/paraphrases/saved`;
     const queryParams: string[] = [];
+    console.log({ messageId, sentenceIndex })
 
     if (messageId) {
       queryParams.push(`messageId=${messageId}`);
     }
-    if (sentenceIndex) {
+    if (sentenceIndex !== undefined) {
       queryParams.push(`sentenceIndex=${sentenceIndex}`);
     }
 

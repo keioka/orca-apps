@@ -23,7 +23,7 @@ import { fetchVocabs, fetchOriginalMaterial } from "@/redux/features/materials";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { ModalAuth } from '@/components/ModalAuth';
 import { StudyPanel } from '@/components/StudyPanel';
-import { saveVocab, fetchSavedVocab } from '@/redux/features/note';
+import { saveVocab, fetchSavedVocab, fetchSavedParaphrases } from '@/redux/features/note';
 import { CardMaterialHistory } from '@/components/CardMaterialHistory';
 import Markdown from 'react-markdown'
 
