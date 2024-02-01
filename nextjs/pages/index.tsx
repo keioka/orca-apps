@@ -21,12 +21,9 @@ const BlogHeader = styled(Box)`
   border-bottom: 1px solid #e0e0e0;
 `
 
-
 export const config = {
   amp: 'hybrid',
 };
-
-
 
 const formatCategory = {
   ai: "AI",
@@ -71,7 +68,6 @@ const formatCategoryJA = {
   world_economy: "世界株",
   world_news: "世界ニュース"
 };
-
 
 function getArticlesByCategory(articles) {
   return articles.reduce((acc, article) => {
@@ -222,7 +218,12 @@ export default function ArticleIndex({ articles }) {
         </Stack>
         <Typography
           variant="h1"
-          sx={{ fontFamily: "Crimson Text", fontSize: "1.2rem", paddingX: 2, paddingTop: 3 }}
+          sx={{
+            fontFamily: "Crimson Text",
+            fontSize: "1.2rem",
+            paddingX: 2,
+            paddingTop: 3
+          }}
         >
           最新ニュース
         </Typography>

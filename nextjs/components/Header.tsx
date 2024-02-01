@@ -89,7 +89,14 @@ export function Header() {
               fontFamily: 'var(--font-outfit)',
             }}
           >
-            <MenuItem onClick={handleNavNote}>Note</MenuItem>
+            <MenuItem
+              sx={{
+                fontFamily: 'var(--font-outfit)',
+              }}
+              onClick={handleNavNote}
+            >
+              Note
+            </MenuItem>
             <MenuItem onClick={handleSignout}>Signout</MenuItem>
           </Menu>
           {!currentUser &&

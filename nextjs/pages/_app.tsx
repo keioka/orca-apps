@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
 import "reset-css";
-import { Crimson_Text, Outfit } from 'next/font/google';
+import { crimsonText, outfit } from '@/font';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { Provider } from 'react-redux';
@@ -23,19 +23,6 @@ const themeLang = {
     },
   }
 }
-
-
-const crimsonText = Crimson_Text({
-  variable: '--font-crimson-text',
-  weight: ["400", "600"],
-  subsets: ['latin'],
-})
-
-const outfit = Outfit({
-  variable: '--font-outfit',
-  weight: ["400", "600"],
-  subsets: ['latin'],
-})
 
 
 const themeBase = {

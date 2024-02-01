@@ -71,6 +71,7 @@ export function InputChat({
           multiline
           disableUnderline={true}
           // placeholder={chrome.i18n.getMessage("chat_talk_input_placeholder")}
+          placeholder="Type your message here..."
           value={value ? value : ""}
           onChange={onChange}
           sx={{
@@ -85,7 +86,7 @@ export function InputChat({
             }
           }}
         />
-        <Stack direction="row" spacing={1} sx={{ marginTop: 1, justifyContent: "space-between" }}>
+        <Stack direction="row" spacing={1} sx={{ marginTop: 1, justifyContent: "space-between", padding: 1 }}>
           <Box
             sx={{
               display: "flex",
@@ -110,9 +111,11 @@ export function InputChat({
                 color: "#3c223c",
                 boxShadow: "none",
                 backgroundColor: "#fff",
+                fontWeight: "bold",
               }}
               onClick={onClearInput}
             >
+              CLEAR
               {/* {chrome.i18n.getMessage("chat_talk_clear_button")} */}
             </Button>
             <Button
@@ -122,9 +125,11 @@ export function InputChat({
               sx={{
                 color: "#fff",
                 boxShadow: "none",
+                fontWeight: "bold",
               }}
               onClick={onSubmit}
             >
+              TALK
               {/* {chrome.i18n.getMessage("chat_talk_button")} */}
             </Button>
           </Stack>

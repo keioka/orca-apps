@@ -62,8 +62,6 @@ export function StudyPanel({
   }, [currentLesson])
 
   const handleTalk = () => {
-    console.log({ currentLesson, currentUser })
-
     if (currentUser && currentLesson) {
       dispatch(addUserMessage({ lessonId: currentLesson.id, message }))
       dispatch(createAIMessage({ lessonId: currentLesson.id, message }))
@@ -78,10 +76,10 @@ export function StudyPanel({
 
   return (
     <Box sx={{ padding: 1 }}>
-      <Box mb={1}>
+      <Box mb={1} px={2}>
         <Typography variant="h6">AIと会話してみよう！</Typography>
       </Box>
-      <Stack sx={{ background: "#fafafa", padding: 2 }} spacing={1}>
+      <Stack sx={{ background: "#f3f3f3", padding: 2 }} spacing={1}>
         {messages.map((message) => (
           <CardChat message={message} />
         ))}
