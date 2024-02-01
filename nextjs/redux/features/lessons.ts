@@ -12,6 +12,10 @@ interface LessonState {
   creating: boolean;
   createdLessonId: string | null;
   error: string | null;
+  sampleResponses: [
+    sentence: string,
+    jaSentence: string
+  ];
 }
 
 // Define the initial state
@@ -21,6 +25,7 @@ const initialState: LessonState = {
   creating: false,
   createdLessonId: null,
   error: null,
+  sampleResponses: []
 };
 
 // Define the lesson slice
@@ -30,6 +35,9 @@ const lessonSlice = createSlice({
   reducers: {
     clearCreatedLessonId: (state) => {
       state.createdLessonId = null;
+    },
+    clearSampleResponses: (state) => {
+      state.sampleResponses = [];
     },
     clearError: (state) => {
       state.error = null;
@@ -102,6 +110,24 @@ const lessonSlice = createSlice({
       state.error = action.error.message || 'Failed to fetch lesson';
     });
 
+    builder.addCase(fetchSampleResponses.pending, (state, action) => {
+      state.sampleResponses = [];
+      state.loading = true;
+      state.error = null;
+    })
+
+    builder.addCase(fetchSampleResponses.fulfilled, (state, action) => {
+      state.sampleResponses = action.payload.samples;
+      state.loading = false;
+      state.error = null;
+    })
+
+    builder.addCase(fetchSampleResponses.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || 'Failed to fetch sample responses';
+    })
+
+
     builder.addMatcher(
       (action) => action.type === "global/RESET_STATE",
       (state) => {
@@ -114,7 +140,7 @@ const lessonSlice = createSlice({
   },
 });
 
-export const { clearCreatedLessonId } = lessonSlice.actions;
+export const { clearCreatedLessonId, clearSampleResponses } = lessonSlice.actions;
 
 const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
@@ -130,6 +156,38 @@ export const fetchLesson = createAsyncThunk(
           Authorization: `Bearer ${token}`
         },
       });
+
+      // data is the server's response
+      const data = response.data;
+
+      return data;
+
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+
+export const fetchSampleResponses = createAsyncThunk(
+  'lesson/fetchSampleResponses',
+  async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
+    const state = getState()
+    const token = await validateSessionAndToken(state, dispatch)
+
+    try {
+      const response = await axios.post(
+        `/api/lessons/${lessonId}/sample`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        }
+      );
+
+      console.log({ token })
 
       // data is the server's response
       const data = response.data;

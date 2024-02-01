@@ -204,7 +204,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     <ThemeProvider theme={theme}>
       <Provider store={store}>
         <AppCore Component={Component} pageProps={pageProps} />
-
       </Provider>
     </ThemeProvider >
   );

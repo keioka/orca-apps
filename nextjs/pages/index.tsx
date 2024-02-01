@@ -293,7 +293,7 @@ function SectionPastArticles({ articlesByCategory, category }) {
 export async function getServerSideProps({ params }) {
   const res = await client.getEntries({
     content_type: "newsArticle",
-    limit: 200,
+    limit: 100,
   })
 
   const articles = res.items
