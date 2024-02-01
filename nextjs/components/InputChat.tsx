@@ -116,7 +116,7 @@ export function InputChat({
               }}
               onClick={onClickFetchSamples}
             >
-              Samples
+              AIの返答例
               {/* {chrome.i18n.getMessage("chat_talk_clear_button")} */}
             </Button>
             <Button
@@ -131,7 +131,7 @@ export function InputChat({
               }}
               onClick={onClearInput}
             >
-              CLEAR
+              クリア
               {/* {chrome.i18n.getMessage("chat_talk_clear_button")} */}
             </Button>
             <Button
@@ -145,7 +145,7 @@ export function InputChat({
               }}
               onClick={onSubmit}
             >
-              TALK
+              話す
               {/* {chrome.i18n.getMessage("chat_talk_button")} */}
             </Button>
           </Stack>

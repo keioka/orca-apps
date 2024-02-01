@@ -16,6 +16,7 @@ interface LessonState {
     sentence: string,
     jaSentence: string
   ];
+  loadingSampleResponses: boolean;
 }
 
 // Define the initial state
@@ -25,7 +26,8 @@ const initialState: LessonState = {
   creating: false,
   createdLessonId: null,
   error: null,
-  sampleResponses: []
+  sampleResponses: [],
+  loadingSampleResponses: false,
 };
 
 // Define the lesson slice
@@ -112,18 +114,18 @@ const lessonSlice = createSlice({
 
     builder.addCase(fetchSampleResponses.pending, (state, action) => {
       state.sampleResponses = [];
-      state.loading = true;
+      state.loadingSampleResponses = true;
       state.error = null;
     })
 
     builder.addCase(fetchSampleResponses.fulfilled, (state, action) => {
       state.sampleResponses = action.payload.samples;
-      state.loading = false;
+      state.loadingSampleResponses = false;
       state.error = null;
     })
 
     builder.addCase(fetchSampleResponses.rejected, (state, action) => {
-      state.loading = false;
+      state.loadingSampleResponses = false;
       state.error = action.error.message || 'Failed to fetch sample responses';
     })
 

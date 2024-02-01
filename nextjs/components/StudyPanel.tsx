@@ -34,6 +34,8 @@ export function StudyPanel({
   const messages = useAppSelector((state) => currentLesson ? state.message.messageMap[currentLesson.id] || [] : [])
   const isCreatingMessage = useAppSelector((state) => state.message.creatingMessage)
   const sampleResponses = useAppSelector((state) => state.lesson.sampleResponses)
+  const loadingSampleResponses = useAppSelector((state) => state.lesson.loadingSampleResponses)
+
   const [message, setMessage] = useState("")
 
   useEffect(() => {
@@ -91,16 +93,16 @@ export function StudyPanel({
         {messages.map((message) => (
           <CardChat message={message} />
         ))}
-
-        <Box sx={{ background: "#fff" }} p={3}>
+        {loadingSampleResponses && <Box sx={{ background: "#fff" }} p={3}>AIの返答例を取得中...</Box>}
+        {sampleResponses && sampleResponses.length > 0 && <Box sx={{ background: "#fff" }} p={3}>
           <Typography variant="body1" sx={{ marginBottom: 2 }}>AIの返答例:</Typography>
-          {sampleResponses && sampleResponses.map((response) => (
+          {sampleResponses.map((response) => (
             <Box sx={{ borderTop: "1px solid #e4e4e4", paddingTop: 2 }}>
               <Box mb={2} sx={{ fontSize: 16 }}>{response.sentence}</Box>
               <Box mb={2} sx={{ fontSize: 14, color: "#747474" }}>{response.jaSentence}</Box>
             </Box>
           ))}
-        </Box>
+        </Box>}
 
         <InputChat
           onSubmit={handleTalk}
