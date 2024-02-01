@@ -3,7 +3,7 @@ import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { CardChat } from './CardChat'
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchOriginalMaterial } from "@/redux/features/materials";
-import { fetchOrCreateLessonByMaterialId } from "@/redux/features/lessons";
+import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleResponses } from "@/redux/features/lessons";
 import { fetchMessages, createAIMessage, addUserMessage } from "@/redux/features/messages";
 import { InputChat } from '@/components/InputChat'
 
@@ -33,7 +33,7 @@ export function StudyPanel({
   const isLoadingLesson = useAppSelector((state) => state.lesson.loading)
   const messages = useAppSelector((state) => currentLesson ? state.message.messageMap[currentLesson.id] || [] : [])
   const isCreatingMessage = useAppSelector((state) => state.message.creatingMessage)
-
+  const sampleResponses = useAppSelector((state) => state.lesson.sampleResponses)
   const [message, setMessage] = useState("")
 
   useEffect(() => {
@@ -65,8 +65,16 @@ export function StudyPanel({
     if (currentUser && currentLesson) {
       dispatch(addUserMessage({ lessonId: currentLesson.id, message }))
       dispatch(createAIMessage({ lessonId: currentLesson.id, message }))
+      dispatch(clearSampleResponses())
+      setMessage("")
     } else {
       setShouldOpenModalAuth(true)
+    }
+  }
+
+  const handleFetchSamples = () => {
+    if (currentLesson) {
+      dispatch(fetchSampleResponses(currentLesson.id))
     }
   }
 
@@ -83,8 +91,20 @@ export function StudyPanel({
         {messages.map((message) => (
           <CardChat message={message} />
         ))}
+
+        <Box sx={{ background: "#fff" }} p={3}>
+          <Typography variant="body1" sx={{ marginBottom: 2 }}>AIの返答例:</Typography>
+          {sampleResponses && sampleResponses.map((response) => (
+            <Box sx={{ borderTop: "1px solid #e4e4e4", paddingTop: 2 }}>
+              <Box mb={2} sx={{ fontSize: 16 }}>{response.sentence}</Box>
+              <Box mb={2} sx={{ fontSize: 14, color: "#747474" }}>{response.jaSentence}</Box>
+            </Box>
+          ))}
+        </Box>
+
         <InputChat
           onSubmit={handleTalk}
+          onClickFetchSamples={handleFetchSamples}
           value={message}
           onChange={(event) => setMessage(event.target.value)}
         />

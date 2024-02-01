@@ -45,7 +45,7 @@ function getJaJp(obj) {
 export async function getAllArticles() {
   const result = await clientPreview.getEntries({
     content_type: "newsArticle",
-    limit: 200,
+    limit: 100,
   })
 
   return result

@@ -12,6 +12,7 @@ export function InputChat({
   onSubmit,
   onChange,
   onChangeInputByVoice,
+  onClickFetchSamples,
   onClearInput,
   value
 }) {
@@ -103,6 +104,21 @@ export function InputChat({
             {isSpeeching ? <IoSquare color={theme.palette.customPalette.red} size={24} /> : <IoMicOutline color="#fff" size={24} />}
           </Box>
           <Stack direction="row" spacing={1} sx={{ marginTop: 1, justifyContent: "space-between" }}>
+            <Button
+              size="small"
+              color="primary"
+              variant="outlined"
+              sx={{
+                color: "#3c223c",
+                boxShadow: "none",
+                backgroundColor: "#fff",
+                fontWeight: "bold",
+              }}
+              onClick={onClickFetchSamples}
+            >
+              Samples
+              {/* {chrome.i18n.getMessage("chat_talk_clear_button")} */}
+            </Button>
             <Button
               size="small"
               color="primary"
