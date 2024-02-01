@@ -7,13 +7,13 @@ import {
   Typography,
   Box,
   Drawer,
-  Card,
-  CardContent,
   CardActions,
   Chip,
   Grid,
   Alert,
   Avatar,
+  Card,
+  CardContent,
   LinearProgress
 } from "@mui/material"
 // import { sendToBackground } from "@plasmohq/messaging"
@@ -30,9 +30,10 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 // import { useAppDispatch, useAppSelector } from "~redux/hooks"
 // import { toggleSubscriptionForm } from "~redux/features/ui"
 // import type { ParaphraseItem, GMCheckItem } from "~types"
-import { fetchLessonByMaterialId } from '@/redux/features/lessons';
+import { saveParaphrase, fetchSavedParaphrases } from '../redux/features/note';
 import { fetchParaphrases, fetchGrammarMistakes } from "@/redux/features/messages"
 import styled from "@emotion/styled"
+import { ButtonSave } from "@/components/ButtonSave"
 
 const TypoEn = styled(Typography)`
   font-size: 16px;
@@ -46,14 +47,14 @@ enum Tab {
 
 interface CardChatProps {
   content: string;
-  type?: "ai" | "human";
+  type?: "ai" | "user";
   loading?: boolean;
   isAutoPlay?: boolean;
   url: string;
 }
 
 interface CardChatPureProps {
-  type?: "ai" | "human";
+  message: any;
   loading?: boolean;
   handleClickGMCheck: () => void;
   handleClickParaphrase: () => void;
@@ -75,34 +76,32 @@ interface CardChatPureProps {
 }
 
 
-export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: CardChatProps) {
+export function CardChat({ message, type = "ai", loading, isAutoPlay, url }: CardChatProps) {
   const [error, setError] = useState(null)
-  const { currentSentence, currentSentenceIndex, numSentences, messageSentences, selectNextSentence, selectPreviousSentence } = useSentence(content)
+  const { currentSentence, currentSentenceIndex, numSentences, messageSentences, selectNextSentence, selectPreviousSentence } = useSentence(message.content)
   const [currentTab, setCurrentTab] = useState<Tab>(null)
-
+  const paraphraseMap = useAppSelector(state => state.message.paraphraseMap[message.id] || {})
+  const savedParaphrases = useAppSelector(state => state.note.paraphrases)
   const [isLoadingParaphrase, setIsLoadingParaphrase] = useState(false)
   const [isLoadingGMCheck, setIsLoadingGMCheck] = useState(false)
   const [isLoadingTranlate, setIsLoadingTranslate] = useState(false)
-
-  const [paraphrase, setParaphrase] = useState({})
   const [gmCheck, setGMCheck] = useState({})
 
   const [translate, setTranslate] = useState(null)
 
   const dispatch = useAppDispatch()
-  const { isValidSubscription } = useAppSelector((state) => state)
 
   useEffect(() => {
-    if (type === "human" || loading || !isAutoPlay) return
+    if (message.type === "user" || loading || !isAutoPlay) return
     handlePlayAudio()
   }, [])
 
   useEffect(() => {
-    if (currentTab === Tab.Paraphrase && !paraphrase[currentSentenceIndex]) {
+    if (currentTab === Tab.Paraphrase && paraphraseMap && !paraphraseMap[currentSentenceIndex]) {
       handleClickParaphrase()
     }
 
-    if (currentTab === Tab.GMCheck && !gmCheck[currentSentenceIndex]) {
+    if (currentTab === Tab.GMCheck && gmCheck && !gmCheck[currentSentenceIndex]) {
       handleClickGMCheck()
     }
   }, [currentSentenceIndex])
@@ -131,26 +130,22 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
     setIsLoadingTranslate(false)
   }
 
-  async function handleClickParaphrase() {
-    if (!isValidSubscription) {
-      handleToggleSubscriptionForm()
+  async function checkParaphrase({ text }: { text: string }) {
+    if (paraphraseMap && paraphraseMap[currentSentenceIndex]) {
       return
     }
-    setIsLoadingParaphrase(true)
-    setCurrentTab(Tab.Paraphrase)
-    // const resp = await sendToBackground({
-    //   name: "paraphrase",
-    //   body: {
-    //     sentence: currentSentence
-    //   }
-    // })
+    dispatch(fetchSavedParaphrases({ messageId: message.id, sentenceIndex: currentSentenceIndex }))
+    dispatch(fetchParaphrases({ messageId: message.id, sentence: text, sentenceIndex: currentSentenceIndex }))
+  }
 
-    // if (resp.error) {
-    //   setError(resp.error)
+  async function handleClickParaphrase() {
+    // if (!isValidSubscription) {
+    //   handleToggleSubscriptionForm()
     //   return
     // }
-
-    // setParaphrase({ ...paraphrase, [currentSentenceIndex]: resp.phrases })
+    setIsLoadingParaphrase(true)
+    setCurrentTab(Tab.Paraphrase)
+    checkParaphrase({ text: currentSentence })
     setIsLoadingParaphrase(false)
   }
 
@@ -198,16 +193,8 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
     }
   }
 
-  function handleSaveParaphrase({ sentence }: { sentence: string }) {
-    dispatch(
-      saveParaphrases({
-        url,
-        data: {
-          paraphrase: sentence,
-          originalSentence: currentSentence
-        },
-      })
-    )
+  function handleSaveParaphrase({ paraphraseId }: { paraphraseId: string }) {
+    dispatch(saveParaphrase({ paraphraseId }))
   }
 
   function handleSaveGMCheck(gmCheck: GMCheckItem) {
@@ -222,7 +209,7 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
 
   return (
     <CardChatPure
-      type={type}
+      message={message}
       loading={loading}
       handleClickGMCheck={handleClickGMCheck}
       handleClickParaphrase={handleClickParaphrase}
@@ -234,19 +221,20 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
       isLoadingGMCheck={isLoadingGMCheck}
       isLoadingParaphrase={isLoadingParaphrase}
       currentTab={currentTab}
-      paraphrase={paraphrase}
+      paraphrase={paraphraseMap}
       gmCheck={gmCheck}
       currentSentenceIndex={currentSentenceIndex}
       numSentences={numSentences}
       messageSentences={messageSentences}
       selectNextSentence={selectNextSentence}
       selectPreviousSentence={selectPreviousSentence}
+      savedParaphrases={savedParaphrases}
     />
   )
 }
 
 export function CardChatPure({
-  type = "ai",
+  message,
   loading,
   handleClickGMCheck,
   handleClickParaphrase,
@@ -264,11 +252,12 @@ export function CardChatPure({
   numSentences,
   messageSentences,
   selectNextSentence,
-  selectPreviousSentence
+  selectPreviousSentence,
+  savedParaphrases
 }: CardChatPureProps) {
   const [error, setError] = useState(null)
 
-  const isOpenPanel = type === "human" && currentTab !== null
+  const isOpenPanel = message.type === "user" && currentTab !== null
 
   return (
     <Stack
@@ -276,7 +265,7 @@ export function CardChatPure({
         width: "100%",
         height: "auto",
       }}
-      direction={type === "ai" ? "row" : "row-reverse"}
+      direction={message.type === "ai" ? "row" : "row-reverse"}
       spacing={1}
     >
       {/* <Box
@@ -294,9 +283,9 @@ export function CardChatPure({
           width: "100%",
           height: "auto",
           padding: 2,
-          borderRadius: type === "ai" ? "16px 16px 16px 0px" : "16px 16px 0px 16px",
+          borderRadius: message.type === "ai" ? "16px 16px 16px 0px" : "16px 16px 0px 16px",
           boxShadow: "none",
-          backgroundColor: type === "ai" ? theme.palette.customPalette.lightBlue : "#fff",
+          backgroundColor: message.type === "ai" ? theme.palette.customPalette.lightBlue : "#fff",
         })}
       >
         <CardContent sx={{ padding: 0, paddingTop: 1 }}>
@@ -326,10 +315,10 @@ export function CardChatPure({
           {loading && <LoaderBounce />}
         </CardContent>
         <CardActions sx={{ padding: 0, paddingTop: 2, width: "100%" }}>
-          {type === "human" && (
+          {message.type === "user" && (
             <Stack sx={{ width: "100%" }}>
               <Stack direction="row" spacing={1}>
-                <Button
+                {/* <Button
                   sx={{
                     background: "rgba(0,0,0,0.1)",
                     borderRadius: "64px",
@@ -342,10 +331,10 @@ export function CardChatPure({
                   onClick={handleClickGMCheck}
                 >
                   <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.GMCheck ? "#fff" : "#787c80", fontWeight: 700 }}>
-                    {/* {chrome.i18n.getMessage("chat_card_button_gm_check")} */}
+                    {chrome.i18n.getMessage("chat_card_button_gm_check")}
                     GM Check
                   </Typography>
-                </Button>
+                </Button> */}
                 <Button
                   sx={{
                     background: "rgba(0,0,0,0.1)",
@@ -360,7 +349,7 @@ export function CardChatPure({
                 >
                   <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.Paraphrase ? "#fff" : "#787c80", fontWeight: 700 }}>
                     {/* {chrome.i18n.getMessage("chat_card_button_paraphrase")} */}
-                    Paraphrase
+                    言い換え表現
                   </Typography>
                 </Button>
               </Stack>
@@ -384,10 +373,11 @@ export function CardChatPure({
                 {
                   currentTab === Tab.Paraphrase &&
                   paraphrase[currentSentenceIndex] &&
-                  paraphrase[currentSentenceIndex].map((item) => {
+                  paraphrase[currentSentenceIndex].slice(0, 5).map((item) => {
+                    const isSaved = savedParaphrases.some((p) => p.paraphrase.id === item.id)
                     return (
                       <Box my={2}>
-                        <CardSmParaphrase item={item} onSave={() => handleSaveParaphrase(item)} />
+                        <CardSmParaphrase item={item} onSave={() => handleSaveParaphrase({ paraphraseId: item.id })} isSaved={isSaved} />
                       </Box>
                     )
                   })
@@ -395,7 +385,7 @@ export function CardChatPure({
                 {
                   currentTab === Tab.GMCheck &&
                   gmCheck[currentSentenceIndex] &&
-                  gmCheck[currentSentenceIndex].map((item) => {
+                  gmCheck[currentSentenceIndex].slice(0, 5).map((item) => {
                     return (
                       <Box my={2}>
                         <CardSmGMCheck item={item} onSave={() => handleSaveGMCheck(item)} />
@@ -416,7 +406,7 @@ export function CardChatPure({
             </Stack>
           )}
 
-          {type === "ai" && (
+          {message.type === "ai" && (
             <Stack sx={{ width: "100%" }}>
               <Stack direction="row" spacing={1}>
                 <Button

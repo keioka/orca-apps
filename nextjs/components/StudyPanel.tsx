@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchOriginalMaterial } from "@/redux/features/materials";
 import { fetchOrCreateLessonByMaterialId } from "@/redux/features/lessons";
 import { fetchMessages, createAIMessage, addUserMessage } from "@/redux/features/messages";
+import { InputChat } from '@/components/InputChat'
 
 const messages = [
   {
@@ -82,18 +83,13 @@ export function StudyPanel({
       </Box>
       <Stack sx={{ background: "#fafafa", padding: 2 }} spacing={1}>
         {messages.map((message) => (
-          <CardChat content={message.content} type={message.type} />
+          <CardChat message={message} />
         ))}
-
-        <TextField
-          sx={{ width: "100%", background: "#fff" }}
-          multiline
+        <InputChat
+          onSubmit={handleTalk}
+          value={message}
           onChange={(event) => setMessage(event.target.value)}
         />
-
-        <Box>
-          <Button variant="contained" onClick={handleTalk}>Talk</Button>
-        </Box>
       </Stack>
     </Box>
   )

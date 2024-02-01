@@ -109,13 +109,16 @@ export const fetchSavedParaphrases = async ({
     paraphrase: {}
   };
 
-  if (messageId) {
-    whereConditions.paraphrase.sentenceMessageId = messageId;
-  }
+  console.log("==============================")
+  console.log({ messageId, sentenceIndex })
 
-  if (typeof sentenceIndex !== 'undefined') {
-    whereConditions.paraphrase.sentenceSentenceIndex = sentenceIndex;
-  }
+  // if (messageId) {
+  //   whereConditions.paraphrase.sentenceMessageId = messageId;
+  // }
+
+  // if (typeof sentenceIndex !== 'undefined') {
+  //   whereConditions.paraphrase.sentenceSentenceIndex = sentenceIndex;
+  // }
 
   return prisma.savedParaphrase.findMany({
     where: whereConditions,
@@ -137,6 +140,7 @@ export const fetchSavedParaphrases = async ({
                           id: true,
                           title: true,
                           url: true,
+                          imageUrl: true,
                           publisher: {
                             select: {
                               id: true,

@@ -85,6 +85,9 @@ export function Header() {
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
+            sx={{
+              fontFamily: 'var(--font-outfit)',
+            }}
           >
             <MenuItem onClick={handleNavNote}>Note</MenuItem>
             <MenuItem onClick={handleSignout}>Signout</MenuItem>

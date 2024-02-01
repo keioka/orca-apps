@@ -21,8 +21,6 @@ export function ModalAuth({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
     setIsSignup(!isSignup);
   }
 
-  console.log({ isOpen })
-
   return (
     <Modal
       open={isOpen}
