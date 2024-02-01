@@ -596,7 +596,17 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                 />
               )
             })}
-            <Box p={3}>
+            <Box
+              p={4}
+              sx={{
+                "& > ol > li": {
+                  listStyle: "decimal",
+                  marginBottom: 3,
+                  fontWeight: 400,
+                  lineHeight: 1.3,
+                  color: "#696969"
+                }
+              }}>
               <Markdown>
                 {reference}
               </Markdown>
