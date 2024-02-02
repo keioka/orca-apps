@@ -175,8 +175,6 @@ export function CardVocabSM({
   shouldHideDiscard,
   isSaved,
 }: { vocab: any, onSaveVocab: any, shouldHideSave?: boolean, shouldHideDiscard?: boolean }) {
-
-  console.log({ vocab })
   const material = vocab.material;
 
   function handlePlayAudio() {

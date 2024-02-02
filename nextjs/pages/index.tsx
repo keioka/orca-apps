@@ -337,7 +337,6 @@ function extractArticleInfo(data) {
       localeTitle: data.fields.title,
     };
   } catch (e) {
-    console.log(data)
     console.error(e);
     throw new Error("Failed to extract article info");
   }

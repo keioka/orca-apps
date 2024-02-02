@@ -52,7 +52,6 @@ export function StudyPanel({
     }
   }, [article])
 
-  console.log({ currentOpenedOriginalMaterial })
   useEffect(() => {
     if (currentOpenedOriginalMaterial && currentUser) {
       dispatch(fetchOrCreateLessonByMaterialId(currentOpenedOriginalMaterial.id))
@@ -83,6 +82,10 @@ export function StudyPanel({
     }
   }
 
+  const handleSetMessage = (message: string) => {
+    setMessage(message)
+  }
+
   if (!currentOpenedOriginalMaterial) {
     return null
   }
@@ -110,6 +113,7 @@ export function StudyPanel({
         <InputChat
           onSubmit={handleTalk}
           onClickFetchSamples={handleFetchSamples}
+          onChangeInputByVoice={handleSetMessage}
           value={message}
           onChange={(event) => setMessage(event.target.value)}
         />
