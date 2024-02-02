@@ -75,6 +75,10 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 function getPosColor(pos: string) {
+  if (!pos) {
+    return '#000000';
+  }
+
   switch (pos.trim()) {
     case 'noun':
       return '#FF6347'; // Tomato

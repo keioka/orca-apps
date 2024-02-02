@@ -77,7 +77,7 @@ export function Header() {
           </Typography>
         </Link>
         <Stack direction="row" sx={{ alignItems: "center" }}>
-          <Button color="inherit" onClick={handleMenuOpen}>
+          <Button color="inherit">
             <RiGlobalLine size={18} />
             <Typography>JA</Typography>
           </Button>
@@ -95,9 +95,9 @@ export function Header() {
               }}
               onClick={handleNavNote}
             >
-              Note
+              ノート
             </MenuItem>
-            <MenuItem onClick={handleSignout}>Signout</MenuItem>
+            <MenuItem onClick={handleSignout}>サインアウト</MenuItem>
           </Menu>
           {!currentUser &&
             <Button
