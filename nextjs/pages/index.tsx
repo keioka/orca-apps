@@ -71,20 +71,20 @@ const formatCategoryJA = {
 
 function getArticlesByCategory(articles) {
   return articles.reduce((acc, article) => {
-    if (!acc[article.fields.category]) {
-      acc[article.fields.category] = []
+    if (!acc[article.category]) {
+      acc[article.category] = []
     }
-    acc[article.fields.category].push(article)
+    acc[article.category].push(article)
     return acc
   }, {})
 }
 
 function getArticlesByPublishedDate(articles) {
   return articles.reduce((acc, article) => {
-    if (!acc[article.fields.publishedDate]) {
-      acc[article.fields.publishedDate] = []
+    if (!acc[article.publishedDate]) {
+      acc[article.publishedDate] = []
     }
-    acc[article.fields.publishedDate].push(article)
+    acc[article.publishedDate].push(article)
     return acc
   }, {})
 }
@@ -124,13 +124,14 @@ const categoryJaOrder = [
   "science",
 ]
 
-export default function ArticleIndex({ articles }) {
+export default function ArticleIndex({ articles }: { articles: Article[] }) {
   const router = useRouter()
+  const locale = 'ja'
 
   const articlesSorted = useMemo(() =>
-    articles.filter((article) => article.fields.publishedDate).sort(
+    articles.filter((article) => article.publishedDate).sort(
       (a, b) => {
-        if (a.fields.publishedDate > b.fields.publishedDate) {
+        if (a.publishedDate > b.publishedDate) {
           return -1
         } else {
           return 1
@@ -228,21 +229,23 @@ export default function ArticleIndex({ articles }) {
           最新ニュース
         </Typography>
         <Grid container py={3} p={2} spacing={{ xs: 3, sm: 2 }}>
-          {latestArtciles.map((article) => (
-            <Grid key={article.id} item xs={12} sm={6} md={4}>
-              <Material article={article} />
-            </Grid>
-          ))}
+          {latestArtciles.map((article) => {
+            return (
+              <Grid key={article.id} item xs={12} sm={6} md={4}>
+                <Material article={article} locale={locale} />
+              </Grid>
+            )
+          })}
         </Grid>
         {Object.keys(articlesByCategory).map((category) => (
-          <SectionPastArticles articlesByCategory={articlesByCategory} category={category} />
+          <SectionPastArticles articlesByCategory={articlesByCategory} category={category} locale={locale} />
         ))}
       </Box>
     </>
   )
 }
 
-function SectionPastArticles({ articlesByCategory, category }) {
+function SectionPastArticles({ articlesByCategory, category, locale }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const articles = articlesByCategory[category]
 
@@ -260,7 +263,7 @@ function SectionPastArticles({ articlesByCategory, category }) {
       <Grid container py={2} p={2} spacing={2}>
         {articlesToShow && articlesToShow.map((article) => (
           <Grid key={article.id} item xs={12} sm={6} md={4}>
-            <MaterialRow article={article} />
+            <MaterialRow article={article} locale={locale} />
           </Grid>
         ))}
       </Grid>
@@ -291,12 +294,13 @@ function SectionPastArticles({ articlesByCategory, category }) {
 }
 
 export async function getServerSideProps({ params }) {
-  const res = await client.getEntries({
+
+  const resLocale = await client.withAllLocales.getEntries({
     content_type: "newsArticle",
     limit: 100,
   })
 
-  const articles = res.items
+  const articles = resLocale.items
 
   if (!articles) {
     return {
@@ -304,12 +308,53 @@ export async function getServerSideProps({ params }) {
     }
   }
 
-  const filteredArticles = articles.filter((article) => article.fields.slug !== "style-guide")
+  const filteredArticles = articles.filter((article) => article.slug !== "style-guide")
+
+  const articlesMapped = filteredArticles.map((article) => {
+    return extractArticleInfo(article)
+  })
+
   return {
     props: {
-      articles: filteredArticles
+      articles: articlesMapped,
     },
   };
 }
 
 
+function extractArticleInfo(data) {
+  try {
+    const { id } = data.sys;
+    const heroImageUrl = data.fields.heroImage["en-US"].fields.file["en-US"].url;
+
+    return {
+      id,
+      title: data.fields.title["en-US"],
+      category: data.fields.category["en-US"],
+      slug: data.fields.slug["en-US"],
+      wordCount: data.fields.wordCount["en-US"],
+      publishedDate: data.fields.publishedDate["en-US"],
+      heroImageUrl,
+      localeTitle: data.fields.title,
+    };
+  } catch (e) {
+    console.log(data)
+    console.error(e);
+    throw new Error("Failed to extract article info");
+  }
+}
+
+
+interface Article {
+  id: string;
+  title: string;
+  category: string;
+  slug: string;
+  heroImage: {
+    url: string;
+    title: string;
+    width: number;
+    height: number;
+  };
+  locale: string;
+}

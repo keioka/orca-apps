@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'GET') {
     const contentfulArticles = await getAllArticles()
     const items = contentfulArticles.items
-    const articles = formatEntries(items).slice(0, 20)
+    const articles = formatEntries(items).slice
     return res.status(200).json({ articles });
   } else {
     return res.status(405).json({ message: 'Method not allowed' });
