@@ -27,31 +27,31 @@ const formatCategory = {
   world_news: "🌍World News"
 };
 
-export function MaterialRow({ article }) {
+export function MaterialRow({ article, locale = 'en-US' }) {
   return (
-    <Link key={article.sys.id} href={`/articles/${article.fields.slug}`} passHref legacyBehavior>
+    <Link key={article.id} href={`/articles/${article.slug}`} passHref legacyBehavior>
       <a style={{ position: "relative", textDecoration: "none", color: "inherit" }}>
         <Stack>
-          <Box sx={{ paddingY: 0.3, paddingX: 0.5, borderRadius: 0.25 }}>
-            <Typography sx={{ fontSize: "0.7rem", textTransform: "uppercase" }}>{formatCategory[article.fields.category]}</Typography>
-          </Box>
+          {/* <Box sx={{ paddingY: 0.3, paddingX: 0.5, borderRadius: 0.25 }}>
+            <Typography sx={{ fontSize: "0.7rem", textTransform: "uppercase" }}>{formatCategory[article.category]}</Typography>
+          </Box> */}
           <Stack direction="row" spacing={1}>
             <Box sx={{ width: "128px", height: "64px", flexGrow: 0, flexShrink: 0 }}>
-              <img alt={article.fields.title} src={article.fields.heroImage ? article.fields.heroImage.fields.file.url : ""} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img alt={article.title} src={article.heroImageUrl ? article.heroImageUrl : ""} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </Box>
             <Box sx={{ flexGrow: 0 }}>
-              <Typography sx={{ fontFamily: "Crimson Text", fontSize: "1.1rem", lineHeight: "1.3rem" }} >{article.fields.title}</Typography>
+              <Typography sx={{ fontFamily: "Crimson Text", fontSize: "1.1rem", lineHeight: "1.3rem" }} >{article.localeTitle[locale] || article.title}</Typography>
             </Box>
 
           </Stack>
           <Grid container justifyContent="space-between">
             <Grid item>
               <Box sx={{ paddingY: 0.3, paddingX: 0.5, borderRadius: 0.25 }}>
-                <Typography sx={{ fontSize: "0.9rem", color: "#00100B", textTransform: "uppercase" }}>{new Date(article.fields.publishedDate).toLocaleDateString()}</Typography>
+                <Typography sx={{ fontSize: "0.9rem", color: "#00100B", textTransform: "uppercase" }}>{new Date(article.publishedDate).toLocaleDateString()}</Typography>
               </Box>
             </Grid>
             <Grid item>
-              <Typography sx={{ fontSize: "0.9rem", color: "gray", textTransform: "uppercase" }}>{article.fields.wordCount} words</Typography>
+              <Typography sx={{ fontSize: "0.9rem", color: "gray", textTransform: "uppercase" }}>{article.wordCount} words</Typography>
             </Grid>
           </Grid>
         </Stack>
