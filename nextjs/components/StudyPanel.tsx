@@ -21,11 +21,13 @@ const messages = [
 export function StudyPanel({
   article,
   currentUser,
-  setShouldOpenModalAuth
+  setShouldOpenModalAuth,
+  setAlertModalAuth
 }: {
   article: any,
   currentUser: any,
-  setShouldOpenModalAuth: any
+  setShouldOpenModalAuth: any,
+  setAlertModalAuth: () => void
 }) {
   const dispatch = useAppDispatch()
   const currentOpenedOriginalMaterial = useAppSelector((state) => state.material.currentOpenedOriginalMaterial)
@@ -71,6 +73,7 @@ export function StudyPanel({
       setMessage("")
     } else {
       setShouldOpenModalAuth(true)
+      setAlertModalAuth("AIと会話練習するにはログインしてください")
     }
   }
 

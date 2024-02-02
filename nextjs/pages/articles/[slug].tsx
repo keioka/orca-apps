@@ -325,6 +325,7 @@ function mapVocab(vocabsFromDB, vocab, paragraphNumber) {
 
 export default function Article({ article, relatedArticles, body, notFound, slug }: { article: Entry, relatedArticles: Entry[], body: any, notFound: boolean }) {
   const [shouldOpenModalAuth, setShouldOpenModalAuth] = useState(false)
+  const [alert, setAlert] = useState("")
   const dispatch = useAppDispatch()
   const searchParams = useSearchParams()
   const currentUser = useAppSelector((state) => state.auth.currentUser)
@@ -454,6 +455,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
 
   const handleCloseModalAuth = () => {
     setShouldOpenModalAuth(false)
+    setAlert("")
   }
 
   const handleSaveVocab = (vocab) => {
@@ -461,6 +463,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
       dispatch(saveVocab({ vocabId: vocab.dbId }))
     } else {
       setShouldOpenModalAuth(true)
+      setAlert("単語を保存するにはログインしてください")
     }
   }
 
@@ -503,7 +506,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
         />
       </Head>
       <Header />
-      <ModalAuth isOpen={shouldOpenModalAuth} onClose={handleCloseModalAuth} />
+      <ModalAuth isOpen={shouldOpenModalAuth} onClose={handleCloseModalAuth} alert={alert} />
       <BlogLayout
         component="article"
         sx={{
@@ -615,6 +618,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               article={article}
               currentUser={currentUser}
               setShouldOpenModalAuth={setShouldOpenModalAuth}
+              setAlertModalAuth={setAlert}
             />
           </Box>
         </Box>

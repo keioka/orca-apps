@@ -122,6 +122,10 @@ function getPosColor(pos: string) {
 }
 
 function convertPosIcon(pos: string, lang: string) {
+  if (!pos) {
+    return pos;
+  }
+
   switch (pos.trim()) {
     case 'noun':
       return '名詞'
@@ -172,6 +176,7 @@ export function CardVocabSM({
   isSaved,
 }: { vocab: any, onSaveVocab: any, shouldHideSave?: boolean, shouldHideDiscard?: boolean }) {
 
+  console.log({ vocab })
   const material = vocab.material;
 
   function handlePlayAudio() {
