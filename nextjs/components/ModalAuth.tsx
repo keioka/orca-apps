@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Box, TextField, Stack, Typography } from '@mui/material';
+import { Modal, Button, Box, TextField, Alert, Stack, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { signUpWithGoogle, loginWithGoogle } from "@/redux/features/auth";
 import { IoClose } from "react-icons/io5";
@@ -7,7 +7,7 @@ import GoogleLogo from "@/assets/images/google.svg"
 import Image from 'next/image';
 import { outfit } from '@/font'
 
-export function ModalAuth({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose: () => void }) {
   const [isSignup, setIsSignup] = useState(false);
   const dispatch = useAppDispatch();
   const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage);
@@ -51,6 +51,15 @@ export function ModalAuth({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
           <IoClose size={24} style={{ position: "absolute", top: 32, left: 32, cursor: "pointer" }} />
         </Box>
         <Box padding={2}>
+          {
+            alert && (
+              <Box mb={2}>
+                <Alert mb={4} color="error">
+                  {alert}
+                </Alert>
+              </Box>
+            )
+          }
           {isSignup && (
             <Stack
               style={{

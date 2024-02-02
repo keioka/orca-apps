@@ -96,6 +96,13 @@ const themeBase = {
         },
       },
     },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'var(--font-outfit)',
+        }
+      }
+    }
   },
 }
 
