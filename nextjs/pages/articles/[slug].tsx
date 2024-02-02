@@ -591,6 +591,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
             {paragraphs.map((paragraph, index) => {
               return (
                 <Paragraph
+                  key={"paragraph_" + index}
                   index={index}
                   content={paragraph}
                   totalLength={paragraphs.length}
@@ -784,7 +785,7 @@ function Paragraph({
           {vocabsOnPage.map((vocab) => {
             const isSaved = savedVocabs && savedVocabs.find((v) => v.vocabularyId === vocab.dbId)
             return (
-              <Box key={vocab.word} sx={{ marginBottom: 1 }}>
+              <Box key={`${vocab.word}_${vocab.id}`} sx={{ marginBottom: 1 }}>
                 <CardVocabSM
                   vocab={vocab}
                   onSaveVocab={() => onSaveVocab(vocab)}

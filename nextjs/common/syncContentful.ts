@@ -138,7 +138,7 @@ export async function syncContentful() {
 
   const result = await client.getEntries({
     content_type: "newsArticle",
-    limit: 200,
+    limit: 100,
   })
 
   const articles = result.items

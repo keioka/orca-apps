@@ -1,5 +1,29 @@
 import prisma from '../db'
 
+export async function addAudioFileToMessage({
+  audioFileId,
+  messageId
+}: {
+  audioFileId: string;
+  messageId: string;
+}) {
+  return await prisma.message.update({
+    where: {
+      id: parseInt(messageId)
+    },
+    data: {
+      audioFileId: parseInt(audioFileId)
+    },
+    include: {
+      audioFile: {
+        select: {
+          path: true
+        }
+      }
+    }
+  });
+}
+
 export async function createMessage({
   message,
   type,
@@ -19,7 +43,7 @@ export async function createMessage({
       connect: {
         id: Number(lessonId),
       }
-    }
+    },
   }
 
   if (createdById) {
@@ -45,6 +69,7 @@ export async function listMessages(lessonId: string) {
     },
     include: {
       createdBy: true,
+      audioFile: true
     },
   })
 
@@ -56,7 +81,10 @@ export async function findMessageById(messageId: string) {
     where: { id: parseInt(messageId) }
   });
 }
-
-export async function addParaphrase(messageId: string) {
-
+export async function createAuioFile(path: string) {
+  return await prisma.audioFile.create({
+    data: {
+      path
+    }
+  });
 }

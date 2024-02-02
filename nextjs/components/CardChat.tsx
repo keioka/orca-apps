@@ -86,7 +86,6 @@ export function CardChat({ message, type = "ai", loading, isAutoPlay, url }: Car
   const [isLoadingGMCheck, setIsLoadingGMCheck] = useState(false)
   const [isLoadingTranlate, setIsLoadingTranslate] = useState(false)
   const [gmCheck, setGMCheck] = useState({})
-
   const [translate, setTranslate] = useState(null)
 
   const dispatch = useAppDispatch()
@@ -175,19 +174,8 @@ export function CardChat({ message, type = "ai", loading, isAutoPlay, url }: Car
 
   function handlePlayAudio() {
     try {
-      const synth = window.speechSynthesis;
-      const voices = synth.getVoices();
-      const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
-
-      const utterance = new SpeechSynthesisUtterance(content);
-      utterance.lang = "en-US";
-
-      console.log({ englishVoices })
-      if (englishVoices.length) {
-        utterance.voice = englishVoices.find(voice => voice.name === 'Google US English');
-      }
-
-      synth.speak(utterance);
+      if (!message.audioFile) return
+      new Audio(message.audioFile.path).play()
     } catch (err) {
       console.error(err)
     }
@@ -426,7 +414,7 @@ export function CardChatPure({
                     {/* {chrome.i18n.getMessage("translate")} */}
                   </Typography>
                 </Button>
-                <Button
+                {message.audioFile && <Button
                   onClick={handlePlayAudio}
                   sx={{
                     borderRadius: '50%', // Makes it circular
@@ -442,6 +430,7 @@ export function CardChatPure({
                 >
                   <IoPlay color="#787c80" size={12} />
                 </Button>
+                }
               </Stack>
               <Box mt={1}>
                 <Typography sx={{ fontSize: 16 }}>
