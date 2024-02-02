@@ -325,15 +325,14 @@ export async function getServerSideProps({ params }) {
 function extractArticleInfo(data) {
   try {
     const { id } = data.sys;
-    const heroImageUrl = data.fields.heroImage["en-US"].fields.file["en-US"].url;
-
+    const heroImageUrl = data.fields.heroImage && data.fields.heroImage["en-US"] && data.fields.heroImage["en-US"].fields.file && data.fields.heroImage["en-US"].fields.file["en-US"] ? data.fields.heroImage["en-US"].fields.file["en-US"].url : null;
     return {
       id,
-      title: data.fields.title["en-US"],
-      category: data.fields.category["en-US"],
-      slug: data.fields.slug["en-US"],
-      wordCount: data.fields.wordCount["en-US"],
-      publishedDate: data.fields.publishedDate["en-US"],
+      title: data.fields.title && data.fields.title["en-US"] ? data.fields.title["en-US"] : null,
+      category: data.fields.category && data.fields.category["en-US"] ? data.fields.category["en-US"] : null,
+      slug: data.fields.slug && data.fields.slug["en-US"] ? data.fields.slug["en-US"] : null,
+      wordCount: data.fields.wordCount && data.fields.wordCount["en-US"] ? data.fields.wordCount["en-US"] : null,
+      publishedDate: data.fields.publishedDate && data.fields.publishedDate["en-US"] ? data.fields.publishedDate["en-US"] : null,
       heroImageUrl,
       localeTitle: data.fields.title,
     };
