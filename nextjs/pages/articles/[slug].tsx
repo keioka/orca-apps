@@ -26,6 +26,7 @@ import { StudyPanel } from '@/components/StudyPanel';
 import { saveVocab, fetchSavedVocab, fetchSavedParaphrases } from '@/redux/features/note';
 import { CardMaterialHistory } from '@/components/CardMaterialHistory';
 import Markdown from 'react-markdown'
+import { setPaymentRequiredAlert } from '@/redux/features/payment';
 
 export const config = {
   amp: 'hybrid',
@@ -333,6 +334,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   const vocabsFromDB = useAppSelector((state) => currentOpenedOriginalMaterial ? state.material.vocabs[currentOpenedOriginalMaterial.id] || [] : [])
   // TODO: Need to refactor this for performance
   const savedVocabs = useAppSelector((state) => state.note.vocabularies)
+  const isValidSubscription = useAppSelector((state) => state.payment.isValidSubscription)
 
   const mode = searchParams.get('mode')
 
@@ -363,6 +365,25 @@ export default function Article({ article, relatedArticles, body, notFound, slug
 
   if (!article) {
     return null
+  }
+
+
+  const handleCloseModalAuth = () => {
+    setShouldOpenModalAuth(false)
+    setAlert("")
+  }
+
+  const handleSaveVocab = (vocab) => {
+    if (currentUser) {
+      if (isValidSubscription) {
+        dispatch(saveVocab({ vocabId: vocab.dbId }))
+      } else {
+        dispatch(setPaymentRequiredAlert("単語を保存するにはプレミアム会員になる必要があります"))
+      }
+    } else {
+      setShouldOpenModalAuth(true)
+      setAlert("単語を保存するにはログインしてください")
+    }
   }
 
   const isEmbedMode = mode === 'embed'
@@ -453,19 +474,6 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     }
   ]
 
-  const handleCloseModalAuth = () => {
-    setShouldOpenModalAuth(false)
-    setAlert("")
-  }
-
-  const handleSaveVocab = (vocab) => {
-    if (currentUser) {
-      dispatch(saveVocab({ vocabId: vocab.dbId }))
-    } else {
-      setShouldOpenModalAuth(true)
-      setAlert("単語を保存するにはログインしてください")
-    }
-  }
 
   return (
     <>

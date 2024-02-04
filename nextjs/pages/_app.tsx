@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
 import "reset-css";
 import { crimsonText, outfit } from '@/font';
-import { createTheme, ThemeProvider } from '@mui/material';
-import { BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { createTheme, Modal, Box, ThemeProvider, Typography, Stack, Button } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, } from '@mui/material';
 import { Provider } from 'react-redux';
 import { store } from '../redux/store';
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { getAuth } from "firebase/auth";
 import { setSession, fetchCurrentUser } from '@/redux/features/auth';
+import { fetchPayments, clearPaymentRequiredAlert } from '@/redux/features/payment';
 import { firebase } from '../firebase/client'
+import { useRouter } from 'next/router';
+import { clear } from 'console';
+import { ContentPremiumPlan } from '@/components/ContentPremiumPlan';
 
 const themeLang = {
   en: {
@@ -99,7 +103,7 @@ const themeBase = {
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          fontFamily: 'var(--font-outfit)',
+          fontFamily: 'var(--font-outfit) !important',
         }
       }
     }
@@ -167,9 +171,23 @@ const theme = createTheme({
 
 function AppCore({ Component, pageProps }: AppProps) {
   const dispatch = useAppDispatch()
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [isInit, setIsInit] = useState(false)
   const [error, setError] = useState(null)
+  const paymentRequiredAlert = useAppSelector((state) => state.payment.paymentRequiredAlert)
+
+  const handleClickPayment = () => {
+    router.push("/plan")
+  }
+
+  const handleClosePaymentRequiredModal = () => {
+    dispatch(clearPaymentRequiredAlert())
+  }
+
+  const handleUpgrade = () => {
+    window.open(process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK, "_blank")
+  }
 
   useEffect(() => {
     try {
@@ -185,6 +203,7 @@ function AppCore({ Component, pageProps }: AppProps) {
           dispatch(fetchCurrentUser({
             accessToken: accessToken,
           }))
+          dispatch(fetchPayments())
 
         } else {
           dispatch(setSession(null))
@@ -201,6 +220,35 @@ function AppCore({ Component, pageProps }: AppProps) {
 
   return (
     <main className={`${crimsonText.className} ${outfit.className}`}>
+      <Modal
+        open={!!paymentRequiredAlert}
+        onClose={handleClosePaymentRequiredModal}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        className={outfit.className}
+      >
+        <Stack
+          sx={{
+            background: "#fff",
+            borderRadius: 8,
+            height: "auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 4,
+          }}
+          spacing={2}
+        >
+          <Typography>{paymentRequiredAlert}</Typography>
+          <ContentPremiumPlan
+            handleUpgrade={handleUpgrade}
+          />
+          {/* <Button variant="contained" onClick={handleClickPayment} sx={{ color: "#fff" }}>プレミアムプランに加入する</Button> */}
+        </Stack>
+      </Modal>
       <Component {...pageProps} />
     </main>
   )

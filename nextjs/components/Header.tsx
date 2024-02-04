@@ -1,11 +1,17 @@
 import { useState } from "react";
-import { Avatar, AppBar, Toolbar, Typography, Button, Menu, MenuItem, Box, Stack } from "@mui/material";
+import { Avatar, AppBar, Toolbar, Typography, Button, Menu, MenuItem as MenuItemCore, Box, Stack } from "@mui/material";
 import Link from 'next/link';
 import { RiGlobalLine } from "react-icons/ri";
 import { ModalAuth } from "./ModalAuth";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { signOut } from "@/redux/features/auth";
 import { useRouter } from "next/router";
+import styled from "@emotion/styled"
+import { outfit } from '@/font';
+
+const MenuItem = styled(MenuItemCore)`
+  font-family:  "--var(font-outfit)"
+`
 
 function stringToColor(string: string) {
   let hash = 0;
@@ -61,6 +67,11 @@ export function Header() {
   const handleNavNote = () => {
     router.push("/note")
   }
+
+  const handleNavPlan = () => {
+    router.push("/plan")
+  }
+
   const handleSignout = () => {
     dispatch(signOut());
     handleMenuClose();
@@ -76,23 +87,11 @@ export function Header() {
             Orca News
           </Typography>
         </Link>
-        <Stack direction="row" sx={{ alignItems: "center" }}>
+        <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
           <Button color="inherit">
             <RiGlobalLine size={18} />
             <Typography>JA</Typography>
           </Button>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem
-              onClick={handleNavNote}
-            >
-              ノート
-            </MenuItem>
-            <MenuItem onClick={handleSignout}>サインアウト</MenuItem>
-          </Menu>
           {!currentUser &&
             <Button
               color="inherit"
@@ -112,6 +111,27 @@ export function Header() {
           )}
         </Stack>
       </Toolbar>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        style={{ fontFamily: "Outfit" }}
+        className={outfit.className}
+      >
+        <MenuItem
+          onClick={handleNavNote}
+          className={outfit.className}
+        >
+          ノート
+        </MenuItem>
+        <MenuItem
+          onClick={handleNavPlan}
+          className={outfit.className}
+        >
+          プラン
+        </MenuItem>
+        <MenuItem onClick={handleSignout} className={outfit.className}>ログアウト</MenuItem>
+      </Menu>
     </AppBar >
   );
 }

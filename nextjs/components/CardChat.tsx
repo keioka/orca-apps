@@ -32,6 +32,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 // import type { ParaphraseItem, GMCheckItem } from "~types"
 import { saveParaphrase, fetchSavedParaphrases } from '../redux/features/note';
 import { fetchParaphrases, fetchGrammarMistakes } from "@/redux/features/messages"
+import { setPaymentRequiredAlert } from "@/redux/features/payment"
+
 import styled from "@emotion/styled"
 import { ButtonSave } from "@/components/ButtonSave"
 
@@ -87,6 +89,7 @@ export function CardChat({ message, type = "ai", loading, isAutoPlay, url }: Car
   const [isLoadingTranlate, setIsLoadingTranslate] = useState(false)
   const [gmCheck, setGMCheck] = useState({})
   const [translate, setTranslate] = useState(null)
+  const isValidSubscription = useAppSelector((state) => state.payment.isValidSubscription)
 
   const dispatch = useAppDispatch()
 
@@ -138,10 +141,10 @@ export function CardChat({ message, type = "ai", loading, isAutoPlay, url }: Car
   }
 
   async function handleClickParaphrase() {
-    // if (!isValidSubscription) {
-    //   handleToggleSubscriptionForm()
-    //   return
-    // }
+    if (!isValidSubscription) {
+      dispatch(setPaymentRequiredAlert("言い換え表現を利用するには、プランをアップグレードしてください。"))
+      return
+    }
     setIsLoadingParaphrase(true)
     setCurrentTab(Tab.Paraphrase)
     checkParaphrase({ text: currentSentence })

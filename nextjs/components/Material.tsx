@@ -38,7 +38,7 @@ export function Material({ article, locale }) {
             </Box>
           </Box>
           <img alt={article.title} src={article.heroImageUrl ? article.heroImageUrl : ""} style={{ width: "100%", maxHeight: "320px", objectFit: "cover" }} />
-          <Typography sx={{ fontFamily: "Crimson Text", fontSize: "1.2rem" }} mt={0.5}>{article.localeTitle[locale] || article.title}</Typography>
+          <Typography sx={{ fontSize: "1.2rem" }} mt={0.5}>{article.localeTitle[locale] || article.title}</Typography>
           <Grid container justifyContent="space-between">
             <Grid item>
               <Box sx={{ paddingY: 0.3, paddingX: 0.5, borderRadius: 0.25 }}>

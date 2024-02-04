@@ -8,6 +8,7 @@ import videoInfo from './features/videoInfo';
 import note from './features/note';
 import publisher from './features/publishers';
 import featureFlag from './features/featureFlag';
+import payment from './features/payment';
 
 import * as Sentry from "@sentry/react";
 
@@ -45,6 +46,7 @@ export const store = configureStore({
     note: note,
     publisher: publisher,
     featureFlag: featureFlag,
+    payment: payment,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
   enhancers: [Sentry.createReduxEnhancer({})],

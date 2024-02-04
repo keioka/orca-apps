@@ -78,7 +78,7 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
                 Sign up
               </Typography>
               <Stack spacing={1}>
-                <Button variant='contained' onClick={onClickGoogleSignup} size='large'>
+                <Button variant='contained' onClick={onClickGoogleSignup} size='large' sx={{ color: "#fff" }}>
                   <Image
                     src={GoogleLogo}
                     alt="Google logo"
@@ -108,7 +108,7 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
                   onClick={onClickGoogleLogin}
                   sx={{
                     background: "#fff",
-                    fontFamily: "--var(font-outfit)"
+                    fontFamily: "--var(font-outfit)",
                   }}
                   size='large'
                 >
