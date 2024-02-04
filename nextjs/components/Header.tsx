@@ -83,9 +83,14 @@ export function Header() {
       {shouldShowModalAuth && <ModalAuth isOpen={!currentUser && shouldShowModalAuth} onClose={handleModalAuthClose} />}
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Link href="/" style={{ textDecoration: "none" }}>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: "#242424" }}>
-            Orca News
-          </Typography>
+          <Stack direction="row" justifyContent="center" alignItems="center" spacing={1}>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: "#242424" }}>
+              Orca News
+            </Typography>
+            <Typography variant="caption" component="div" sx={{ flexGrow: 1, color: "#242424" }}>
+              β版試験運転中
+            </Typography>
+          </Stack>
         </Link>
         <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
           <Button color="inherit">
