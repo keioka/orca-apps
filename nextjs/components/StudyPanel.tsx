@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchOriginalMaterial } from "@/redux/features/materials";
 import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleResponses } from "@/redux/features/lessons";
 import { fetchMessages, createAIMessage, addUserMessage } from "@/redux/features/messages";
+import { setPaymentRequiredAlert } from "@/redux/features/payment";
+
 import { InputChat } from '@/components/InputChat'
 
 const messages = [
@@ -37,6 +39,7 @@ export function StudyPanel({
   const isCreatingMessage = useAppSelector((state) => state.message.creatingMessage)
   const sampleResponses = useAppSelector((state) => state.lesson.sampleResponses)
   const loadingSampleResponses = useAppSelector((state) => state.lesson.loadingSampleResponses)
+  const isValidSubscription = useAppSelector((state) => state.payment.isValidSubscription)
 
   const [message, setMessage] = useState("")
 
@@ -78,7 +81,11 @@ export function StudyPanel({
 
   const handleFetchSamples = () => {
     if (currentLesson) {
-      dispatch(fetchSampleResponses(currentLesson.id))
+      if (isValidSubscription) {
+        dispatch(fetchSampleResponses(currentLesson.id))
+      } else {
+        dispatch(setPaymentRequiredAlert("AIの返答を見るには、プレミアム会員になる必要があります"))
+      }
     }
   }
 

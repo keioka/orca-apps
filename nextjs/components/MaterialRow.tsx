@@ -36,13 +36,12 @@ export function MaterialRow({ article, locale = 'en-US' }) {
             <Typography sx={{ fontSize: "0.7rem", textTransform: "uppercase" }}>{formatCategory[article.category]}</Typography>
           </Box> */}
           <Stack direction="row" spacing={1}>
+            <Box sx={{ flexGrow: 0 }}>
+              <Typography sx={{ fontFamily: "var(--font-outfit)", fontSize: "1rem", lineHeight: "1.3rem" }} >{article.localeTitle[locale] || article.title}</Typography>
+            </Box>
             <Box sx={{ width: "128px", height: "64px", flexGrow: 0, flexShrink: 0 }}>
               <img alt={article.title} src={article.heroImageUrl ? article.heroImageUrl : ""} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </Box>
-            <Box sx={{ flexGrow: 0 }}>
-              <Typography sx={{ fontFamily: "Crimson Text", fontSize: "1.1rem", lineHeight: "1.3rem" }} >{article.localeTitle[locale] || article.title}</Typography>
-            </Box>
-
           </Stack>
           <Grid container justifyContent="space-between">
             <Grid item>
