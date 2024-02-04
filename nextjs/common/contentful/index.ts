@@ -74,7 +74,6 @@ export function formatEntries(entries: any[]) {
 
     const cleanedArticle = getEnUS(entry)
     const jaArticle = getJaJp(entry)
-
     return {
       id: cleanedArticle.sys.id,
       title: cleanedArticle.fields.title,

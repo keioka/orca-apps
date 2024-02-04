@@ -192,6 +192,20 @@ export default function ArticleIndex({ articles }: { articles: Article[] }) {
       </Head>
       <Box sx={{ minHeight: "100vh" }} px={{ xs: 1, md: 24 }}>
         <Header />
+        {/* <Box sx={{ width: "100%", background: "#e4e4e4", height: 240, borderRadius: 4, boxSizing: "border-box" }} mb={3} p={2}>
+          <Typography variant="body1">Orcaのプレミアム機能</Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={4}>
+              <Typography>AIとの会話無制限</Typography>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Typography>単語帳保存機能や復習クイズ機能（予定）</Typography>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Typography variant="body1">AIによる返答サンプル機能</Typography>
+            </Grid>
+          </Grid>
+        </Box> */}
         <Stack
           direction="row"
           sx={{

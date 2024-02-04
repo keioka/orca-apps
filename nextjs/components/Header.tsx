@@ -10,7 +10,6 @@ import styled from "@emotion/styled"
 import { outfit } from '@/font';
 
 const MenuItem = styled(MenuItemCore)`
-  font-family:  "--var(font-outfit)"
 `
 
 function stringToColor(string: string) {
@@ -127,7 +126,7 @@ export function Header() {
           onClick={handleNavNote}
           className={outfit.className}
         >
-          ノート
+          復習ノート
         </MenuItem>
         <MenuItem
           onClick={handleNavPlan}

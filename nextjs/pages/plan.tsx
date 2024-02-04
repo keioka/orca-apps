@@ -18,6 +18,7 @@ enum Tab {
 const convertStatusToText = {
   'no_subscription': '無料プラン',
   'trialing': '無料トライアル中',
+  'active': 'プレミアムプラン',
 }
 
 export default function Plan() {
@@ -63,7 +64,7 @@ export default function Plan() {
       <Stack sx={{ mt: 2, alignItems: "center", background: "#f4f4f4", borderRadius: 1 }} p={2}>
         <Typography variant="body2">現在のプラン</Typography>
         <Typography variant="h6">{convertStatusToText[status]}</Typography>
-        {trialInfo && <Typography variant="body2">トライアル期間：{moment(trialInfo.start).format('MMMM Do YYYY, h:mm:ss a')} - {moment(trialInfo.end).format('MMMM Do YYYY, h:mm:ss a')}</Typography>}
+        {trialInfo && status === 'trialing' && <Typography variant="body2">トライアル期間：{moment(trialInfo.start).format('MMMM Do YYYY, h:mm:ss a')} - {moment(trialInfo.end).format('MMMM Do YYYY, h:mm:ss a')}</Typography>}
         {
           status !== 'no_subscription' && (
             <Stack sx={{ mt: 2, alignItems: "center", background: "#f4f4f4", borderRadius: 1 }} p={2} spacing={2}>
