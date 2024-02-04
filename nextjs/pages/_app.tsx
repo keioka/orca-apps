@@ -30,6 +30,11 @@ const themeLang = {
 
 
 const themeBase = {
+  typography: {
+    allVariants: {
+      color: "#191c29",
+    }
+  },
   palette: {
     primary: {
       main: '#2FABE8',
@@ -42,9 +47,15 @@ const themeBase = {
       red: '#FF8A60',
       lightBlue: '#DFEDF2',
       darkBlue: '#2852A4',
+      black: '#191c29',
     },
   },
   components: {
+    MuiTypography: {
+      root: {
+        color: "#191c29"
+      }
+    },
     MuiCssBaseline: {
       styleOverrides: (themeParam) => ({
         root: {
