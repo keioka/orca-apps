@@ -43,12 +43,10 @@ function getJaJp(obj) {
 }
 
 export async function getAllArticles() {
-  const result = await clientPreview.getEntries({
+  return await clientPreview.getEntries({
     content_type: "newsArticle",
     limit: 100,
   })
-
-  return result
 }
 
 export async function getEntryWithLocale(entryId: string) {
