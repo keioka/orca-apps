@@ -155,14 +155,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           ...vocab,
           translation: vocab.meaningInJapanese,
           langCode: 'ja',
-          materialId: material.id
+          materialId: newArticle.id
         }
       })
 
       console.log({ vocabParams, entry })
 
       addedVocabs = await createVocabs({
-        materialId: material.id,
+        materialId: newArticle.id,
         vocabParams
       })
     }

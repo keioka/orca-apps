@@ -181,19 +181,10 @@ const theme = createTheme({
 })
 
 function iniFrame() {
-  if (window.location !== window.parent.location) {
-    // The page is in an iFrames
-    alert("The page is in an iFrame");
-  }
-  else {
-    // The page is not in an iFrame
-    alert("The page is not in an iFrame");
-    alert(window.navigator.userAgent)
-  }
-
   // if the user agent includes LINE
   if (window.navigator.userAgent.toLowerCase().includes("line")) {
-    // Open the current page with default browser
+    alert("LINE");
+
     window.open(window.location.href, "_system");
   }
 }
