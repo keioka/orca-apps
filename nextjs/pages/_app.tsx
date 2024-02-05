@@ -180,15 +180,6 @@ const theme = createTheme({
   }
 })
 
-function iniFrame() {
-  // if the user agent includes LINE
-  if (window.navigator.userAgent.toLowerCase().includes("line")) {
-    alert("LINE");
-
-    window.open(window.location.href, "_system");
-  }
-}
-
 function AppCore({ Component, pageProps }: AppProps) {
   const dispatch = useAppDispatch()
   const router = useRouter()
@@ -212,7 +203,6 @@ function AppCore({ Component, pageProps }: AppProps) {
   useEffect(() => {
     try {
       const auth = getAuth(firebase);
-      iniFrame()
       auth.onAuthStateChanged(async (user) => {
         if (user) {
           let accessToken = user.accessToken
