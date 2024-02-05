@@ -31,11 +31,12 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 // import { toggleSubscriptionForm } from "~redux/features/ui"
 // import type { ParaphraseItem, GMCheckItem } from "~types"
 import { saveParaphrase, fetchSavedParaphrases } from '../redux/features/note';
-import { fetchParaphrases, fetchGrammarMistakes } from "@/redux/features/messages"
+import { fetchParaphrases, fetchTranslation } from "@/redux/features/messages"
 import { setPaymentRequiredAlert } from "@/redux/features/payment"
-
 import styled from "@emotion/styled"
 import { ButtonSave } from "@/components/ButtonSave"
+import mixpanel from "mixpanel-browser";
+
 
 const TypoEn = styled(Typography)`
   font-size: 16px;
@@ -83,12 +84,12 @@ export function CardChat({ message, type = "ai", loading, isAutoPlay, url }: Car
   const { currentSentence, currentSentenceIndex, numSentences, messageSentences, selectNextSentence, selectPreviousSentence } = useSentence(message.content)
   const [currentTab, setCurrentTab] = useState<Tab>(null)
   const paraphraseMap = useAppSelector(state => state.message.paraphraseMap[message.id] || {})
+  const translate = useAppSelector(state => state.message.translationMap[message.id])
   const savedParaphrases = useAppSelector(state => state.note.paraphrases)
   const [isLoadingParaphrase, setIsLoadingParaphrase] = useState(false)
   const [isLoadingGMCheck, setIsLoadingGMCheck] = useState(false)
   const [isLoadingTranlate, setIsLoadingTranslate] = useState(false)
   const [gmCheck, setGMCheck] = useState({})
-  const [translate, setTranslate] = useState(null)
   const isValidSubscription = useAppSelector((state) => state.payment.isValidSubscription)
 
   const dispatch = useAppDispatch()
@@ -129,6 +130,7 @@ export function CardChat({ message, type = "ai", loading, isAutoPlay, url }: Car
     // }
 
     // setTranslate(resp.translation)
+    dispatch(fetchTranslation({ messageId: message.id, text: message.content }))
     setIsLoadingTranslate(false)
   }
 
@@ -141,7 +143,9 @@ export function CardChat({ message, type = "ai", loading, isAutoPlay, url }: Car
   }
 
   async function handleClickParaphrase() {
+    mixpanel.track("Click Paraphrase Start")
     if (!isValidSubscription) {
+      mixpanel.track("Click Paraphrase Paywall")
       dispatch(setPaymentRequiredAlert("言い換え表現を利用するには、プランをアップグレードしてください。"))
       return
     }

@@ -14,6 +14,7 @@ import { firebase } from '../firebase/client'
 import { useRouter } from 'next/router';
 import { clear } from 'console';
 import { ContentPremiumPlan } from '@/components/ContentPremiumPlan';
+import mixpanel from "mixpanel-browser";
 
 const themeLang = {
   en: {
@@ -216,6 +217,11 @@ function AppCore({ Component, pageProps }: AppProps) {
           }))
           dispatch(fetchPayments())
 
+          mixpanel.identify(user.uid);
+          mixpanel.track("Session", {
+            uid: user.uid,
+          });
+
         } else {
           dispatch(setSession(null))
           // dispatch(resetStateAction())
@@ -266,6 +272,12 @@ function AppCore({ Component, pageProps }: AppProps) {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
+
+  useEffect(() => {
+    mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { track_pageview: true });
+    mixpanel.track("Page View");
+  }, [])
+
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>

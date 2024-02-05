@@ -6,7 +6,7 @@ import { fetchOriginalMaterial } from "@/redux/features/materials";
 import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleResponses } from "@/redux/features/lessons";
 import { fetchMessages, createAIMessage, addUserMessage } from "@/redux/features/messages";
 import { setPaymentRequiredAlert } from "@/redux/features/payment";
-
+import mixpanel from 'mixpanel-browser';
 import { InputChat } from '@/components/InputChat'
 
 const messages = [
@@ -68,24 +68,35 @@ export function StudyPanel({
   }, [currentLesson])
 
   const handleTalk = () => {
+    mixpanel.track("Talk Start");
     if (currentUser && currentLesson) {
       dispatch(addUserMessage({ lessonId: currentLesson.id, message }))
       dispatch(createAIMessage({ lessonId: currentLesson.id, message }))
       dispatch(clearSampleResponses())
       setMessage("")
+      mixpanel.track("Talk Success");
+
     } else {
+      mixpanel.track("Talk AuthWall");
       setShouldOpenModalAuth(true)
       setAlertModalAuth("AIと会話練習するにはログインしてください")
     }
   }
 
   const handleFetchSamples = () => {
+    mixpanel.track("Fetch Sample Start");
     if (currentLesson) {
       if (isValidSubscription) {
+        mixpanel.track("Fetch Sample Success");
         dispatch(fetchSampleResponses(currentLesson.id))
       } else {
-        dispatch(setPaymentRequiredAlert("AIの返答を見るには、プレミアム会員になる必要があります"))
+        mixpanel.track("Fetch Sample PayWall");
+        dispatch(setPaymentRequiredAlert("AIの返答例を見るには、プレミアム会員になる必要があります"))
       }
+    } else {
+      mixpanel.track("Fetch Sample AuthWall");
+      setShouldOpenModalAuth(true)
+      setAlertModalAuth("AIの返答例を見るには、ログインしてください")
     }
   }
 

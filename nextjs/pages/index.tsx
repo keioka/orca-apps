@@ -174,7 +174,7 @@ export default function ArticleIndex({ articles }: { articles: Article[] }) {
         <meta property="og:image:height" content="Image Height" />
         <meta property="og:image:alt" content="Image alternative text, if the image is missing" />
         <meta property="og:image:type" content="image/png (or other i.e. image/jpeg, image/gif)" />
-        <meta property="og:url" content="https://www.oudweb.com" />
+        <meta property="og:url" content="https://orcatalk.news" />
         <meta property="og:site_name" content="Orca" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="Website URL" />
@@ -183,7 +183,7 @@ export default function ArticleIndex({ articles }: { articles: Article[] }) {
         <meta name="twitter:description" content="Orca is community/website for men to find right mens skincare, haircare, and personal care products." />
         <meta name="twitter:image" content="Image of page" />
         <meta name="robots" content="index,follow" />
-        <link rel="canonical" href="https://www.oudweb.com" />
+        <link rel="canonical" href="https://orcatalk.news" />
         {/* <script
           type="application/ld+json"
           dangerouslySetInnerHTML={addProductJsonLd()}

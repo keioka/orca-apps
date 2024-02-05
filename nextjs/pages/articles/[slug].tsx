@@ -6,12 +6,8 @@ import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import Head from 'next/head'
-import Image from 'next/image';
 import { client } from '../../utils/apis/contentful'
 import { Entry } from 'contentful'
-import Link from 'next/link';
-import { renderToStaticMarkup } from 'react-dom/server'
-// import { BlogPost } from 'src/components/BlogPost'
 import { CardVocabSM } from '../../components/CardVocabSM'
 import { HiOutlineSpeakerWave } from "react-icons/hi2"
 import { MdOutlineGTranslate } from "react-icons/md";
@@ -24,7 +20,6 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { ModalAuth } from '@/components/ModalAuth';
 import { StudyPanel } from '@/components/StudyPanel';
 import { saveVocab, fetchSavedVocab, fetchSavedParaphrases } from '@/redux/features/note';
-import { CardMaterialHistory } from '@/components/CardMaterialHistory';
 import Markdown from 'react-markdown'
 import { setPaymentRequiredAlert } from '@/redux/features/payment';
 
@@ -226,7 +221,7 @@ function addArticleJsonLd({
     "@type": "BlogPosting",
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": "https://oudweb.com"
+      "@id": "https://orcatalk.news"
     },
     headline: title,
     image: [
@@ -239,12 +234,12 @@ function addArticleJsonLd({
     author: author ? [{
       "@type": "Person",
       name: author.fields.name,
-      url: `https://oudweb.com/profile/${author.fields.name}`,
+      url: `https://orcatalk.news/profile/${author.fields.name}`,
       jobTitle: author.fields.title,
     }] : null,
     publisher: {
-      name: "Oud",
-      url: "https://oudweb.com",
+      name: "Orca News",
+      url: "https://orcatalk.news",
     }
   }
 
@@ -252,7 +247,7 @@ function addArticleJsonLd({
     data["author"].push({
       "@type": "Person",
       name: proofreader.fields.name,
-      url: `https://oudweb.com/profile/${proofreader.fields.name}`,
+      url: `https://orcatalk.news/profile/${proofreader.fields.name}`,
       jobTitle: author.fields.title,
       knowsAbout: "Dermatology",
       hasCredential: "Dermatologist",
@@ -381,13 +376,17 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   }
 
   const handleSaveVocab = (vocab) => {
+    mixpanel.track("Save Vocab Start");
     if (currentUser) {
       if (isValidSubscription) {
+        mixpanel.track("Save Vocab Success");
         dispatch(saveVocab({ vocabId: vocab.dbId }))
       } else {
+        mixpanel.track("Save Vocab Paywall");
         dispatch(setPaymentRequiredAlert("単語を保存するにはプレミアム会員になる必要があります"))
       }
     } else {
+      mixpanel.track("Save Vocab AuthWall");
       setShouldOpenModalAuth(true)
       setAlert("単語を保存するにはログインしてください")
     }
