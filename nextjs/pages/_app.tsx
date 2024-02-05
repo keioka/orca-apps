@@ -15,6 +15,8 @@ import { useRouter } from 'next/router';
 import { clear } from 'console';
 import { ContentPremiumPlan } from '@/components/ContentPremiumPlan';
 import mixpanel from "mixpanel-browser";
+import LogRocket from 'logrocket'
+import setupLogRocketReact from 'logrocket-react';
 
 const themeLang = {
   en: {
@@ -244,6 +246,7 @@ function AppCore({ Component, pageProps }: AppProps) {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          padding: 24
         }}
         className={outfit.className}
       >
@@ -274,8 +277,16 @@ function AppCore({ Component, pageProps }: AppProps) {
 function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
-    mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { track_pageview: true });
-    mixpanel.track("Page View");
+    if (typeof window !== 'undefined') {
+
+      if (process.env.NODE_ENV !== "development") {
+        LogRocket.init('taiheyyo/orca-news-prod');
+        // plugins should also only be initialized when in the browser
+        setupLogRocketReact(LogRocket);
+      }
+      mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { track_pageview: true });
+      mixpanel.track("Visit Website");
+    }
   }, [])
 
   return (
