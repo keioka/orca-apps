@@ -180,6 +180,18 @@ const theme = createTheme({
   }
 })
 
+function iniFrame() {
+  if (window.location !== window.parent.location) {
+    // The page is in an iFrames
+    alert("The page is in an iFrame");
+  }
+  else {
+    // The page is not in an iFrame
+    alert("The page is not in an iFrame");
+    alert(window.navigator.userAgent)
+  }
+}
+
 function AppCore({ Component, pageProps }: AppProps) {
   const dispatch = useAppDispatch()
   const router = useRouter()
@@ -203,6 +215,7 @@ function AppCore({ Component, pageProps }: AppProps) {
   useEffect(() => {
     try {
       const auth = getAuth(firebase);
+      iniFrame()
       auth.onAuthStateChanged(async (user) => {
         if (user) {
           let accessToken = user.accessToken

@@ -1,0 +1,102 @@
+[
+  {
+    "id": "9cb9cf73-8ebc-4dd6-9568-669fd8d50fee",
+    "pos": "noun",
+    "word": "conflict",
+    "example": "The conflict between the two countries has been going on for years.",
+    "meaning": "a serious disagreement or argument",
+    "sentence": "The conflict in Gaza has had devastating consequences.",
+    "pronounce": "ˈkɒnflɪkt",
+    "meaningInJapanese": "紛争"
+  },
+  {
+    "id": "5358b9e8-56a7-42e7-b16b-0dc576115ee8",
+    "pos": "adjective",
+    "word": "devastating",
+    "example": "The hurricane had a devastating impact on the coastal town.",
+    "meaning": "causing great damage or suffering",
+    "sentence": "The conflict in Gaza has had devastating consequences.",
+    "pronounce": "ˈdɛvəsteɪtɪŋ",
+    "meaningInJapanese": "壊滅的な"
+  },
+  {
+    "id": "de6258ef-fbcb-4da1-a550-307b82037a3e",
+    "pos": "verb",
+    "word": "begin",
+    "example": "We will begin the meeting at 9 am sharp.",
+    "meaning": "start; perform or undergo the first part of (an action or activity)",
+    "sentence": "Since it began, at least 152 UNRWA staff members have been killed.",
+    "pronounce": "bɪˈɡɪn",
+    "meaningInJapanese": "始める"
+  },
+  {
+    "id": "db332ccb-ee73-41a5-96d3-baf6225a9d2f",
+    "pos": "verb",
+    "word": "kill",
+    "example": "The virus has killed thousands of people.",
+    "meaning": "cause the death of (a person, animal, or other living thing)",
+    "sentence": "Since it began, at least 152 UNRWA staff members have been killed.",
+    "pronounce": "kɪl",
+    "meaningInJapanese": "殺す"
+  },
+  {
+    "pos": "noun",
+    "uuid": "58a09411-b5cf-429e-990f-10aac63e3959",
+    "word": "consequence",
+    "example": "Eating too much processed food can have dire health consequences.",
+    "meaning": "a result of a particular action or situation, often one that is bad or not convenient",
+    "sentence": "The conflict in Gaza has had devastating consequences.",
+    "pronounce": "ˈkɑːn.sə.kwəns",
+    "referenceLink": "https://dictionary.cambridge.org/dictionary/english/consequence",
+    "referenceName": "Cambridge Dictionary",
+    "meaningInJapanese": "結果"
+  },
+  {
+    "pos": "noun ",
+    "uuid": "6f39d26c-f45e-4f43-8d7a-6c4c16141c07",
+    "word": "death toll",
+    "example": "The day after the explosion the death toll had risen to 90.",
+    "meaning": "the number of people who die because of an event such as a war or an accident",
+    "sentence": "The death toll since October 7, as reported by the Hamas-controlled health ministry, stands at 26,422, with 65,087 injured.",
+    "pronounce": "ˈdeθ ˌtoʊl",
+    "referenceLink": "https://dictionary.cambridge.org/dictionary/english/death-toll",
+    "referenceName": "Cambridge Dictionary",
+    "meaningInJapanese": "死者数"
+  },
+  {
+    "pos": "noun",
+    "uuid": "6878081b-ca39-4f9a-97c0-3de34ef6fee7",
+    "word": "injured",
+    "example": "The injured were taken to several nearby hospitals.",
+    "meaning": "people who are injured, considered as a group",
+    "sentence": "The death toll since October 7, as reported by the Hamas-controlled health ministry, stands at 26,422, with 65,087 injured.",
+    "pronounce": "ˈɪn.dʒɚd",
+    "referenceLink": "https://dictionary.cambridge.org/dictionary/english/injured",
+    "referenceName": "Cambridge Dictionary",
+    "meaningInJapanese": "負傷した"
+  },
+  {
+    "pos": "verb",
+    "uuid": "67fd3f7e-f33f-478e-9af8-eb2323c01de1",
+    "word": "stand",
+    "example": "The national debt stands at 55 billion dollars.",
+    "meaning": "to be in, cause to be in, or get into a particular state or situation",
+    "sentence": "The death toll since October 7, as reported by the Hamas-controlled health ministry, stands at 26,422, with 65,087 injured.",
+    "pronounce": "stænd",
+    "referenceLink": "https://dictionary.cambridge.org/dictionary/english/stand",
+    "referenceName": "Cambridge Dictionary",
+    "meaningInJapanese": "スタンド"
+  },
+  {
+    "pos": "noun",
+    "uuid": "2728dd53-0740-4c30-bd28-201b8472c6d7",
+    "word": "ministry",
+    "example": "All the ministries were represented at the meeting – justice, foreign affairs, economic affairs, and the interior.",
+    "meaning": "a government department led by a minister",
+    "sentence": "The death toll since October 7, as reported by the Hamas-controlled health ministry, stands at 26,422, with 65,087 injured.",
+    "pronounce": "ˈmɪn.ə.stri",
+    "referenceLink": "https://dictionary.cambridge.org/dictionary/english/ministry",
+    "referenceName": "Cambridge Dictionary",
+    "meaningInJapanese": "聖職"
+  }
+]
