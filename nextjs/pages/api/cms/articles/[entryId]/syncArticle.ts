@@ -6,8 +6,66 @@ import { fetchVocab } from '@/common/workServer/vocab'
 import { polly } from '@/common/lambda/polly'
 import { translate } from '@/utils/apis/deepL'
 import pRetry, { AbortError } from 'p-retry';
+import * as Material from '@/models/material'
+import * as Publisher from '@/models/publisher'
+
 function formatVocabData(data) {
   return { ja: data }
+}
+
+export const convertCategory = {
+  "ai": "tech",
+  "business": "business",
+  "eu_stock": "economy",
+  "fintech": "business",
+  "israel-hamas": "world_news",
+  "jp_economy": "economy",
+  "jp_news": "world_news",
+  "jp_stock": "economy",
+  "marketing": "business",
+  "metaverse": "tech",
+  "russia-ukraine": "world_news",
+  "science": "science",
+  "sdgs": "world_news",
+  "startup": "business",
+  "tech": "tech",
+  "us_stock": "economy",
+  "web3": "tech",
+  "world_economy": "economy",
+  "world_news": "world_news",
+  "general": "world_news",
+}
+
+
+
+function formatContentfulEntry(article: Entry): {
+  id: string;
+  url: string;
+  title: string;
+  slug: string;
+  category: string;
+  publishedAt: Date;
+  imageUrl: string;
+} {
+  const { fields, sys } = article
+  const { id, title, slug, publishedDate, heroImage, category } = fields
+  const file = heroImage && heroImage.fields ? heroImage.fields.file : null
+  const imageUrl = file ? file.url : null
+
+  return {
+    id: sys.id,
+    title,
+    url: process.env.ROOT_URL + "/articles/" + slug,
+    slug,
+    category: category || "general",
+    publishedAt: publishedDate ? new Date(publishedDate) : new Date(),
+    imageUrl: imageUrl ? "https:" + imageUrl : null,
+    p1Vocab: fields.p1Vocab,
+    p2Vocab: fields.p2Vocab,
+    p3Vocab: fields.p3Vocab,
+    p4Vocab: fields.p4Vocab,
+    p5Vocab: fields.p5Vocab,
+  }
 }
 
 export const maxDuration = 300; // This function can run for a maximum of 5 seconds
@@ -23,47 +81,93 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     const entryId = req.query.entryId
     const entry = await getEntry(entryId)
-    const material = await getMaterialByExternalId(entryId)
 
-    if (!material) {
-      return res.status(404).json({ message: 'Material not found' });
-    }
+    let publisher = await Publisher.getPublisherById(process.env.ORCA_PUBLISHER_ID)
 
-    const p1Vocab = Array.isArray(entry.fields.p1Vocab) ? entry.fields.p1Vocab : []
-    const p2Vocab = Array.isArray(entry.fields.p2Vocab) ? entry.fields.p2Vocab : []
-    const p3Vocab = Array.isArray(entry.fields.p3Vocab) ? entry.fields.p3Vocab : []
-    const p4Vocab = Array.isArray(entry.fields.p4Vocab) ? entry.fields.p4Vocab : []
-    const p5Vocab = Array.isArray(entry.fields.p5Vocab) ? entry.fields.p5Vocab : []
-
-    const vocabs = [
-      ...p1Vocab.map(vocab => ({ ...vocab, paragraphNumber: 1 })),
-      ...p2Vocab.map(vocab => ({ ...vocab, paragraphNumber: 2 })),
-      ...p3Vocab.map(vocab => ({ ...vocab, paragraphNumber: 3 })),
-      ...p4Vocab.map(vocab => ({ ...vocab, paragraphNumber: 4 })),
-      ...p5Vocab.map(vocab => ({ ...vocab, paragraphNumber: 5 }))
-    ]
-
-    if (!vocabs.length) {
-      return res.status(404).json({ message: 'No vocab found' })
-    }
-
-    const vocabParams = vocabs.map(vocab => {
-      return {
-        ...vocab,
-        translation: vocab.meaningInJapanese,
-        langCode: 'ja',
-        materialId: material.id
+    if (!publisher) {
+      const publishers = await Publisher.fetchAllPublishers()
+      publisher = publishers.find((publisher) => publisher.name === "Orca News")
+      if (!publisher) {
+        console.error({ publisher })
+        throw new Error("Orca News not found")
       }
-    })
+    }
 
-    console.log({ vocabParams, entry })
+    const result = await formatContentfulEntry(entry)
+    const material = await Material.getMaterialByExternalId(result.id)
 
-    const addedVocabs = await createVocabs({
-      materialId: material.id,
-      vocabParams
-    })
+    let newArticle = null
+    let addedVocabs = null
+    let isNew = false
 
-    return res.status(200).json({ vocabs: addedVocabs })
+    if (material) {
+      newArticle = await Material.updateMaterial({
+        externalId: result.id,
+        url: result.url + "?mode=embed",
+        title: result.title || "general",
+        category: convertCategory[result.category],
+        categoryExternal: result.category,
+        imageUrl: result.imageUrl,
+        type: "article",
+        slug: result.slug,
+        publisher: {
+          connect: {
+            id: process.env.ORCA_PUBLISHER_ID
+          }
+        }
+      })
+    } else {
+      isNew = true
+      newArticle = await Material.createMaterial({
+        externalId: result.id,
+        url: result.url + "?mode=embed",
+        title: result.title || "general",
+        category: convertCategory[result.category],
+        categoryExternal: result.category,
+        imageUrl: result.imageUrl,
+        publishedAt: result.publishedAt || new Date(),
+        type: "article",
+        slug: result.slug,
+        publisher: {
+          id: process.env.ORCA_PUBLISHER_ID
+        }
+      })
+      const p1Vocab = Array.isArray(entry.fields.p1Vocab) ? entry.fields.p1Vocab : []
+      const p2Vocab = Array.isArray(entry.fields.p2Vocab) ? entry.fields.p2Vocab : []
+      const p3Vocab = Array.isArray(entry.fields.p3Vocab) ? entry.fields.p3Vocab : []
+      const p4Vocab = Array.isArray(entry.fields.p4Vocab) ? entry.fields.p4Vocab : []
+      const p5Vocab = Array.isArray(entry.fields.p5Vocab) ? entry.fields.p5Vocab : []
+
+      const vocabs = [
+        ...p1Vocab.map(vocab => ({ ...vocab, paragraphNumber: 1 })),
+        ...p2Vocab.map(vocab => ({ ...vocab, paragraphNumber: 2 })),
+        ...p3Vocab.map(vocab => ({ ...vocab, paragraphNumber: 3 })),
+        ...p4Vocab.map(vocab => ({ ...vocab, paragraphNumber: 4 })),
+        ...p5Vocab.map(vocab => ({ ...vocab, paragraphNumber: 5 }))
+      ]
+
+      if (!vocabs.length) {
+        return res.status(404).json({ message: 'No vocab found' })
+      }
+
+      const vocabParams = vocabs.map(vocab => {
+        return {
+          ...vocab,
+          translation: vocab.meaningInJapanese,
+          langCode: 'ja',
+          materialId: material.id
+        }
+      })
+
+      console.log({ vocabParams, entry })
+
+      addedVocabs = await createVocabs({
+        materialId: material.id,
+        vocabParams
+      })
+    }
+
+    return res.status(200).json({ newArticle, isNew, addedVocabs })
   } else {
     return res.status(405).json({ message: 'Method not allowed' });
   }

@@ -190,6 +190,12 @@ function iniFrame() {
     alert("The page is not in an iFrame");
     alert(window.navigator.userAgent)
   }
+
+  // if the user agent includes LINE
+  if (window.navigator.userAgent.toLowerCase().includes("line")) {
+    // Open the current page with default browser
+    window.open(window.location.href, "_system");
+  }
 }
 
 function AppCore({ Component, pageProps }: AppProps) {

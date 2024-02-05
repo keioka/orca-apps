@@ -335,24 +335,31 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   // TODO: Need to refactor this for performance
   const savedVocabs = useAppSelector((state) => state.note.vocabularies)
   const isValidSubscription = useAppSelector((state) => state.payment.isValidSubscription)
+  const isFetchingMaterials = useAppSelector((state) => state.material.isFetchingMaterials)
 
   const mode = searchParams.get('mode')
 
   useEffect(() => {
     if (currentUser) {
-      setShouldOpenModalAuth(false)
-      dispatch(fetchSavedVocab())
+      if (shouldOpenModalAuth) {
+        setShouldOpenModalAuth(false)
+      }
+      if (savedVocabs.length === 0) {
+        dispatch(fetchSavedVocab())
+      }
     }
   }, [currentUser])
 
   useEffect(() => {
-    if (article) {
+    if (article && !isFetchingMaterials && !currentOpenedOriginalMaterial) {
       dispatch(fetchOriginalMaterial({ externalId: article.sys.id }))
     }
-  }, [article])
+  }, [article, isFetchingMaterials, currentOpenedOriginalMaterial])
 
   useEffect(() => {
-    dispatch(fetchVocabs({ materialId: currentOpenedOriginalMaterial?.id }))
+    if (currentOpenedOriginalMaterial && vocabsFromDB.length === 0) {
+      dispatch(fetchVocabs({ materialId: currentOpenedOriginalMaterial?.id }))
+    }
   }, [currentOpenedOriginalMaterial])
 
 
