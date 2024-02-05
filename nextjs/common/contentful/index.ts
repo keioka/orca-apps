@@ -81,18 +81,29 @@ export function formatEntries(entries: any[]) {
       description: cleanedArticle.fields.description,
       content: cleanedArticle.fields.content,
       publishedDate: cleanedArticle.fields.publishedDate,
+
       p1Exists: cleanedArticle.fields.p1 && cleanedArticle.fields.p1.length > 0 ? true : false,
+      p1VocabCount: cleanedArticle.fields.p1Vocab.length,
       p1JaExists: jaArticle.fields.p1 && jaArticle.fields.p1.length > 0 ? true : false,
       p1AudioLink: cleanedArticle.fields.p1AudioLink,
+
+      p2VocabCount: cleanedArticle.fields.p2Vocab.length,
       p2Exists: cleanedArticle.fields.p2 && cleanedArticle.fields.p2.length > 0 ? true : false,
       p2AudioLink: cleanedArticle.fields.p2AudioLink,
       p2JaExists: jaArticle.fields.p2 && jaArticle.fields.p2.length > 0 ? true : false,
+
+      p3VoabCount: cleanedArticle.fields.p3Vocab.length,
       p3Exists: cleanedArticle.fields.p3 && cleanedArticle.fields.p3.length > 0 ? true : false,
       p3AudioLink: cleanedArticle.fields.p3AudioLink,
+
+      p4VoabCount: cleanedArticle.fields.p4Vocab.length,
       p4Exists: cleanedArticle.fields.p4 && cleanedArticle.fields.p4.length > 0 ? true : false,
       p4AudioLink: cleanedArticle.fields.p4AudioLink,
+
+      p5VoabCount: cleanedArticle.fields.p5Vocab.length,
       p5Exists: cleanedArticle.fields.p5 && cleanedArticle.fields.p5.length > 0 ? true : false,
       p5AudioLink: cleanedArticle.fields.p5AudioLink,
+
       p6Exists: cleanedArticle.fields.p6 && cleanedArticle.fields.p6.length > 0 ? true : false,
       p6AudioLink: cleanedArticle.fields.p6AudioLink,
       // heroImage: {
