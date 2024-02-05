@@ -178,6 +178,7 @@ export async function syncContentful() {
             categoryExternal: result.category,
             imageUrl: result.imageUrl,
             type: "article",
+            slug: result.slug,
             publisher: {
               connect: {
                 id: process.env.ORCA_PUBLISHER_ID
@@ -194,6 +195,7 @@ export async function syncContentful() {
             imageUrl: result.imageUrl,
             publishedAt: result.publishedAt || new Date(),
             type: "article",
+            slug: result.slug,
             publisher: {
               id: process.env.ORCA_PUBLISHER_ID
             }

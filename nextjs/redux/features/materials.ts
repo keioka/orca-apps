@@ -140,11 +140,11 @@ const materialsSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(fetchOriginalMaterial.pending, (state) => {
-        state.isFetchingMaterials = false;
+        state.isFetchingMaterials = true;
         state.error = null;
       })
       .addCase(fetchOriginalMaterial.fulfilled, (state, action) => {
-        state.isFetchingMaterials = true;
+        state.isFetchingMaterials = false;
         state.error = null;
         state.currentOpenedOriginalMaterial = action.payload;
       })
