@@ -28,6 +28,7 @@ import { HiOutlineSpeakerWave } from "react-icons/hi2"
 import { IoBookmark } from "react-icons/io5";
 import { BiSolidRightArrow } from "react-icons/bi";
 import { ButtonSave } from "@/components/ButtonSave";
+import mixpanel from 'mixpanel-browser';
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />

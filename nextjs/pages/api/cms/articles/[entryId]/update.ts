@@ -178,7 +178,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 function removeCitations(paragraph: string): string {
   // Regular expression to match citation patterns like [1], [1,2], (1), (1,2)
-  const citationPattern = /\[\d+(,\d+)*\]|\(\d+(,\d+)*\)/g;
+  const citationPattern = /\[\d+(,\d+)*\]|\(\d+(,\d+)*\)|\【\d+(,\d+)*\】/g;
 
   // Replace the matched patterns with an empty string
   return paragraph.replace(citationPattern, '').trim();

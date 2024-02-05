@@ -6,6 +6,7 @@ import { IoClose } from "react-icons/io5";
 import GoogleLogo from "@/assets/images/google.svg"
 import Image from 'next/image';
 import { outfit } from '@/font'
+import mixpanel from "mixpanel-browser";
 
 const locale = {
 
@@ -23,10 +24,12 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
 
   function onClickGoogleSignup() {
     dispatch(signUpWithGoogle());
+    mixpanel.track("SignUp");
   }
 
   function onClickGoogleLogin() {
     dispatch(loginWithGoogle());
+    mixpanel.track("Login");
   }
 
   function onCopyUrl() {
@@ -36,7 +39,6 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
   function toggleSignup() {
     setIsSignup(!isSignup);
   }
-
 
   return (
     <Modal

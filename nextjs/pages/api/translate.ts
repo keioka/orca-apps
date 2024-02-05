@@ -1,27 +1,13 @@
 import axios from "axios";
 const DEEPL_API_ENDPOINT = 'https://api-free.deepl.com/v2/translate';
 const USER_AGENT = 'YourApp/1.2.3';  // Replace with your application's user agent
+import { translate } from '@/utils/apis/deepL'
 
-async function translateText(text: string, targetLang: string): Promise<string> {
+async function translateText(text: string, targetLang: string = 'ja'): Promise<string> {
   try {
-    const response = await axios.post(
-      DEEPL_API_ENDPOINT,
-      {
-        text: [text],
-        target_lang: targetLang
-      },
-      {
-        headers: {
-          'Authorization': `DeepL-Auth-Key ${process.env.DEEPL_AUTH_KEY}`,
-          'User-Agent': USER_AGENT,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    const translations = response.data.translations;
-    if (translations && translations.length > 0) {
-      return translations[0].text;
+    [{ text }] = await translate({ texts: [text], targetLang })
+    if (text) {
+      return text
     } else {
       throw new Error('No translations received from DeepL');
     }
