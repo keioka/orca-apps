@@ -29,7 +29,6 @@ init()
 export const validateToken = async (req: NextApiRequest, res: NextApiResponse): Promise<{ error: { code: string, message: string } | null }> => {
   // Extract the token from the request headers
   try {
-    console.log({ wowow: req.headers })
     const token = req.headers.authorization?.split('Bearer ')[1];
     if (!token) {
       throw new Error('No token found')
