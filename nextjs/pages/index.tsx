@@ -252,9 +252,7 @@ export default function ArticleIndex({ articles }: { articles: Article[] }) {
             )
           })}
         </Grid>
-        {Object.keys(articlesByCategory).sort((a, b) => {
-          return categoryJaOrder.indexOf(a) - categoryJaOrder.indexOf(b)
-        }).map((category) => (
+        {categoryJaOrder.map((category) => (
           <SectionPastArticles articlesByCategory={articlesByCategory} category={category} locale={locale} />
         ))}
       </Box>
@@ -266,11 +264,16 @@ function SectionPastArticles({ articlesByCategory, category, locale }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const articles = articlesByCategory[category]
 
+  if (!articles || articles.length === 0) {
+    return null
+  }
+
   const articlesToShow = isExpanded ? articles : articles.slice(0, 6)
 
   const handleExpandClick = () => {
     setIsExpanded(!isExpanded);
   }
+
 
   return (
     <Box id={`${category}`} key={category}>

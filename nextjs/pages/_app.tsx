@@ -279,7 +279,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
 
-      if (process.env.NODE_ENV !== "development") {
+      if (process.env.APP_ENV !== "production") {
         LogRocket.init('taiheyyo/orca-news-prod');
         // plugins should also only be initialized when in the browser
         setupLogRocketReact(LogRocket);
