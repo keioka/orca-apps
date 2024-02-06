@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from "next/document";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 export default function Document() {
   return (
@@ -8,23 +9,11 @@ export default function Document() {
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
         />
-        {process.env.APP_ENV == 'production' &&
-          (
-            <>
-              <script async src="https://www.googletagmanager.com/gtag/js?id=G-NE6PCSKN7W"></script>
-              <script>
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date())
-                gtag('config', 'G-NE6PCSKN7W');
-              </script>
-            </>
-          )
-        }
       </Head>
       <body>
         <Main />
         <NextScript />
+        {process.env.APP_ENV == 'production' && <GoogleAnalytics gaId='G-NE6PCSKN7W' />}
       </body>
     </Html>
   );

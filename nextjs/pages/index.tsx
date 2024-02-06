@@ -108,20 +108,21 @@ function getArticlesArrByDate(articlesByPublishedDate) {
 const categoryJaOrder = [
   "jp_news",
   "jp_economy",
-  "jp_stock",
+  // "jp_stock",
   "world_news",
   "world_economy",
   "us_stock",
-  "eu_stock",
-  "russia_ukraine",
+
+  // "eu_stock",
+  // "russia_ukraine",
   "business",
-  "marketing",
+  // "marketing",
   "tech",
-  "fintech",
+  "science",
+  // "fintech",
   "web3",
   "metaverse",
-  "sdgs",
-  "science",
+  // "sdgs",
 ]
 
 export default function ArticleIndex({ articles }: { articles: Article[] }) {
@@ -251,7 +252,9 @@ export default function ArticleIndex({ articles }: { articles: Article[] }) {
             )
           })}
         </Grid>
-        {Object.keys(articlesByCategory).map((category) => (
+        {Object.keys(articlesByCategory).sort((a, b) => {
+          return categoryJaOrder.indexOf(a) - categoryJaOrder.indexOf(b)
+        }).map((category) => (
           <SectionPastArticles articlesByCategory={articlesByCategory} category={category} locale={locale} />
         ))}
       </Box>
