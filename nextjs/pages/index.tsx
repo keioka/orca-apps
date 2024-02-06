@@ -164,11 +164,11 @@ export default function ArticleIndex({ articles }: { articles: Article[] }) {
     <>
       <Head>
         <title>Orca  | News for ESL students</title>
-        <meta name="title" content="Orca | Mens skincare, haircare" />
-        <meta name="description" content="Orca is community/website for men to find right mens skincare, haircare, and personal care products." />
-        <meta property="og:title" content=" | Mens skincare, haircare" />
-        <meta property="og:locale" content="en_GB (or other locality code)" />
-        <meta property="og:description" content="Orca is community/website for men to find right mens skincare, haircare, and personal care products." />
+        <meta name="title" content="Orca | Learn English from 3 minutes news with AI" />
+        <meta name="description" content="Orca." />
+        <meta property="og:title" content="Orca | 3 minutes news for English learners" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:description" content="Orca is news website where you can learn English with AI" />
         <meta property="og:image" content="Image URL representing Orca" />
         <meta property="og:image:width" content="Image Width" />
         <meta property="og:image:height" content="Image Height" />
@@ -180,7 +180,7 @@ export default function ArticleIndex({ articles }: { articles: Article[] }) {
         <meta name="twitter:site" content="Website URL" />
         <meta name="twitter:title" content="Title for page" />
         <meta name="twitter:creator" content="Your Twitter Handle" />
-        <meta name="twitter:description" content="Orca is community/website for men to find right mens skincare, haircare, and personal care products." />
+        <meta name="twitter:description" content="Orca is news website where you can learn English with AI" />
         <meta name="twitter:image" content="Image of page" />
         <meta name="robots" content="index,follow" />
         <link rel="canonical" href="https://orcatalk.news" />
