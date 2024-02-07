@@ -22,6 +22,7 @@ import { StudyPanel } from '@/components/StudyPanel';
 import { saveVocab, fetchSavedVocab, fetchSavedParaphrases } from '@/redux/features/note';
 import Markdown from 'react-markdown'
 import { setPaymentRequiredAlert } from '@/redux/features/payment';
+import mixpanel from 'mixpanel-browser';
 
 export const config = {
   amp: 'hybrid',
@@ -357,6 +358,10 @@ export default function Article({ article, relatedArticles, body, notFound, slug
       dispatch(fetchVocabs({ materialId: currentOpenedOriginalMaterial?.id }))
     }
   }, [currentOpenedOriginalMaterial])
+
+  useEffect(() => {
+    mixpanel.track("Article Viewed", {})
+  }, [])
 
 
   // const savedVocabIdsInMaterial = useMemo(() => savedVocabs.filter(() => saveVocab).map((v) => v.id), [vocabsFromDB, savedVocabs])
