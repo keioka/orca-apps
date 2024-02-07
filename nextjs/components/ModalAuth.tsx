@@ -19,7 +19,6 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
   const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage);
 
   useEffect(() => {
-    console.log("userAgent", window.navigator.userAgent)
     if (window && window.navigator) {
       setIsInvalidBrowser(
         window.navigator.userAgent.toLowerCase().includes("line") ||
@@ -40,7 +39,9 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
   }
 
   function onCopyUrl() {
-    navigator.clipboard.writeText(window.location.href)
+    if (window && window.navigator) {
+      navigator.clipboard.writeText(window.location.href)
+    }
   }
 
   function toggleSignup() {
