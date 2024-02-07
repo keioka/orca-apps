@@ -521,7 +521,8 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               proofreader,
               author,
               article,
-            })}
+            })
+          }
           key="product-jsonld"
         />
       </Head>
