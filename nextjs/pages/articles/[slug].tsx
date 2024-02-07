@@ -331,6 +331,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   const savedVocabs = useAppSelector((state) => state.note.vocabularies)
   const isValidSubscription = useAppSelector((state) => state.payment.isValidSubscription)
   const isFetchingMaterials = useAppSelector((state) => state.material.isFetchingMaterials)
+  const isFailedToFetchOriginalMaterialsByExternalId = useAppSelector((state) => state.material.isFailedToFetchOriginalMaterialsByExternalId[article.sys.id])
 
   const mode = searchParams.get('mode')
 
@@ -346,7 +347,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   }, [currentUser])
 
   useEffect(() => {
-    if (article && !isFetchingMaterials && !currentOpenedOriginalMaterial) {
+    if (article && !isFetchingMaterials && !currentOpenedOriginalMaterial && !isFailedToFetchOriginalMaterialsByExternalId) {
       dispatch(fetchOriginalMaterial({ externalId: article.sys.id }))
     }
   }, [article, isFetchingMaterials, currentOpenedOriginalMaterial])

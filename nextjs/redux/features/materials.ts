@@ -20,6 +20,7 @@ interface MaterialsState {
   currentOpenedOriginalMaterial: Material | null;
   searchResult: Material[];
   originalItems: Material[];
+  isFailedToFetchOriginalMaterialsByExternalId: { [key: string]: boolean };
   isInitMaterials: boolean;
   isFetchingMaterials: boolean;
   isFetchingSummary: boolean;
@@ -41,6 +42,7 @@ const initialState: MaterialsState = {
   },
   vocabs: {},
   summaries: {},
+  isFailedToFetchOriginalMaterialsByExternalId: {},
   isInitMaterials: false,
   isFetchingMaterials: false,
   isFetchingSummary: false,
@@ -150,6 +152,9 @@ const materialsSlice = createSlice({
       })
       .addCase(fetchOriginalMaterial.rejected, (state, action) => {
         state.isFetchingMaterials = false;
+        state.isFailedToFetchOriginalMaterialsByExternalId = {
+          [action.payload.externalId]: true
+        };
         state.error = action.payload as string;
       })
       .addMatcher(
@@ -208,7 +213,7 @@ export const fetchMaterials = createAsyncThunk<Material[], void>(
       // Create a new cancel token source
       cancelTokenSource = axios.CancelToken.source();
 
-      const response = await axios(`${ROOT_URL}/api/materials`, {
+      const response = await axios(`/api/materials`, {
         params: params,
         paramsSerializer: params => {
           return qs.stringify(params, { arrayFormat: 'repeat' })
@@ -242,7 +247,7 @@ export const fetchOriginalMaterials = createAsyncThunk<Material[], void>(
   'materials/fetchOriginalMaterials',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios(`${ROOT_URL}/api/materials/original`); // Replace with your API endpoint
+      const response = await axios(`/api/materials/original`); // Replace with your API endpoint
 
       const data = response.data;
 
@@ -264,11 +269,9 @@ export const fetchOriginalMaterial = createAsyncThunk<Material[], void>(
     try {
 
       const material = await getMaterialByExternalId({ id: externalId })
-
-      // if (!data || !data.materials) {
-      //   return rejectWithValue('Failed to fetch materials')
-      // }
-
+      if (!material) {
+        return rejectWithValue({ externalId: externalId })
+      }
       return material;
     } catch (error) {
       console.error(error)
@@ -286,7 +289,7 @@ export const searchMaterials = createAsyncThunk<Material[], void>(
   'materials/searchMaterials',
   async (params: SeachMaterialParams, { rejectWithValue }) => {
     try {
-      const response = await axios(`${ROOT_URL}/api/materials/search`, {
+      const response = await axios(`/api/materials/search`, {
         params: params,
       }); // Replace with your API endpoint
 
@@ -314,7 +317,7 @@ export const createVocabs = createAsyncThunk<Material[], void>(
   'materials/createVocabs',
   async (params: FetchVocabsParams, { rejectWithValue }) => {
     try {
-      const response = await axios(`${ROOT_URL}/api/vocabs`, {
+      const response = await axios(`/api/vocabs`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
@@ -360,7 +363,7 @@ export const fetchSummaries = createAsyncThunk<Material[], void>(
   'materials/fetchSummaries',
   async ({ materialId, levels }: FetchSummariesParams, { rejectWithValue }) => {
     try {
-      const response = await axios(`${ROOT_URL}/api/summary`, {
+      const response = await axios(`/api/summary`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
