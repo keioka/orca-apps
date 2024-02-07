@@ -179,18 +179,24 @@ export function CardVocabSM({
   const material = vocab.material;
 
   function handlePlayAudio() {
-    const voices = synth.getVoices();
-    const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
+    try {
+      const synth = window.speechSynthesis;
+      const voices = synth.getVoices();
+      const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
 
-    const utterance = new SpeechSynthesisUtterance(vocab.word);
-    utterance.lang = "en-US";
+      const utterance = new SpeechSynthesisUtterance(content);
+      utterance.lang = "en-US";
 
-    if (englishVoices.length) {
-      utterance.voice = englishVoices.find(voice => voice.name === 'Google US English');
+      if (englishVoices.length) {
+        utterance.voice = englishVoices.find(voice => voice.name === 'Google US English');
+      }
+
+      synth.speak(utterance);
+    } catch (err) {
+      console.error(err)
     }
-
-    synth.speak(utterance);
   }
+
 
   function handleClickSave() {
     onSaveVocab(vocab)
