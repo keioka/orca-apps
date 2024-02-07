@@ -1,10 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import * as Material from '@/models/material';
+import { syncArticleByExternalId } from '@/common/contentful/syncArticle';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { externalId } = req.query
-    const material = await Material.getMaterialByExternalId(externalId)
+    let material = await Material.getMaterialByExternalId(externalId)
+    if (!material) {
+      const { newArticle } = await syncArticleByExternalId(externalId as string)
+      return res.status(200).json({ newArticle })
+    }
     res.status(200).json(material)
   } catch (error) {
     console.error(error)
