@@ -21,7 +21,11 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
   useEffect(() => {
     console.log("userAgent", window.navigator.userAgent)
     if (window && window.navigator) {
-      setIsInvalidBrowser(window.navigator.userAgent.toLowerCase().includes("line"))
+      setIsInvalidBrowser(
+        window.navigator.userAgent.toLowerCase().includes("line") ||
+        window.navigator.userAgent.toLowerCase().includes("instagram") ||
+        window.navigator.userAgent.toLowerCase().includes("facebook")
+      )
     }
   }, [])
 
@@ -156,6 +160,7 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
                 </Stack>
               </Stack>
             }
+            <Typography sx={{ fontSize: 12, color: "#aaaaaa" }}>{window.navigator.userAgent}</Typography>
           </Box>
         </>
       </Box>
