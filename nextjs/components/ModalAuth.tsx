@@ -161,7 +161,7 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
                 </Stack>
               </Stack>
             }
-            <Typography sx={{ fontSize: 12, color: "#aaaaaa" }}>{window.navigator.userAgent}</Typography>
+            <Typography sx={{ fontSize: 12, color: "#aaaaaa" }}>{typeof window !== "undefined" && window.navigator.userAgent}</Typography>
           </Box>
         </>
       </Box>
