@@ -19,7 +19,7 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
   const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage);
 
   useEffect(() => {
-    if (window && window.navigator) {
+    if (typeof window !== "undefined" && window.navigator) {
       setIsInvalidBrowser(
         window.navigator.userAgent.toLowerCase().includes("line") ||
         window.navigator.userAgent.toLowerCase().includes("instagram") ||
@@ -39,7 +39,7 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
   }
 
   function onCopyUrl() {
-    if (window && window.navigator) {
+    if (typeof window !== "undefined" && window.navigator) {
       navigator.clipboard.writeText(window.location.href)
     }
   }
