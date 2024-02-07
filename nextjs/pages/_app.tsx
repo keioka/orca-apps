@@ -274,17 +274,17 @@ function AppCore({ Component, pageProps }: AppProps) {
   )
 }
 
+mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { track_pageview: true });
+
 function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-
-      if (process.env.APP_ENV !== "production") {
+      if (process.env.APP_ENV === "production") {
         LogRocket.init('taiheyyo/orca-news-prod');
         // plugins should also only be initialized when in the browser
         setupLogRocketReact(LogRocket);
       }
-      mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { track_pageview: true });
       mixpanel.track("Visit Website");
     }
   }, [])
