@@ -19,7 +19,10 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
   const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage);
 
   useEffect(() => {
-    setIsInvalidBrowser(window.navigator.userAgent.toLowerCase().includes("line"))
+    console.log("userAgent", window.navigator.userAgent)
+    if (window && window.navigator) {
+      setIsInvalidBrowser(window.navigator.userAgent.toLowerCase().includes("line"))
+    }
   }, [])
 
   function onClickGoogleSignup() {
