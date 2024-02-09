@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Card, List, Title, Paragraph, Button } from 'react-native-paper';
-import { Text } from '../components/Text';
+import { Text } from '@/components/Text';
 
 interface CardSummaryProps {
   content: string;

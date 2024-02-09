@@ -2,6 +2,7 @@ import type { AWS } from '@serverless/typescript';
 
 import { hello } from './src/functions';
 import { polly } from './src/functions';
+import { chatPolly } from './src/functions';
 
 const serverlessConfiguration: AWS = {
   service: 'aws',
@@ -30,7 +31,8 @@ const serverlessConfiguration: AWS = {
   },
   functions: {
     hello,
-    polly
+    polly,
+    chatPolly,
   }
 }
 

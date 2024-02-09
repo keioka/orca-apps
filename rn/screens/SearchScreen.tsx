@@ -1,13 +1,13 @@
 import { useState, useCallback } from 'react';
 import { StyleSheet, ScrollView, View, RefreshControl } from 'react-native';
-import { CardArticle } from '../components/CardArticle';
-import { UserStats } from '../components/UserStats';
+import { CardArticle } from '@/components/CardArticle';
+import { UserStats } from '@/components/UserStats';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useEffect } from 'react';
 import { fetchLessons, createLesson } from '../redux/features/lessons';
 import { fetchCurrentUserStats } from '../redux/features/auth';
 import { i18n } from '../locales';
-import { Text } from '../components/Text';
+import { Text } from '@/components/Text';
 import LottieView from 'lottie-react-native';
 
 export function SearchScreen({ navigation }) {

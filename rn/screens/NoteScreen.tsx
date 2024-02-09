@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native';
-import { CardVocab } from '../components/CardVocab';
+import { CardVocab } from '@/components/CardVocab';
 import { vocab, phrases, grammar } from '../helpers/dummy';
-import { CardPhrase } from '../components/CardPhrase';
-import { CardGrammar } from '../components/CardGrammar';
+import { CardPhrase } from '@/components/CardPhrase';
+import { CardGrammar } from '@/components/CardGrammar';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchSavedVocab, fetchSavedParaphrases } from '../redux/features/note';
-import { Text } from '../components/Text';
+import { Text } from '@/components/Text';
 import { i18n } from '../locales';
 
 enum NoteTab {

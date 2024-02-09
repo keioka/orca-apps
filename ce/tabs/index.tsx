@@ -323,8 +323,6 @@ function Search() {
     setSelectedCategory(category)
   }
 
-  console.log({ publishersFiltered })
-
   return (
     <Stack spacing={6}>
       <Stack sx={{ background: "#f4f4f4", justifyContent: "center", alignItems: "center", padding: 2, borderRadius: 1 }} spacing={1}>

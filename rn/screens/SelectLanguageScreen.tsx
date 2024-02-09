@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import SelectDropdown from 'react-native-select-dropdown'
-import { Text } from '../components/Text'
+import { Text } from '@/components/Text'
 import { Button } from 'react-native-paper'
 
 export function SelectLanguageScreen() {

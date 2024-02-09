@@ -25,7 +25,7 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-  // i18n,
+  i18n,
   webpack(config, { isServer }) {
     config.module.rules.push({
       test: /\.ttf$/,
@@ -65,7 +65,7 @@ const nextConfig = {
   },
 }
 
-export default withSentryConfig(
+const config = withSentryConfig(
   nextConfig,
   {
     // For all available options, see:
@@ -96,3 +96,5 @@ export default withSentryConfig(
     disableLogger: true,
   }
 );
+
+export default config;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { TalkMode } from '../components/TalkMode';
+import { TalkMode } from '@/components/TalkMode';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchLesson } from '../redux/features/lessons';
 import { fetchMessages, createMessage, addMessage } from '../redux/features/messages';

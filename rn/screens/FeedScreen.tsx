@@ -1,14 +1,14 @@
 import { useRef, useState, useEffect, useMemo, useCallback, } from 'react';
 import { StyleSheet, ScrollView, SafeAreaView, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Modal, Portal, Snackbar, Button, Menu } from 'react-native-paper';
-import { CardArticle } from '../components/CardArticle';
+import { CardArticle } from '@/components/CardArticle';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchMaterials, fetchOriginalMaterials, clearError } from '../redux/features/materials';
 import { createLesson, clearCreatedLessonId, clearError as clearErrorLesson } from '../redux/features/lessons';
 import { signOut, toggleFeatureFlag } from '../redux/features/auth';
 import { clearHasSuccessCreateFollow, fetchFollowPublishers } from '../redux/features/publishers';
 import { categories } from '../helpers/categories';
-import { Text } from '../components/Text';
+import { Text } from '@/components/Text';
 import { fetchLessons } from '../redux/features/lessons';
 import * as Updates from 'expo-updates';
 import { Feather } from '@expo/vector-icons';
@@ -17,8 +17,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { analytics, ACTION } from '../helpers/mixpanel';
 import { Linking } from "react-native";
 import { i18n } from '../locales';
-import { NewsCarousel } from '../components/NewsCarousel';
-import { SearchMaterials } from '../components/SearchMaterials';
+import { NewsCarousel } from '@/components/NewsCarousel';
+import { SearchMaterials } from '@/components/SearchMaterials';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 interface OffsetByCategory {
