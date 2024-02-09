@@ -935,7 +935,7 @@ export async function getServerSideProps({ params, locale = 'en' }) {
       [
         'common',
       ],
-      null,
+      nextI18NextConfig,
       [
         'en',
         'ja'

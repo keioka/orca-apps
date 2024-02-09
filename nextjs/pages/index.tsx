@@ -12,6 +12,7 @@ import { MaterialRow } from '../components/MaterialRow'
 import { Chip } from '../components/Chip'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
+import nextI18NextConfig from '@/next-i18next.config.cjs'
 
 const BlogLayout = styled(Box)`
   overflow: auto;
@@ -258,11 +259,8 @@ export async function getServerSideProps({ params, locale = 'en' }) {
       [
         'common',
       ],
-      null,
-      [
-        'en',
-        'ja'
-      ]
+      nextI18NextConfig,
+      ['en', 'ja']
     )
   )
 
