@@ -18,6 +18,7 @@ import mixpanel from "mixpanel-browser";
 import LogRocket from 'logrocket'
 import setupLogRocketReact from 'logrocket-react';
 import { appWithTranslation } from 'next-i18next'
+import nextI18NextConfig from '@/next-i18next.config.cjs'   /// <- mjs here
 
 const themeLang = {
   en: {
@@ -299,4 +300,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default appWithTranslation(MyApp)
+export default appWithTranslation(MyApp, nextI18NextConfig)

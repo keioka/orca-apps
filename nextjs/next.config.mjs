@@ -25,7 +25,7 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-  i18n,
+  ...i18n,
   webpack(config, { isServer }) {
     config.module.rules.push({
       test: /\.ttf$/,
