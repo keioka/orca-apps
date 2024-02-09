@@ -7,6 +7,7 @@ import {
 } from "@mui/material"
 import { IoMicOutline, IoSquare } from "react-icons/io5";
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'next-i18next'
 
 export function InputChat({
   onSubmit,
@@ -19,6 +20,7 @@ export function InputChat({
   const theme = useTheme();
   const [isSpeeching, setIsSpeeching] = useState(false)
   const micObjectRef = useRef(null)
+  const { t } = useTranslation('common')
 
   function handleEventSpeech(event) {
     const result = event.results
@@ -116,7 +118,7 @@ export function InputChat({
               }}
               onClick={onClickFetchSamples}
             >
-              AIの返答例
+              {t('inputChat.fetchSampleButton')}
               {/* {chrome.i18n.getMessage("chat_talk_clear_button")} */}
             </Button>
             <Button
@@ -131,7 +133,7 @@ export function InputChat({
               }}
               onClick={onClearInput}
             >
-              クリア
+              {t('inputChat.clearButton')}
               {/* {chrome.i18n.getMessage("chat_talk_clear_button")} */}
             </Button>
             <Button
@@ -145,7 +147,7 @@ export function InputChat({
               }}
               onClick={onSubmit}
             >
-              話す
+              {t("inputChat.talk")}
               {/* {chrome.i18n.getMessage("chat_talk_button")} */}
             </Button>
           </Stack>

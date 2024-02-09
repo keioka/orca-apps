@@ -36,7 +36,7 @@ import { setPaymentRequiredAlert } from "@/redux/features/payment"
 import styled from "@emotion/styled"
 import { ButtonSave } from "@/components/ButtonSave"
 import mixpanel from "mixpanel-browser";
-
+import { useTranslation } from "next-i18next"
 
 const TypoEn = styled(Typography)`
   font-size: 16px;
@@ -91,7 +91,6 @@ export function CardChat({ message, type = "ai", loading, isAutoPlay, url }: Car
   const [isLoadingTranlate, setIsLoadingTranslate] = useState(false)
   const [gmCheck, setGMCheck] = useState({})
   const isValidSubscription = useAppSelector((state) => state.payment.isValidSubscription)
-
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -144,11 +143,11 @@ export function CardChat({ message, type = "ai", loading, isAutoPlay, url }: Car
 
   async function handleClickParaphrase() {
     mixpanel.track("Click Paraphrase Start")
-    if (!isValidSubscription) {
-      mixpanel.track("Click Paraphrase Paywall")
-      dispatch(setPaymentRequiredAlert("言い換え表現を利用するには、プランをアップグレードしてください。"))
-      return
-    }
+    // if (!isValidSubscription) {
+    //   mixpanel.track("Click Paraphrase Paywall")
+    //   dispatch(setPaymentRequiredAlert("言い換え表現を利用するには、プランをアップグレードしてください。"))
+    //   return
+    // }
     setIsLoadingParaphrase(true)
     setCurrentTab(Tab.Paraphrase)
     checkParaphrase({ text: currentSentence })
@@ -248,9 +247,11 @@ export function CardChatPure({
   messageSentences,
   selectNextSentence,
   selectPreviousSentence,
-  savedParaphrases
+  savedParaphrases,
 }: CardChatPureProps) {
   const [error, setError] = useState(null)
+  const { t, i18n } = useTranslation("common");
+  const locale = i18n.language
 
   const isOpenPanel = message.type === "user" && currentTab !== null
 
@@ -344,7 +345,7 @@ export function CardChatPure({
                 >
                   <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.Paraphrase ? "#fff" : "#787c80", fontWeight: 700 }}>
                     {/* {chrome.i18n.getMessage("chat_card_button_paraphrase")} */}
-                    言い換え表現
+                    {t("paraphrase")}
                   </Typography>
                 </Button>
               </Stack>
@@ -354,6 +355,7 @@ export function CardChatPure({
                     <LinearProgress />
                     <Typography>
                       {/* {chrome.i18n.getMessage("chat_card_paraphrase_loading")} */}
+                      {t("paraphraseLoading")}
                     </Typography>
                   </Box>
                 }
@@ -404,23 +406,25 @@ export function CardChatPure({
           {message.type === "ai" && (
             <Stack sx={{ width: "100%" }}>
               <Stack direction="row" spacing={1}>
-                <Button
-                  sx={{
-                    background: "rgba(0,0,0,0.1)",
-                    borderRadius: "64px",
-                    padding: "6px 12px",
-                    backgroundColor: "rgba(0,0,0,0.1)",
-                    "&:hover": {
+                {locale === 'ja' &&
+                  <Button
+                    sx={{
+                      background: "rgba(0,0,0,0.1)",
+                      borderRadius: "64px",
+                      padding: "6px 12px",
                       backgroundColor: "rgba(0,0,0,0.1)",
-                    }
-                  }}
-                  onClick={handleClickTranslate}
-                >
-                  <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: "#787c80", fontWeight: 700 }}>
-                    翻訳
-                    {/* {chrome.i18n.getMessage("translate")} */}
-                  </Typography>
-                </Button>
+                      "&:hover": {
+                        backgroundColor: "rgba(0,0,0,0.1)",
+                      }
+                    }}
+                    onClick={handleClickTranslate}
+                  >
+                    <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: "#787c80", fontWeight: 700 }}>
+                      {t("translate")}
+                      {/* {chrome.i18n.getMessage("translate")} */}
+                    </Typography>
+                  </Button>
+                }
                 {message.audioFile && <Button
                   onClick={handlePlayAudio}
                   sx={{

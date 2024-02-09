@@ -17,6 +17,7 @@ import { ContentPremiumPlan } from '@/components/ContentPremiumPlan';
 import mixpanel from "mixpanel-browser";
 import LogRocket from 'logrocket'
 import setupLogRocketReact from 'logrocket-react';
+import { appWithTranslation } from 'next-i18next'
 
 const themeLang = {
   en: {
@@ -298,4 +299,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp;
+export default appWithTranslation(MyApp)

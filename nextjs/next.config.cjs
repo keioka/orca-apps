@@ -1,5 +1,6 @@
 import webpack from 'webpack';
 import { withSentryConfig } from "@sentry/nextjs"
+import i18n from './next-i18next.config.cjs';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -24,6 +25,7 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  // i18n,
   webpack(config, { isServer }) {
     config.module.rules.push({
       test: /\.ttf$/,
@@ -51,6 +53,12 @@ const nextConfig = {
       config.resolve.fallback.net = false;
       config.resolve.fallback.worker_threads = false;
       config.resolve.fallback.tls = false;
+
+      // Make some packages external
+      // config.externals.push({
+      //   [path.resolve('./next-i18next.config.js')]: `commonjs ${path.resolve('./next-i18next.config.js')}`,
+      // });
+
     }
 
     return config;

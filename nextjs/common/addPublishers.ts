@@ -53,7 +53,7 @@ export async function addPublishers(publishers: Publisher[], category?: string) 
       };
 
       return publisherData
-    } catch (error) {
+    } catch (error: any) {
       console.error(`${error.code}-${error.message}`, publisher.url)
       return null
     }

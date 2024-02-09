@@ -8,6 +8,7 @@ import { fetchMessages, createAIMessage, addUserMessage } from "@/redux/features
 import { setPaymentRequiredAlert } from "@/redux/features/payment";
 import mixpanel from 'mixpanel-browser';
 import { InputChat } from '@/components/InputChat'
+import { useTranslation } from 'next-i18next'
 
 const messages = [
   {
@@ -40,7 +41,7 @@ export function StudyPanel({
   const sampleResponses = useAppSelector((state) => state.lesson.sampleResponses)
   const loadingSampleResponses = useAppSelector((state) => state.lesson.loadingSampleResponses)
   const isValidSubscription = useAppSelector((state) => state.payment.isValidSubscription)
-
+  const { t, i18n } = useTranslation(['common'])
   const [message, setMessage] = useState("")
 
   useEffect(() => {
@@ -111,15 +112,15 @@ export function StudyPanel({
   return (
     <Box sx={{ padding: 1 }}>
       <Box mb={1} px={2}>
-        <Typography variant="h6">AIと会話してみよう！</Typography>
+        <Typography variant="h6">{t("studyPanel.title")}</Typography>
       </Box>
       <Stack sx={{ background: "#f3f3f3", padding: 2 }} spacing={1}>
         {messages.map((message) => (
           <CardChat message={message} />
         ))}
-        {loadingSampleResponses && <Box sx={{ background: "#fff" }} p={3}>AIの返答例を取得中...</Box>}
+        {loadingSampleResponses && <Box sx={{ background: "#fff" }} p={3}>{t("studyPanel.fetchingSampleResponses")}</Box>}
         {sampleResponses && sampleResponses.length > 0 && <Box sx={{ background: "#fff" }} p={3}>
-          <Typography variant="body1" sx={{ marginBottom: 2 }}>AIの返答例:</Typography>
+          <Typography variant="body1" sx={{ marginBottom: 2 }}>{t("studyPanel.sampleResponsesTitle")}</Typography>
           {sampleResponses.map((response) => (
             <Box sx={{ borderTop: "1px solid #e4e4e4", paddingTop: 2 }}>
               <Box mb={2} sx={{ fontSize: 16 }}>{response.sentence}</Box>
