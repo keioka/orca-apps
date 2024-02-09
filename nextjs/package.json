@@ -12,7 +12,7 @@
     "next-dev": "next dev",
     "dev": "concurrently --kill-others npm:dev:*",
     "dev:next": "next dev",
-    "build": "I18NEXT_DEFAULT_CONFIG_PATH=./next-i18next.config.cjs; echo I18NEXT_DEFAULT_CONFIG_PATH; next build",
+    "build": "I18NEXT_DEFAULT_CONFIG_PATH=./next-i18next.config.cjs; echo $I18NEXT_DEFAULT_CONFIG_PATH; next build",
     "start": "next start",
     "test": "jest",
     "db:migrate": "prisma migrate dev --schema='./db/prisma/schema.prisma'",
