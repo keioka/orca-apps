@@ -8,6 +8,7 @@ import { signOut } from "@/redux/features/auth";
 import { useRouter } from "next/router";
 import styled from "@emotion/styled"
 import { outfit } from '@/font';
+import { useTranslation } from 'next-i18next'
 
 const MenuItem = styled(MenuItemCore)`
 `
@@ -47,9 +48,12 @@ function stringAvatar(name: string) {
 export function Header() {
   const [shouldShowModalAuth, setShouldShowModalAuth] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorLocaleEl, setAnchorLocaleEl] = useState(null);
   const currentUser = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
   const router = useRouter();
+
+  const { t, i18n } = useTranslation('common')
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -57,6 +61,14 @@ export function Header() {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLocaleOpen = (event) => {
+    setAnchorLocaleEl(event.currentTarget);
+  };
+
+  const handleLocaleClose = () => {
+    setAnchorLocaleEl(null);
   };
 
   const handleModalAuthClose = () => {
@@ -77,6 +89,14 @@ export function Header() {
     setShouldShowModalAuth(false)
   }
 
+  const handleClickLocales = (locale) => {
+    router.push({
+      route: router.route,
+      query: router.query
+    }, router.asPath, { locale });
+    i18n.changeLanguage(locale)
+  }
+
   return (
     <AppBar position="static">
       {shouldShowModalAuth && <ModalAuth isOpen={!currentUser && shouldShowModalAuth} onClose={handleModalAuthClose} />}
@@ -84,17 +104,17 @@ export function Header() {
         <Link href="/" style={{ textDecoration: "none" }}>
           <Stack direction="row" justifyContent="center" alignItems="center" spacing={1}>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: "#242424" }}>
-              Orca News
+              {t("appName")}
             </Typography>
             <Typography variant="caption" component="div" sx={{ flexGrow: 1, color: "#242424" }}>
-              β版試験運転中
+              {t("appStatus")}
             </Typography>
           </Stack>
         </Link>
         <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
-          <Button color="inherit">
+          <Button color="inherit" onClick={handleLocaleOpen}>
             <RiGlobalLine size={18} />
-            <Typography>JA</Typography>
+            <Typography>{i18n.language && i18n.language.toUpperCase()}</Typography>
           </Button>
           {!currentUser &&
             <Button
@@ -126,15 +146,35 @@ export function Header() {
           onClick={handleNavNote}
           className={outfit.className}
         >
-          復習ノート
+          {t("reviewNotes")}
         </MenuItem>
         <MenuItem
           onClick={handleNavPlan}
           className={outfit.className}
         >
-          プラン
+          {t("plan")}
         </MenuItem>
-        <MenuItem onClick={handleSignout} className={outfit.className}>ログアウト</MenuItem>
+        <MenuItem onClick={handleSignout} className={outfit.className}>{t("logout")}</MenuItem>
+      </Menu>
+      <Menu
+        anchorEl={anchorLocaleEl}
+        open={Boolean(anchorLocaleEl)}
+        onClose={handleLocaleClose}
+        style={{ fontFamily: "Outfit" }}
+        className={outfit.className}
+      >
+        <MenuItem
+          onClick={() => handleClickLocales("ja")}
+          className={outfit.className}
+        >
+          日本語
+        </MenuItem>
+        <MenuItem
+          onClick={() => handleClickLocales("en")}
+          className={outfit.className}
+        >
+          English
+        </MenuItem>
       </Menu>
     </AppBar >
   );

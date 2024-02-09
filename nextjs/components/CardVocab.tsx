@@ -15,6 +15,7 @@ import {
 } from "@mui/material"
 import { HiOutlineSpeakerWave } from "react-icons/hi2"
 import { IoBookmark } from "react-icons/io5";
+import { useTranslation } from 'next-i18next'
 
 function getPosColor(pos: string) {
   switch (pos) {
@@ -105,6 +106,7 @@ export function CardVocab({
   shouldHideDiscard,
 }: { vocab: any, onSaveVocab: any, shouldHideSave?: boolean, shouldHideDiscard?: boolean }) {
 
+  const { t } = useTranslation('common')
 
   // function handlePlayAudio() {
   //   const voices = synth.getVoices();

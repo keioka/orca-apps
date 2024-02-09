@@ -7,6 +7,7 @@ import GoogleLogo from "@/assets/images/google.svg"
 import Image from 'next/image';
 import { outfit } from '@/font'
 import mixpanel from "mixpanel-browser";
+import { useTranslation } from 'next-i18next'
 
 const locale = {
 
@@ -14,6 +15,7 @@ const locale = {
 export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose: () => void }) {
   const [isSignup, setIsSignup] = useState(false);
   const [isInvalidBrowser, setIsInvalidBrowser] = useState(false)
+  const { t, i18n } = useTranslation("common")
 
   const dispatch = useAppDispatch();
   const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage);
@@ -91,8 +93,8 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
             }
             {isInvalidBrowser && (
               <Stack sx={{ display: "flex", justifyContent: "center", alignItems: "center" }} spacing={2} mt={3}>
-                <Typography>LINE内ブラウザではログインできません。他のブラウザをご利用ください。</Typography>
-                <Button onClick={onCopyUrl} variant="outlined">URLをコピーする</Button>
+                <Typography>{t('cannotLoginInBrowser')}</Typography>
+                <Button onClick={onCopyUrl} variant="outlined">{t('copyUrl')}</Button>
               </Stack>
             )}
 
@@ -111,7 +113,7 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
                     fontFamily: "--var(font-outfit)"
                   }}
                 >
-                  サインアップ
+                  {t('signUp')}
                 </Typography>
                 <Stack spacing={1}>
                   <Button variant='contained' onClick={onClickGoogleSignup} size='large' sx={{ color: "#fff" }}>
@@ -121,9 +123,9 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
                       width={24}
                       height={24}
                     />
-                    Googleでサインアップ
+                    {t('signUpWithGoogle')}
                   </Button>
-                  <Button onClick={toggleSignup}>すでにアカウントをお持ちの方</Button>
+                  <Button onClick={toggleSignup}> {t('alreadyHaveAccount')}</Button>
                 </Stack>
               </Stack>
             )}
@@ -137,7 +139,7 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
                 }}
                 spacing={2}
               >
-                <Typography variant='h5'>ログイン</Typography>
+                <Typography variant='h5'>{t("login")}</Typography>
                 <Stack spacing={1}>
                   <Button
                     variant='outlined'
@@ -154,9 +156,9 @@ export function ModalAuth({ isOpen, onClose, alert }: { isOpen: boolean, onClose
                       width={24}
                       height={24}
                     />
-                    Googleでログイン
+                    {t('loginWithGoogle')}
                   </Button>
-                  <Button onClick={toggleSignup}>アカウント新規作成</Button>
+                  <Button onClick={toggleSignup}>{t("createNewAccount")}</Button>
                   <Typography>{errorSignupMessage}</Typography>
                 </Stack>
               </Stack>

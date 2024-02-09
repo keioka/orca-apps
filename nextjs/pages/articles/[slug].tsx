@@ -23,11 +23,13 @@ import { saveVocab, fetchSavedVocab, fetchSavedParaphrases } from '@/redux/featu
 import Markdown from 'react-markdown'
 import { setPaymentRequiredAlert } from '@/redux/features/payment';
 import mixpanel from 'mixpanel-browser';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import nextI18NextConfig from '@/next-i18next.config.cjs'
+import { useTranslation } from 'next-i18next'
 
 export const config = {
   amp: 'hybrid',
 };
-
 
 const formatCategory = {
   ai: "AI",
@@ -50,7 +52,6 @@ const formatCategory = {
   world_economy: "🌍World Economy",
   world_news: "🌍World News"
 };
-
 
 const Bold = ({ children }) => <Typography sx={{ fontWeight: "600", display: "inline" }}>{children}</Typography>;
 
@@ -333,6 +334,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   const isValidSubscription = useAppSelector((state) => state.payment.isValidSubscription)
   const isFetchingMaterials = useAppSelector((state) => state.material.isFetchingMaterials)
   const isFailedToFetchOriginalMaterialsByExternalId = useAppSelector((state) => state.material.isFailedToFetchOriginalMaterialsByExternalId[article.sys.id])
+  const { t, i18n } = useTranslation();
 
   const mode = searchParams.get('mode')
 
@@ -539,7 +541,6 @@ export default function Article({ article, relatedArticles, body, notFound, slug
         }}
       >
         <BlogHeader component="header" sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-
           <img
             alt={String(title)}
             src={imageUrl}
@@ -554,7 +555,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
           <Box sx={{ width: "100%", display: "flex", maxWidth: "840px", justifyContent: "center" }} component="section" itemProp="articleBody">
             <Box sx={{ background: "#191c29", color: "#fff", maxWidth: "840px", width: "100%" }} p={2} mt={-0.5}>
               <H1>{title}</H1>
-              <H1>{jaTitle}</H1>
+              {i18n.language === 'ja' && <H1>{jaTitle}</H1>}
               {/* <Typography variant="h6">{article?.fields.content}</Typography> */}
               {/* <Box display="flex" flexDirection="row" alignItems="center" gap={1} mt={1} mb={2}>
                 <Avatar alt={""} src={""} />
@@ -607,7 +608,6 @@ export default function Article({ article, relatedArticles, body, notFound, slug
         </Box> */}
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
           <Box sx={{ width: "100%", maxWidth: "840px", position: "relative" }}>
-
             {body && documentToReactComponents(body, options)}
             {paragraphs.map((paragraph, index) => {
               return (
@@ -667,6 +667,7 @@ function Paragraph({
   const [shouldShowTrans, setShouldShowTrans] = useState(false)
   const [shouldShowPlaySound, setShouldShowPlaySound] = useState(false)
   const [vocabPageIndex, setVocabPageIndex] = useState(0)
+  const { t, i18n } = useTranslation("common");
 
   const vocabs = useMemo(() => content.vocab.sort((a, b) => {
     if (a.word < b.word) {
@@ -718,9 +719,9 @@ function Paragraph({
             >
               <HiOutlineSpeakerWave size={18} color={shouldShowPlaySound ? "#fff" : "#242424"} />
             </Box>
-            <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text>
+            <Text sx={{ fontSize: 12, marginTop: 0.5 }}>{t("paragraph.pronunciation")}</Text>
           </Stack>
-          <Stack
+          {i18n.language !== 'en' && <Stack
             sx={{
               alignItems: "center",
               marginRight: 2,
@@ -742,8 +743,8 @@ function Paragraph({
             >
               <MdOutlineGTranslate size={18} color={shouldShowTrans ? "#fff" : "#242424"} />
             </Box>
-            <Text sx={{ fontSize: 12, marginTop: 0.5 }}>翻訳</Text>
-          </Stack>
+            <Text sx={{ fontSize: 12, marginTop: 0.5 }}>{t("paragraph.translation")}</Text>
+          </Stack>}
           <Stack
             sx={{
               alignItems: "center",
@@ -765,7 +766,7 @@ function Paragraph({
             >
               <TbVocabulary size={18} color={shouldShowVocab ? "#fff" : "#242424"} />
             </Box>
-            <Text sx={{ fontSize: 12, marginTop: 0.5 }}>単語リスト</Text>
+            <Text sx={{ fontSize: 12, marginTop: 0.5 }}>{t("paragraph.vocabList")}</Text>
           </Stack>
         </Stack>
       </Stack>
@@ -876,7 +877,7 @@ function Paragraph({
 // }
 
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, locale = 'en' }) {
   const { slug } = params;
   const res = await client.withAllLocales.getEntries({
     content_type: "newsArticle",
@@ -928,12 +929,26 @@ export async function getServerSideProps({ params }) {
   //   relatedArticles = relatedArticlesRes.map((res) => res.items).flat().filter((item) => item.sys.id !== id)
   // }
 
+  const i18Props = (
+    await serverSideTranslations(
+      locale,
+      [
+        'common',
+      ],
+      null,
+      [
+        'en',
+        'ja'
+      ]
+    )
+  )
+
   return {
     props: {
       slug,
       article,
-      // relatedArticles,
       body,
+      ...i18Props
     },
   };
 }

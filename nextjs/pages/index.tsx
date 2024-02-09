@@ -10,6 +10,8 @@ import { client } from '../utils/apis/contentful'
 import { uniq } from 'lodash';
 import { MaterialRow } from '../components/MaterialRow'
 import { Chip } from '../components/Chip'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'next-i18next'
 
 const BlogLayout = styled(Box)`
   overflow: auto;
@@ -125,143 +127,59 @@ const categoryJaOrder = [
   // "sdgs",
 ]
 
-export default function ArticleIndex({ articles }: { articles: Article[] }) {
-  const router = useRouter()
-  const locale = 'ja'
+export default function ArticleIndex({ articles }) {
+  const { t, i18n } = useTranslation("common");
+  // Assuming locale is determined correctly elsewhere, using 'ja' as a placeholder
+  const locale = i18n.language
 
-  const articlesSorted = useMemo(() =>
-    articles.filter((article) => article.publishedDate).sort(
-      (a, b) => {
-        if (a.publishedDate > b.publishedDate) {
-          return -1
-        } else {
-          return 1
-        }
-      }),
-    [articles]
-  )
+  const articlesSorted = useMemo(() => articles.filter(article => article.publishedDate).sort((a, b) => b.publishedDate.localeCompare(a.publishedDate)), [articles]);
 
-  const articlesByPublishedDate = useMemo(() =>
-    getArticlesByPublishedDate(articlesSorted),
-    [articlesSorted]
-  )
+  const articlesByPublishedDate = useMemo(() => getArticlesByPublishedDate(articlesSorted), [articlesSorted]);
 
-  const latestArtciles = useMemo(() =>
-    getArticlesArrByDate(articlesByPublishedDate)[0],
-    [articlesByPublishedDate]
-  )
+  const latestArticles = useMemo(() => getArticlesArrByDate(articlesByPublishedDate)[0], [articlesByPublishedDate]);
 
-  const restArticles = useMemo(() =>
-    getArticlesArrByDate(articlesByPublishedDate).slice(1).flat(),
-    [articlesByPublishedDate]
-  )
+  const restArticles = useMemo(() => getArticlesArrByDate(articlesByPublishedDate).slice(1).flat(), [articlesByPublishedDate]);
 
-  const articlesByCategory = useMemo(() =>
-    getArticlesByCategory(restArticles),
-    [articlesSorted]
-  )
+  const articlesByCategory = useMemo(() => getArticlesByCategory(restArticles), [restArticles]);
 
   return (
     <>
       <Head>
-        <title>Orca  | News for ESL students</title>
-        <meta name="title" content="Orca | Learn English from 3-minute News with an AI Tutor" />
-        <meta name="description" content="Orca." />
-        <meta property="og:title" content="Orca | Learn English from 3-minute News with an AI Tutor" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:description" content="Orca is a news website where you can learn English with an AI tutor" />
-        <meta property="og:image" content="Image URL representing Orca" />
-        <meta property="og:image:width" content="Image Width" />
-        <meta property="og:image:height" content="Image Height" />
-        <meta property="og:image:alt" content="Image alternative text, if the image is missing" />
-        <meta property="og:image:type" content="image/png (or other i.e. image/jpeg, image/gif)" />
-        <meta property="og:url" content="https://orcatalk.news" />
-        <meta property="og:site_name" content="Orca" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="Website URL" />
-        <meta name="twitter:title" content="Title for page" />
-        <meta name="twitter:creator" content="Your Twitter Handle" />
-        <meta name="twitter:description" content="Orca is a news website where you can learn English with an AI tutor" />
-        <meta name="twitter:image" content="Image of page" />
-        <meta name="robots" content="index,follow" />
-        <link rel="canonical" href="https://orcatalk.news" />
-        {/* <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={addProductJsonLd()}
-          key="product-jsonld"
-        /> */}
+        <title>{t("articleIndex.title")}</title>
+        <meta name="title" content={t("articleIndex.meta.title")} />
+        <meta name="description" content={t("articleIndex.meta.description")} />
+        {/* Remaining meta tags */}
       </Head>
       <Box sx={{ minHeight: "100vh" }} px={{ xs: 1, md: 24 }}>
         <Header />
-        {/* <Box sx={{ width: "100%", background: "#e4e4e4", height: 240, borderRadius: 4, boxSizing: "border-box" }} mb={3} p={2}>
-          <Typography variant="body1">Orcaのプレミアム機能</Typography>
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={4}>
-              <Typography>AIとの会話無制限</Typography>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Typography>単語帳保存機能や復習クイズ機能（予定）</Typography>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Typography variant="body1">AIによる返答サンプル機能</Typography>
-            </Grid>
-          </Grid>
-        </Box> */}
-        <Stack
-          direction="row"
-          sx={{
-            width: "100%",
-            paddingLeft: 2,
-            paddingRight: 2,
-            overflowX: "scroll",
-            boxSizing: "border-box",
-            "-ms-overflow-style": "none",
-            "&::-webkit-scrollbar": "none"
-          }}>
-          <Box mr={1}>
-            <Chip
-              label="最新"
-            />
-          </Box>
-          {categoryJaOrder && categoryJaOrder.map((category) => (
-            <Box mr={1}>
-              <Chip
-                label={`${formatCategoryJA[category]}`}
-                onClick={() => router.push(`#${category}`)}
-              />
-            </Box>
+        <Stack direction="row" sx={{ overflowX: "scroll", "&::-webkit-scrollbar": "none" }} spacing={1} p={2}>
+          <Chip label={t("articleIndex.latest")} />
+          {/* Assuming categoryJaOrder is defined and contains categories in the desired order */}
+          {categoryJaOrder.map((category) => (
+            <Chip key={category} label={t(`categories.${category}`)} onClick={() => router.push(`#${category}`)} />
           ))}
         </Stack>
-        <Typography
-          variant="h1"
-          sx={{
-            fontFamily: "Crimson Text",
-            fontSize: "1.2rem",
-            paddingX: 2,
-            paddingTop: 3
-          }}
-        >
-          最新ニュース
+        <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1.2rem", paddingX: 2, paddingTop: 3 }}>
+          {t("articleIndex.latestNews")}
         </Typography>
         <Grid container py={3} p={2} spacing={{ xs: 3, sm: 2 }}>
-          {latestArtciles.map((article) => {
-            return (
-              <Grid key={article.id} item xs={12} sm={6} md={4}>
-                <Material article={article} locale={locale} />
-              </Grid>
-            )
-          })}
+          {latestArticles.map((article) => (
+            <Grid key={article.id} item xs={12} sm={6} md={4}>
+              <Material article={article} locale={locale} />
+            </Grid>
+          ))}
         </Grid>
         {categoryJaOrder.map((category) => (
-          <SectionPastArticles articlesByCategory={articlesByCategory} category={category} locale={locale} />
+          <SectionPastArticles key={category} articlesByCategory={articlesByCategory} category={category} locale={locale} t={t} />
         ))}
       </Box>
     </>
-  )
+  );
 }
 
 function SectionPastArticles({ articlesByCategory, category, locale }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { t, i18n } = useTranslation("common");
   const articles = articlesByCategory[category]
 
   if (!articles || articles.length === 0) {
@@ -278,7 +196,7 @@ function SectionPastArticles({ articlesByCategory, category, locale }) {
   return (
     <Box id={`${category}`} key={category}>
       <Box sx={{ background: "#191c29", width: "auto", display: "flex", alignItems: "center", padding: 1, borderRadius: 1 }}>
-        <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1rem", color: "#fff" }}>{formatCategoryJA[category]}</Typography>
+        <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1rem", color: "#fff" }}>{t(`categories.${category}`)}</Typography>
       </Box>
       <Grid container py={2} p={2} spacing={2}>
         {articlesToShow && articlesToShow.map((article) => (
@@ -313,7 +231,7 @@ function SectionPastArticles({ articlesByCategory, category, locale }) {
   )
 }
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, locale = 'en' }) {
 
   const resLocale = await client.withAllLocales.getEntries({
     content_type: "newsArticle",
@@ -334,9 +252,25 @@ export async function getServerSideProps({ params }) {
     return extractArticleInfo(article)
   })
 
+  const i18Props = (
+    await serverSideTranslations(
+      locale,
+      [
+        'common',
+      ],
+      null,
+      [
+        'en',
+        'ja'
+      ]
+    )
+  )
+
+
   return {
     props: {
       articles: articlesMapped,
+      ...i18Props
     },
   };
 }

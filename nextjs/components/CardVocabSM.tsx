@@ -29,6 +29,7 @@ import { IoBookmark } from "react-icons/io5";
 import { BiSolidRightArrow } from "react-icons/bi";
 import { ButtonSave } from "@/components/ButtonSave";
 import mixpanel from 'mixpanel-browser';
+import { useTranslation } from "next-i18next";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -177,6 +178,8 @@ export function CardVocabSM({
   isSaved,
 }: { vocab: any, onSaveVocab: any, shouldHideSave?: boolean, shouldHideDiscard?: boolean }) {
   const material = vocab.material;
+  const { t, i18n } = useTranslation("common");
+  const locale = i18n.language;
 
   function handlePlayAudio() {
     try {
@@ -203,7 +206,7 @@ export function CardVocabSM({
   }
 
   return (
-    <Card sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee", fontSize: 16 }}>
+    <Card sx={{ width: "100%", height: locale === 'ja' ? "auto" : "240px", boxShadow: "none", border: "1px solid #eeeeee", fontSize: 16, justifyContent: "center" }}>
       <Accordion>
         <Stack
           direction="row"
@@ -242,13 +245,13 @@ export function CardVocabSM({
                 {vocab.pronounce}
               </Typography>
               <AccordionSummary sx={{ fontSize: 12 }}>
-                例文
+                {t("vocab.exampleSentences")}
               </AccordionSummary>
             </Stack>
 
             <Stack spacing={0.5}>
               <Typography variant="body2" component="h6">
-                {vocab.meaningInJapanese || vocab.meaingInJapanese}
+                {locale === 'ja' ? (vocab.meaningInJapanese || vocab.meaingInJapanese) : vocab.meaning}
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", background: getPosColor(vocab.pos), borderRadius: 1, py: 0, px: 1, width: 48 }}>
                 <Typography variant="caption" component="span" sx={{ color: "#fff", fontSize: 11, fontWeight: "bold", textAlign: "center" }}>
@@ -289,7 +292,7 @@ export function CardVocabSM({
             <Table>
               <TableBody>
                 <TableRow>
-                  <TableCell>記事中例文</TableCell>
+                  <TableCell>{t("vocab.articleExampleSentence")}</TableCell>
                   <TableCell>
                     <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
                       <Typography sx={{ textDecoration: "italic" }} >
@@ -299,7 +302,7 @@ export function CardVocabSM({
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>その他例文</TableCell>
+                  <TableCell>{t("vocab.otherExampleSentence")}</TableCell>
 
                   <TableCell>
                     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
