@@ -33,7 +33,7 @@ export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: 
     }
 
     const token = state.auth.session.accessToken;
-    const response = await axios.get(`${ROOT_URL}/api/lessons/${lessonId}/messages`, {
+    const response = await axios.get(`/api/lessons/${lessonId}/messages`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -70,7 +70,7 @@ export const createMessage = createAsyncThunk(`${NAME}/create`, async ({
       rejectWithValue('No session found')
     }
 
-    const response = await axios.post(`${ROOT_URL}/api/lessons/${lessonId}/messages`,
+    const response = await axios.post(`/api/lessons/${lessonId}/messages`,
       {
         message,
       },

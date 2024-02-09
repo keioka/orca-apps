@@ -129,6 +129,7 @@ model Message {
   createdBy   User?      @relation(fields: [createdById], references: [id])
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
+  audioFileId Int?       @map("audio_file_id")
 
   @@map("messages")
 }
@@ -237,4 +238,13 @@ model FollowHashtag {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("follow_hashtags")
+}
+
+model AudioFile {
+  id        Int      @id @default(autoincrement())
+  path      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("audio_files")
 }

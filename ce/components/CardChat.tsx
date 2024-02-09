@@ -188,7 +188,6 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
       const utterance = new SpeechSynthesisUtterance(content);
       utterance.lang = "en-US";
 
-      console.log({ englishVoices })
       if (englishVoices.length) {
         utterance.voice = englishVoices.find(voice => voice.name === 'Google US English');
       }

@@ -30,7 +30,7 @@ export async function getVocabsFromText({ id, text, transLangCode }) {
             [meaning]: The meaning of the word or phrase. This is required.
             [sentence]: The sentence from the content where the word or phrase is found. This is required.
             [example]: Additional examples of the word or phrase in use. This is required.
-            [meaningInJapanese]: The Japanese translation of the word or phrase's meaning. This is required.
+            [meaningInJapanese]: The Japanese translation of the word or phrase's meaning. Don't use sentence but should be a word This is required.
             
             Please ensure that all fields are filled for each vocabulary item. Process the following text to create the list:
 

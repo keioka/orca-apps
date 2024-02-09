@@ -1,13 +1,13 @@
 import { useState, useCallback } from 'react';
 import { StyleSheet, ScrollView, View, RefreshControl } from 'react-native';
-import { CardArticle } from '../components/CardArticle';
-import { UserStats } from '../components/UserStats';
+import { CardArticle } from '@/components/CardArticle';
+import { UserStats } from '@/components/UserStats';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useEffect } from 'react';
 import { fetchLessons, createLesson } from '../redux/features/lessons';
 import { fetchCurrentUserStats } from '../redux/features/auth';
 import { i18n } from '../locales';
-import { Text } from '../components/Text';
+import { Text } from '@/components/Text';
 import LottieView from 'lottie-react-native';
 
 export function HistoryScreen({ navigation }) {
@@ -15,12 +15,15 @@ export function HistoryScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const { lessons } = useAppSelector((state) => state.lesson);
   const stats = useAppSelector((state) => state.auth.stats);
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
   const fetchingCurrentUserStats = useAppSelector((state) => state.auth.fetchingCurrentUserStats);
 
   useEffect(() => {
-    dispatch(fetchLessons())
-    dispatch(fetchCurrentUserStats())
-  }, []);
+    if (currentUser) {
+      dispatch(fetchLessons())
+      dispatch(fetchCurrentUserStats())
+    }
+  }, [currentUser]);
 
   const onPressStart = ({ url, lessonId }: { url: string, lessonId: string }) => {
     if (!lessonId) {
@@ -63,18 +66,17 @@ export function HistoryScreen({ navigation }) {
           />
           <Text>{i18n.t("loading")}</Text>
         </View>}
-        {!fetchingCurrentUserStats && stats && <View style={{ width: "100%" }}>
-          <UserStats stats={stats} />
-        </View>}
+        {!fetchingCurrentUserStats && stats &&
+          <View style={{ width: "100%" }}>
+            <UserStats stats={stats} />
+          </View>
+
+        }
+
         <View style={styles.sectionSubtitle}>
           <Text style={styles.subtitle} weight='Bold'>{i18n.t("pastLesson")}</Text>
         </View>
-        {/* {feed.map((item, index) => (
-          <CardArticle
-            item={item}
-            onPressStart={() => onPressStart({ url: item.url, materialId: item.id })}
-          />
-        ))} */}
+
         {lessons && lessons.map((item, index) => (
           <CardArticle
             key={`lesson_${item.id}`}

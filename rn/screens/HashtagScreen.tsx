@@ -9,7 +9,7 @@ import { Image } from 'expo-image';
 import { createFollowPublishers, clearHasSuccessCreateFollow, fetchFollowPublishers } from '../redux/features/publishers';
 import { unionBy } from 'lodash';
 import { categories, categoryBySection } from '../helpers/categories';
-import { Text } from '../components/Text';
+import { Text } from '@/components/Text';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;

@@ -194,7 +194,6 @@ class InputChat extends Component {
                 </View>
               </View>
             )}
-
             <View
               style={{
                 justifyContent: "center",
@@ -206,8 +205,6 @@ class InputChat extends Component {
                 flexGrow: 1,
               }}
             >
-
-
               <View style={styles.footer}>
                 <View
                   style={[styles.textInputWrapper]}
@@ -339,10 +336,8 @@ export function TalkMode({ onPressToggle, lesson }: { onPressToggle: () => void,
   const isTypeVideo = lesson.material.type === "video"
   const disabledSubmit = !message || message === "" || isAddingMessage
 
-
   return (
     <View style={{ flex: 1, height: "100%" }}>
-
       <View style={styles.menuTalkMode}>
         <View style={{ flexDirection: "row", paddingVertical: 8 }}>
           {/* {isTypeVideo ? <WebView

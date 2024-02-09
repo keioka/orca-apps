@@ -3,7 +3,7 @@ import { Alert, StyleSheet, View, Button } from 'react-native'
 import LottieView from 'lottie-react-native';
 import * as Updates from 'expo-updates';
 import { NativeModules } from "react-native";
-import { Text } from '../components/Text';
+import { Text } from '@/components/Text';
 
 
 export function ErrorScreen() {
