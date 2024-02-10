@@ -69,8 +69,6 @@ export async function setInitMessage(lessonId: number) {
 
 export async function findLessonByUserAndMaterial(params: { userId: string, materialId: string }): Promise<Lesson | null> {
 
-  console.log("params", params)
-
   return prisma.lesson.findUnique({
     where: {
       userId_materialId: params

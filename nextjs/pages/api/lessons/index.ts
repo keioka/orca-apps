@@ -96,6 +96,8 @@ async function getOrCreateMaterialByUrl(url: string) {
       return { error: 'Failed to fetch url' };
     }
 
+    console.log({ result })
+
     material = await Material.createMaterial({
       url: url,
       title: result.title,

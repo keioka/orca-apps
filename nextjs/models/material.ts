@@ -113,24 +113,47 @@ export async function getMaterials(params: GetMaterialsParams): Promise<Paginati
 export async function createMaterial(materialData: Omit<Material, 'id'>): Promise<Material> {
   const publisherData = materialData.publisher;
 
+  console.log({ publisherData })
+  // TODO: This is a temporary workaround to handle the case where the publisher is not yet in the database
   let existingPublisherId = publisherData?.id;
   if (!existingPublisherId && publisherData && publisherData.domain) {
     const existingPublisher = await prisma.publisher.findUnique({
       where: { domain: publisherData.domain }
     });
     existingPublisherId = existingPublisher?.id;
+  } else if (!existingPublisherId && publisherData && publisherData.domain) {
+
+  } else {
+    const existingPublisher = await prisma.publisher.create({
+      data: {
+        name: publisherData.name,
+        domain: publisherData.url,
+        isActive: true
+      }
+    });
+    existingPublisherId = existingPublisher?.id;
   }
 
   const publisherAction = existingPublisherId
-    ? { connect: { id: existingPublisherId } }
-    : { create: publisherData };
+    ? { connect: { id: existingPublisherId as string } }
+    : { create: publisherData as Material };
 
+  console.log({
+    publisherAction,
+    materialData
+  })
+
+  delete materialData.publisher;
+
+  const data = {
+    ...materialData,
+    publisher: publisherAction
+  }
+
+  console.log(JSON.stringify({ data }))
 
   const material = await prisma.material.create({
-    data: {
-      ...materialData,
-      publisher: publisherAction
-    },
+    data: data,
     include: {
       publisher: true,
     },
