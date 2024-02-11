@@ -7,6 +7,14 @@
     "message": "Orca - Practice English based on your interests",
     "description": "Description of the extension."
   },
+  "login_google": {
+    "message": "Sign in with Google",
+    "description": "Button label for signing in with Google."
+  },
+  "signup_google": {
+    "message": "Sign up with Google",
+    "description": "Button label for signing up with Google."
+  },
   "opener_label": {
     "message": "Talk",
     "description": "Label used to initiate a conversation or chat session."

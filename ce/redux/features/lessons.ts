@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { Lesson } from "../../types/lesson";
+// import { Lesson } from "../../types/lesson";
 import axios from 'axios';
 import { setLessonIdToMaterial } from './materials';
+import { sendToBackground } from '@plasmohq/messaging';
 
 // Define the lesson state
 interface LessonState {
@@ -174,40 +175,35 @@ export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({
       return rejectWithValue('No session found')
     }
 
+    console.log({ auth })
     const token = session?.accessToken
     if (!token) {
       return rejectWithValue('No session found')
     }
 
+    console.log({ materialId, url, token })
     const response = await createLessonAPI({ materialId, url, token });
-
-    if (response.status !== 200) {
-      return rejectWithValue('Failed to fetch lesson');
-    }
+    console.log({ response })
     const { data } = response;
 
+    console.log({ data })
     dispatch(setLessonIdToMaterial({ materialId, lessonId: data.id }))
     return data;
   } catch (error) {
     console.error(error)
-    return rejectWithValue('Failed to fetch lesson');
+    return rejectWithValue(error);
   }
 });
 
 async function createLessonAPI({ materialId, url, token }: { materialId: string, url, token: string }) {
-
-  const response = await axios.post(`${ROOT_URL}/api/lessons`,
-    {
+  return await sendToBackground({
+    name: 'api/lessons',
+    body: {
       materialId,
       url,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      token
     }
-  ); // Replace w
-
+  })
 }
 
 export const { clearError } = lessonSlice.actions;

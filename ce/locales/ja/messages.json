@@ -7,6 +7,14 @@
     "message": "スキマ時間に興味のある英文記事,YouTubeを読んでAIと会話しながらスピーキング力アップ!",
     "description": "Description of the extension."
   },
+  "login_google": {
+    "message": "Googleでログイン",
+    "description": "Button label for signing in with Google."
+  },
+  "signup_google": {
+    "message": "Googleでサインアップ",
+    "description": "Button label for signing up with Google."
+  },
   "opener_label": {
     "message": "トーク",
     "description": "会話やチャットセッションを開始するためのラベル。"
