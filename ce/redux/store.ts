@@ -22,6 +22,8 @@ import lessonsLocal from './features/lessonsLocal';
 import payment from './features/payment';
 import ui from './features/ui';
 
+// import * as Sentry from "@sentry/react";
+
 const rootReducer = combineReducers({
   auth: auth,
   publisher: publisher,
@@ -55,9 +57,9 @@ const logger = (storeAPI: any) => (next: any) => (action: any) => {
 }
 
 
-const sentryReduxEnhancer = Sentry.createReduxEnhancer({
-  attachReduxState: false,
-});
+// const sentryReduxEnhancer = Sentry.createReduxEnhancer({
+//   attachReduxState: false,
+// });
 
 export const store = configureStore({
   reducer: persistedReducer,

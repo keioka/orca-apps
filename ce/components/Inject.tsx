@@ -15,7 +15,7 @@ import { useFirebase } from "../firebase/hooks"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchLesson } from '../redux/features/lessons';
-import { fetchMessages, createMessage, addMessage } from '../redux/features/messages';
+import { fetchMessages, createMessage, addMessage } from '~/redux/features/messages';
 import { Opener } from "./Opener";
 import { ChatModeProto } from "./ChatModeProto";
 import { RiSpeakLine } from "react-icons/ri";
@@ -24,11 +24,13 @@ import { FaFileWord } from "react-icons/fa";
 import { ListVocab } from "./ListVocab";
 import { saveVocabulary } from "../redux/features/save";
 import { toggleDisable, clearSubscriptionForm } from "~redux/features/ui";
-import { createNewLesson, addMessageToLesson } from "../redux/features/lessonsLocal";
+// import { createNewLesson, addMessageToLesson } from "../redux/features/lessonsLocal";
+import { createLesson, } from "~redux/features/lessons";
 import type { VocabularyItem, Message } from "~types";
 import { urlPath } from "~helpers/path";
 import { SummaryMode } from "./SummaryMode";
 import { FormSubscription } from "./FormSubscription";
+import { setCurrentUser, setSession } from "~/redux/features/auth";
 
 const drawerWidth = 380
 
@@ -122,33 +124,50 @@ export function Inject() {
   const [summaries, setSummaries] = useState<Summary[]>([])
   const [isLoadingSummaries, setIsLoadingSummaries] = useState(false)
 
-
   const [originalWidth, setOriginalWidth] = useState(0)
   const [error, setError] = useState(null)
   const [isLoadingData, setIsLoadingData] = useState(false)
-  const { user, isLoading, onLoginBackground, onLogout } = useFirebase()
+  const { user, session: sessionFB, isLoading, onLogin, onLoginBackground, onLogout } = useFirebase()
   const [message, setMessage] = useState(null)
   const [isFullLoaded, setIsFullLoaded] = useState(false)
   const dispatch = useAppDispatch()
-  const lesson = useAppSelector(state => { return state.lessonsLocal.lessons[urlPath] })
+
+  const currentLesson = useAppSelector((state) => state.lessons.lessons.find((lesson) => lesson.material.url === urlPath))
+
   const note = useAppSelector(state => { return state.saveData[urlPath] })
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   const shouldShowSubscriptionForm = useAppSelector(state => { return !state.payment.isValidSubscription && state.ui.shouldShowSubscriptionForm })
+  const currentUser = useAppSelector(state => { return state.auth.currentUser })
+  const session = useAppSelector(state => { return state.auth.session })
+
+  console.log({ currentUser })
 
   useEffect(() => {
+    if (currentLesson) {
+      dispatch(fetchMessages({ lessonId: currentLesson.id }))
+    }
     dispatch(clearSubscriptionForm())
-  }, [])
+  }, [currentLesson])
 
   const chatHistory = useMemo(() => {
-    return lesson?.chatHistory || []
-  }, [lesson])
+    return currentLesson?.chatHistory || []
+  }, [currentLesson])
 
   useEffect(() => {
     // Create a new lesson using redux
-    if (open) {
-      dispatch(createNewLesson({ url: urlPath }))
+    console.log({ currentLesson, open, session, urlPath })
+    if (open && session && !currentLesson) {
+      dispatch(createLesson({ url: urlPath }))
     }
-  }, [open])
+  }, [open, session, currentLesson])
+
+  useEffect(() => {
+    dispatch(setCurrentUser(user))
+  }, [user])
+
+  useEffect(() => {
+    dispatch(setSession(sessionFB))
+  }, [sessionFB])
 
   function handleToggleDisable() {
     dispatch(toggleDisable())
@@ -195,6 +214,8 @@ export function Inject() {
   if (uiDisabled || hideExtention || blaklist.some((url) => window.location.href.includes(url))) {
     return null
   }
+
+
 
   return (
     <Box
@@ -254,54 +275,77 @@ export function Inject() {
               )
             }
 
-            <>
-              <Box mt={2}>
-                <Menu onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
-              </Box>
-
-              {mode === Mode.Talk && (
-                <>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "flex-end"
-                    }}
-                    mt={0} mb={2}
+            {
+              !currentUser && (
+                <Box
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "32px"
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={onLoginBackground}
                   >
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={isAutoPlay}
-                          onChange={handleChangeAutoPlay}
-                        />
-                      }
-                      label={chrome.i18n.getMessage("chat_toggle_autoplay")}
-                    />
-                  </Box>
-                  <ChatModeProto isAutoPlay={isAutoPlay} handleAddMessage={handleAddMessage} chatHistory={chatHistory} />
-                </>
-              )}
-              {mode === Mode.Vocab &&
-                <VocabMode
-                  vocabs={vocabs}
-                  setVocabs={setVocabs}
-                  setIsLoadingVocabs={setIsLoadingVocabs}
-                  isLoadingVocabs={isLoadingVocabs}
-                  setError={setError}
-                  onSaveVocab={handleSaveVocab}
-                />
-              }
-              {mode === Mode.Summary &&
-                <SummaryMode
-                  url={urlPath}
-                  summaries={summaries}
-                  setSummaries={setSummaries}
-                  setIsLoadingSummaries={setIsLoadingSummaries}
-                  isLoadingSummaries={isLoadingSummaries}
-                  setError={setError}
-                />
-              }
-            </>
+                    {chrome.i18n.getMessage("login_google")}
+                  </Button>
+                </Box>
+              )
+            }
+
+            {currentUser && (
+              <>
+                <Box mt={2}>
+                  <Menu onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
+                </Box>
+
+                {mode === Mode.Talk && (
+                  <>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end"
+                      }}
+                      mt={0} mb={2}
+                    >
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={isAutoPlay}
+                            onChange={handleChangeAutoPlay}
+                          />
+                        }
+                        label={chrome.i18n.getMessage("chat_toggle_autoplay")}
+                      />
+                    </Box>
+                    <ChatModeProto isAutoPlay={isAutoPlay} handleAddMessage={handleAddMessage} chatHistory={chatHistory} />
+                  </>
+                )}
+                {mode === Mode.Vocab &&
+                  <VocabMode
+                    vocabs={vocabs}
+                    setVocabs={setVocabs}
+                    setIsLoadingVocabs={setIsLoadingVocabs}
+                    isLoadingVocabs={isLoadingVocabs}
+                    setError={setError}
+                    onSaveVocab={handleSaveVocab}
+                  />
+                }
+                {mode === Mode.Summary &&
+                  <SummaryMode
+                    url={urlPath}
+                    summaries={summaries}
+                    setSummaries={setSummaries}
+                    setIsLoadingSummaries={setIsLoadingSummaries}
+                    isLoadingSummaries={isLoadingSummaries}
+                    setError={setError}
+                  />
+                }
+              </>
+            )}
           </Box>
         </Drawer>
       }

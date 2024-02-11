@@ -24,6 +24,7 @@
     "@plasmohq/redux-persist": "^6.1.0",
     "@plasmohq/storage": "^1.8.0",
     "@reduxjs/toolkit": "^1.9.5",
+    "@sentry/react": "^7.100.1",
     "@stripe/react-stripe-js": "^2.3.1",
     "@stripe/stripe-js": "^2.1.6",
     "axios": "^1.5.0",
@@ -41,8 +42,8 @@
     "ulid": "^2.3.0"
   },
   "devDependencies": {
-    "@ladle/react": "^3.0.0",
     "@ianvs/prettier-plugin-sort-imports": "4.1.0",
+    "@ladle/react": "^3.0.0",
     "@storybook/addon-essentials": "^7.4.2",
     "@storybook/addon-interactions": "^7.4.2",
     "@storybook/addon-links": "^7.4.2",

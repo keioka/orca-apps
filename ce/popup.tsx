@@ -14,7 +14,7 @@ import { fetchPayments, initState as initStatePayment } from "~redux/features/pa
 import { toggleDisable } from "~redux/features/ui";
 import { useAppDispatch, useAppSelector } from "~redux/hooks";
 // https://stripe.com/docs/testing?testing-method=card-numbers#cards
-import { ButtonGoogleLogin } from "~/components/ButtonGoogleLogin";
+import { ButtonGoogleAuth } from "~/components/ButtonGoogleAuth";
 import { login, signupGoogle, checkAuthStatus, clearError, logout } from "~redux/features/auth";
 
 export const config: PlasmoCSConfig = {
@@ -144,8 +144,8 @@ function IndexPopup() {
             </Typography>
           </Stack>
         </Card> */}
-        {!loadingCurrentUser && !currentUser && <ButtonGoogleLogin onLogin={handleSignin} />}
-        {!loadingCurrentUser && !currentUser && <ButtonGoogleLogin onLogin={handleSignup} />}
+        {!loadingCurrentUser && !currentUser && <ButtonGoogleAuth onClick={handleSignin} />}
+        {!loadingCurrentUser && !currentUser && <ButtonGoogleAuth onClick={handleSignup} />}
 
         <Snackbar
           open={error}
