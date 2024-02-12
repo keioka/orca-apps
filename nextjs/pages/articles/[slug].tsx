@@ -888,18 +888,23 @@ function Paragraph({
           </Typography>
         </TransP>
       }
-      <Stack direction="row" spacing={2} sx={{ overflowX: "scroll", height: 280, width: "100%", paddingX: 2 }}>
-        {questions && questions.length > 0 && questions.map((question) => {
-          return (
-            <Box sx={{ height: 280, width: "100%", minWidth: 320, display: "flex", justifyContent: "center", alignItems: "center", borderRadius: 8 }}>
-              <Stack sx={{ width: "90%", background: "#f4f4f4", padding: 2, borderRadius: 4 }} spacing={3}>
-                <Typography>{question.content}</Typography>
-                {locale === 'ja' && <Typography>{question.translation[0].content}</Typography>}
-                <Button variant="contained" sx={{ color: "#fff" }} onClick={() => handleOnClickAnswer(question.content)}>Answer</Button>
-              </Stack>
-            </Box>
-          )
-        })}
+      <Stack>
+        <Typography sx={{ fontSize: 14, color: "#242424", paddingX: 2 }}>
+          {t("paragraph.questions")}
+        </Typography>
+        <Stack direction="row" spacing={2} sx={{ overflowX: "scroll", width: "100%", paddingX: 2 }}>
+          {questions && questions.length > 0 && questions.map((question) => {
+            return (
+              <Box sx={{ width: "100%", minWidth: 320, display: "flex", justifyContent: "center", alignItems: "center", borderRadius: 8 }}>
+                <Stack sx={{ width: "90%", background: "#f4f4f4", padding: 2, borderRadius: 4 }} spacing={3}>
+                  <Typography>{question.content}</Typography>
+                  {locale === 'ja' && <Typography>{question.translation[0].content}</Typography>}
+                  <Button variant="contained" sx={{ color: "#fff" }} onClick={() => handleOnClickAnswer(question.content)}>{t("paragraph.buttonAnswer")}</Button>
+                </Stack>
+              </Box>
+            )
+          })}
+        </Stack>
       </Stack>
     </Box>
   )
