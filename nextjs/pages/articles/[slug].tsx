@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState, useMemo } from 'react'
-import { Avatar, List, ListItem, ListItemText, Box, Typography, Grid, Stack, Pagination } from '@mui/material'
+import { Avatar, List, ListItem, ListItemText, Box, Typography, Grid, Stack, Pagination, TextField, Button } from '@mui/material'
 import styled from '@emotion/styled';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
@@ -15,7 +15,7 @@ import { TbVocabulary } from "react-icons/tb";
 import { useSearchParams } from 'next/navigation'
 import { Header } from '../../components/Header'
 import { AudioPlayer } from '../../components/AudioPlayer'
-import { fetchVocabs, fetchOriginalMaterial } from "@/redux/features/materials";
+import { fetchVocabs, fetchOriginalMaterial, fetchQuestions } from "@/redux/features/materials";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { ModalAuth } from '@/components/ModalAuth';
 import { StudyPanel } from '@/components/StudyPanel';
@@ -23,6 +23,7 @@ import { saveVocab, fetchSavedVocab, fetchSavedParaphrases } from '@/redux/featu
 import Markdown from 'react-markdown'
 import { setPaymentRequiredAlert } from '@/redux/features/payment';
 import mixpanel from 'mixpanel-browser';
+import { addUserMessage } from "@/redux/features/messages";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import nextI18NextConfig from '@/next-i18next.config.cjs'
 import { useTranslation } from 'next-i18next'
@@ -329,11 +330,14 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   const currentUser = useAppSelector((state) => state.auth.currentUser)
   const currentOpenedOriginalMaterial = useAppSelector((state) => state.material.currentOpenedOriginalMaterial)
   const vocabsFromDB = useAppSelector((state) => currentOpenedOriginalMaterial ? state.material.vocabs[currentOpenedOriginalMaterial.id] || [] : [])
+  const questions = useAppSelector((state) => currentOpenedOriginalMaterial ? state.material.questions[currentOpenedOriginalMaterial.id] || [] : [])
   // TODO: Need to refactor this for performance
   const savedVocabs = useAppSelector((state) => state.note.vocabularies)
   const isValidSubscription = useAppSelector((state) => state.payment.isValidSubscription)
   const isFetchingMaterials = useAppSelector((state) => state.material.isFetchingMaterials)
   const isFailedToFetchOriginalMaterialsByExternalId = useAppSelector((state) => state.material.isFailedToFetchOriginalMaterialsByExternalId[article.sys.id])
+  const currentLesson = useAppSelector((state) => state.lesson.lessons.find((lesson) => lesson.materialId === currentOpenedOriginalMaterial?.id))
+
   const { t, i18n } = useTranslation();
 
   const mode = searchParams.get('mode')
@@ -359,15 +363,35 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     if (currentOpenedOriginalMaterial && vocabsFromDB.length === 0) {
       dispatch(fetchVocabs({ materialId: currentOpenedOriginalMaterial?.id }))
     }
+    if (currentOpenedOriginalMaterial && currentOpenedOriginalMaterial?.id) {
+      dispatch(fetchQuestions({ materialId: currentOpenedOriginalMaterial?.id }))
+    }
   }, [currentOpenedOriginalMaterial])
 
   useEffect(() => {
     mixpanel.track("Article Viewed", {})
   }, [])
 
+  const questionsByParagraphNumber = useMemo(() => {
+    if (!questions) {
+      return {}
+    }
 
-  // const savedVocabIdsInMaterial = useMemo(() => savedVocabs.filter(() => saveVocab).map((v) => v.id), [vocabsFromDB, savedVocabs])
+    if (questions.length === 0) {
+      return {}
+    }
 
+    const questionsByParagraphNumber = questions.reduce((acc, question) => {
+      const { paragraphNumber } = question
+      if (!acc[paragraphNumber]) {
+        acc[paragraphNumber] = []
+      }
+      acc[paragraphNumber].push(question)
+      return acc
+    }, {})
+    return questionsByParagraphNumber
+
+  }, [questions])
 
   if (notFound) {
     return <div>not found</div>
@@ -377,6 +401,20 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     return null
   }
 
+  const handleSelectQuestion = (question: string) => {
+    if (!currentUser || !currentLesson) {
+      console.error("no user or lesson")
+      return
+    }
+    dispatch(addUserMessage({ message: question, lessonId: currentLesson.id, type: "ai" }))
+    if (window && window.scroll) {
+      window.scroll({
+        // scroll to very bottom
+        top: document.body.scrollHeight + 1000,
+        behavior: "smooth"
+      })
+    }
+  }
 
   const handleCloseModalAuth = () => {
     setShouldOpenModalAuth(false)
@@ -487,7 +525,6 @@ export default function Article({ article, relatedArticles, body, notFound, slug
       vocab: p5VocabWithDB
     }
   ]
-
 
   return (
     <>
@@ -618,6 +655,12 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                   totalLength={paragraphs.length}
                   onSaveVocab={handleSaveVocab}
                   savedVocabs={savedVocabs}
+                  questions={questionsByParagraphNumber[index + 1]}
+                  currentUser={currentUser}
+                  setShouldOpenModalAuth={setShouldOpenModalAuth}
+                  setAlertModalAuth={setAlert}
+                  handleSelectQuestion={handleSelectQuestion}
+                  locale={i18n.language}
                 />
               )
             })}
@@ -657,11 +700,18 @@ function Paragraph({
   totalLength,
   onSaveVocab,
   savedVocabs,
+  questions,
+  currentUser,
+  setShouldOpenModalAuth,
+  setAlertModalAuth,
+  handleSelectQuestion,
+  locale,
 }: {
   paragraph: any,
   isEmbedMode: boolean,
   index: number,
   totalLength: number,
+  setShouldOpenModalAuth: (boolean) => void,
 }) {
   const [shouldShowVocab, setShouldShowVocab] = useState(false)
   const [shouldShowTrans, setShouldShowTrans] = useState(false)
@@ -687,6 +737,15 @@ function Paragraph({
 
   const handleChange = (_, page) => {
     setVocabPageIndex(page - 1)
+  }
+
+  const handleOnClickAnswer = (question: string) => {
+    if (!currentUser) {
+      setShouldOpenModalAuth(true)
+      setAlertModalAuth("AIと会話練習するにはログインしてください")
+    } else {
+      handleSelectQuestion(question)
+    }
   }
 
   return (
@@ -829,6 +888,19 @@ function Paragraph({
           </Typography>
         </TransP>
       }
+      <Stack direction="row" spacing={2} sx={{ overflowX: "scroll", height: 280, width: "100%", paddingX: 2 }}>
+        {questions && questions.length > 0 && questions.map((question) => {
+          return (
+            <Box sx={{ height: 280, width: "100%", minWidth: 320, display: "flex", justifyContent: "center", alignItems: "center", borderRadius: 8 }}>
+              <Stack sx={{ width: "90%", background: "#f4f4f4", padding: 2, borderRadius: 4 }} spacing={3}>
+                <Typography>{question.content}</Typography>
+                {locale === 'ja' && <Typography>{question.translation[0].content}</Typography>}
+                <Button variant="contained" sx={{ color: "#fff" }} onClick={() => handleOnClickAnswer(question.content)}>Answer</Button>
+              </Stack>
+            </Box>
+          )
+        })}
+      </Stack>
     </Box>
   )
 }

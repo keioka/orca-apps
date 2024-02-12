@@ -59,7 +59,7 @@ async function fetchMessagesHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
   const { lessonId } = req.query;
-  const { message } = req.body;
+  const { message, type = "user" } = req.body;
   await validateToken(req, res)
   await setCurrentUser(req, res)
   // Validate body parameters
@@ -98,7 +98,7 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ message: "createMessageHandler: Invalid parameters" });
     }
 
-    const userMessage = await createMessage({ message, lessonId, createdById: req.currentUser?.id as string, type: "user" });
+    const userMessage = await createMessage({ message, lessonId, createdById: type === "user" ? req.currentUser?.id as string : null, type });
 
     return res.status(200).json(userMessage);
   } catch (error) {
