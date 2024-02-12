@@ -30,6 +30,18 @@ export async function createQuestions(questions: QuestionParams[]) {
               }
             }
           }
+        },
+        include: {
+          translation: {
+            select: {
+              content: true,
+              language: {
+                select: {
+                  code: true
+                }
+              }
+            }
+          }
         }
       })
       result.push(q)
