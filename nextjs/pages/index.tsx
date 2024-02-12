@@ -137,7 +137,12 @@ export default function ArticleIndex({ articles }) {
 
   const articlesByPublishedDate = useMemo(() => getArticlesByPublishedDate(articlesSorted), [articlesSorted]);
 
-  const latestArticles = useMemo(() => getArticlesArrByDate(articlesByPublishedDate)[0], [articlesByPublishedDate]);
+  const latestArticles = useMemo(() => {
+    if (!articles.length === 0) {
+      return []
+    }
+    return getArticlesArrByDate(articlesByPublishedDate)[0]
+  }, [articlesByPublishedDate])
 
   const restArticles = useMemo(() => getArticlesArrByDate(articlesByPublishedDate).slice(1).flat(), [articlesByPublishedDate]);
 
@@ -169,11 +174,13 @@ export default function ArticleIndex({ articles }) {
               <Material article={article} locale={locale} />
             </Grid>
           ))}
-        </Grid>
-        {categoryJaOrder.map((category) => (
-          <SectionPastArticles key={category} articlesByCategory={articlesByCategory} category={category} locale={locale} t={t} />
-        ))}
-      </Box>
+        </Grid >
+        {
+          categoryJaOrder.map((category) => (
+            <SectionPastArticles key={category} articlesByCategory={articlesByCategory} category={category} locale={locale} t={t} />
+          ))
+        }
+      </Box >
     </>
   );
 }
@@ -247,7 +254,7 @@ export async function getServerSideProps({ params, locale = 'en' }) {
     }
   }
 
-  const filteredArticles = articles.filter((article) => article.slug !== "style-guide")
+  const filteredArticles = articles.filter((article) => article.fields.title != null && article.fields.slug !== "style-guide")
 
   const articlesMapped = filteredArticles.map((article) => {
     return extractArticleInfo(article)

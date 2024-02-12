@@ -98,7 +98,7 @@ export const createAIMessage = createAsyncThunk(`${NAME}/create`, async ({
 
 export const addUserMessage = createAsyncThunk(`${NAME}/add`,
   async (
-    { lessonId, message }: { message: string, lessonId: string },
+    { lessonId, message, type }: { message: string, lessonId: string },
     { getState, rejectWithValue, dispatch }
   ) => {
     try {
@@ -108,6 +108,7 @@ export const addUserMessage = createAsyncThunk(`${NAME}/add`,
       const response = await axios.post(`/api/lessons/${lessonId}/messages`,
         {
           message,
+          type,
         },
         {
           headers: {

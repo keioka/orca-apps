@@ -92,7 +92,7 @@ export function StudyPanel({
         dispatch(fetchSampleResponses(currentLesson.id))
       } else {
         mixpanel.track("Fetch Sample PayWall");
-        dispatch(setPaymentRequiredAlert("AIの返答例を見るには、プレミアム会員になる必要があります"))
+        // dispatch(setPaymentRequiredAlert("AIの返答例を見るには、プレミアム会員になる必要があります"))
       }
     } else {
       mixpanel.track("Fetch Sample AuthWall");

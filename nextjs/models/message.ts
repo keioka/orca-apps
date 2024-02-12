@@ -32,7 +32,7 @@ export async function createMessage({
 }: {
   message: string;
   type: "user" | "ai";
-  createdById?: string;
+  createdById?: string | null;
   lessonId: string;
 }) {
 

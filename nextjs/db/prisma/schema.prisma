@@ -70,8 +70,23 @@ model Material {
   publisherId     String            @map("publisher_id")
   publisher       Publisher         @relation(fields: [publisherId], references: [id])
   materialHashtag MaterialHashtag[]
+  questions       Question[]
 
   @@map("materials")
+}
+
+model Question {
+  id              Int           @id @default(autoincrement())
+  content         String
+  paragraphNumber Int?          @map("paragraph_number")
+  materialId      String        @map("material_id")
+  material        Material      @relation(fields: [materialId], references: [id])
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  translation     Translation[]
+
+  @@unique([content, paragraphNumber, materialId])
+  @@map("questions")
 }
 
 model Publisher {
@@ -271,6 +286,8 @@ model Translation {
   vocabulary   Vocabulary? @relation(fields: [vocabularyId], references: [id])
   messageId    Int?        @map("message_id")
   message      Message?    @relation(fields: [messageId], references: [id])
+  questionId   Int?        @map("question_id")
+  question     Question?   @relation(fields: [questionId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

@@ -23,11 +23,13 @@ interface MaterialsState {
   isFailedToFetchOriginalMaterialsByExternalId: { [key: string]: boolean };
   isInitMaterials: boolean;
   isFetchingMaterials: boolean;
+  isFetchingQuestions: boolean;
   isFetchingSummary: boolean;
   isFetchingVocabs: boolean;
   error: string | null;
   vocabs: { [key: string]: string[] }
   summaries: { [key: string]: string[] }
+  questions: { [key: string]: string[] }
 }
 
 // Define the initial state
@@ -42,8 +44,10 @@ const initialState: MaterialsState = {
   },
   vocabs: {},
   summaries: {},
+  questions: {},
   isFailedToFetchOriginalMaterialsByExternalId: {},
   isInitMaterials: false,
+  isFetchingQuestions: false,
   isFetchingMaterials: false,
   isFetchingSummary: false,
   isFetchingVocabs: false,
@@ -155,6 +159,19 @@ const materialsSlice = createSlice({
         state.isFailedToFetchOriginalMaterialsByExternalId = {
           [action.payload.externalId]: true
         };
+        state.error = action.payload as string;
+      })
+      .addCase(fetchQuestions.pending, (state) => {
+        state.isFetchingQuestions = true;
+        state.error = null;
+      })
+      .addCase(fetchQuestions.fulfilled, (state, action) => {
+        state.isFetchingQuestions = false;
+        state.error = null;
+        state.questions[action.payload.materialId] = action.payload.questions;
+      })
+      .addCase(fetchQuestions.rejected, (state, action) => {
+        state.isFetchingQuestions = false;
         state.error = action.payload as string;
       })
       .addMatcher(
@@ -389,6 +406,30 @@ export const fetchSummaries = createAsyncThunk<Material[], void>(
   }
 );
 
+
+interface FetchQuestionsParams {
+  materialId: string,
+}
+
+export const fetchQuestions = createAsyncThunk<Material[], void>(
+  'materials/fetchQuestions',
+  async ({ materialId }: FetchQuestionsParams, { rejectWithValue }) => {
+    try {
+      const result = await getQuestionsByMaterialId({ materialId })
+
+      if (!result) {
+        return rejectWithValue('Failed to fetch materials')
+      }
+
+      return { questions: result.quetions, materialId };
+    } catch (error) {
+      console.error(error)
+      const message = error.message;
+      return rejectWithValue(message)
+    }
+  }
+);
+
 async function getSummariesByLevel(params: { url: string, levels: string[] }) {
   const { url, levels } = params
 
@@ -433,4 +474,16 @@ async function getMaterialByExternalId(params: { id: string }) {
   }
 
   return await response.json()
+}
+
+
+async function getQuestionsByMaterialId(params: { materialId: string }) {
+  const response = await axios(`/api/materials/${params.materialId}/preChatQuestion`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  });
+
+  return response.data;
 }
