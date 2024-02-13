@@ -187,7 +187,7 @@ export function CardVocabSM({
       const voices = synth.getVoices();
       const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
 
-      const utterance = new SpeechSynthesisUtterance(content);
+      const utterance = new SpeechSynthesisUtterance(vocab.word);
       utterance.lang = "en-US";
 
       if (englishVoices.length) {
