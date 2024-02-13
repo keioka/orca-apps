@@ -285,12 +285,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      if (process.env.APP_ENV === "production") {
+      if (process.env.NEXT_PUBLIC_APP_ENV === "production") {
         LogRocket.init('taiheyyo/orca-news-prod');
         // plugins should also only be initialized when in the browser
         setupLogRocketReact(LogRocket);
+        mixpanel.track("Visit Website");
       }
-      mixpanel.track("Visit Website");
     }
   }, [])
 

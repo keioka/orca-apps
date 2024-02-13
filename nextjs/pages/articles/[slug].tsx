@@ -715,23 +715,27 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   )
 }
 
-const ratingInteresting = {
-  1: "Not interesting",
-  2: "A little interesting",
-  3: "Interesting",
-  4: "Very interesting",
-  5: "Extremely interesting"
-}
-
-const ratingDifficulties = {
-  1: "Extremely difficult",
-  2: "Very difficult",
-  3: "Difficult",
-  4: "A little difficult",
-  5: "Not difficult"
-}
 
 function RatingForm({ onSubmit, isRatingSent }) {
+
+  const { t, i18n } = useTranslation("common");
+
+  const ratingInteresting = {
+    1: t("notInteresting"),
+    2: t("aLittleInteresting"),
+    3: t("interesting"),
+    4: t("veryInteresting"),
+    5: t("extremelyInteresting")
+  }
+
+  const ratingDifficulties = {
+    1: t("extremelyDifficult"),
+    2: t("veryDifficult"),
+    3: t("difficult"),
+    4: t("aLittleDifficult"),
+    5: t("notDifficult")
+  }
+
   const [valueInteresting, setValueInteresting] = useState(null)
   const [valueDifficulties, setValueDifficulties] = useState(null)
 
@@ -750,7 +754,7 @@ function RatingForm({ onSubmit, isRatingSent }) {
   return (
     <Box sx={{ border: "1px solid #d4d4d4", padding: 2, borderRadius: 4 }}>
       <Typography sx={{ fontSize: 18, fontWeight: "bold", textAlign: "center" }}>
-        Rate this article
+        {t("rateThisArticle")}
       </Typography>
       {isRatingSent &&
         <Typography sx={{ fontSize: 14, textAlign: "center" }}>
@@ -762,13 +766,13 @@ function RatingForm({ onSubmit, isRatingSent }) {
         <>
           <Stack direction="row" spacing={2} sx={{ marginTop: 2, width: "100%", boxSizing: "border-box", justifyContent: "center", alignItems: "center" }}>
             <Typography sx={{ fontSize: 14, textAlign: "center" }}>
-              Was it interesting?
+              {t("wasThisInteresting")}
             </Typography>
             <RatingSentiment value={valueInteresting} labels={ratingInteresting} onChange={handleChangeInteresting} />
           </Stack>
           <Stack direction="row" spacing={2} sx={{ marginTop: 2, width: "100%", boxSizing: "border-box", justifyContent: "center", alignItems: "center" }}>
             <Typography sx={{ fontSize: 14, textAlign: "center" }}>
-              Was it difficault?
+              {t("wasThisDifficult")}
             </Typography>
             <RatingSentiment value={valueDifficulties} labels={ratingDifficulties} onChange={handleChangeDifficulties} />
           </Stack>
@@ -778,7 +782,7 @@ function RatingForm({ onSubmit, isRatingSent }) {
             onClick={handleSubmit}
             disabled={isRatingSent}
           >
-            Submit
+            {t("submit")}
           </Button>
         </>
       }

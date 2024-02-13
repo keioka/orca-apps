@@ -81,5 +81,19 @@
   "description.p2": "単語を使いながら、AIと会話してアプトプット。言い換え表現などのフィードバックを確認。",
   "description.p3": "保存した単語やフィードバックをノートから復習",
   "close": "閉じる",
-  "seeMore": "もっと見る"
+  "seeMore": "もっと見る",
+  "rateThisArticle": "この記事を評価する",
+  "wasThisInteresting": "この記事は面白かったですか？",
+  "notInteresting": "面白くなかった",
+  "aLittleInteresting": "少し面白かった",
+  "interesting": "面白かった",
+  "veryInteresting": "とても面白かった",
+  "extremelyInteresting": "非常に面白かった",
+  "wasThisDifficult": "この記事は難しかったですか？",
+  "notDifficult": "難しくなかった",
+  "aLittleDifficult": "少し難しかった",
+  "difficult": "難しかった",
+  "veryDifficult": "とても難しかった",
+  "extremelyDifficult": "非常に難しかった",
+  "submit": "送信"
 }
