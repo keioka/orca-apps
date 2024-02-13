@@ -58,6 +58,7 @@ export function StudyPanel({
 
   useEffect(() => {
     if (currentOpenedOriginalMaterial && currentUser) {
+      console.log({ currentOpenedOriginalMaterial })
       dispatch(fetchOrCreateLessonByMaterialId(currentOpenedOriginalMaterial.id))
     }
   }, [currentOpenedOriginalMaterial, currentUser])

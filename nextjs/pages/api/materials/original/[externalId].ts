@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let material = await Material.getMaterialByExternalId(externalId)
     if (!material) {
       const { newArticle } = await syncArticleByExternalId(externalId as string)
-      return res.status(200).json({ newArticle })
+      return res.status(200).json(newArticle)
     }
     res.status(200).json(material)
   } catch (error) {

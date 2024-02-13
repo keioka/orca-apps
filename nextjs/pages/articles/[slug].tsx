@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { Avatar, List, ListItem, ListItemText, Box, Typography, Grid, Stack, Pagination, TextField, Button } from '@mui/material'
 import styled from '@emotion/styled';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
@@ -446,10 +446,12 @@ export default function Article({ article, relatedArticles, body, notFound, slug
     }
   }
 
-  const handleSubmitRatingForm = (values: { interesting: number, difficulty: number }) => {
-    dispatch(createRating({ type: "interesting", rating: values.interesting, materialId: currentOpenedOriginalMaterial.id }))
-    dispatch(createRating({ type: "difficulty", rating: values.difficulty, materialId: currentOpenedOriginalMaterial.id }))
-  }
+  const handleSubmitRatingForm = useCallback((values: { interesting: number, difficulty: number }) => {
+    if (currentOpenedOriginalMaterial) {
+      dispatch(createRating({ type: "interesting", rating: values.interesting, materialId: currentOpenedOriginalMaterial.id }))
+      dispatch(createRating({ type: "difficulty", rating: values.difficulty, materialId: currentOpenedOriginalMaterial.id }))
+    }
+  }, [currentOpenedOriginalMaterial])
 
   const isEmbedMode = mode === 'embed'
 
@@ -693,11 +695,13 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                 {reference}
               </Markdown>
             </Box>
-            <Box mb={8} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Box sx={{ width: "90%" }}>
-                <RatingForm onSubmit={handleSubmitRatingForm} isRatingSent={isRatingSent} />
+            {currentOpenedOriginalMaterial &&
+              <Box mb={8} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Box sx={{ width: "90%" }}>
+                  <RatingForm onSubmit={handleSubmitRatingForm} isRatingSent={isRatingSent} />
+                </Box>
               </Box>
-            </Box>
+            }
             <StudyPanel
               article={article}
               currentUser={currentUser}
