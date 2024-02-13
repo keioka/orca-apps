@@ -81,5 +81,18 @@
   "description.p2": "Practice speaking with AI using the words you've saved. Check feedback such as paraphrasing.",
   "description.p3": "Review saved words and feedback in your notebook",
   "close": "Close",
-  "seeMore": "See More"
+  "seeMore": "See More",
+  "rateThisArticle": "Rate this article",
+  "wasThisInteresting": "Was this interesting?",
+  "notInteresting": "Not interesting",
+  "aLittleInteresting": "A little interesting",
+  "interesting": "Interesting",
+  "veryInteresting": "Very interesting",
+  "extremelyInteresting": "Extremely interesting",
+  "wasThisDifficult": "Was this difficult?",
+  "aLittleDifficult": "A little difficult",
+  "difficult": "Difficult",
+  "veryDifficult": "Very difficult",
+  "extremelyDifficult": "Extremely difficult",
+  "submit": "Submit"
 }
