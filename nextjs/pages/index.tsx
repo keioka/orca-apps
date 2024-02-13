@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Box, Typography, Grid, Stack, Button } from '@mui/material'
+import { Box, Typography, Grid, Stack, Button, List, ListItem } from '@mui/material'
 import { Header } from '../components/Header'
 import { Material } from '../components/Material'
 import styled from '@emotion/styled';
@@ -156,31 +156,74 @@ export default function ArticleIndex({ articles }) {
         <meta name="description" content={t("articleIndex.meta.description")} />
         {/* Remaining meta tags */}
       </Head>
-      <Box sx={{ minHeight: "100vh" }} px={{ xs: 1, md: 24 }}>
-        <Header />
-        <Stack direction="row" sx={{ overflowX: "scroll", "&::-webkit-scrollbar": "none" }} spacing={1} p={2}>
-          <Chip label={t("articleIndex.latest")} />
-          {/* Assuming categoryJaOrder is defined and contains categories in the desired order */}
-          {categoryJaOrder.map((category) => (
-            <Chip key={category} label={t(`categories.${category}`)} onClick={() => router.push(`#${category}`)} />
-          ))}
+      <Box sx={{ minHeight: "100vh" }}>
+        <Box px={{ xs: 1, md: 24 }}>
+          <Header />
+        </Box>
+        <Stack sx={{ background: "linear-gradient(135deg, #191c29, #2c3e50)", px: 3, py: 2, spacing: 2 }}>
+          <Typography sx={{ color: "#fff" }}>
+            How it works
+          </Typography>
+          <Stack spacing={1}>
+            <List sx={{ paddingLeft: 2 }}>
+              <ListItem
+                sx={{
+                  color: "#fff",
+                  listStyleType: "disc",
+                  display: "list-item",
+                  pl: 0
+                }}
+              >
+                記事を読んで、覚えたい単語を保存
+              </ListItem>
+              <ListItem
+                sx={{
+                  color: "#fff",
+                  listStyleType: "disc",
+                  display: "list-item",
+                  pl: 0
+                }}
+              >
+                単語を使いながら、AIと会話してアプトプット。言い換え表現などのフィードバックを確認。
+              </ListItem>
+              <ListItem
+                sx={{
+                  color: "#fff",
+                  listStyleType: "disc",
+                  display: "list-item",
+                  pl: 0
+                }}
+              >
+                保存した単語やフィードバックをノートから復習
+              </ListItem>
+            </List>
+          </Stack>
         </Stack>
-        <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1.2rem", paddingX: 2, paddingTop: 3 }}>
-          {t("articleIndex.latestNews")}
-        </Typography>
-        <Grid container py={3} p={2} spacing={{ xs: 3, sm: 2 }}>
-          {latestArticles.map((article) => (
-            <Grid key={article.id} item xs={12} sm={6} md={4}>
-              <Material article={article} locale={locale} />
-            </Grid>
-          ))}
-        </Grid >
-        {
-          categoryJaOrder.map((category) => (
-            <SectionPastArticles key={category} articlesByCategory={articlesByCategory} category={category} locale={locale} t={t} />
-          ))
-        }
-      </Box >
+        <Box sx={{ minHeight: "100vh" }} px={{ xs: 1, md: 24 }}>
+          <Stack direction="row" sx={{ overflowX: "scroll", "&::-webkit-scrollbar": "none" }} spacing={1} p={2}>
+            <Chip label={t("articleIndex.latest")} />
+            {/* Assuming categoryJaOrder is defined and contains categories in the desired order */}
+            {categoryJaOrder.map((category) => (
+              <Chip key={category} label={t(`categories.${category}`)} onClick={() => router.push(`#${category}`)} />
+            ))}
+          </Stack>
+          <Typography variant="h1" sx={{ fontFamily: "Crimson Text", fontSize: "1.2rem", paddingX: 2, paddingTop: 3 }}>
+            {t("articleIndex.latestNews")}
+          </Typography>
+          <Grid container py={3} p={2} spacing={{ xs: 3, sm: 2 }}>
+            {latestArticles.map((article) => (
+              <Grid key={article.id} item xs={12} sm={6} md={4}>
+                <Material article={article} locale={locale} />
+              </Grid>
+            ))}
+          </Grid >
+          {
+            categoryJaOrder.map((category) => (
+              <SectionPastArticles key={category} articlesByCategory={articlesByCategory} category={category} locale={locale} t={t} />
+            ))
+          }
+        </Box>
+      </Box>
     </>
   );
 }

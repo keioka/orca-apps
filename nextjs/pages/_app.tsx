@@ -19,6 +19,7 @@ import LogRocket from 'logrocket'
 import setupLogRocketReact from 'logrocket-react';
 import { appWithTranslation } from 'next-i18next'
 import nextI18NextConfig from '@/next-i18next.config.cjs'   /// <- mjs here
+import { TourProvider } from '@reactour/tour'
 
 const themeLang = {
   en: {
@@ -282,19 +283,35 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      if (process.env.NEXT_PUBLIC_APP_ENV === "production") {
+      if (process.env.APP_ENV === "production") {
         LogRocket.init('taiheyyo/orca-news-prod');
         // plugins should also only be initialized when in the browser
         setupLogRocketReact(LogRocket);
-        mixpanel.track("Visit Website");
       }
+      mixpanel.track("Visit Website");
     }
   }, [])
 
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <AppCore Component={Component} pageProps={pageProps} />
+        <TourProvider
+          steps={[
+            {
+              selector: '[data-tour="step1"]',
+              content: 'Pronounce',
+            }, {
+              selector: '[data-tour="step2"]',
+              content: 'Vocabularies'
+            },
+            {
+              selector: '[data-tour="step3"]',
+              content: 'Save'
+            }
+          ]}
+        >
+          <AppCore Component={Component} pageProps={pageProps} />
+        </TourProvider>
       </Provider>
     </ThemeProvider >
   );
