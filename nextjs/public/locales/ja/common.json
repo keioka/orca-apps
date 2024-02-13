@@ -45,7 +45,6 @@
   "paragraph.translation": "翻訳",
   "paragraph.vocabList": "単語帳",
   "paragraph.questions": "AIの質問に答えて会話してみよう",
-  // "paragraph.buttonAnswer": "Answer to this question",
   "paragraph.buttonAnswer": "この質問に答えて会話する",
   "vocab.exampleSentences": "例文",
   "vocab.pronunciation": "発音",
@@ -80,5 +79,7 @@
   "description.title": "Orcaの使い方",
   "description.p1": "記事を読んで、覚えたい単語を保存",
   "description.p2": "単語を使いながら、AIと会話してアプトプット。言い換え表現などのフィードバックを確認。",
-  "description.p3": "保存した単語やフィードバックをノートから復習"
+  "description.p3": "保存した単語やフィードバックをノートから復習",
+  "close": "閉じる",
+  "seeMore": "もっと見る"
 }

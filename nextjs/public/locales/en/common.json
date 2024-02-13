@@ -79,5 +79,7 @@
   "description.title": "How Orca Works",
   "description.p1": "Read articles and save words you want to remember",
   "description.p2": "Practice speaking with AI using the words you've saved. Check feedback such as paraphrasing.",
-  "description.p3": "Review saved words and feedback in your notebook"
+  "description.p3": "Review saved words and feedback in your notebook",
+  "close": "Close",
+  "seeMore": "See More"
 }

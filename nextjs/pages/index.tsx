@@ -111,7 +111,7 @@ function getArticlesArrByDate(articlesByPublishedDate) {
 const categoryJaOrder = [
   "jp_news",
   "jp_economy",
-  // "jp_stock",
+  "jp_stock",
   "world_news",
   "world_economy",
   "us_stock",
@@ -128,11 +128,33 @@ const categoryJaOrder = [
   // "sdgs",
 ]
 
+
+const categoryEnOrder = [
+
+  // "jp_stock",
+  "world_news",
+  "world_economy",
+  "us_stock",
+
+  // "eu_stock",
+  // "russia_ukraine",
+  "business",
+  // "marketing",
+  "tech",
+  "science",
+  // "fintech",
+  "web3",
+  "metaverse",
+  "jp_news",
+  "jp_economy",
+  // "sdgs",
+]
+
 export default function ArticleIndex({ articles }) {
   const { t, i18n } = useTranslation("common");
   // Assuming locale is determined correctly elsewhere, using 'ja' as a placeholder
   const locale = i18n.language
-
+  const router = useRouter()
   const articlesSorted = useMemo(() => articles.filter(article => article.publishedDate).sort((a, b) => b.publishedDate.localeCompare(a.publishedDate)), [articles]);
 
   const articlesByPublishedDate = useMemo(() => getArticlesByPublishedDate(articlesSorted), [articlesSorted]);
@@ -147,6 +169,10 @@ export default function ArticleIndex({ articles }) {
   const restArticles = useMemo(() => getArticlesArrByDate(articlesByPublishedDate).slice(1).flat(), [articlesByPublishedDate]);
 
   const articlesByCategory = useMemo(() => getArticlesByCategory(restArticles), [restArticles]);
+
+  const order = useMemo(() => {
+    return locale === 'ja' ? categoryJaOrder : categoryEnOrder
+  }, [locale])
 
   return (
     <>
@@ -203,7 +229,7 @@ export default function ArticleIndex({ articles }) {
           <Stack direction="row" sx={{ overflowX: "scroll", "&::-webkit-scrollbar": "none" }} spacing={1} p={2}>
             <Chip label={t("articleIndex.latest")} />
             {/* Assuming categoryJaOrder is defined and contains categories in the desired order */}
-            {categoryJaOrder.map((category) => (
+            {order.map((category) => (
               <Chip key={category} label={t(`categories.${category}`)} onClick={() => router.push(`#${category}`)} />
             ))}
           </Stack>
@@ -218,7 +244,7 @@ export default function ArticleIndex({ articles }) {
             ))}
           </Grid >
           {
-            categoryJaOrder.map((category) => (
+            order.map((category) => (
               <SectionPastArticles key={category} articlesByCategory={articlesByCategory} category={category} locale={locale} t={t} />
             ))
           }
@@ -275,7 +301,7 @@ function SectionPastArticles({ articlesByCategory, category, locale }) {
             }
           }}
         >
-          {isExpanded ? "閉じる" : "もっと見る"}
+          {isExpanded ? t("close") : t("seeMore")}
         </Button>
       </Box>
     </Box>
