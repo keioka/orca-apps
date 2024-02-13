@@ -160,7 +160,7 @@ export default function ArticleIndex({ articles }) {
         <Box px={{ xs: 1, md: 24 }}>
           <Header />
         </Box>
-        <Stack sx={{ background: "linear-gradient(135deg, #191c29, #2c3e50)", px: 3, py: 2, spacing: 2 }}>
+        <Stack sx={{ background: "linear-gradient(135deg, #191c29, #2c3e50)", py: 2, spacing: 2 }} px={{ xs: 3, md: 26 }}>
           <Typography sx={{ color: "#fff" }}>
             {t("description.title")}
           </Typography>

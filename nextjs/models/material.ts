@@ -1,4 +1,4 @@
-import { Material } from '@prisma/client';
+import { Material, Rating } from '@prisma/client';
 
 import prisma from '../db'
 
@@ -325,4 +325,22 @@ export async function toggleArchive({ isArchived, materialId }: { materialId: st
   });
 
   return material
+}
+
+interface CreateRatingParams {
+  materialId: string;
+  rating: number;
+  type: string;
+  userId: string;
+}
+
+export async function createRatings(createRatingParams: CreateRatingParams): Promise<Rating> {
+  return await prisma.rating.create({
+    data: {
+      materialId: createRatingParams.materialId,
+      userId: createRatingParams.userId,
+      rating: createRatingParams.rating,
+      type: createRatingParams.type,
+    }
+  });
 }
