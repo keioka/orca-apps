@@ -27,6 +27,7 @@ import { addUserMessage } from "@/redux/features/messages";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import nextI18NextConfig from '@/next-i18next.config.cjs'
 import { useTranslation } from 'next-i18next'
+import { useTour } from '@reactour/tour'
 
 export const config = {
   amp: 'hybrid',
@@ -339,6 +340,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   const currentLesson = useAppSelector((state) => state.lesson.lessons.find((lesson) => lesson.materialId === currentOpenedOriginalMaterial?.id))
 
   const { t, i18n } = useTranslation();
+  const { setIsOpen } = useTour()
 
   const mode = searchParams.get('mode')
 
@@ -352,6 +354,10 @@ export default function Article({ article, relatedArticles, body, notFound, slug
       }
     }
   }, [currentUser])
+
+  useEffect(() => {
+    setIsOpen(true)
+  }, [])
 
   useEffect(() => {
     if (article && !isFetchingMaterials && !currentOpenedOriginalMaterial && !isFailedToFetchOriginalMaterialsByExternalId) {
@@ -749,7 +755,7 @@ function Paragraph({
   }
 
   return (
-    <Box pb={4}>
+    <Box pb={8}>
       <Stack direction="row" sx={{ alignItems: "center" }} justifyContent="space-between">
         <Box style={{ backgroundColor: "#f2f3f4", padding: 8, borderTopRightRadius: 8, justifyContent: "center", alignItems: "center", width: 64, marginRight: 18 }}>
           <Typography sx={{ fontSize: 16, textAlign: "center", fontWeight: "bold", color: "#242424" }}>{index + 1} / {totalLength}</Typography>
@@ -763,6 +769,7 @@ function Paragraph({
               cursor: "pointer",
             }}
             onClick={() => { setShouldShowPlaySound(!shouldShowPlaySound) }}
+            data-tour="step1"
           >
             <Box
               sx={{
@@ -811,6 +818,7 @@ function Paragraph({
               cursor: "pointer",
             }}
             onClick={() => { setShouldShowVocab(!shouldShowVocab) }}
+            data-tour="step2"
           >
             <Box
               sx={{
@@ -855,7 +863,7 @@ function Paragraph({
             >
               <HiOutlineSpeakerWave size={18} color="#fff" />
             </Box> */}
-        <AudioPlayer file={content.audioFileLink} />
+        <AudioPlayer file={content.audioFileLink} autoPlay />
         {/* <Text sx={{ fontSize: 12, marginTop: 0.5 }}>発音</Text> */}
       </Stack>}
       {!isEmbedMode && shouldShowVocab && vocabsOnPage &&
@@ -888,24 +896,28 @@ function Paragraph({
           </Typography>
         </TransP>
       }
-      <Stack>
-        <Typography sx={{ fontSize: 14, color: "#242424", paddingX: 2 }}>
-          {t("paragraph.questions")}
-        </Typography>
-        <Stack direction="row" spacing={2} sx={{ overflowX: "scroll", width: "100%", paddingX: 2 }}>
-          {questions && questions.length > 0 && questions.map((question) => {
-            return (
-              <Box sx={{ width: "100%", minWidth: 320, display: "flex", justifyContent: "center", alignItems: "center", borderRadius: 8 }}>
-                <Stack sx={{ width: "90%", background: "#f4f4f4", padding: 2, borderRadius: 4 }} spacing={3}>
-                  <Typography>{question.content}</Typography>
-                  {locale === 'ja' && <Typography>{question.translation[0].content}</Typography>}
-                  <Button variant="contained" sx={{ color: "#fff" }} onClick={() => handleOnClickAnswer(question.content)}>{t("paragraph.buttonAnswer")}</Button>
-                </Stack>
-              </Box>
-            )
-          })}
-        </Stack>
-      </Stack>
+      {questions && questions.length > 0 &&
+        <Box sx={{ background: "#fff", padding: 2 }}>
+          <Stack spacing={1} sx={{ background: "#f4f4f4", borderRadius: 8, paddingY: 3, paddingX: 1, overflow: "hidden" }}>
+            <Typography sx={{ fontSize: 14, color: "#242424", paddingX: 2 }}>
+              {t("paragraph.questions")}
+            </Typography>
+            <Stack direction="row" spacing={2} sx={{ overflowX: "scroll", width: "100%", paddingX: 2 }}>
+              {questions.map((question) => {
+                return (
+                  <Box sx={{ width: "100%", minWidth: 320, display: "flex", borderRadius: 8 }}>
+                    <Stack sx={{ width: "90%", background: "#fff", padding: 2, borderRadius: 4 }} spacing={3}>
+                      <Typography>{question.content}</Typography>
+                      {locale === 'ja' && <Typography>{question.translation[0].content}</Typography>}
+                      <Button variant="contained" sx={{ color: "#fff" }} onClick={() => handleOnClickAnswer(question.content)}>{t("paragraph.buttonAnswer")}</Button>
+                    </Stack>
+                  </Box>
+                )
+              })}
+            </Stack>
+          </Stack>
+        </Box>
+      }
     </Box>
   )
 }

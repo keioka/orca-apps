@@ -1,6 +1,5 @@
-export function AudioPlayer({ file }: { file: string }) {
-  console.log({ file })
+export function AudioPlayer({ file, autoPlay }: { file: string, autoPlay?: boolean }) {
   return (
-    <audio src={file} controls style={{ width: "100%" }} />
+    <audio src={file} controls autoPlay={autoPlay} style={{ width: "100%" }} />
   );
 }
