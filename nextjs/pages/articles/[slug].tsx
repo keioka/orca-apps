@@ -15,7 +15,7 @@ import { TbVocabulary } from "react-icons/tb";
 import { useSearchParams } from 'next/navigation'
 import { Header } from '../../components/Header'
 import { AudioPlayer } from '../../components/AudioPlayer'
-import { fetchVocabs, fetchOriginalMaterial, fetchQuestions } from "@/redux/features/materials";
+import { fetchVocabs, fetchOriginalMaterial, fetchQuestions, createRating } from "@/redux/features/materials";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { ModalAuth } from '@/components/ModalAuth';
 import { StudyPanel } from '@/components/StudyPanel';
@@ -28,6 +28,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import nextI18NextConfig from '@/next-i18next.config.cjs'
 import { useTranslation } from 'next-i18next'
 import { useTour } from '@reactour/tour'
+import { RatingSentiment } from '@/components/Rating'
 
 export const config = {
   amp: 'hybrid',
@@ -338,6 +339,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   const isFetchingMaterials = useAppSelector((state) => state.material.isFetchingMaterials)
   const isFailedToFetchOriginalMaterialsByExternalId = useAppSelector((state) => state.material.isFailedToFetchOriginalMaterialsByExternalId[article.sys.id])
   const currentLesson = useAppSelector((state) => state.lesson.lessons.find((lesson) => lesson.materialId === currentOpenedOriginalMaterial?.id))
+  const isRatingSent = useAppSelector((state) => currentOpenedOriginalMaterial ? state.material.ratingSent[currentOpenedOriginalMaterial?.id] : false)
 
   const { t, i18n } = useTranslation();
   const { setIsOpen } = useTour()
@@ -442,6 +444,11 @@ export default function Article({ article, relatedArticles, body, notFound, slug
       setShouldOpenModalAuth(true)
       setAlert("単語を保存するにはログインしてください")
     }
+  }
+
+  const handleSubmitRatingForm = (values: { interesting: number, difficulty: number }) => {
+    dispatch(createRating({ type: "interesting", rating: values.interesting, materialId: currentOpenedOriginalMaterial.id }))
+    dispatch(createRating({ type: "difficulty", rating: values.difficulty, materialId: currentOpenedOriginalMaterial.id }))
   }
 
   const isEmbedMode = mode === 'embed'
@@ -645,6 +652,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               </Typography>
             </Box>
           </Box>
+
         </BlogHeader>
         {/* <Box my={3}>
           <AudioPlayer />
@@ -671,7 +679,7 @@ export default function Article({ article, relatedArticles, body, notFound, slug
               )
             })}
             <Box
-              p={4}
+              px={4}
               sx={{
                 "& > ol > li": {
                   listStyle: "decimal",
@@ -685,6 +693,11 @@ export default function Article({ article, relatedArticles, body, notFound, slug
                 {reference}
               </Markdown>
             </Box>
+            <Box mb={8} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <Box sx={{ width: "90%" }}>
+                <RatingForm onSubmit={handleSubmitRatingForm} isRatingSent={isRatingSent} />
+              </Box>
+            </Box>
             <StudyPanel
               article={article}
               currentUser={currentUser}
@@ -693,9 +706,79 @@ export default function Article({ article, relatedArticles, body, notFound, slug
             />
           </Box>
         </Box>
-      </BlogLayout >
+      </BlogLayout>
     </>
+  )
+}
 
+const ratingInteresting = {
+  1: "Not interesting",
+  2: "A little interesting",
+  3: "Interesting",
+  4: "Very interesting",
+  5: "Extremely interesting"
+}
+
+const ratingDifficulties = {
+  1: "Extremely difficult",
+  2: "Very difficult",
+  3: "Difficult",
+  4: "A little difficult",
+  5: "Not difficult"
+}
+
+function RatingForm({ onSubmit, isRatingSent }) {
+  const [valueInteresting, setValueInteresting] = useState(null)
+  const [valueDifficulties, setValueDifficulties] = useState(null)
+
+  const handleChangeInteresting = (event) => {
+    setValueInteresting(event.target.value);
+  }
+
+  const handleChangeDifficulties = (event) => {
+    setValueDifficulties(event.target.value);
+  }
+
+  const handleSubmit = () => {
+    onSubmit({ interesting: valueInteresting, difficulty: valueDifficulties })
+  }
+
+  return (
+    <Box sx={{ border: "1px solid #d4d4d4", padding: 2, borderRadius: 4 }}>
+      <Typography sx={{ fontSize: 18, fontWeight: "bold", textAlign: "center" }}>
+        Rate this article
+      </Typography>
+      {isRatingSent &&
+        <Typography sx={{ fontSize: 14, textAlign: "center" }}>
+          Thank you for your feedback!
+        </Typography>
+      }
+
+      {!isRatingSent &&
+        <>
+          <Stack direction="row" spacing={2} sx={{ marginTop: 2, width: "100%", boxSizing: "border-box", justifyContent: "center", alignItems: "center" }}>
+            <Typography sx={{ fontSize: 14, textAlign: "center" }}>
+              Was it interesting?
+            </Typography>
+            <RatingSentiment value={valueInteresting} labels={ratingInteresting} onChange={handleChangeInteresting} />
+          </Stack>
+          <Stack direction="row" spacing={2} sx={{ marginTop: 2, width: "100%", boxSizing: "border-box", justifyContent: "center", alignItems: "center" }}>
+            <Typography sx={{ fontSize: 14, textAlign: "center" }}>
+              Was it difficault?
+            </Typography>
+            <RatingSentiment value={valueDifficulties} labels={ratingDifficulties} onChange={handleChangeDifficulties} />
+          </Stack>
+          <Button
+            variant="outlined"
+            sx={{ width: "100%", marginTop: 2, padding: 1, fontSize: 14, fontWeight: "bold" }}
+            onClick={handleSubmit}
+            disabled={isRatingSent}
+          >
+            Submit
+          </Button>
+        </>
+      }
+    </Box>
   )
 }
 

@@ -45,6 +45,7 @@ model User {
   followRss           FollowRss[]
   savedVocabularies   SavedVocabularies[]
   hashtags            UserFollowHashtag[]
+  Rating              Rating[]
 
   @@map("users")
 }
@@ -71,6 +72,7 @@ model Material {
   publisher       Publisher         @relation(fields: [publisherId], references: [id])
   materialHashtag MaterialHashtag[]
   questions       Question[]
+  Rating          Rating[]
 
   @@map("materials")
 }
@@ -374,4 +376,19 @@ model AudioFile {
   Message   Message[]
 
   @@map("audio_files")
+}
+
+model Rating {
+  id         Int      @id @default(autoincrement())
+  userId     String?  @map("user_id") @db.Char(36)
+  user       User?    @relation(fields: [userId], references: [id])
+  materialId String   @map("material_id") @db.Char(36)
+  material   Material @relation(fields: [materialId], references: [id])
+  rating     Int
+  type       String   @db.VarChar(32)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, materialId])
+  @@map("ratings")
 }

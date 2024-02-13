@@ -30,6 +30,7 @@ interface MaterialsState {
   vocabs: { [key: string]: string[] }
   summaries: { [key: string]: string[] }
   questions: { [key: string]: string[] }
+  ratingSent: { [key: string]: boolean }
 }
 
 // Define the initial state
@@ -45,6 +46,7 @@ const initialState: MaterialsState = {
   vocabs: {},
   summaries: {},
   questions: {},
+  ratingSent: {},
   isFailedToFetchOriginalMaterialsByExternalId: {},
   isInitMaterials: false,
   isFetchingQuestions: false,
@@ -172,6 +174,15 @@ const materialsSlice = createSlice({
       })
       .addCase(fetchQuestions.rejected, (state, action) => {
         state.isFetchingQuestions = false;
+        state.error = action.payload as string;
+      })
+      .addCase(createRating.pending, (state, action) => {
+        state.error = null;
+      })
+      .addCase(createRating.fulfilled, (state, action) => {
+        state.ratingSent[action.payload.materialId] = true;
+      })
+      .addCase(createRating.rejected, (state, action) => {
         state.error = action.payload as string;
       })
       .addMatcher(
@@ -430,6 +441,20 @@ export const fetchQuestions = createAsyncThunk<Material[], void>(
   }
 );
 
+export const createRating = createAsyncThunk<Material[], void>(
+  'materials/createRating',
+  async (params: { materialId: string, rating: number, type: string, userId: string }, { rejectWithValue }) => {
+    try {
+      const response = await createRatingAPI(params)
+      const data = response.data;
+      return { materialId: params.materialId };
+    } catch (error) {
+      const message = error.message;
+      return rejectWithValue(message)
+    }
+  }
+);
+
 async function getSummariesByLevel(params: { url: string, levels: string[] }) {
   const { url, levels } = params
 
@@ -483,6 +508,19 @@ async function getQuestionsByMaterialId(params: { materialId: string }) {
     headers: {
       'Content-Type': 'application/json'
     },
+  });
+
+  return response.data;
+}
+
+
+async function createRatingAPI(params: { materialId: string, rating: number, type: string, userId: string }) {
+  const response = await axios(`/api/materials/${params.materialId}/rating`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: JSON.stringify(params)
   });
 
   return response.data;
