@@ -20,6 +20,7 @@ import setupLogRocketReact from 'logrocket-react';
 import { appWithTranslation } from 'next-i18next'
 import nextI18NextConfig from '@/next-i18next.config.cjs'   /// <- mjs here
 import { TourProvider } from '@reactour/tour'
+import { useTranslation } from 'next-i18next'
 
 const themeLang = {
   en: {
@@ -280,6 +281,7 @@ function AppCore({ Component, pageProps }: AppProps) {
 mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { track_pageview: true });
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const { t, i18n } = useTranslation('common')
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -295,7 +297,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <TourProvider
+        {/* <TourProvider
           steps={[
             {
               selector: '[data-tour="step1"]',
@@ -309,9 +311,9 @@ function MyApp({ Component, pageProps }: AppProps) {
               content: 'Save'
             }
           ]}
-        >
-          <AppCore Component={Component} pageProps={pageProps} />
-        </TourProvider>
+        > */}
+        <AppCore Component={Component} pageProps={pageProps} />
+        {/* </TourProvider> */}
       </Provider>
     </ThemeProvider >
   );

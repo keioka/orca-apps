@@ -162,7 +162,7 @@ export default function ArticleIndex({ articles }) {
         </Box>
         <Stack sx={{ background: "linear-gradient(135deg, #191c29, #2c3e50)", px: 3, py: 2, spacing: 2 }}>
           <Typography sx={{ color: "#fff" }}>
-            How it works
+            {t("description.title")}
           </Typography>
           <Stack spacing={1}>
             <List sx={{ paddingLeft: 2 }}>
@@ -174,7 +174,7 @@ export default function ArticleIndex({ articles }) {
                   pl: 0
                 }}
               >
-                記事を読んで、覚えたい単語を保存
+                {t("description.p1")}
               </ListItem>
               <ListItem
                 sx={{
@@ -184,7 +184,7 @@ export default function ArticleIndex({ articles }) {
                   pl: 0
                 }}
               >
-                単語を使いながら、AIと会話してアプトプット。言い換え表現などのフィードバックを確認。
+                {t("description.p2")}
               </ListItem>
               <ListItem
                 sx={{
@@ -194,7 +194,7 @@ export default function ArticleIndex({ articles }) {
                   pl: 0
                 }}
               >
-                保存した単語やフィードバックをノートから復習
+                {t("description.p3")}
               </ListItem>
             </List>
           </Stack>
