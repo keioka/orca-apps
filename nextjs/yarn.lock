@@ -1241,6 +1241,11 @@
     protobufjs "^7.2.4"
     yargs "^17.7.2"
 
+"@highlight-run/react@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@highlight-run/react/-/react-3.2.1.tgz#2c92347b5a7427a856e00d7b436435f40acd7ac7"
+  integrity sha512-jjnXsr0T4pXX4D6Etrw081J45ruBrxi2378cVKAqtevgBGu2mQV51/bq14nwi10hrCU/qVr1IhXLHB2y8PY2ug==
+
 "@humanwhocodes/config-array@^0.11.8":
   version "0.11.8"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.11.8.tgz"
@@ -6022,6 +6027,11 @@ hexoid@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/hexoid/-/hexoid-1.0.0.tgz#ad10c6573fb907de23d9ec63a711267d9dc9bc18"
   integrity sha512-QFLV0taWQOZtvIRIAdBChesmogZrtuXvVWsFHZTk2SU+anspqZ2vMnoLg7IE1+Uk16N19APic1BuF8bC8c2m5g==
+
+highlight.run@^8.4.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/highlight.run/-/highlight.run-8.4.0.tgz#d1730a5aa537da61a0f3e6938654a951e054d738"
+  integrity sha512-uZxrG21HA90PkwvVYjXQgJ4l6UlW0VrHusFC2rLkaPeGh2T9vTnO0iiuBy7oqyk2bP4TjuyrqyLBA4nun4iFjA==
 
 hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.1, hoist-non-react-statics@^3.3.2:
   version "3.3.2"

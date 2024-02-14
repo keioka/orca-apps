@@ -21,6 +21,7 @@ import { appWithTranslation } from 'next-i18next'
 import nextI18NextConfig from '@/next-i18next.config.cjs'   /// <- mjs here
 import { TourProvider } from '@reactour/tour'
 import { useTranslation } from 'next-i18next'
+import { H } from 'highlight.run';
 
 const themeLang = {
   en: {
@@ -290,6 +291,15 @@ function MyApp({ Component, pageProps }: AppProps) {
         // plugins should also only be initialized when in the browser
         setupLogRocketReact(LogRocket);
         mixpanel.track("Visit Website");
+
+        H.init('4g8lm90d', {
+          serviceName: "frontend-app",
+          tracingOrigins: true,
+          networkRecording: {
+            enabled: true,
+            recordHeadersAndBody: true,
+          },
+        });
       }
     }
   }, [])

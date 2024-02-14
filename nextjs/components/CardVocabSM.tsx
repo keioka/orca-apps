@@ -202,6 +202,11 @@ export function CardVocabSM({
 
 
   function handleClickSave() {
+    if (typeof window !== 'undefined') {
+      if (process.env.APP_ENV === "production") {
+        mixpanel.track("Save Vocab");
+      }
+    }
     onSaveVocab(vocab)
   }
 
