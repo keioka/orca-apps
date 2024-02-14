@@ -448,8 +448,8 @@ export default function Article({ article, relatedArticles, body, notFound, slug
 
   const handleSubmitRatingForm = useCallback((values: { interesting: number, difficulty: number }) => {
     if (currentOpenedOriginalMaterial) {
-      dispatch(createRating({ type: "interesting", rating: values.interesting, materialId: currentOpenedOriginalMaterial.id }))
-      dispatch(createRating({ type: "difficulty", rating: values.difficulty, materialId: currentOpenedOriginalMaterial.id }))
+      dispatch(createRating({ type: "interesting", rating: values.interesting, materialId: currentOpenedOriginalMaterial.id, userId: currentUser.id }))
+      dispatch(createRating({ type: "difficulty", rating: values.difficulty, materialId: currentOpenedOriginalMaterial.id, userId: currentUser.id }))
     }
   }, [currentOpenedOriginalMaterial])
 
@@ -748,6 +748,11 @@ function RatingForm({ onSubmit, isRatingSent }) {
   }
 
   const handleSubmit = () => {
+    if (typeof window !== 'undefined') {
+      if (process.env.APP_ENV === "production") {
+        mixpanel.track("Submit feedback")
+      }
+    }
     onSubmit({ interesting: valueInteresting, difficulty: valueDifficulties })
   }
 
@@ -837,6 +842,11 @@ function Paragraph({
   }
 
   const handleOnClickAnswer = (question: string) => {
+    if (typeof window !== 'undefined') {
+      if (process.env.APP_ENV === "production") {
+        mixpanel.track("Click Answer");
+      }
+    }
     if (!currentUser) {
       setShouldOpenModalAuth(true)
       setAlertModalAuth("AIと会話練習するにはログインしてください")
