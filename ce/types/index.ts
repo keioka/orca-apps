@@ -7,6 +7,7 @@ export interface Message {
 }
 
 export interface VocabularyItem {
+  id: number;
   word: string;
   pronounce: string;
   meaning: string;

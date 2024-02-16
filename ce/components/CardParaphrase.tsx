@@ -43,7 +43,7 @@ export function CardParaphrase({
               fontSize: 18,
             }}
           >
-            {paraphrase.originalSentence}
+            {paraphrase.sentence.message.content}
           </Typography>
         </Stack>
         <TbArrowBigDownLinesFilled size={18} color="#a4a4a4" />
@@ -58,7 +58,7 @@ export function CardParaphrase({
               fontSize: 18,
             }}
           >
-            {paraphrase.paraphrase}
+            {paraphrase.content}
           </Typography>
         </Stack>
       </Stack>

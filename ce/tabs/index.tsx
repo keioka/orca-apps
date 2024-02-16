@@ -34,13 +34,16 @@ import scienceImage from "data-base64:~assets/images/science.jpg"
 import { BsSearch } from "react-icons/bs"
 import { NoteScreen } from "../tabScreens/NoteScreen"
 import { Provider } from "react-redux";
-import { PersistGate } from "@plasmohq/redux-persist/integration/react"
+// import { PersistGate } from "@plasmohq/redux-persist/integration/react"
 import { persistor, store } from '../redux/store';
 import { getTheme } from "../theme";
 import { ThemeProvider } from '@mui/material/styles';
 import { PiNotebookDuotone } from "react-icons/pi"
 import { useAppDispatch, useAppSelector } from "~redux/hooks";
 import { fetchPublishers } from "~redux/features/publisher"
+import { PersistGate } from "@plasmohq/redux-persist/integration/react"
+import fontCSS from "data-text:~/font.css"
+import "../font.css"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -136,11 +139,6 @@ function Main() {
     <Routes>
       <Route path={`${ROOT_PATH}`} element={<Layout />}>
         <Route index element={<NoteScreen />} />
-        <Route path="search" element={<Search />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="note" element={<NoteScreen />} />
-        <Route path="feed" element={<FeedPage />} />
-        <Route path="*" element={<NoMatch />} />
       </Route>
     </Routes>
   )
@@ -176,109 +174,7 @@ function Layout() {
         padding: 8
       }}
     >
-      <Drawer
-        anchor="left"
-        open
-        variant="persistent"
-        PaperProps={{
-          sx: {
-            width: WIDTH_SIDEBAR,
-            overflowY: "scroll",
-          }
-        }}
-      >
-        <Box
-          sx={(theme) => ({
-            backgroundColor: theme.palette.primary.main,
-            padding: 2,
-            width: "100%",
-            height: 32,
-          })}
-        >
-
-        </Box>
-        <Box sx={{ paddingX: 2, marginTop: 2 }}>
-          <Typography variant="caption">{chrome.i18n.getMessage("menu_caption_dashboard")}</Typography>
-        </Box>
-        <Box sx={{ display: "flex", height: 32, alignItems: "center", paddingLeft: "20px" }}>
-          <Menu
-            icon={<PiNotebookDuotone size={24} />}
-            path={`${ROOT_PATH}/note`}
-            title={chrome.i18n.getMessage("menu_note")}
-          />
-        </Box>
-        {/* <Box sx={{ display: "flex", height: 32, alignItems: "center" }}>
-          <Menu
-            icon={<BsGraphUpArrow size={12} />}
-            path={`${ROOT_PATH}/dashboard`}
-            title="Progress"
-          />
-        </Box> */}
-
-        {/* *
-         * RSS Feed
-         */}
-
-        <Box>
-          <Box sx={{ paddingX: 2, marginTop: 2 }}>
-            <Typography variant="caption">RSS Feed</Typography>
-          </Box>
-          <Box sx={{ display: "flex", height: 32, alignItems: "center", paddingLeft: "20px" }}>
-            <Menu
-              icon={<BsSearch size={12} />}
-              path={`${ROOT_PATH}/search`}
-              title="Search"
-            />
-          </Box>
-          {/* <Box sx={{ display: "flex", height: 32, alignItems: "center", paddingLeft: "20px" }}>
-            <Menu
-              icon={<SlFeed size={12} />}
-              path={`${ROOT_PATH}/feed`}
-              title="For you"
-            />
-          </Box> */}
-
-          {
-            feeds.map((feed) => (
-              <ExpandableMenu title={feed.category}>
-                <Stack spacing={1}>
-                  {
-                    feed.items.map((item) => (
-                      <Menu
-                        icon={<img src={fetchFavicon(item.url)} style={{ width: 16, height: 16 }} />}
-                        path={`${ROOT_PATH}/feed`}
-                        state={{ item: item }}
-                        title={item.name}
-                      />
-                      // <Stack direction="row" spacing={1} alignItems="center">
-                      //   <img src={fetchFavicon(item.url)} style={{ width: 16, height: 16 }} />
-                      //   <Typography
-                      //     sx={{
-                      //       fontSize: 14,
-                      //     }}
-                      //     onClick={() => {
-                      //       navigate(`${ROOT_PATH}/feed`, { state: { item: item } });
-                      //     }}
-                      //   >
-                      //     {item.name}
-                      //   </Typography>
-
-                      // </Stack>
-                    ))
-                  }
-                </Stack>
-              </ExpandableMenu>
-            ))
-          }
-        </Box>
-      </Drawer >
-      <Box
-        sx={{
-          paddingLeft: `${WIDTH_SIDEBAR}px`
-        }}
-      >
-        <Outlet />
-      </Box>
+      <Outlet />
     </Box >
   );
 }
@@ -424,6 +320,8 @@ function App() {
   const lang = chrome.i18n.getUILanguage()
   const langCode = lang.split("-")[0]
   const theme = getTheme(langCode)
+  console.log({ fontCSS })
+
   return (
     <React.StrictMode>
       <ThemeProvider theme={theme}>

@@ -24,7 +24,7 @@ const sampleVocabs = [
     sentence: "Xin chào, bạn khỏe không?",
   }
 ]
-export function ListVocab({ direction, vocabs = sampleVocabs, isLoading, onSaveVocab }: { direction?: "row" | "column", vocabs: any, isLoading: boolean }) {
+export function ListVocab({ direction, vocabs = sampleVocabs, savedVocabs, isLoading, onSaveVocab }: { direction?: "row" | "column", vocabs: any, isLoading: boolean }) {
   if (isLoading) {
     return (
       <Player
@@ -42,9 +42,13 @@ export function ListVocab({ direction, vocabs = sampleVocabs, isLoading, onSaveV
   return (
     <Stack direction={direction} spacing={2} pb={2}>
       {
-        vocabs.map((vocab) => (
-          <CardVocab vocab={vocab} onSaveVocab={onSaveVocab} />
-        ))
+        vocabs.map((vocab) => {
+          const isSaved = savedVocabs?.find((v) => v.vocabularyId === vocab.id)
+          console.log("isSaved", isSaved)
+          return (
+            <CardVocab vocab={vocab} onSaveVocab={onSaveVocab} isSaved={isSaved} />
+          )
+        })
       }
     </Stack>
   )

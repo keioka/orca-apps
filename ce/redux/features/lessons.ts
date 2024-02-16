@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // import { Lesson } from "../../types/lesson";
 import axios from 'axios';
-import { setLessonIdToMaterial } from './materials';
+import { setLessonIdToMaterial } from './materialsOld';
 import { sendToBackground } from '@plasmohq/messaging';
+import { validateSessionAndToken } from '../helpers';
 
 // Define the lesson state
 interface LessonState {
@@ -87,7 +88,23 @@ const lessonSlice = createSlice({
       state.createdLessonId = action.payload.id;
       state.creating = false;
       state.error = null;
+    });
 
+    builder.addCase(fetchOrCreateLessonByMaterialId.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+
+    builder.addCase(fetchOrCreateLessonByMaterialId.fulfilled, (state, action) => {
+      console.log({ lesson: action.payload })
+      state.lessons = [...state.lessons, action.payload];
+      state.loading = false;
+      state.error = null;
+    })
+
+    builder.addCase(fetchOrCreateLessonByMaterialId.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || 'Failed to fetch lesson';
     });
 
     builder.addCase(createLesson.rejected, (state, action) => {
@@ -100,6 +117,34 @@ const lessonSlice = createSlice({
 export const { clearCreatedLessonId } = lessonSlice.actions;
 
 const ROOT_URL = process.env.PLASMO_PUBLIC_API_ROOT
+
+export const fetchOrCreateLessonByMaterialId = createAsyncThunk(
+  'lesson/fetchOrCreateLessonByMaterialId',
+  async (materialId: string, { getState, rejectWithValue, dispatch }) => {
+    try {
+      const state = getState()
+      const token = await validateSessionAndToken(state, dispatch);
+      const response = await sendToBackground({
+        name: 'api/material/lesson',
+        body: {
+          materialId,
+          token
+        }
+      })
+
+      if (!response || !response.data) {
+        return rejectWithValue('Failed to fetch lesson');
+      }
+
+      const data = response.data;
+
+      return data;
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
 
 export const fetchLesson = createAsyncThunk(
   'lesson/fetchLesson',
@@ -135,30 +180,32 @@ export const fetchLesson = createAsyncThunk(
 );
 
 // Define the async thunk to fetch the lesson
-export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async ({ materialId }, { getState, rejectWithValue }) => {
+export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async (_, { getState, rejectWithValue }) => {
   try {
     const { auth } = getState()
     const { session } = auth
+    console.log({ session })
     if (!session) {
       rejectWithValue('No session found')
     }
 
-    const token = session?.access_token
+    const token = session?.accessToken
     if (!token) {
       return rejectWithValue('No session found')
     }
 
-    const response = await fetch(`${ROOT_URL}/api/lessons`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    const response = await sendToBackground({
+      name: 'api/lessons/fetchLessons',
+      body: {
+        token
       }
-    }); // Replace with your API endpoint
+    })
 
-
-    if (!response.ok) {
+    if (!response) {
       return rejectWithValue('Failed to fetch lesson');
     }
-    const data = await response.json();
+    const data = await response.data;
+
     return data;
   } catch (error) {
     return rejectWithValue('Failed to fetch lesson');

@@ -9,28 +9,32 @@ import {
   Switch,
   FormControlLabel,
   ButtonGroup,
+  Menu,
+  MenuItem,
 } from "@mui/material"
 import { IoPlayCircle, IoCloseCircle, IoMicOutline } from "react-icons/io5";
 import { useFirebase } from "../firebase/hooks"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchLesson } from '../redux/features/lessons';
-import { fetchMessages, createMessage, addMessage } from '~/redux/features/messages';
+// import { fetchMessages, createMessage, addMessage } from '~redux/features/messagesLocal';
+import { fetchMessages, addUserMessage, createAIMessage } from "~redux/features/messages";
+import { fetchCurrentOpenedMaterial, createVocabs, fetchVocabs } from "~redux/features/materials";
+import { fetchSavedVocab, saveVocab } from "~redux/features/note";
+
 import { Opener } from "./Opener";
 import { ChatModeProto } from "./ChatModeProto";
 import { RiSpeakLine } from "react-icons/ri";
 import { TbVocabulary } from "react-icons/tb";
 import { FaFileWord } from "react-icons/fa";
 import { ListVocab } from "./ListVocab";
-import { saveVocabulary } from "../redux/features/save";
 import { toggleDisable, clearSubscriptionForm } from "~redux/features/ui";
-// import { createNewLesson, addMessageToLesson } from "../redux/features/lessonsLocal";
-import { createLesson, } from "~redux/features/lessons";
 import type { VocabularyItem, Message } from "~types";
 import { urlPath } from "~helpers/path";
 import { SummaryMode } from "./SummaryMode";
 import { FormSubscription } from "./FormSubscription";
-import { setCurrentUser, setSession } from "~/redux/features/auth";
+import { fetchCurrentUser, setSession } from "~/redux/features/auth";
+import { fetchOrCreateLessonByMaterialId } from "~/redux/features/lessons";
 
 const drawerWidth = 380
 
@@ -131,43 +135,65 @@ export function Inject() {
   const [message, setMessage] = useState(null)
   const [isFullLoaded, setIsFullLoaded] = useState(false)
   const dispatch = useAppDispatch()
-
-  const currentLesson = useAppSelector((state) => state.lessons.lessons.find((lesson) => lesson.material.url === urlPath))
-
   const note = useAppSelector(state => { return state.saveData[urlPath] })
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   const shouldShowSubscriptionForm = useAppSelector(state => { return !state.payment.isValidSubscription && state.ui.shouldShowSubscriptionForm })
   const currentUser = useAppSelector(state => { return state.auth.currentUser })
   const session = useAppSelector(state => { return state.auth.session })
-
-  console.log({ currentUser })
+  const currentOpenedMaterial = useAppSelector(state => { return state.materials.currentOpenedMaterial })
+  const currentLesson = useAppSelector((state) => state.lesson.lessons.find((lesson) => lesson.materialId === currentOpenedMaterial?.id))
+  const messages = useAppSelector((state) => currentLesson ? state.message.messageMap[currentLesson.id] || [] : [])
+  const isCreatingMessage = useAppSelector((state) => state.message.creatingMessage)
 
   useEffect(() => {
+    if (!open) return
+    if (session) {
+      dispatch(fetchCurrentUser())
+    }
+  }, [open, session])
+
+  useEffect(() => {
+    if (!open) return
+    dispatch(setSession(sessionFB))
+  }, [open, sessionFB])
+
+  useEffect(() => {
+    if (!open) return
+    if (!currentOpenedMaterial || currentOpenedMaterial.url !== urlPath) {
+      dispatch(fetchCurrentOpenedMaterial(urlPath))
+    }
+  }, [open, urlPath])
+
+  useEffect(() => {
+    if (!open) return
     if (currentLesson) {
-      dispatch(fetchMessages({ lessonId: currentLesson.id }))
+      dispatch(fetchMessages(currentLesson.id))
     }
     dispatch(clearSubscriptionForm())
-  }, [currentLesson])
+  }, [open, currentLesson])
 
-  const chatHistory = useMemo(() => {
-    return currentLesson?.chatHistory || []
-  }, [currentLesson])
 
   useEffect(() => {
-    // Create a new lesson using redux
-    console.log({ currentLesson, open, session, urlPath })
-    if (open && session && !currentLesson) {
-      dispatch(createLesson({ url: urlPath }))
+    if (!open) return
+    if (currentOpenedMaterial && currentUser) {
+      dispatch(fetchOrCreateLessonByMaterialId(currentOpenedMaterial.id))
     }
-  }, [open, session, currentLesson])
+  }, [open, currentOpenedMaterial, currentUser])
 
   useEffect(() => {
-    dispatch(setCurrentUser(user))
-  }, [user])
+    if (!open) return
+    if (!isCreatingMessage && currentLesson && !currentLesson.initMessage && messages.length === 0) {
+      dispatch(createAIMessage({ message: "Ask me a question about the news.", lessonId: currentLesson.id }))
+    }
+  }, [open, isCreatingMessage, currentLesson, messages])
 
   useEffect(() => {
-    dispatch(setSession(sessionFB))
-  }, [sessionFB])
+    if (!open) return
+    if (currentOpenedMaterial) {
+      dispatch(fetchVocabs({ materialId: currentOpenedMaterial.id }))
+      dispatch(fetchMessages(currentOpenedMaterial.id))
+    }
+  }, [open, currentOpenedMaterial])
 
   function handleToggleDisable() {
     dispatch(toggleDisable())
@@ -178,17 +204,27 @@ export function Inject() {
   }
 
   function handleSaveVocab(vocab: VocabularyItem) {
-    dispatch(saveVocabulary({
-      url: urlPath,
-      data: vocab
+    console.log({ vocab })
+    dispatch(saveVocab({
+      vocabId: vocab.id
     }))
   }
 
-  function handleAddMessage(message: Message) {
-    dispatch(addMessageToLesson({
-      url: urlPath,
-      data: message
-    }))
+  function handleSubmitMessage(message: Message) {
+    if (currentLesson) {
+      dispatch(
+        addUserMessage({
+          lessonId: currentLesson.id,
+          message,
+        })
+      )
+      dispatch(
+        createAIMessage({
+          lessonId: currentLesson.id,
+          message,
+        })
+      )
+    }
   }
 
   useEffect(() => {
@@ -299,7 +335,7 @@ export function Inject() {
             {currentUser && (
               <>
                 <Box mt={2}>
-                  <Menu onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
+                  <Tabs onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
                 </Box>
 
                 {mode === Mode.Talk && (
@@ -321,7 +357,7 @@ export function Inject() {
                         label={chrome.i18n.getMessage("chat_toggle_autoplay")}
                       />
                     </Box>
-                    <ChatModeProto isAutoPlay={isAutoPlay} handleAddMessage={handleAddMessage} chatHistory={chatHistory} />
+                    <ChatModeProto isAutoPlay={isAutoPlay} handleSubmitMessage={handleSubmitMessage} messages={messages} />
                   </>
                 )}
                 {mode === Mode.Vocab &&
@@ -356,7 +392,6 @@ export function Inject() {
 }
 
 function VocabMode({
-  vocabs,
   setVocabs,
   setIsLoadingVocabs,
   isLoadingVocabs,
@@ -364,56 +399,80 @@ function VocabMode({
   onSaveVocab
 }) {
 
+  const dispatch = useAppDispatch()
+  const materialId = useAppSelector(state => state.materials.currentOpenedMaterial?.id)
+  const vocabs = useAppSelector(state => state.materials.vocabs[materialId] || [])
+  const savedVocabs = useAppSelector(state => state.note.vocabularies || [])
+
   useEffect(() => {
+    dispatch(fetchSavedVocab({ materialId: materialId }))
+
     if (vocabs.length > 0) {
       return
     }
+    const fetchVocabsInterval = setInterval(() => {
+      dispatch(fetchVocabs({ materialId: materialId }))
+    }, 5000);
 
-    async function init() {
-      setIsLoadingVocabs(true);
+    // setIsLoadingVocabs(true);
 
-      try {
-        // Select all paragraphs in the DOM
-        const paragraphs = Array.from(document.querySelectorAll('p'));
+    // try {
+    //   // Select all paragraphs in the DOM
+    //   const paragraphs = Array.from(document.querySelectorAll('p'));
 
-        // Loop over each paragraph
-        for (const paragraph of paragraphs) {
-          // Send the text content of the paragraph to the background
-          const text = paragraph.textContent || paragraph.innerText
-          const trimmedText = text.trim()
-          const resp = await sendToBackground({
-            name: "vocabsFromText",
-            body: {
-              text: trimmedText,
-            },
-          });
+    //   // Loop over each paragraph
+    //   for (const paragraph of paragraphs) {
+    //     // Send the text content of the paragraph to the background
+    //     const text = paragraph.textContent || paragraph.innerText
+    //     const trimmedText = text.trim()
+    //     const resp = await sendToBackground({
+    //       name: "vocabsFromText",
+    //       body: {
+    //         text: trimmedText,
+    //       },
+    //     });
 
-          if (resp.error) {
-            // Handle error
-            setError(resp.error);
-          } else {
-            setIsLoadingVocabs(false);
-            // Update the vocabs state with the returned vocabs
-            setVocabs(prevVocabs => [...prevVocabs, ...resp.vocabs]);
-          }
-        }
-      } catch (e) {
-        console.error(e);
-      }
+    //     if (resp.error) {
+    //       // Handle error
+    //       setError(resp.error);
+    //     } else {
+    //       setIsLoadingVocabs(false);
+    //       // Update the vocabs state with the returned vocabs
+    //       setVocabs(prevVocabs => [...prevVocabs, ...resp.vocabs]);
+    //     }
+    //   }
+    // } catch (e) {
+    //   console.error(e);
+    // }
+
+    dispatch(createVocabs({ materialId: materialId }))
+
+
+    return () => {
+      clearInterval(fetchVocabsInterval)
     }
 
-    init()
   }, [])
 
 
   return (
     <Box mt={2}>
-      <ListVocab vocabs={vocabs} isLoading={isLoadingVocabs} onSaveVocab={onSaveVocab} />
+      <ListVocab vocabs={vocabs} savedVocabs={savedVocabs} isLoading={isLoadingVocabs} onSaveVocab={onSaveVocab} />
     </Box>
   )
 }
 
 function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Stack
       direction="row"
@@ -452,11 +511,28 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
         }
         label={chrome.i18n.getMessage("toggle_disable")}
       />
+      <Avatar
+        onClick={handleMenuOpen}
+      // alt={currentUser.username}
+      />
+      {/* <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        style={{ fontFamily: "Outfit" }}
+      >
+        <MenuItem>
+          hello
+        </MenuItem>
+        <MenuItem>
+          Signout
+        </MenuItem>
+      </Menu> */}
     </Stack>
   )
 }
 
-function Menu({
+function Tabs({
   onClickButton,
   selectedMode
 }) {

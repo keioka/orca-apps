@@ -2,7 +2,7 @@ import { Publisher } from '@prisma/client'; // Import Prisma and PublisherUpdate
 import prisma from '../db'
 
 export function getPublisherByDomain(domain: string) {
-  return prisma.publisher.findUnique({
+  return prisma.publisher.findFirst({
     where: {
       domain: domain
     }

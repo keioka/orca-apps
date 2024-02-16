@@ -14,13 +14,15 @@ import { fetchPayments, initState as initStatePayment } from "~redux/features/pa
 import { toggleDisable } from "~redux/features/ui";
 import { useAppDispatch, useAppSelector } from "~redux/hooks";
 // https://stripe.com/docs/testing?testing-method=card-numbers#cards
-import { ButtonGoogleAuth } from "~/components/ButtonGoogleAuth";
 import { login, signupGoogle, checkAuthStatus, clearError, logout } from "~redux/features/auth";
+import "./font.css"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
   css: ["font.css"]
 }
+
+
 function RootPopup() {
   const lang = chrome.i18n.getUILanguage()
   const langCode = lang.split("-")[0]
@@ -28,17 +30,16 @@ function RootPopup() {
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+        <PersistGate persistor={persistor}>
           <IndexPopup />
         </PersistGate>
       </Provider>
-
     </ThemeProvider>
   )
 }
 
 function IndexPopup() {
-  // const { onLogin, onLogout, currentUser, loadingCurrentUser } = useFirebase()
+  const { onLogin, onLogout, user: currentUserFB, session } = useFirebase()
   const payment = useAppSelector(state => state.payment)
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   const { currentUser, loadingCurrentUser, error } = useAppSelector(state => state.auth)
@@ -47,9 +48,10 @@ function IndexPopup() {
 
   const { isValidSubscription, loadingCurrentUser: loadingCurrentUserSubsc, status } = payment
 
-  useEffect(() => {
-    dispatch(checkAuthStatus())
-  }, [])
+  console.log({ currentUserFB, currentUser })
+  // useEffect(() => {
+  //   dispatch(checkAuthStatus())
+  // }, [])
 
   useEffect(() => {
     if (currentUser) {
@@ -67,7 +69,6 @@ function IndexPopup() {
     dispatch(logout())
     dispatch(initStatePayment())
   }
-
 
   function handleSignup() {
     dispatch(signupGoogle())
@@ -144,8 +145,8 @@ function IndexPopup() {
             </Typography>
           </Stack>
         </Card> */}
-        {!loadingCurrentUser && !currentUser && <ButtonGoogleAuth onClick={handleSignin} />}
-        {!loadingCurrentUser && !currentUser && <ButtonGoogleAuth onClick={handleSignup} />}
+        {/* {!loadingCurrentUser && !currentUser && <ButtonGoogleAuth onClick={handleSignin} />} */}
+        {/* {!loadingCurrentUser && !currentUser && <ButtonGoogleAuth onClick={handleSignup} />} */}
 
         <Snackbar
           open={error}
@@ -163,19 +164,19 @@ function IndexPopup() {
         </Snackbar>
 
 
-        {!loadingCurrentUser && currentUser && (
-          <Button
-            variant="contained"
-            onClick={() => {
-              chrome.tabs.create({
-                url: "./tabs/index.html"
-              })
-            }}
-            sx={{ color: "#fff" }}
-          >
-            {chrome.i18n.getMessage("popup_button_open_note")}
-          </Button>
-        )}
+        {/* {!loadingCurrentUser && currentUser && ( */}
+        <Button
+          variant="contained"
+          onClick={() => {
+            chrome.tabs.create({
+              url: "./tabs/index.html"
+            })
+          }}
+          sx={{ color: "#fff" }}
+        >
+          {chrome.i18n.getMessage("popup_button_open_note")}
+        </Button>
+        {/* )} */}
 
         {!loadingCurrentUser && currentUser && !loadingCurrentUserSubsc && (
           <Box

@@ -67,23 +67,11 @@ const themeBase = {
   },
 }
 
-const themeLang = {
-  en: {
-    typography: {
-      fontFamily: "Open Sans",
-    },
-  },
-  ja: {
-    typography: {
-      fontFamily: "ZenMaruGothic",
-    },
-  }
-}
-
-
-export function getTheme(lang: string) {
+export function getTheme(lang: string = 'ja') {
   return createTheme({
     ...themeBase,
-    ...themeLang[lang]
+    typography: {
+      fontFamily: "Outfit",
+    },
   })
 }

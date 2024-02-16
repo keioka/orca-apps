@@ -279,7 +279,7 @@ export function CardChatPure({
       direction={type === "ai" ? "row" : "row-reverse"}
       spacing={1}
     >
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           height: "auto",
@@ -288,7 +288,7 @@ export function CardChatPure({
         mb={1}
       >
         <Avatar src={type === "ai" ? "" : ""} sx={{ width: 24, height: 24 }} />
-      </Box>
+      </Box> */}
       <Card
         sx={(theme) => ({
           width: "100%",

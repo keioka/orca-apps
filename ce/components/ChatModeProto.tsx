@@ -15,8 +15,7 @@ import { InputChat } from "./InputChat";
 import { sendToBackground } from "@plasmohq/messaging"
 import { urlPath } from "~helpers/path";
 
-export function ChatModeProto({ isAutoPlay, handleAddMessage, chatHistory }) {
-  const [messages, setMessages] = useState(chatHistory)
+export function ChatModeProto({ isAutoPlay, handleSubmitMessage, messages }) {
   const [message, setMessage] = useState(null)
   const [initializing, setInitalizing] = useState(false)
   const [isLoadingData, setIsLoadingData] = useState(false)
@@ -26,34 +25,14 @@ export function ChatModeProto({ isAutoPlay, handleAddMessage, chatHistory }) {
   const url = urlPath
 
   useEffect(() => {
-    async function init() {
-      const message = { message: "Hello!", type: "ai" }
-      setMessages([message])
-      setInitalizing(true)
-      const initPrompt = "Can you ask me a question about the news? I will try to answer it. Don't have to say `Sure!` or `Yes!`."
-      const resp = await sendToBackground({
-        name: "chat",
-        body: {
-          url: urlPath,
-          message: initPrompt,
-          history: chatHistory,
-        }
-      })
-      console.log("orca", { resp })
+    // async function init() {
+    //   setInitalizing(true)     
+    //   setInitalizing(false)
+    // }
 
-      const { data: { completion: { choices } } } = resp
-      if (resp.error) {
-        setError(resp.error)
-        return
-      }
-      handleAddMessage({ message: choices[0].message.content, type: "ai" })
-      setMessages([message, { message: choices[0].message.content, type: "ai" }])
-      setInitalizing(false)
-    }
-
-    if (chatHistory.length === 0) {
-      init()
-    }
+    // if (chatHistory.length === 0) {
+    //   init()
+    // }
   }, [])
 
   const onClearInput = () => {
@@ -75,29 +54,9 @@ export function ChatModeProto({ isAutoPlay, handleAddMessage, chatHistory }) {
 
   const submitMessage = async () => {
     console.log("submit")
-    const pastMessages = [...messages] // copy
-    const newMessages = [...messages, { message: message, type: "human" }]
-    setMessages(newMessages)
-    handleAddMessage({ message: message, type: "human" })
+    handleSubmitMessage(message)
 
     try {
-      const resp = await sendToBackground({
-        name: "chat",
-        body: {
-          url: urlPath,
-          message: message,
-          history: pastMessages || [],
-        }
-      })
-
-      const { data: { completion: { choices } } } = resp
-      if (resp.error) {
-        setError(resp.error)
-        return
-      }
-      handleAddMessage({ message: choices[0].message.content, type: "ai" })
-      setMessages([...newMessages, { message: choices[0].message.content, type: "ai" }])
-      setMessage(null)
     } catch (e) {
       console.error(e)
     } finally {

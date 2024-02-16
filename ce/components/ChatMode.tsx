@@ -15,7 +15,7 @@ import { InputChat } from "./InputChat";
 import { ListChat } from "./ListChat";
 import { Preview } from "./Preview";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { fetchMessages, createMessage, addMessage } from '../redux/features/messages';
+import { fetchMessages, createMessage, addMessage } from '../redux/features/messagesLocal';
 import { urlPath } from "~helpers/path";
 
 const messages = [

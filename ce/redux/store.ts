@@ -11,7 +11,7 @@ import {
 } from "@plasmohq/redux-persist";
 import { Storage } from "@plasmohq/storage";
 import publisher from './features/publisher';
-import messages from './features/messages';
+import message from './features/messages';
 import auth from './features/auth';
 import materials from './features/materials';
 import lessons from './features/lessons';
@@ -21,6 +21,7 @@ import saveData from './features/save';
 import lessonsLocal from './features/lessonsLocal';
 import payment from './features/payment';
 import ui from './features/ui';
+import note from './features/note';
 
 // import * as Sentry from "@sentry/react";
 
@@ -28,14 +29,15 @@ const rootReducer = combineReducers({
   auth: auth,
   publisher: publisher,
   materials: materials,
-  messages: messages,
-  lessons: lessons,
+  message: message,
+  lesson: lessons,
   transcribe: transcribe,
   videoInfo: videoInfo,
   saveData,
   lessonsLocal,
   payment,
-  ui
+  ui,
+  note
 })
 
 const persistConfig = {
@@ -76,8 +78,8 @@ export const store = configureStore({
 
 export const persistor = persistStore(store);
 
-const storage = new Storage({
-  area: "local",
+export const storage = new Storage({
+  area: "session",
 })
 
 storage.watch({
@@ -96,7 +98,8 @@ storage.watch({
       }
     }
     if (updatedKeys.length > 0) {
-      // persistor.resync();
+      persistor.resync()
+
     }
   },
 });

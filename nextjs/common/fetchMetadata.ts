@@ -9,43 +9,48 @@ interface Metadata {
   locale: string
 }
 
-export async function fetchMetadata(url: string): Promise<Metadata> {
+export async function fetchMetadata(url: string): Promise<Metadata | null> {
 
-  const data = await urlMetadata(url, {
-    requestHeaders: {
-      'User-Agent': getRandomUserAgent(),
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-      'Accept-Language': 'en-US,en;q=0.9',
-      'Accept-Encoding': 'gzip, deflate, br',
-    },
-    timeout: 5000,
-  })
+  try {
+    const data = await urlMetadata(url, {
+      requestHeaders: {
+        'User-Agent': getRandomUserAgent(),
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+      },
+      timeout: 5000,
+    })
 
-  const jsonld = data.jsonld
-  const publisher = jsonld?.publisher
-  const date = jsonld.datePublished
+    const jsonld = data.jsonld
+    const publisher = jsonld?.publisher
+    const date = jsonld.datePublished
 
-  const sitedata = {
-    title: data.title as string || data['og:title'] as string,
-    description: data.description as string || data['og:description'] as string,
-    image: data.image as string || data['og:image'] as string,
-    url: data.url as string || data['og:url'] as string,
-    name: data['og:site_name'] as string,
-    locale: data['og:locale'] as string,
-    category: data.theme || "general",
-    keywords: data.keywords || [],
-    publishedAt: date as string,
-    externalId: data['og:url'] as string,
-    publisher: {
-      type: "Article",
-      externalId: publisher?.name as string || data.url as string,
-      name: publisher?.name as string || data.url as string,
-      url: publisher?.url as string || data.url as string,
-      imageUrl: publisher?.logo as string || data.image as string,
+    const sitedata = {
+      title: data.title as string || data['og:title'] as string,
+      description: data.description as string || data['og:description'] as string,
+      image: data.image as string || data['og:image'] as string,
+      url: data.url as string || data['og:url'] as string,
+      name: data['og:site_name'] as string,
+      locale: data['og:locale'] as string,
+      category: data.theme || "general",
+      keywords: data.keywords || [],
+      publishedAt: date as string,
+      externalId: data['og:url'] as string,
+      publisher: {
+        type: "Article",
+        externalId: publisher?.name as string || data.url as string,
+        name: publisher?.name as string || data.url as string,
+        url: publisher?.url as string || data.url as string,
+        imageUrl: publisher?.logo as string || data.image as string,
+      }
     }
-  }
 
-  return sitedata
+    return sitedata
+  } catch (error) {
+    console.error(error)
+    return null
+  }
 }
 
 
