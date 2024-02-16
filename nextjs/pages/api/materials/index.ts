@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getMaterials, createMaterial, getMaterialByUrl, upsertMaterial } from '@/models/material'
+import { getMaterials, createMaterial, getMaterialsByURL, getMaterialByUrl, upsertMaterial } from '@/models/material'
 import { getPublisherById } from '@/models/publisher';
 import { validateTokenWithoutError } from '@/firebase';
 import { fetchMetadata } from '@/common/fetchMetadata';
@@ -64,7 +64,7 @@ async function parseAndCreateMaterial({ publisherId, category }: { publisherId: 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { category, date, offset, limit, publisherIds } = req.query;
+    const { category, date, offset, limit, publisherIds, url } = req.query;
     if (date && typeof date !== 'string') {
       return res.status(400).json({ message: 'Date must be a string' });
     }
@@ -78,6 +78,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     //   await parseAndCreateMaterial({ publisherId: publisherIds, category: category as string })
     //   console.log("done")
     // }
+
+    if (url) {
+      try {
+        await getMaterialByUrl(url as string)
+      } catch (error) {
+        console.error(error)
+        return res.status(500).json({ message: 'Internal server error' });
+      }
+    }
 
     try {
       const material = await getMaterials({
@@ -113,19 +122,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const metadata = await fetchMetadata(url as string)
 
-      const materialData = {
-        url: url as string,
-        title: metadata.title,
-        imageUrl: metadata.image,
-        type: "article",
-        publishedAt: metadata.publishedAt,
-        externalId: metadata.externalId,
-        category: metadata.category,
-        publisher: metadata.publisher,
+      if (!metadata) {
+        const materialData = {
+          url: url as string,
+          title: url,
+          imageUrl: "",
+          type: "article",
+          publishedAt: new Date(),
+          publisher: {
+            name: url,
+            imageUrl: new URL(url).host,
+            domain: new URL(url).host,
+            contentType: "article",
+            publisherType: "website",
+          },
+        }
+        const createdMaterial = await createMaterial(materialData);
+        return res.status(201).json(createdMaterial);
       }
 
-      const createdMaterial = await createMaterial(materialData);
-      return res.status(201).json(createdMaterial);
+      if (metadata) {
+        const materialData = {
+          url: url as string,
+          title: metadata.title,
+          imageUrl: metadata.image,
+          type: "article",
+          publishedAt: metadata.publishedAt,
+          externalId: metadata.externalId,
+          category: metadata.category,
+          publisher: {
+            name: metadata.publisher.name,
+            imageUrl: metadata.publisher.imageUrl,
+            domain: new URL(url).host,
+            contentType: "article",
+            publisherType: "website",
+          },
+        }
+
+        const createdMaterial = await createMaterial(materialData);
+        return res.status(201).json(createdMaterial);
+      }
     } catch (error) {
       console.error(error)
       return res.status(500).json({ message: 'Internal server error' });

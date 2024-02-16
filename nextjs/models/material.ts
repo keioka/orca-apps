@@ -56,6 +56,14 @@ interface PaginationResult<T> {
   totalPages: number;
 }
 
+export async function getMaterialsByURL(url: string): Promise<Material> {
+  return await prisma.material.findUnique({
+    where: {
+      url
+    }
+  });
+}
+
 export async function getMaterials(params: GetMaterialsParams): Promise<PaginationResult<MaterialWithLesson[]>> {
   const where: Prisma.MaterialWhereInput = {
     publisher: {
@@ -113,11 +121,10 @@ export async function getMaterials(params: GetMaterialsParams): Promise<Paginati
 export async function createMaterial(materialData: Omit<Material, 'id'>): Promise<Material> {
   const publisherData = materialData.publisher;
 
-  console.log({ publisherData })
   // TODO: This is a temporary workaround to handle the case where the publisher is not yet in the database
   let existingPublisherId = publisherData?.id;
   if (!existingPublisherId && publisherData && publisherData.domain) {
-    const existingPublisher = await prisma.publisher.findUnique({
+    const existingPublisher = await prisma.publisher.findFirst({
       where: { domain: publisherData.domain }
     });
     existingPublisherId = existingPublisher?.id;
@@ -128,6 +135,8 @@ export async function createMaterial(materialData: Omit<Material, 'id'>): Promis
       data: {
         name: publisherData.name,
         domain: publisherData.url,
+        contentType: publisherData.contentType,
+        publisherType: publisherData.publisherType,
         isActive: true
       }
     });
@@ -138,19 +147,12 @@ export async function createMaterial(materialData: Omit<Material, 'id'>): Promis
     ? { connect: { id: existingPublisherId as string } }
     : { create: publisherData as Material };
 
-  console.log({
-    publisherAction,
-    materialData
-  })
-
   delete materialData.publisher;
 
   const data = {
     ...materialData,
     publisher: publisherAction
   }
-
-  console.log(JSON.stringify({ data }))
 
   const material = await prisma.material.create({
     data: data,

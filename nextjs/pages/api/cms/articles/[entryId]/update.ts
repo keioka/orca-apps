@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import deepmerge from 'deepmerge'
-import { getMaterials, createMaterial, getMaterialByUrl, upsertMaterial } from '@/models/material'
-import { getEntry, getEntryWithLocale, updateEntry, getEntryRaw } from '@/common/contentful'
+import { getEntry, getEntryWithLocale, getEntryRaw } from '@/common/contentful'
 import { fetchVocab } from '@/common/workServer/vocab'
 import { polly } from '@/common/lambda/polly'
 import { translate } from '@/utils/apis/deepL'

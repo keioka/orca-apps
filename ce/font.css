@@ -1,113 +1,50 @@
 
-/* ZenMaruGothic font rules */
 @font-face {
-  font-family: "ZenMaruGothic";
+  font-family: "Outfit";
   font-style: normal;
-  font-weight: 900; /* Black */
+  font-weight: 700;
   font-display: swap;
-  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Black.ttf) format('truetype');
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-Black.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: "ZenMaruGothic";
+  font-family: "Outfit";
   font-style: normal;
-  font-weight: 700; /* Bold */
+  font-weight: 600;
   font-display: swap;
-  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Bold.ttf) format('truetype');
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-Bold.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: "ZenMaruGothic";
+  font-family: "Outfit";
   font-style: normal;
-  font-weight: 300; /* Light */
+  font-weight: 300;
   font-display: swap;
-  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Light.ttf) format('truetype');
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-Light.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: "ZenMaruGothic";
+  font-family: "Outfit";
   font-style: normal;
-  font-weight: 500; /* Medium */
+  font-weight: 600;
   font-display: swap;
-  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Medium.ttf) format('truetype');
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-Medium.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: "ZenMaruGothic";
+  font-family: "Outfit";
   font-style: normal;
-  font-weight: 400; /* Regular */
+  font-weight: 500;
   font-display: swap;
-  src: url(data-base64:~assets/fonts/zen/ZenMaruGothic-Regular.ttf) format('truetype');
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-Regular.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: "NotoSansJP";
+  font-family: "Outfit";
   font-style: normal;
-  font-weight: 900; /* Black */
+  font-weight: 800;
   font-display: swap;
-  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Black.ttf) format('truetype');
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-ExtraBold.ttf) format('truetype');
 }
 
-@font-face {
-  font-family: "NotoSansJP";
-  font-style: normal;
-  font-weight: 700; /* Bold */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Bold.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "NotoSansJP";
-  font-style: normal;
-  font-weight: 800; /* ExtraBold */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-ExtraBold.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "NotoSansJP";
-  font-style: normal;
-  font-weight: 200; /* ExtraLight */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-ExtraLight.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "NotoSansJP";
-  font-style: normal;
-  font-weight: 300; /* Light */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Light.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "NotoSansJP";
-  font-style: normal;
-  font-weight: 500; /* Medium */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Medium.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "NotoSansJP";
-  font-style: normal;
-  font-weight: 400; /* Regular */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Regular.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "NotoSansJP";
-  font-style: normal;
-  font-weight: 600; /* SemiBold */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-SemiBold.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: "NotoSansJP";
-  font-style: normal;
-  font-weight: 100; /* Thin */
-  font-display: swap;
-  src: url(data-base64:~assets/fonts/NotoSansJa/NotoSansJP-Thin.ttf) format('truetype');
-}
+/* Path: ce/typography.css */

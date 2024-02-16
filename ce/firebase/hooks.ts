@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from "react"
 import { app, auth } from "firebase"
 import { sendToBackground } from "@plasmohq/messaging"
 
-// setPersistence(auth, browserLocalPersistence)
+setPersistence(auth, browserLocalPersistence)
 
 export const useFirebase = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -39,8 +39,6 @@ export const useFirebase = () => {
         name: "login",
       })
 
-      console.log({ token, error })
-
       if (error) {
         return
       }
@@ -49,13 +47,27 @@ export const useFirebase = () => {
         return
       }
 
+      chrome.runtime.sendMessage(
+        {
+          type: "login",
+          token
+        },
+        function (response) {
+          console.log(response)
+        }
+      )
+
       const credential = GoogleAuthProvider.credential(null, token)
-      console.log({ credential })
+      console.log({
+        credential
+      })
       await signInWithCredential(auth, credential)
+
       setSession({
         accessToken: token,
         uid: user.uid
       })
+
     } catch (e) {
       console.error("Could not log in. ", e)
     }
@@ -88,8 +100,11 @@ export const useFirebase = () => {
 
   useEffect(() => {
     setIsLoading(true)
-    onAuthStateChanged(auth, (user) => {
-      console.log("onAuthStateChanged")
+
+    onAuthStateChanged(auth, async (user) => {
+      console.log("onAuthStateChanged >>>", user)
+      await setPersistence(auth, browserLocalPersistence)
+
       if (!user) {
         setIsLoading(false)
         setUser(null)

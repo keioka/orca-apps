@@ -9,6 +9,7 @@ const langName = {
 }
 
 export async function addVocabs(req: any, res: any) {
+  console.log('addVocabs start')
   const { materialId, transLangCode = 'ja' } = req.body;
 
   if (!materialId) {

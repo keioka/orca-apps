@@ -19,6 +19,7 @@ import { ButtonRound } from "./ButtonRound";
 const synth = window.speechSynthesis;
 
 export function CardVocab({
+  isSaved,
   vocab,
   onSaveVocab,
   shouldHideSave,
@@ -117,7 +118,7 @@ export function CardVocab({
         </Box>
         <CardActions sx={{ borderTop: "1px solid #f2f2f2", padding: 0, paddingTop: 1 }}>
           <Stack direction="row" spacing={1}>
-            {!shouldHideSave && <ButtonRound onClick={handleClickSave}>{chrome.i18n.getMessage("card_vocab_button_save")}</ButtonRound>}
+            {!shouldHideSave && <ButtonRound isActive={isSaved} onClick={handleClickSave}>{chrome.i18n.getMessage("card_vocab_button_save")}</ButtonRound>}
             {!shouldHideDiscard && <ButtonRound>{chrome.i18n.getMessage("card_vocab_button_discard")}</ButtonRound>}
             {/* <Button variant="outlined" size="small">Source</Button> */}
           </Stack>

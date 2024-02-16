@@ -32,7 +32,7 @@ function fetchFavicon(url) {
   // Try fetching favicon.ico from the root domain first
   try {
     //
-    const domain = new URL(url).origin;
+    const domain = new URL(url).host;
     const size = 24
     // const faviconUrl = `${domain}/favicon.ico`;
     const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`

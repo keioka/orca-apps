@@ -22,6 +22,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     if (!result.ok) {
       console.error("Error fetching material");
       console.error(result);
+      console.error(await result.json());
       throw new Error("Error fetching material");
     }
 

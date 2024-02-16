@@ -1,111 +1,151 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { LoadingStatus } from '../types';
+import { validateSessionAndToken } from '../helpers';
+import { sendToBackground } from '@plasmohq/messaging';
 
 const NAME = 'message'
+
+const ROOT_URL = process.env.EXPO_PUBLIC_API_ROOT
 
 interface Message {
   text: string;
   role: string;
 }
 
+interface Paraphrase {
+  content: string;
+
+}
+
 interface MessageLesson {
   [lessonId: string]: Message[];
 }
 
+interface ParaphraseMap {
+  [messageId: string]: SentenceMap;
+}
+
+interface SentenceMap {
+  [sentenceIndex: number]: Paraphrase[];
+}
+
 interface MessageState {
   messageMap: MessageLesson;
+  paraphraseMap: ParaphraseMap;
+  translationMap: { [messageId: string]: string };
   status: LoadingStatus;
-  statusCreate: LoadingStatus;
-  error: string | null;
+  creatingMessage: boolean;
   addingMessage: boolean;
+  isFetchingParaphrases: boolean;
+  isFetchingTranslation: boolean;
+  isSendingWhisper: boolean;
+  messageInputSpeech: string | null;
+  error: string | null;
 }
-const ROOT_URL = process.env.API_ROOT
 
-const initialState: MessageState = { messageMap: {}, status: LoadingStatus.IDLE, statusCreate: LoadingStatus.IDLE, error: null, addingMessage: false };
+const initialState: MessageState = { messageMap: {}, paraphraseMap: {}, translationMap: {}, isFetchingTranslation: false, error: null, creatingMessage: false, addingMessage: false, messageInputSpeech: null };
 
-export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue }) => {
+
+export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
   try {
-    const state = getState()
+    const state = getState();
+    const token = await validateSessionAndToken(state, dispatch);
 
-    if (!state.auth.session) {
-      return rejectWithValue('fetchMessages: Session is not defined')
-    }
+    // const response = await axios.get(`/api/lessons/${lessonId}/messages`, {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`
+    //   }
+    // });
 
-    const token = state.auth.session.accessToken;
-    const response = await axios.get(`/api/lessons/${lessonId}/messages`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    console.log({ lessonId, token })
+    const response = await sendToBackground({
+      name: "api/message/fetchMessages",
+      body: {
+        lessonId,
+        token
       }
-    });
+    })
 
-    console.log({ messages: response.data });
-    return { [lessonId]: response.data };
+    console.log(response)
+
+    return { messages: response.data, lessonId };
   } catch (error) {
     console.error(error)
-    rejectWithValue('Failed to fetch lesson')
+    return rejectWithValue(error.message || 'Failed to fetch lesson');
   }
 });
 
 
-export const createMessage = createAsyncThunk(`${NAME}/create`, async ({
+export const createAIMessage = createAsyncThunk(`${NAME}/create`, async ({
   message,
   lessonId
 }: {
   lessonId: string,
   message: string
-}, { getState, rejectWithValue }) => {
+}, { getState, rejectWithValue, dispatch }) => {
   try {
 
-    console.log("========= createMessage ================")
     const state = getState()
-
-    if (!state.auth.session) {
-      return rejectWithValue('fetchMessages: Session is not defined')
-    }
-
-    const token = state.auth.session.accessToken;
-
-    if (!token) {
-      rejectWithValue('No session found')
-    }
-
-    const response = await axios.post(`/api/lessons/${lessonId}/messages`,
-      {
+    const token = await validateSessionAndToken(state, dispatch);
+    const response = await sendToBackground({
+      name: "api/message/createAIMessage",
+      body: {
+        lessonId,
         message,
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        token,
       }
-    );
-
-    return { [lessonId]: [...state.messages.messageMap[lessonId], response.data] };
+    })
+    const aiMessage = response.data
+    return { message: aiMessage, lessonId };
   } catch (error) {
     console.error(error)
     rejectWithValue(error.response.data.message)
   }
 });
 
-export const addMessage = createAsyncThunk(`${NAME}/add`, async (body: { message: string, lessonId: string }, { getState, rejectWithValue }) => {
-  try {
-    console.log("========= addMessage ================")
-    const state = getState()
+export const addUserMessage = createAsyncThunk(`${NAME}/add`,
+  async (
+    { lessonId, message, type }: { message: string, lessonId: string },
+    { getState, rejectWithValue, dispatch }
+  ) => {
+    try {
+      const state = getState()
+      const token = await validateSessionAndToken(state, dispatch);
 
-    if (!state.auth.session) {
-      return rejectWithValue('fetchMessages: Session is not defined')
+      const response = await sendToBackground({
+        name: "api/message/addUserMessage",
+        body: {
+          lessonId,
+          message,
+          type,
+          token,
+        }
+      })
+      const userMessage = response.data
+      return { message: userMessage, lessonId };
+    } catch (error) {
+      console.error(error)
+      rejectWithValue(error.response.data.message)
     }
+  });
 
-    const token = state.auth.session.accessToken;
+export const fetchParaphrases = createAsyncThunk(`${NAME}/fetchParaphrases`, async ({ messageId, sentence, sentenceIndex }: { messageId: string }, { getState, rejectWithValue, dispatch }) => {
+  try {
+    const state = getState()
+    const token = await validateSessionAndToken(state, dispatch);
 
-    if (!token) {
-      rejectWithValue('No session found')
+    if (!messageId || !sentence || sentenceIndex == null) {
+      return rejectWithValue('No messageId or sentence or sentenceIndex')
     }
 
     const response = await axios.post(
-      `${AI_ROOT_URL}/api/chat`,
-      body,
+      `/api/messages/${messageId}/paraphrase`,
+      {
+        sentence,
+        sentenceIndex,
+        messageId
+      },
       {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -117,15 +157,105 @@ export const addMessage = createAsyncThunk(`${NAME}/add`, async (body: { message
       return rejectWithValue('Failed to create message')
     }
 
-    const message = response.data.completion.choices[0].message
-
-    return { message };
+    return { paraphrases: response.data.phrases, messageId, sentenceIndex };
   } catch (error) {
     console.error(error)
     const errorMessage = error.response.data.message
     return rejectWithValue(errorMessage)
+
   }
-});
+})
+
+export const fetchTranslation = createAsyncThunk(
+  `${NAME}/fetchTranslation`,
+  async (
+    { messageId, text }: { messageId: string, message: string },
+    { getState, rejectWithValue, dispatch }
+  ) => {
+    try {
+      const state = getState()
+      const token = await validateSessionAndToken(state, dispatch);
+
+      const response = await axios.post(`/api/translate`,
+        {
+          text,
+          lang: "ja"
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+      if (response.status !== 200) {
+        console.error(response)
+        return rejectWithValue('Failed to translate')
+      }
+
+      const { translation } = response.data
+      return { translation, messageId };
+    } catch (error) {
+      console.error(error)
+      rejectWithValue('Failed to translate')
+    }
+  });
+
+
+function removeFilePrefix(filePath) {
+  if (filePath.startsWith('file://')) {
+    return filePath.substring(7);
+  }
+  return filePath;
+}
+
+export const sendWhisper = createAsyncThunk(
+  `${NAME}/sendWhisper`,
+  async (
+    { file, fileURI }: { file: Blob, fileURI: string },
+    { getState, rejectWithValue }
+  ) => {
+    try {
+
+      console.log({ file, fileURI })
+      const body = new FormData()
+      const fileObj = {
+        uri: removeFilePrefix(fileURI),
+        name: `unknown`,
+        type: "audio/wav" // file.type,
+      }
+      console.log("fileObj", fileObj)
+      // body.append('file', file)
+      body.append('file', new Blob(['test payload'], { type: 'text/csv' }));
+      body.append('audio_data', file)
+      body.append('type', 'audio')
+      body.append('model', 'whisper-1')
+      body.append('language', 'en')
+      // body.append('prompt', whisperConfig.prompt)
+      body.append('response_format', "text")
+      // body.append('temperature', `${whisperConfig.temperature}`)
+
+      // const headers: RawAxiosRequestHeaders = {
+      //   'Content-Type': 'multipart/form-data',
+      //   'Authorization': `Bearer ${process.env.EXPO_PUBLIC_OPEN_AI_API_KEY}`
+      // }
+
+      const response = await fetch(
+        `/api/transcribe`,
+        {
+          method: 'POST',
+          body,
+        }
+      )
+
+      console.log(response)
+      return response
+
+    } catch (error) {
+      console.error(error)
+      rejectWithValue('Failed to translate')
+    }
+  });
+
 
 const messageSlice = createSlice({
   name: NAME,
@@ -140,57 +270,89 @@ const messageSlice = createSlice({
       .addCase(fetchMessages.pending, (state) => {
         state.status = LoadingStatus.LOADING;
       })
-      .addCase(fetchMessages.fulfilled, (state, action: PayloadAction<any[]>) => {
+      .addCase(fetchMessages.fulfilled, (state, action: PayloadAction<{ lessonId: string; messages: Message[] }>) => {
+        const { lessonId, messages } = action.payload;
+        state.messageMap[lessonId] = messages;
         state.status = LoadingStatus.SUCCESS;
-        state.messageMap = {
-          ...state.messages,
-          ...action.payload
-        };
-
       })
-      .addCase(fetchMessages.rejected, (state, action: PayloadAction<string | null>) => {
+      .addCase(fetchMessages.rejected, (state, action) => {
         state.status = LoadingStatus.FAILED;
-        state.error = action.error.message;
+        state.error = action.error.message || 'Failed to fetch messages';
       })
-      .addCase(addMessage.pending, (state, action: PayloadAction<string | null>) => {
-        state.statusCreate = LoadingStatus.LOADING;
-        const lessonId = action.meta.arg.lessonId;
-
-        state.messageMap = {
-          ...state.messageMap,
-          [lessonId]: [...state.messageMap[lessonId], { type: "user", fullContent: action.meta.arg.message }]
-        }
-        state.addingMessage = true
+      .addCase(createAIMessage.pending, (state) => {
+        state.creatingMessage = true;
       })
-      .addCase(addMessage.fulfilled, (state, action: PayloadAction<any[]>) => {
-        state.statusCreate = LoadingStatus.SUCCESS;
-        const lessonId = action.meta.arg.lessonId;
-        state.messageMap = {
-          ...state.messageMap,
-          [action.meta.arg.lessonId]: [...state.messageMap[lessonId], { type: "ai", fullContent: action.payload.message }]
-        }
-        state.addingMessage = false
+      .addCase(createAIMessage.fulfilled, (state, action: PayloadAction<{ lessonId: string; message: Message }>) => {
+        const { lessonId, message } = action.payload;
+        state.messageMap[lessonId] = [...(state.messageMap[lessonId] || []), message];
+        state.creatingMessage = false;
       })
-      .addCase(addMessage.rejected, (state, action: PayloadAction<string | null>) => {
-        state.statusCreate = LoadingStatus.FAILED;
-        state.error = action.error.message;
-        state.addingMessage = false
+      .addCase(createAIMessage.rejected, (state, action) => {
+        state.creatingMessage = false;
+        state.error = action.error.message || 'Failed to create AI message';
       })
-      .addCase(createMessage.pending, (state, action: PayloadAction<string | null>) => {
-        state.statusCreate = LoadingStatus.LOADING;
+      .addCase(addUserMessage.pending, (state) => {
+        state.addingMessage = true;
       })
-      .addCase(createMessage.fulfilled, (state, action: PayloadAction<any[]>) => {
-        state.statusCreate = LoadingStatus.SUCCESS;
-        console.log({ action })
-        state.messageMap = {
-          ...state.messageMap,
-          ...action.payload
-        }
+      .addCase(addUserMessage.fulfilled, (state, action: PayloadAction<{ lessonId: string; message: Message }>) => {
+        const { lessonId, message } = action.payload;
+        state.messageMap[lessonId] = [...(state.messageMap[lessonId] || []), message];
+        state.addingMessage = false;
       })
-      .addCase(createMessage.rejected, (state, action: PayloadAction<string | null>) => {
-        state.statusCreate = LoadingStatus.FAILED;
-        state.error = action.error.message;
-      });
+      .addCase(addUserMessage.rejected, (state, action) => {
+        state.addingMessage = false;
+        state.error = action.error.message || 'Failed to add user message';
+      })
+      .addCase(fetchParaphrases.pending, (state) => {
+        state.isFetchingParaphrases = true;
+      })
+      .addCase(fetchParaphrases.fulfilled, (state, action: PayloadAction<{ messageId: string; sentenceIndex: number; paraphrases: Paraphrase[] }>) => {
+        const { messageId, sentenceIndex, paraphrases } = action.payload;
+        const currentParaphrases = state.paraphraseMap[messageId] || {};
+        currentParaphrases[sentenceIndex] = paraphrases;
+        state.paraphraseMap[messageId] = currentParaphrases;
+        state.isFetchingParaphrases = false;
+      })
+      .addCase(fetchParaphrases.rejected, (state, action) => {
+        state.isFetchingParaphrases = false;
+        state.error = action.error.message || 'Failed to fetch paraphrases';
+      })
+      .addCase(fetchTranslation.pending, (state) => {
+        state.isFetchingTranslation = true;
+      })
+      .addCase(fetchTranslation.fulfilled, (state, action: PayloadAction<{ messageId: string; translation: string }>) => {
+        const { messageId, translation } = action.payload;
+        state.translationMap[messageId] = translation;
+        state.isFetchingTranslation = false;
+      })
+      .addCase(fetchTranslation.rejected, (state, action) => {
+        state.isFetchingTranslation = false;
+        state.error = action.error.message || 'Failed to fetch translation';
+      })
+      .addCase(sendWhisper.pending, (state) => {
+        state.isSendingWhisper = true;
+      })
+      .addCase(sendWhisper.fulfilled, (state, action: PayloadAction<{ messageId: string; translation: string }>) => {
+        state.isSendingWhisper = false;
+      })
+      .addCase(sendWhisper.rejected, (state, action) => {
+        state.isSendingWhisper = false;
+        state.error = action.error.message || 'Failed to send whisper';
+      })
+      .addMatcher(
+        (action) => action.type === "global/RESET_STATE",
+        (state) => {
+          state.messageMap = {}
+          state.paraphraseMap = {}
+          state.translationMap = {}
+          state.status = LoadingStatus.IDLE
+          state.addingMessage = false
+          state.isFetchingParaphrases = false
+          state.isFetchingTranslation = false
+          state.isSendingWhisper = false
+          state.messageInputSpeech = null
+          state.error = null
+        })
   },
 });
 

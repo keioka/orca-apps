@@ -8,6 +8,9 @@ import {
 } from "firebase/auth"
 import { initializeApp } from "firebase/app"
 import { getAuth } from "firebase/auth"
+// import { Storage } from "@plasmohq/storage"
+
+// const storage = new Storage()
 
 const firebaseConfig = {
   apiKey: "REDACTED_FIREBASE_API_KEY",
@@ -28,13 +31,26 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   chrome.identity.getAuthToken({ interactive: false }, async function (token) {
     if (chrome.runtime.lastError || !token) {
       console.error(chrome.runtime.lastError.message)
+      auth.setPersistence(browserLocalPersistence);
       res.send({ error: chrome.runtime.lastError })
       return
     }
     if (token) {
+      // await storage.set("firebase:token", token)
       res.send({ token })
+      // const data = await storage.get("firebase:token") // "value"
+      // console.log(data)
+      // await storage.set("capt", { color: "red" })
+      // const data2 = await storage.get("capt") // { color: "red" }
     }
+
+    chrome.runtime.sendMessage({ type: "login", token }, function (response) {
+      console.log(response)
+    });
+
   })
+
+
   // chrome.identity.getAuthToken({ 'interactive': true }, async (token) => {
   //   const credential = GoogleAuthProvider.credential(null, token);
   //   try {

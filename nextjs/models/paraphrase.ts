@@ -109,8 +109,6 @@ export const fetchSavedParaphrases = async ({
     paraphrase: {}
   };
 
-  console.log("==============================")
-  console.log({ messageId, sentenceIndex })
 
   // if (messageId) {
   //   whereConditions.paraphrase.sentenceMessageId = messageId;
