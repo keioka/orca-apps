@@ -155,6 +155,7 @@ const materialsSlice = createSlice({
       .addMatcher(
         (action) => action.type === "global/RESET_STATE",
         (state) => {
+          state = initialState
           state.items = []
           state.searchResult = []
           state.originalItems = []
@@ -272,12 +273,14 @@ export const fetchCurrentOpenedMaterial = createAsyncThunk<Material[], void>(
         }
       })
 
+
+      if (response.error) {
+        console.error(response)
+        return rejectWithValue(response.error)
+      }
       const data = response.data;
 
-      if (!data) {
-        console.error(response)
-        return rejectWithValue('Failed to fetch material')
-      }
+      console.log({ data })
 
       return data.material;
     } catch (error) {

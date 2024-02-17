@@ -12,7 +12,7 @@ import { getTheme } from "./theme";
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
-  css: ["font.css"]
+  css: ["./font.css"]
 }
 
 const styleElement = document.createElement("style")

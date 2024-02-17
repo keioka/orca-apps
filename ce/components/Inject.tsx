@@ -21,7 +21,7 @@ import { fetchLesson } from '../redux/features/lessons';
 import { fetchMessages, addUserMessage, createAIMessage } from "~redux/features/messages";
 import { fetchCurrentOpenedMaterial, createVocabs, fetchVocabs } from "~redux/features/materials";
 import { fetchSavedVocab, saveVocab } from "~redux/features/note";
-
+import { clearState, removeAll } from "../redux/store";
 import { Opener } from "./Opener";
 import { ChatModeProto } from "./ChatModeProto";
 import { RiSpeakLine } from "react-icons/ri";
@@ -30,10 +30,9 @@ import { FaFileWord } from "react-icons/fa";
 import { ListVocab } from "./ListVocab";
 import { toggleDisable, clearSubscriptionForm } from "~redux/features/ui";
 import type { VocabularyItem, Message } from "~types";
-import { urlPath } from "~helpers/path";
 import { SummaryMode } from "./SummaryMode";
 import { FormSubscription } from "./FormSubscription";
-import { fetchCurrentUser, setSession } from "~/redux/features/auth";
+import { fetchCurrentUser, setSession, setCurrentUser } from "~/redux/features/auth";
 import { fetchOrCreateLessonByMaterialId } from "~/redux/features/lessons";
 
 const drawerWidth = 380
@@ -119,6 +118,8 @@ interface Summary {
 }
 
 export function Inject() {
+  const urlPath = `${window.location.origin}${window.location.pathname}`
+  const [url, setUrl] = useState(urlPath)
   const [hideExtention, setHideExtention] = useState(false)
   const [open, setOpen] = useState(false)
   const [isAutoPlay, setIsAutoPlay] = useState(false)
@@ -131,11 +132,11 @@ export function Inject() {
   const [originalWidth, setOriginalWidth] = useState(0)
   const [error, setError] = useState(null)
   const [isLoadingData, setIsLoadingData] = useState(false)
-  const { user, session: sessionFB, isLoading, onLogin, onLoginBackground, onLogout } = useFirebase()
+  const { user, session: sessionFB, isLoading, onLogin, onLoginBackground, onLogout, authCheck } = useFirebase()
   const [message, setMessage] = useState(null)
   const [isFullLoaded, setIsFullLoaded] = useState(false)
   const dispatch = useAppDispatch()
-  const note = useAppSelector(state => { return state.saveData[urlPath] })
+  const note = useAppSelector(state => { return state.saveData[url] })
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   const shouldShowSubscriptionForm = useAppSelector(state => { return !state.payment.isValidSubscription && state.ui.shouldShowSubscriptionForm })
   const currentUser = useAppSelector(state => { return state.auth.currentUser })
@@ -146,11 +147,8 @@ export function Inject() {
   const isCreatingMessage = useAppSelector((state) => state.message.creatingMessage)
 
   useEffect(() => {
-    if (!open) return
-    if (session) {
-      dispatch(fetchCurrentUser())
-    }
-  }, [open, session])
+    authCheck()
+  }, [])
 
   useEffect(() => {
     if (!open) return
@@ -158,11 +156,25 @@ export function Inject() {
   }, [open, sessionFB])
 
   useEffect(() => {
+    if (!user) return
+    dispatch(setCurrentUser(null))
+  }, [user])
+
+  useEffect(() => {
     if (!open) return
-    if (!currentOpenedMaterial || currentOpenedMaterial.url !== urlPath) {
-      dispatch(fetchCurrentOpenedMaterial(urlPath))
+    if (session) {
+      dispatch(fetchCurrentUser())
     }
-  }, [open, urlPath])
+  }, [open, session])
+
+  console.log({ open, currentOpenedMaterial, url })
+
+  useEffect(() => {
+    if (!open) return
+    if (!currentOpenedMaterial || currentOpenedMaterial.url !== url) {
+      dispatch(fetchCurrentOpenedMaterial(url))
+    }
+  }, [open, url, currentOpenedMaterial])
 
   useEffect(() => {
     if (!open) return
@@ -180,6 +192,14 @@ export function Inject() {
     }
   }, [open, currentOpenedMaterial, currentUser])
 
+  console.log({
+    messages,
+    currentLesson,
+    isCreatingMessage,
+    currentOpenedMaterial,
+    currentUser,
+    url
+  })
   useEffect(() => {
     if (!open) return
     if (!isCreatingMessage && currentLesson && !currentLesson.initMessage && messages.length === 0) {
@@ -195,6 +215,23 @@ export function Inject() {
     }
   }, [open, currentOpenedMaterial])
 
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      console.log("================ onMessage ====================")
+      console.log({ request, sender, sendResponse })
+      if (request.name === "logout") {
+        console.log("logout")
+        onLogout()
+      }
+
+      if (request.name === "urlChange") {
+        console.log("urlChanged")
+        setUrl(request.url)
+        sendResponse(true)
+      }
+    })
+  }, [])
+
   function handleToggleDisable() {
     dispatch(toggleDisable())
   }
@@ -204,7 +241,6 @@ export function Inject() {
   }
 
   function handleSaveVocab(vocab: VocabularyItem) {
-    console.log({ vocab })
     dispatch(saveVocab({
       vocabId: vocab.id
     }))
@@ -372,7 +408,7 @@ export function Inject() {
                 }
                 {mode === Mode.Summary &&
                   <SummaryMode
-                    url={urlPath}
+                    url={url}
                     summaries={summaries}
                     setSummaries={setSummaries}
                     setIsLoadingSummaries={setIsLoadingSummaries}
@@ -464,14 +500,24 @@ function VocabMode({
 
 function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
   const [anchorEl, setAnchorEl] = useState(null);
-
+  const { onLogout } = useFirebase()
+  const dispatch = useAppDispatch()
+  const open = Boolean(anchorEl);
   const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+    if (anchorEl) {
+      setAnchorEl(null);
+    } else {
+      setAnchorEl(event.currentTarget);
+    }
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  const handleSignout = () => {
+    onLogout()
+  }
 
   return (
     <Stack
@@ -479,7 +525,8 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
       justifyContent="space-between"
       sx={{
         paddingBottom: 1,
-        borderBottom: "1px solid #f2f2f2"
+        borderBottom: "1px solid #f2f2f2",
+        position: "relative"
       }}
     >
       <Box
@@ -512,22 +559,40 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
         label={chrome.i18n.getMessage("toggle_disable")}
       />
       <Avatar
+        id="basic-button"
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
         onClick={handleMenuOpen}
       // alt={currentUser.username}
       />
-      {/* <Menu
+      <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
-        style={{ fontFamily: "Outfit" }}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        id="basic-menu"
+        MenuListProps={{
+          sx: {
+            position: "absolute",
+          },
+          'aria-labelledby': 'basic-button',
+        }}
       >
         <MenuItem>
           hello
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={handleSignout}>
           Signout
         </MenuItem>
-      </Menu> */}
+      </Menu>
     </Stack>
   )
 }
@@ -565,7 +630,7 @@ function Tabs({
         onClick={() => onClickButton(Mode.Talk)}
       >
         <RiSpeakLine size={16} />
-        <Typography variant="body2" component="span" sx={{ marginLeft: 0.5, fontWeight: 600 }}>
+        <Typography variant="body1" component="span" sx={{ marginLeft: 0.5, fontWeight: 600 }}>
           {chrome.i18n.getMessage("menu_chat")}
         </Typography>
       </Button>

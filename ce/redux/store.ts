@@ -40,7 +40,7 @@ const rootReducer = combineReducers({
   note
 })
 
-const persistConfig = {
+export const persistConfig = {
   key: "orca-storage",
   storage: localStorage,
   debug: true,
@@ -82,25 +82,40 @@ export const storage = new Storage({
   area: "session",
 })
 
+export const clearState = () => store.dispatch(persistor.purge);
+export const removeAll = () => storage.clear()
+
 storage.watch({
-  [`persist:${persistConfig.key}`]: (change) => {
-    console.log({ change })
+  [`persist:${persistConfig.key}`]: async (change, area) => {
+    console.log({ change, area })
     const { oldValue, newValue } = change;
     const updatedKeys = [];
-    for (const key in oldValue) {
-      if (oldValue[key] !== newValue?.[key]) {
-        updatedKeys.push(key);
-      }
-    }
-    for (const key in newValue) {
-      if (oldValue?.[key] !== newValue[key]) {
-        updatedKeys.push(key);
-      }
-    }
-    if (updatedKeys.length > 0) {
-      persistor.resync()
+    console.log({ updatedKeys })
 
+    if (newValue === null) {
+      await persistor.pause();
+      await persistor.flush()
+      await persistor.purge();
+      store.dispatch({ type: "global/RESET_STATE" });
+    } else {
+      persistor.resync()
     }
+
+
+    // for (const key in oldValue) {
+    //   if (oldValue[key] !== newValue?.[key]) {
+    //     updatedKeys.push(key);
+    //   }
+    // }
+    // for (const key in newValue) {
+    //   if (oldValue?.[key] !== newValue[key]) {
+    //     updatedKeys.push(key);
+    //   }
+    // }
+    // if (updatedKeys.length > 0) {
+    //   persistor.resync()
+
+    // }
   },
 });
 

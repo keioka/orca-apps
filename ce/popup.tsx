@@ -22,7 +22,6 @@ export const config: PlasmoCSConfig = {
   css: ["font.css"]
 }
 
-
 function RootPopup() {
   const lang = chrome.i18n.getUILanguage()
   const langCode = lang.split("-")[0]
@@ -67,6 +66,7 @@ function IndexPopup() {
   function handleSignout() {
     console.log("dispatch initStatePayment")
     dispatch(logout())
+    onLogout()
     dispatch(initStatePayment())
   }
 

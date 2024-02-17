@@ -5,10 +5,10 @@ import {
 } from "@mui/material";
 import { BsFillBookmarkFill } from "react-icons/bs";
 
-export function ButtonSaveItem({ onSave }) {
+export function ButtonSaveItem({ onSave, isSaved }) {
   return (
     <Stack sx={{ alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-      <BsFillBookmarkFill size={18} color="rgba(0,0,0,0.2)" onClick={onSave} />
+      <BsFillBookmarkFill size={18} color={isSaved ? "#FFD744" : "rgba(0,0,0,0.2)"} onClick={onSave} />
       <Typography sx={{ fontSize: 10, color: "rgba(0,0,0,0.2)" }}>
         Save
       </Typography>

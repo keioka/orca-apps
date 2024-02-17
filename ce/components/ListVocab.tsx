@@ -44,7 +44,6 @@ export function ListVocab({ direction, vocabs = sampleVocabs, savedVocabs, isLoa
       {
         vocabs.map((vocab) => {
           const isSaved = savedVocabs?.find((v) => v.vocabularyId === vocab.id)
-          console.log("isSaved", isSaved)
           return (
             <CardVocab vocab={vocab} onSaveVocab={onSaveVocab} isSaved={isSaved} />
           )

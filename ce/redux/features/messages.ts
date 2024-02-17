@@ -130,7 +130,15 @@ export const addUserMessage = createAsyncThunk(`${NAME}/add`,
     }
   });
 
-export const fetchParaphrases = createAsyncThunk(`${NAME}/fetchParaphrases`, async ({ messageId, sentence, sentenceIndex }: { messageId: string }, { getState, rejectWithValue, dispatch }) => {
+export const fetchParaphrases = createAsyncThunk(`${NAME}/fetchParaphrases`, async ({
+  messageId,
+  sentence,
+  sentenceIndex
+}: {
+  messageId: string,
+  sentence: string,
+  sentenceIndex: number
+}, { getState, rejectWithValue, dispatch }) => {
   try {
     const state = getState()
     const token = await validateSessionAndToken(state, dispatch);
@@ -139,22 +147,26 @@ export const fetchParaphrases = createAsyncThunk(`${NAME}/fetchParaphrases`, asy
       return rejectWithValue('No messageId or sentence or sentenceIndex')
     }
 
-    const response = await axios.post(
-      `/api/messages/${messageId}/paraphrase`,
-      {
+    const response = await sendToBackground({
+      name: "api/message/fetchParaphrases",
+      body: {
+        messageId,
         sentence,
         sentenceIndex,
-        messageId
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        token,
       }
-    );
+    })
 
-    if (response.status !== 200) {
-      return rejectWithValue('Failed to create message')
+    if (response.error) {
+      return rejectWithValue(response.error)
+    }
+
+    console.log({ response })
+
+    if (!response) {
+      console.error("Error fetching paraphrases");
+      console.error(response);
+      throw new Error("Error fetching paraphrases");
     }
 
     return { paraphrases: response.data.phrases, messageId, sentenceIndex };
