@@ -4,7 +4,7 @@ import axios from 'axios';
 import { setLessonIdToMaterial } from './materialsOld';
 import { sendToBackground } from '@plasmohq/messaging';
 import { validateSessionAndToken } from '../helpers';
-
+import { uniqBy } from 'lodash';
 // Define the lesson state
 interface LessonState {
   lessons: Lesson[];
@@ -84,7 +84,7 @@ const lessonSlice = createSlice({
     });
 
     builder.addCase(createLesson.fulfilled, (state, action) => {
-      state.lessons = [...state.lessons, action.payload];
+      state.lessons = uniqBy([...state.lessons, action.payload], 'id');
       state.createdLessonId = action.payload.id;
       state.creating = false;
       state.error = null;
@@ -97,7 +97,7 @@ const lessonSlice = createSlice({
 
     builder.addCase(fetchOrCreateLessonByMaterialId.fulfilled, (state, action) => {
       console.log({ lesson: action.payload })
-      state.lessons = [...state.lessons, action.payload];
+      state.lessons = uniqBy([...state.lessons, action.payload], 'id');
       state.loading = false;
       state.error = null;
     })
@@ -111,6 +111,10 @@ const lessonSlice = createSlice({
       state.creating = false;
       state.error = action.error.message || 'Failed to fetch lesson';
     });
+
+    builder.addCase("RESET", (state, action) => {
+      state = initialState
+    })
   },
 });
 
@@ -184,7 +188,6 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async (_, {
   try {
     const { auth } = getState()
     const { session } = auth
-    console.log({ session })
     if (!session) {
       rejectWithValue('No session found')
     }
@@ -201,14 +204,14 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async (_, {
       }
     })
 
-    if (!response) {
-      return rejectWithValue('Failed to fetch lesson');
+    if (response.error) {
+      return rejectWithValue(response.error);
     }
     const data = await response.data;
-
     return data;
   } catch (error) {
-    return rejectWithValue('Failed to fetch lesson');
+    console.error(error)
+    return rejectWithValue(error);
   }
 });
 
@@ -222,18 +225,15 @@ export const createLesson = createAsyncThunk<Lesson[]>('lesson/create', async ({
       return rejectWithValue('No session found')
     }
 
-    console.log({ auth })
     const token = session?.accessToken
     if (!token) {
       return rejectWithValue('No session found')
     }
 
-    console.log({ materialId, url, token })
     const response = await createLessonAPI({ materialId, url, token });
-    console.log({ response })
+
     const { data } = response;
 
-    console.log({ data })
     dispatch(setLessonIdToMaterial({ materialId, lessonId: data.id }))
     return data;
   } catch (error) {

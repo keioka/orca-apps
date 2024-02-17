@@ -6,41 +6,19 @@ import { CardVocab } from "~components/CardVocab";
 import { useAppSelector } from "../redux/hooks";
 import { useEffect, useState } from "react";
 import { sendToBackground } from "@plasmohq/messaging";
-import type { NoteData } from "~types";
+import type { NoteData, VocabularyInfo, ParaphraseInfo, GMCheckInfo } from "~types";
+import materials from "~redux/features/materials";
 
 const VOCAB_KEY = "vocabulary"
 const PARAPHRASE_KEY = "paraphrases"
 const GM_CHECK_KEY = "grammarMistakes"
 
-interface NoteProps { note: NoteData, url: string }
+interface NoteProps { note: NoteData }
 
-export function Note({ note }: NoteProps) {
-  const [previewData, setPreviewData] = useState(null)
-
-  useEffect(() => {
-    async function fetchPreviewData() {
-      const { result: previewData, error } = await sendToBackground({
-        name: "preview",
-        body: {
-          url: note.url,
-        }
-      })
-
-      if (error) {
-        console.error(error)
-        return
-      }
-
-      setPreviewData(previewData)
-    }
-
-    fetchPreviewData()
-  }, [])
-
-
-  const vocabulary = note[VOCAB_KEY]
-  const paraphrases = note[PARAPHRASE_KEY]
-  const gmChecks = note[GM_CHECK_KEY]
+export function Note({ note }: NoteProps): JSX.Element {
+  const vocabulary: VocabularyInfo[] | undefined = note[VOCAB_KEY]
+  const paraphrases: ParaphraseInfo[] | undefined = note[PARAPHRASE_KEY]
+  const gmChecks: GMCheckInfo[] | undefined = note[GM_CHECK_KEY]
 
   return (
     <Card
@@ -53,12 +31,21 @@ export function Note({ note }: NoteProps) {
     >
       <Stack>
         <Typography variant="h6" component="h6">
+          {chrome.i18n.getMessage("note_subtitle_article_label")}: {note.lessonStartedAt}
+        </Typography>
+
+        <Typography variant="h6" component="h6">
           {chrome.i18n.getMessage("note_subtitle_article_label")}
         </Typography>
         <Box sx={{ background: "#fff", padding: 2, marginBottom: 4 }}>
           <Stack direction="row" spacing={1}>
             <Box sx={{ background: "#e4e4e4", width: "8px", borderRadius: 1 }} />
-            <Preview {...previewData} />
+            <Preview
+              title={note.material.title}
+              description={note.material.description}
+              imageUrl={note.material.imageUrl}
+              url={note.material.url}
+            />
           </Stack>
         </Box>
       </Stack>
@@ -83,10 +70,10 @@ export function Note({ note }: NoteProps) {
             {chrome.i18n.getMessage("note_subtitle_paraphrase_label")}
           </Typography>
           <Stack direction="row" spacing={2} sx={{ overflowX: "scroll", width: "100%" }}>
-            {paraphrases && paraphrases.map((paraphraseInfo) => {
+            {paraphrases && paraphrases.map((paraphrase) => {
               return (
-                <Box key={`note_paraphrase_${paraphraseInfo.id}`} sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
-                  <CardParaphrase paraphrase={paraphraseInfo.paraphrase} />
+                <Box key={`note_paraphrase_${paraphrase.id}`} sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
+                  <CardParaphrase paraphrase={paraphrase} />
                 </Box>
               )
             })}
@@ -125,4 +112,8 @@ export function Note({ note }: NoteProps) {
       </Stack>
     </Card>
   )
+}
+
+interface PreviewData {
+  // Define the properties of the PreviewData object here
 }

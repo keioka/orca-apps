@@ -1,0 +1,24 @@
+import type { PlasmoMessaging } from "@plasmohq/messaging"
+import {
+  browserLocalPersistence,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  setPersistence,
+  signInWithCredential,
+} from "firebase/auth"
+import { initializeApp } from "firebase/app"
+import { getAuth } from "firebase/auth"
+
+import { Storage } from "@plasmohq/storage"
+
+const storage = new Storage()
+
+const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
+  console.log("authCheck message received")
+
+  const data = await storage.get("firebase:token") // "value"
+
+  res.send({ token: data })
+}
+
+export default handler

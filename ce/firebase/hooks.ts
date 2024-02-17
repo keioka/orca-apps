@@ -9,11 +9,9 @@ import { useEffect, useMemo, useState } from "react"
 import { app, auth } from "firebase"
 import { sendToBackground } from "@plasmohq/messaging"
 
-setPersistence(auth, browserLocalPersistence)
-
 export const useFirebase = () => {
   const [isLoading, setIsLoading] = useState(false)
-  const [user, setUser] = useState<User>(null)
+  const [user, setUser] = useState(null)
   const [session, setSession] = useState<{
     accessToken: string,
     uid: string
@@ -21,8 +19,31 @@ export const useFirebase = () => {
 
   const onLogout = async () => {
     setIsLoading(true)
-    if (user) {
-      await auth.signOut()
+    await auth.signOut()
+    const { success } = await sendToBackground({
+      name: "logout",
+    })
+
+    console.log({ success })
+  }
+
+  const authCheck = async () => {
+    console.log("authCheck")
+    try {
+      const { token } = await sendToBackground({
+        name: "authCheck",
+      })
+
+      console.log({ token })
+      if (!token) {
+        console.warn("No token found")
+        return
+      }
+
+      const credential = GoogleAuthProvider.credential(null, token)
+      await signInWithCredential(auth, credential)
+    } catch (e) {
+      console.error("Could not log in. ", e)
     }
   }
 
@@ -47,26 +68,11 @@ export const useFirebase = () => {
         return
       }
 
-      chrome.runtime.sendMessage(
-        {
-          type: "login",
-          token
-        },
-        function (response) {
-          console.log(response)
-        }
-      )
-
       const credential = GoogleAuthProvider.credential(null, token)
       console.log({
         credential
       })
       await signInWithCredential(auth, credential)
-
-      setSession({
-        accessToken: token,
-        uid: user.uid
-      })
 
     } catch (e) {
       console.error("Could not log in. ", e)
@@ -103,7 +109,7 @@ export const useFirebase = () => {
 
     onAuthStateChanged(auth, async (user) => {
       console.log("onAuthStateChanged >>>", user)
-      await setPersistence(auth, browserLocalPersistence)
+      // await setPersistence(auth, browserLocalPersistence)
 
       if (!user) {
         setIsLoading(false)
@@ -124,6 +130,7 @@ export const useFirebase = () => {
     isLoading,
     user,
     session,
+    authCheck,
     onLogin,
     onLoginBackground,
     onLogout

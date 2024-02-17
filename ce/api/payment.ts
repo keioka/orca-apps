@@ -15,7 +15,7 @@ export async function fetchPaymentHistory(email: string | null, token: string): 
     const data = await result.json();
 
     if (!result.ok) {
-      console.log({ result })
+      console.error({ result })
       console.error("Error fetching payment history");
     }
 

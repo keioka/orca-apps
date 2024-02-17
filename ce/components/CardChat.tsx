@@ -26,11 +26,13 @@ import { useSentence } from "../hooks/card"
 // import Avator from "~assets/images/ai_avatar.png"
 import { CardSmGMCheck } from "./CardSmGMCheck"
 import { CardSmParaphrase } from "./CardSmParaphrase"
-import { saveParaphrases, saveGrammarMistakes } from "~redux/features/save"
+import { saveGrammarMistakes } from "~redux/features/save"
 import { useAppDispatch, useAppSelector } from "~redux/hooks"
 import { toggleSubscriptionForm } from "~redux/features/ui"
+import { saveParaphrase } from "~redux/features/note"
 import type { ParaphraseItem, GMCheckItem } from "~types"
 import styled from "@emotion/styled"
+import { fetchParaphrases } from "~redux/features/messages"
 
 const TypoEn = styled(Typography)`
   font-size: 14px;
@@ -75,7 +77,7 @@ interface CardChatPureProps {
 }
 
 
-export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: CardChatProps) {
+export function CardChat({ id, content, type = "ai", loading, isAutoPlay, url }: CardChatProps) {
   const [error, setError] = useState(null)
   const { currentSentence, currentSentenceIndex, numSentences, messageSentences, selectNextSentence, selectPreviousSentence } = useSentence(content)
   const [currentTab, setCurrentTab] = useState<Tab>(null)
@@ -84,29 +86,31 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
   const [isLoadingGMCheck, setIsLoadingGMCheck] = useState(false)
   const [isLoadingTranlate, setIsLoadingTranslate] = useState(false)
 
-  const [paraphrase, setParaphrase] = useState({})
   const [gmCheck, setGMCheck] = useState({})
 
   const [translate, setTranslate] = useState(null)
 
   const dispatch = useAppDispatch()
   const { isValidSubscription } = useAppSelector((state) => state.payment)
+  const paraphrase = useAppSelector((state) => state.message.paraphraseMap[id])
+  const savedPhrasesByMessageId = useAppSelector((state) => state.note.paraphrases.filter((paraphrase) => Boolean(paraphrase)).filter((paraphraseInfo) => paraphraseInfo.paraphrase.sentence.message.id === id))
 
+  console.log({ savedPhrasesByMessageId })
 
   useEffect(() => {
     if (type === "human" || loading || !isAutoPlay) return
     handlePlayAudio()
   }, [])
 
-  useEffect(() => {
-    if (currentTab === Tab.Paraphrase && !paraphrase[currentSentenceIndex]) {
-      handleClickParaphrase()
-    }
+  // useEffect(() => {
+  //   if (currentTab === Tab.Paraphrase && !paraphrase[currentSentenceIndex]) {
+  //     handleClickParaphrase()
+  //   }
 
-    if (currentTab === Tab.GMCheck && !gmCheck[currentSentenceIndex]) {
-      handleClickGMCheck()
-    }
-  }, [currentSentenceIndex])
+  //   if (currentTab === Tab.GMCheck && !gmCheck[currentSentenceIndex]) {
+  //     handleClickGMCheck()
+  //   }
+  // }, [currentSentenceIndex])
 
   function handleToggleSubscriptionForm() {
     dispatch(toggleSubscriptionForm())
@@ -133,25 +137,19 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
   }
 
   async function handleClickParaphrase() {
-    if (!isValidSubscription) {
-      handleToggleSubscriptionForm()
-      return
-    }
+    // if (!isValidSubscription) {
+    //   handleToggleSubscriptionForm()
+    //   return
+    // }
     setIsLoadingParaphrase(true)
     setCurrentTab(Tab.Paraphrase)
-    const resp = await sendToBackground({
-      name: "paraphrase",
-      body: {
-        sentence: currentSentence
-      }
-    })
 
-    if (resp.error) {
-      setError(resp.error)
-      return
-    }
+    dispatch(fetchParaphrases({
+      sentence: currentSentence,
+      messageId: id,
+      sentenceIndex: currentSentenceIndex
+    }))
 
-    setParaphrase({ ...paraphrase, [currentSentenceIndex]: resp.phrases })
     setIsLoadingParaphrase(false)
   }
 
@@ -198,16 +196,8 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
     }
   }
 
-  function handleSaveParaphrase({ sentence }: { sentence: string }) {
-    dispatch(
-      saveParaphrases({
-        url,
-        data: {
-          paraphrase: sentence,
-          originalSentence: currentSentence
-        },
-      })
-    )
+  function handleSaveParaphrase({ paraphraseId }: { paraphraseId: number }) {
+    dispatch(saveParaphrase({ paraphraseId }))
   }
 
   function handleSaveGMCheck(gmCheck: GMCheckItem) {
@@ -241,6 +231,7 @@ export function CardChat({ content, type = "ai", loading, isAutoPlay, url }: Car
       messageSentences={messageSentences}
       selectNextSentence={selectNextSentence}
       selectPreviousSentence={selectPreviousSentence}
+      savedPhrasesByMessageId={savedPhrasesByMessageId}
     />
   )
 }
@@ -264,12 +255,14 @@ export function CardChatPure({
   numSentences,
   messageSentences,
   selectNextSentence,
-  selectPreviousSentence
+  selectPreviousSentence,
+  savedPhrasesByMessageId
 }: CardChatPureProps) {
   const [error, setError] = useState(null)
 
   const isOpenPanel = type === "human" && currentTab !== null
 
+  console.log({ paraphrase })
   return (
     <Stack
       sx={{
@@ -326,7 +319,7 @@ export function CardChatPure({
           {loading && <LoaderBounce />}
         </CardContent>
         <CardActions sx={{ padding: 0, paddingTop: 2, width: "100%" }}>
-          {type === "human" && (
+          {type === "user" && (
             <Stack sx={{ width: "100%" }}>
               <Stack direction="row" spacing={1}>
                 <Button
@@ -341,7 +334,7 @@ export function CardChatPure({
                   }}
                   onClick={handleClickGMCheck}
                 >
-                  <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.GMCheck ? "#fff" : "#787c80", fontWeight: 700 }}>
+                  <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.GMCheck ? "#fff" : "#787c80", fontWeight: 600 }}>
                     {chrome.i18n.getMessage("chat_card_button_gm_check")}
                   </Typography>
                 </Button>
@@ -357,7 +350,7 @@ export function CardChatPure({
                   }}
                   onClick={handleClickParaphrase}
                 >
-                  <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.Paraphrase ? "#fff" : "#787c80", fontWeight: 700 }}>
+                  <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.Paraphrase ? "#fff" : "#787c80", fontWeight: 600 }}>
                     {chrome.i18n.getMessage("chat_card_button_paraphrase")}
                   </Typography>
                 </Button>
@@ -380,18 +373,20 @@ export function CardChatPure({
                   </Box>
                 }
                 {
-                  currentTab === Tab.Paraphrase &&
+                  currentTab === Tab.Paraphrase && paraphrase &&
                   paraphrase[currentSentenceIndex] &&
                   paraphrase[currentSentenceIndex].map((item) => {
+                    const isSaved = savedPhrasesByMessageId.some((paraphraseInfo) => paraphraseInfo.paraphrase.id === item.id)
                     return (
                       <Box my={2}>
-                        <CardSmParaphrase item={item} onSave={() => handleSaveParaphrase(item)} />
+                        <CardSmParaphrase item={item} onSave={() => handleSaveParaphrase({ paraphraseId: item.id })} isSaved={isSaved} />
                       </Box>
                     )
                   })
                 }
+                {/*}
                 {
-                  currentTab === Tab.GMCheck &&
+                  currentTab === Tab.GMCheck && gmCheck &&
                   gmCheck[currentSentenceIndex] &&
                   gmCheck[currentSentenceIndex].map((item) => {
                     return (
@@ -400,17 +395,19 @@ export function CardChatPure({
                       </Box>
                     )
                   })
-                }
+                } */}
               </Box>
-              {currentTab && <Stack direction="row" mt={1} sx={{ alignItems: "center", justifyContent: "center" }}>
-                <Box onClick={selectPreviousSentence} sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginRight: 1 }}>
-                  <BsFillCaretLeftFill color="#787c80" size={16} />
-                </Box>
-                <Typography color="787c80" sx={{ fontSize: 12, fontWeight: "600" }} > {currentSentenceIndex + 1} / {numSentences}</Typography>
-                <Box onClick={selectNextSentence} sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginLeft: 1 }}>
-                  <BsFillCaretRightFill color="#787c80" size={16} />
-                </Box>
-              </Stack>}
+              {currentTab &&
+                <Stack direction="row" mt={1} sx={{ alignItems: "center", justifyContent: "center" }}>
+                  <Box onClick={selectPreviousSentence} sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginRight: 1 }}>
+                    <BsFillCaretLeftFill color="#787c80" size={16} />
+                  </Box>
+                  <Typography color="787c80" sx={{ fontSize: 12, fontWeight: "600" }} > {currentSentenceIndex + 1} / {numSentences}</Typography>
+                  <Box onClick={selectNextSentence} sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginLeft: 1 }}>
+                    <BsFillCaretRightFill color="#787c80" size={16} />
+                  </Box>
+                </Stack>
+              }
             </Stack>
           )}
 
@@ -460,6 +457,6 @@ export function CardChatPure({
 
         </CardActions>
       </Card>
-    </Stack >
+    </Stack>
   )
 }

@@ -176,17 +176,19 @@ export const saveParaphrase = createAsyncThunk(`note/saveParaphrase`,
       const state = getState()
       const token = await validateSessionAndToken(state, dispatch);
 
-      const response = await axios.post(
-        `/api/paraphrases/${paraphraseId}/save`,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+      if (!token) {
+        return rejectWithValue('Token is required')
+      }
 
-      if (response.status !== 200) {
+      const response = await sendToBackground({
+        name: "api/note/saveParaphrase",
+        body: {
+          paraphraseId,
+          token
+        }
+      })
+
+      if (!response) {
         return rejectWithValue('Failed to create message')
       }
 

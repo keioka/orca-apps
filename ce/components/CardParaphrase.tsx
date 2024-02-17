@@ -28,7 +28,6 @@ export function CardParaphrase({
   shouldHideSave?: boolean,
   shouldHideDiscard?: boolean
 }) {
-
   return (
     <Card sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee" }}>
       <Stack p={3} spacing={0.5}>

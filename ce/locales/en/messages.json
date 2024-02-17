@@ -79,6 +79,10 @@
     "message": "Article",
     "description": "Label for the article section in a note."
   },
+  "note_subtitle_lesson_start_at": {
+    "message": "Lesson Started At",
+    "description": "Label for the lesson start time in a note."
+  },
   "note_subtitle_vocab_label": {
     "message": "Vocabulary",
     "description": "Label for the vocabulary section in a note."

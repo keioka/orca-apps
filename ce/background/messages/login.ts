@@ -8,9 +8,9 @@ import {
 } from "firebase/auth"
 import { initializeApp } from "firebase/app"
 import { getAuth } from "firebase/auth"
-// import { Storage } from "@plasmohq/storage"
+import { Storage } from "@plasmohq/storage"
 
-// const storage = new Storage()
+const storage = new Storage()
 
 const firebaseConfig = {
   apiKey: "REDACTED_FIREBASE_API_KEY",
@@ -36,9 +36,9 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       return
     }
     if (token) {
-      // await storage.set("firebase:token", token)
+      await storage.set("firebase:token", token)
       res.send({ token })
-      // const data = await storage.get("firebase:token") // "value"
+      const data = await storage.get("firebase:token") // "value"
       // console.log(data)
       // await storage.set("capt", { color: "red" })
       // const data2 = await storage.get("capt") // { color: "red" }

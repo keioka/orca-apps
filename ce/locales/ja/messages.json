@@ -79,6 +79,10 @@
     "message": "記事",
     "description": "記事のサブタイトルラベル。"
   },
+  "note_subtitle_lesson_start_at": {
+    "message": "レッスン開始時間",
+    "description": "レッスン開始時間のサブタイトルラベル。"
+  },
   "note_subtitle_vocab_label": {
     "message": "単語",
     "description": "単語のサブタイトルラベル。"

@@ -35,6 +35,9 @@ export interface GMCheckSuggestion {
 }
 
 export type NoteData = {
+  material: Material;
+  url: string;
+  lessonStartedAt: number;
   vocabulary: VocabularyEntry[];
   paraphrases: Paraphrase[];
   grammarMistakes: GrammarMistake[];

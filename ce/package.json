@@ -76,7 +76,8 @@
     ],
     "permissions": [
       "identity",
-      "webRequest"
+      "webRequest",
+      "tabs"
     ],
     "oauth2": {
       "client_id": "$PLASMO_PUBLIC_FIREBASE_CLIENT_ID",
