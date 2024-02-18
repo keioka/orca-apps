@@ -15,11 +15,11 @@ import { toggleDisable } from "~redux/features/ui";
 import { useAppDispatch, useAppSelector } from "~redux/hooks";
 // https://stripe.com/docs/testing?testing-method=card-numbers#cards
 import { login, signupGoogle, checkAuthStatus, clearError, logout } from "~redux/features/auth";
+
 import "./font.css"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
-  css: ["font.css"]
 }
 
 function RootPopup() {
@@ -47,14 +47,12 @@ function IndexPopup() {
 
   const { isValidSubscription, loadingCurrentUser: loadingCurrentUserSubsc, status } = payment
 
-  console.log({ currentUserFB, currentUser })
   // useEffect(() => {
   //   dispatch(checkAuthStatus())
   // }, [])
 
   useEffect(() => {
     if (currentUser) {
-      console.log("dispatch fetch payments")
       dispatch(fetchPayments({ email: currentUser.email }))
     }
   }, [currentUser])
@@ -64,7 +62,6 @@ function IndexPopup() {
   }
 
   function handleSignout() {
-    console.log("dispatch initStatePayment")
     dispatch(logout())
     onLogout()
     dispatch(initStatePayment())

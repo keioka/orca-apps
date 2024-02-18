@@ -167,8 +167,6 @@ export function Inject() {
     }
   }, [open, session])
 
-  console.log({ open, currentOpenedMaterial, url })
-
   useEffect(() => {
     if (!open) return
     if (!currentOpenedMaterial || currentOpenedMaterial.url !== url) {
@@ -218,7 +216,6 @@ export function Inject() {
   useEffect(() => {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log("================ onMessage ====================")
-      console.log({ request, sender, sendResponse })
       if (request.name === "logout") {
         console.log("logout")
         onLogout()

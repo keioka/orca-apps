@@ -148,7 +148,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           imageUrl: metadata.image,
           type: "article",
           publishedAt: metadata.publishedAt,
-          externalId: metadata.externalId,
           category: metadata.category,
           publisher: {
             name: metadata.publisher.name,

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { sendToBackground } from "@plasmohq/messaging";
 import type { NoteData, VocabularyInfo, ParaphraseInfo, GMCheckInfo } from "~types";
 import materials from "~redux/features/materials";
+import moment from "moment";
 
 const VOCAB_KEY = "vocabulary"
 const PARAPHRASE_KEY = "paraphrases"
@@ -31,7 +32,7 @@ export function Note({ note }: NoteProps): JSX.Element {
     >
       <Stack>
         <Typography variant="h6" component="h6">
-          {chrome.i18n.getMessage("note_subtitle_article_label")}: {note.lessonStartedAt}
+          {chrome.i18n.getMessage("note_subtitle_lesson_start_at")}: {moment(note.lessonStartedAt).format("YYYY/MM/DD HH:mm:ss")}
         </Typography>
 
         <Typography variant="h6" component="h6">

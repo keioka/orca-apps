@@ -1,4 +1,4 @@
-import { getVocabsFromText } from '../openai/vocab'
+import { getVocabsFromText, getVocabsFromUrl } from '../openai/vocab'
 import prisma from '../prisma'
 import { parseWebText } from '../helpers/parser'
 
@@ -30,8 +30,26 @@ export async function addVocabs(req: any, res: any) {
   }
 
   const text = await parseWebText(material.url)
+
   if (!text) {
-    throw new Error(`Failed to parse text: ${material.url}`)
+    const { vocabs } = await getVocabsFromUrl({ id: materialId, url: material.url, transLangCode })
+    const mappedVocabs = vocabs.map((vocab) => {
+      return {
+        ...vocab,
+        translation: vocab[`meaningIn${langName[transLangCode.toLowerCase()]}`],
+        langCode: transLangCode
+      }
+    })
+
+    const newVocabs = await createVocabs({
+      vocabParams: mappedVocabs,
+      materialId
+    })
+
+    return {
+      status: 'ok',
+      vocabs: newVocabs
+    }
   }
 
   const cleanedText = text.replace(/\s+/g, ' ').trim()
@@ -64,6 +82,8 @@ export async function addVocabs(req: any, res: any) {
     console.timeEnd(pid)
     return mappedVocabs
   }))
+
+
 
   return {
     status: 'ok',

@@ -23,6 +23,8 @@ export async function parseWebText(url: string): Promise<string | null> {
   const body = $('body').html();
   const document = new JSDOM(body);
   const article = new Readability(document.window.document).parse();
-
+  if (!article) {
+    return null;
+  }
   return article.textContent.trim();
 }
