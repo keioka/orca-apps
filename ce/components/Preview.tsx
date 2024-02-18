@@ -23,7 +23,7 @@ interface PreviewProps {
 
 export function Preview(props: PreviewProps) {
   return (
-    <a href={props.url} style={{ textDecoration: "none" }}>
+    <a href={props.url} style={{ textDecoration: "none" }} target="_blank">
       <Card
         sx={{
           width: "100%",

@@ -95,8 +95,6 @@ export function CardChat({ id, content, type = "ai", loading, isAutoPlay, url }:
   const paraphrase = useAppSelector((state) => state.message.paraphraseMap[id])
   const savedPhrasesByMessageId = useAppSelector((state) => state.note.paraphrases.filter((paraphrase) => Boolean(paraphrase)).filter((paraphraseInfo) => paraphraseInfo.paraphrase.sentence.message.id === id))
 
-  console.log({ savedPhrasesByMessageId })
-
   useEffect(() => {
     if (type === "human" || loading || !isAutoPlay) return
     handlePlayAudio()
@@ -262,7 +260,6 @@ export function CardChatPure({
 
   const isOpenPanel = type === "human" && currentTab !== null
 
-  console.log({ paraphrase })
   return (
     <Stack
       sx={{
@@ -272,16 +269,6 @@ export function CardChatPure({
       direction={type === "ai" ? "row" : "row-reverse"}
       spacing={1}
     >
-      {/* <Box
-        sx={{
-          display: "flex",
-          height: "auto",
-          alignItems: "flex-end",
-        }}
-        mb={1}
-      >
-        <Avatar src={type === "ai" ? "" : ""} sx={{ width: 24, height: 24 }} />
-      </Box> */}
       <Card
         sx={(theme) => ({
           width: "100%",

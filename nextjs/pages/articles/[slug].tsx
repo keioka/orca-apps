@@ -426,7 +426,6 @@ export default function Article({ article, relatedArticles, body, notFound, slug
 
   const handleCloseModalAuth = () => {
     setShouldOpenModalAuth(false)
-    setAlert("")
   }
 
   const handleSaveVocab = (vocab) => {

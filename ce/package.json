@@ -1,7 +1,7 @@
 {
   "name": "Orca",
   "displayName": "__MSG_extensionName__",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "__MSG_extensionDescription__",
   "author": "Orca",
   "scripts": {
@@ -77,7 +77,8 @@
     "permissions": [
       "identity",
       "webRequest",
-      "tabs"
+      "tabs",
+      "contextMenus"
     ],
     "oauth2": {
       "client_id": "$PLASMO_PUBLIC_FIREBASE_CLIENT_ID",

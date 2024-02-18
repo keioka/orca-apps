@@ -46,7 +46,6 @@ import "../font.css"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
-  css: ["font.css"]
 }
 
 const WIDTH_SIDEBAR = 280

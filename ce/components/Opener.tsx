@@ -57,7 +57,7 @@ export function Opener({ setOpen, setHideExtention }: { setHideExtention: (hide:
         {/* <Box sx={{ transform: "scale(0.07)" }}>
           <Logo />
         </Box> */}
-        <Typography sx={{ fontSize: 8, fontWeight: 700 }}>{chrome.i18n.getMessage("opener_label")}</Typography>
+        <Typography sx={{ fontSize: 12, fontWeight: 700 }}>{chrome.i18n.getMessage("opener_label")}</Typography>
       </Button>
     </Box>
   )

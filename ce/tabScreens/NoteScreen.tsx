@@ -95,7 +95,7 @@ export function NoteScreen() {
 
   if (!session) {
     return (
-      <Stack sx={{ background: "#f2f2f2", alignItems: "center", borderRadius: 2 }} p={2} mt={4}>
+      <Stack sx={{ background: "#f2f2f2", alignItems: "center", borderRadius: 2 }} p={2} mt={4} spacing={2}>
         <Typography variant="h6" component="h6">
           Please login to see your notes
         </Typography>
