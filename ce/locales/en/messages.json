@@ -7,6 +7,10 @@
     "message": "Orca - Practice English based on your interests",
     "description": "Description of the extension."
   },
+  "signout": {
+    "message": "Sign out",
+    "description": "Button label for signing out."
+  },
   "login_google": {
     "message": "Sign in with Google",
     "description": "Button label for signing in with Google."

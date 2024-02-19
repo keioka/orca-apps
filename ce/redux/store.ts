@@ -15,10 +15,6 @@ import message from './features/messages';
 import auth from './features/auth';
 import materials from './features/materials';
 import lessons from './features/lessons';
-import transcribe from './features/transcribe';
-import videoInfo from './features/videoInfo';
-import saveData from './features/save';
-import lessonsLocal from './features/lessonsLocal';
 import payment from './features/payment';
 import ui from './features/ui';
 import note from './features/note';
@@ -31,10 +27,6 @@ const rootReducer = combineReducers({
   materials: materials,
   message: message,
   lesson: lessons,
-  transcribe: transcribe,
-  videoInfo: videoInfo,
-  saveData,
-  lessonsLocal,
   payment,
   ui,
   note

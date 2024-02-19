@@ -4,11 +4,10 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const token = req.body.token;
   const uid = req.body.uid;
-
-  console.log({ token, uid })
+  console.log("signup message received")
 
   try {
-    const response = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/users/login`, {
+    const response = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/users/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -20,21 +19,23 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     });
 
     const data = await response.json();
-
     console.log({ response })
+
     if (response.status !== 201) {
-      return res.send({
-        error: data.error
+      res.send({
+        error: data
       });
     }
+
+    console.log({ data })
 
     if (data.error) {
-      return res.send({
+      res.send({
         error: data.error
       });
     }
 
-    return res.send({
+    res.send({
       data
     });
 

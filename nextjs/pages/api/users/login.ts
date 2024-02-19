@@ -16,18 +16,18 @@ export default async function handler(
     await validateToken(req, res)
   } catch (err) {
     console.error(err)
-    return res.status(401).json({ message: 'Failed to validate token' });
+    return res.status(401).json({ code: "INVALID_TOKEN", message: 'Failed to validate token' });
   }
 
   try {
     await setCurrentUser(req)
   } catch (err) {
     console.error(err)
-    return res.status(401).json({ message: 'Failed to validate token' });
+    return res.status(401).json({ code: "NO_USER", message: err.message });
   }
 
   try {
-    return res.status(200).json(req.currentUser);
+    return res.status(201).json(req.currentUser);
   } catch (err) {
     console.error(err)
     return res.status(500).json({ message: 'Something went wrong' });

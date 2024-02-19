@@ -1,5 +1,6 @@
-import { initializeApp } from "firebase/app"
+import { initializeApp, getApps, getApp } from "firebase/app"
 import { getAuth } from "firebase/auth"
+import * as firebase from "firebase";
 
 const firebaseConfig = {
   apiKey: process.env.PLASMO_PUBLIC_FIREBASE_PUBLIC_API_KEY,
@@ -10,5 +11,5 @@ const firebaseConfig = {
   appId: process.env.PLASMO_PUBLIC_FIREBASE_APP_ID,
 };
 
-export const app = initializeApp(firebaseConfig)
+export const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app)

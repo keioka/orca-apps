@@ -7,6 +7,12 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
   console.log({ token, uid })
 
+  if (!token || !uid) {
+    return res.send({
+      error: "Invalid token or uid"
+    });
+  }
+
   try {
     const response = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/users/login`, {
       method: 'POST',
@@ -21,10 +27,10 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     const data = await response.json();
 
-    console.log({ response })
     if (response.status !== 201) {
+      console.error(response)
       return res.send({
-        error: data.error
+        error: data
       });
     }
 

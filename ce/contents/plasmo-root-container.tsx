@@ -7,12 +7,19 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import cssText from "data-text:~/global.css"
 import { Provider } from "react-redux";
 import { PersistGate } from "@plasmohq/redux-persist/integration/react"
-import { persistor, store } from './redux/store';
-import { getTheme } from "./theme";
+import { persistor, store } from '~/redux/store';
+import { getTheme } from "~/theme";
+import type {
+  PlasmoCSConfig,
+  PlasmoCSUIJSXContainer,
+  PlasmoCSUIProps,
+  PlasmoRender
+} from "plasmo"
+import { createRoot } from "react-dom/client"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
-  css: ["./font.css"]
+  css: ["font.css"]
 }
 
 const styleElement = document.createElement("style")
@@ -52,5 +59,28 @@ function Root() {
     </CacheProvider >
   )
 }
+
+// export const getRootContainer = () =>
+//   new Promise((resolve) => {
+//     const checkInterval = setInterval(() => {
+//       const rootContainerParent = document.querySelector(`[href="/docs"]`)
+//       if (rootContainerParent) {
+//         clearInterval(checkInterval)
+//         const rootContainer = document.createElement("div")
+//         rootContainerParent.appendChild(rootContainer)
+//         resolve(rootContainer)
+//       }
+//     }, 137)
+//   })
+
+
+// export const render: PlasmoRender<PlasmoCSUIJSXContainer> = async ({
+//   createRootContainer
+// }) => {
+//   const rootContainer = await createRootContainer()
+//   const root = createRoot(rootContainer)
+//   root.render(<Root />)
+// }
+
 
 export default Root

@@ -100,7 +100,7 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
 
     const userMessage = await createMessage({ message, lessonId, createdById: type === "user" ? req.currentUser?.id as string : null, type });
 
-    return res.status(200).json(userMessage);
+    return res.status(201).json(userMessage);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "createMessageHandler: An error occurred while creating the message" });

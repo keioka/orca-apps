@@ -89,7 +89,7 @@ async function createMessageHandler(req: NextApiRequest, res: NextApiResponse) {
     if (!lesson.initMessage) {
       await LessonModel.setInitMessage(lesson.id)
     }
-    return res.status(200).json(updatedAIMessage);
+    return res.status(201).json(updatedAIMessage);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "createMessageHandler: An error occurred while creating the message" });
