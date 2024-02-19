@@ -36,12 +36,12 @@ export default async function handler(
       console.warn(error)
     }
 
-    return res.status(200).json(newUser);
+    return res.status(201).json(newUser);
   } catch (err) {
     console.error(err)
     console.error(err.code)
     if (err.code === "P2002") {
-      return res.status(401).json({ message: 'Already Exists', type: 'ALREADY_EXISTS' });
+      return res.status(401).json({ message: 'Already Exists', code: 'ALREADY_EXISTS' });
     }
 
     return res.status(500).json({ message: 'Something went wrong' });

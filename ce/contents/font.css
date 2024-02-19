@@ -1,0 +1,50 @@
+
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-Black.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-Bold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-Light.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-Medium.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(data-base64:~assets/fonts/Outfit/Outfit-ExtraBold.ttf) format('truetype');
+}
+
+/* Path: ce/typography.css */

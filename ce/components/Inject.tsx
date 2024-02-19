@@ -11,13 +11,14 @@ import {
   ButtonGroup,
   Menu,
   MenuItem,
+  Alert,
+  Popover
 } from "@mui/material"
 import { IoPlayCircle, IoCloseCircle, IoMicOutline } from "react-icons/io5";
 import { useFirebase } from "../firebase/hooks"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchLesson } from '../redux/features/lessons';
-// import { fetchMessages, createMessage, addMessage } from '~redux/features/messagesLocal';
 import { fetchMessages, addUserMessage, createAIMessage } from "~redux/features/messages";
 import { fetchCurrentOpenedMaterial, createVocabs, fetchVocabs } from "~redux/features/materials";
 import { fetchSavedVocab, saveVocab } from "~redux/features/note";
@@ -32,7 +33,7 @@ import { toggleDisable, clearSubscriptionForm } from "~redux/features/ui";
 import type { VocabularyItem, Message } from "~types";
 import { SummaryMode } from "./SummaryMode";
 import { FormSubscription } from "./FormSubscription";
-import { fetchCurrentUser, setSession, setCurrentUser } from "~/redux/features/auth";
+import { fetchCurrentUser, setSession, login, signup } from "~/redux/features/auth";
 import { fetchOrCreateLessonByMaterialId } from "~/redux/features/lessons";
 
 const drawerWidth = 380
@@ -136,7 +137,6 @@ export function Inject() {
   const [message, setMessage] = useState(null)
   const [isFullLoaded, setIsFullLoaded] = useState(false)
   const dispatch = useAppDispatch()
-  const note = useAppSelector(state => { return state.saveData[url] })
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   const shouldShowSubscriptionForm = useAppSelector(state => { return !state.payment.isValidSubscription && state.ui.shouldShowSubscriptionForm })
   const currentUser = useAppSelector(state => { return state.auth.currentUser })
@@ -144,21 +144,20 @@ export function Inject() {
   const currentOpenedMaterial = useAppSelector(state => { return state.materials.currentOpenedMaterial })
   const currentLesson = useAppSelector((state) => state.lesson.lessons.find((lesson) => lesson.materialId === currentOpenedMaterial?.id))
   const messages = useAppSelector((state) => currentLesson ? state.message.messageMap[currentLesson.id] || [] : [])
-  const isCreatingMessage = useAppSelector((state) => state.message.creatingMessage)
+  const isCreatingMessage = useAppSelector((state) => state.message.isCreatingMessage)
+  const errorSigninMessage = useAppSelector((state) => state.auth.errorSigninMessage)
+  const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage)
 
   useEffect(() => {
+    dispatch({ type: "global/RESET_STATE" });
     authCheck()
   }, [])
 
+  // set session from Firebase to Redux State
   useEffect(() => {
     if (!open) return
     dispatch(setSession(sessionFB))
   }, [open, sessionFB])
-
-  useEffect(() => {
-    if (!user) return
-    dispatch(setCurrentUser(null))
-  }, [user])
 
   useEffect(() => {
     if (!open) return
@@ -185,19 +184,11 @@ export function Inject() {
 
   useEffect(() => {
     if (!open) return
-    if (currentOpenedMaterial && currentUser) {
+    if (currentOpenedMaterial && session) {
       dispatch(fetchOrCreateLessonByMaterialId(currentOpenedMaterial.id))
     }
-  }, [open, currentOpenedMaterial, currentUser])
+  }, [open, currentOpenedMaterial, session])
 
-  console.log({
-    messages,
-    currentLesson,
-    isCreatingMessage,
-    currentOpenedMaterial,
-    currentUser,
-    url
-  })
   useEffect(() => {
     if (!open) return
     if (!isCreatingMessage && currentLesson && !currentLesson.initMessage && messages.length === 0) {
@@ -209,7 +200,6 @@ export function Inject() {
     if (!open) return
     if (currentOpenedMaterial) {
       dispatch(fetchVocabs({ materialId: currentOpenedMaterial.id }))
-      dispatch(fetchMessages(currentOpenedMaterial.id))
     }
   }, [open, currentOpenedMaterial])
 
@@ -228,6 +218,18 @@ export function Inject() {
       }
     })
   }, [])
+
+  async function handleSignup() {
+    const userCred = await onLoginBackground()
+    console.log({ userCred })
+    dispatch(signup({ accessToken: userCred.accessToken, uid: userCred.uid }))
+  }
+
+  async function handleSignin() {
+    const userCred = await onLoginBackground()
+    console.log({ userCred })
+    dispatch(login({ accessToken: userCred.accessToken, uid: userCred.uid }))
+  }
 
   function handleToggleDisable() {
     dispatch(toggleDisable())
@@ -284,8 +286,6 @@ export function Inject() {
     return null
   }
 
-
-
   return (
     <Box
       id="orca-window"
@@ -314,8 +314,6 @@ export function Inject() {
             }
           }}
         >
-
-
           <Box
             sx={{
               padding: "16px",
@@ -346,22 +344,32 @@ export function Inject() {
 
             {
               !currentUser && (
-                <Box
+                <Stack
                   sx={{
                     width: "100%",
                     display: "flex",
                     justifyContent: "center",
                     marginTop: "32px"
                   }}
+                  spacing={2}
                 >
+                  {errorSigninMessage && <Alert severity="error">{errorSigninMessage}</Alert>}
+                  {errorSignupMessage && <Alert severity="error">{errorSignupMessage}</Alert>}
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={onLoginBackground}
+                    onClick={handleSignin}
                   >
                     {chrome.i18n.getMessage("login_google")}
                   </Button>
-                </Box>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSignup}
+                  >
+                    {chrome.i18n.getMessage("signup_google")}
+                  </Button>
+                </Stack>
               )
             }
 
@@ -447,39 +455,7 @@ function VocabMode({
       dispatch(fetchVocabs({ materialId: materialId }))
     }, 5000);
 
-    // setIsLoadingVocabs(true);
-
-    // try {
-    //   // Select all paragraphs in the DOM
-    //   const paragraphs = Array.from(document.querySelectorAll('p'));
-
-    //   // Loop over each paragraph
-    //   for (const paragraph of paragraphs) {
-    //     // Send the text content of the paragraph to the background
-    //     const text = paragraph.textContent || paragraph.innerText
-    //     const trimmedText = text.trim()
-    //     const resp = await sendToBackground({
-    //       name: "vocabsFromText",
-    //       body: {
-    //         text: trimmedText,
-    //       },
-    //     });
-
-    //     if (resp.error) {
-    //       // Handle error
-    //       setError(resp.error);
-    //     } else {
-    //       setIsLoadingVocabs(false);
-    //       // Update the vocabs state with the returned vocabs
-    //       setVocabs(prevVocabs => [...prevVocabs, ...resp.vocabs]);
-    //     }
-    //   }
-    // } catch (e) {
-    //   console.error(e);
-    // }
-
     dispatch(createVocabs({ materialId: materialId }))
-
 
     return () => {
       clearInterval(fetchVocabsInterval)
@@ -517,79 +493,85 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
   }
 
   return (
-    <Stack
-      direction="row"
-      justifyContent="space-between"
-      sx={{
-        paddingBottom: 1,
-        borderBottom: "1px solid #f2f2f2",
-        position: "relative"
-      }}
-    >
-      <Box
+    <Stack>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
         sx={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
+          paddingBottom: 1,
+          borderBottom: "1px solid #f2f2f2",
+          position: "relative"
         }}
-        onClick={() => setOpen(false)}
       >
-        <IoCloseCircle size={32} color="#dddddd" />
-      </Box>
-      {/* <Box onClick={onLogin}>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+          }}
+          onClick={() => setOpen(false)}
+        >
+          <IoCloseCircle size={32} color="#dddddd" />
+        </Box>
+        {/* <Box onClick={onLogin}>
         <Avatar src="" />
       </Box> */}
-      <FormControlLabel
-        sx={{
-          width: "100%",
-          justifyContent: "flex-end",
-          fontSize: 12,
-          fontWeight: 600
-        }}
-        control={
-          <Switch
-            size="small"
-            checked={uiDisabled}
-            onChange={handleToggleDisable}
-          />
-        }
-        label={chrome.i18n.getMessage("toggle_disable")}
-      />
-      <Avatar
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleMenuOpen}
-      // alt={currentUser.username}
-      />
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        id="basic-menu"
-        MenuListProps={{
-          sx: {
-            position: "absolute",
-          },
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem>
-          hello
-        </MenuItem>
-        <MenuItem onClick={handleSignout}>
-          Signout
-        </MenuItem>
-      </Menu>
+        <FormControlLabel
+          sx={{
+            width: "100%",
+            justifyContent: "flex-end",
+            fontSize: 12,
+            fontWeight: 600
+          }}
+          control={
+            <Switch
+              size="small"
+              checked={uiDisabled}
+              onChange={handleToggleDisable}
+            />
+          }
+          label={chrome.i18n.getMessage("toggle_disable")}
+        />
+        <Avatar
+          id="basic-button"
+          aria-controls={open ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleMenuOpen}
+        // alt={currentUser.username}
+        />
+
+      </Stack>
+      {open &&
+        <Stack
+          sx={{
+            width: "100%",
+            borderRadius: 4,
+            border: "1px solid #f2f2f2",
+            padding: 2,
+            marginTop: 1,
+          }}
+          spacing={1}
+        >
+          <Typography variant="body2" sx={{ color: "#c4c4c4" }}>Menu</Typography>
+          <Box sx={{ paddingY: 1, borderTop: "1px solid #f4f4f4" }}>
+            <Typography onClick={handleSignout} fontSize="h6">{chrome.i18n.getMessage("signout")}</Typography>
+          </Box>
+          <Box sx={{ paddingY: 1, borderTop: "1px solid #f4f4f4" }}>
+            <Typography
+              onClick={() => {
+                console.log({ chrome })
+                sendToBackground({ name: "openNote" })
+              }}
+            >
+              {chrome.i18n.getMessage("popup_button_open_note")}
+            </Typography>
+          </Box>
+          <Box sx={{ paddingY: 1, borderTop: "1px solid #f4f4f4" }}>
+            <Typography onClick={handleMenuClose}>Close Menu</Typography>
+          </Box>
+        </Stack>
+      }
     </Stack>
   )
 }

@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // import { Lesson } from "../../types/lesson";
 import axios from 'axios';
-import { setLessonIdToMaterial } from './materialsOld';
 import { sendToBackground } from '@plasmohq/messaging';
 import { validateSessionAndToken } from '../helpers';
 import { uniqBy } from 'lodash';
@@ -112,8 +111,12 @@ const lessonSlice = createSlice({
       state.error = action.error.message || 'Failed to fetch lesson';
     });
 
-    builder.addCase("RESET", (state, action) => {
-      state = initialState
+    builder.addCase("global/RESET_STATE", (state, action) => {
+      state.lessons = [];
+      state.loading = false;
+      state.creating = false;
+      state.createdLessonId = null;
+      state.error = null;
     })
   },
 });
@@ -128,6 +131,11 @@ export const fetchOrCreateLessonByMaterialId = createAsyncThunk(
     try {
       const state = getState()
       const token = await validateSessionAndToken(state, dispatch);
+
+      if (!token) {
+        return rejectWithValue('No session found')
+      }
+
       const response = await sendToBackground({
         name: 'api/material/lesson',
         body: {

@@ -5,7 +5,12 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const lessonId = req.body.lessonId;
   const token = req.body.token;
   const message = req.body.message;
-  const type = req.body.type;
+
+  if (!lessonId || !token || !message) {
+    return res.send({
+      error: "Invalid lessonId, token, message, or type"
+    });
+  }
 
   try {
     const result = await fetch(`${process.env.PLASMO_PUBLIC_API_ROOT}/api/lessons/${lessonId}/chat`, {
@@ -19,14 +24,14 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       })
     });
 
-    if (!result) {
-      console.error("Error fetching material");
-      console.error(result);
-      console.error(await result.json());
-      throw new Error("Error fetching material");
-    }
-
     const data = await result.json();
+
+    if (result.status !== 201) {
+      res.send({
+        error: data
+      });
+      return
+    }
 
     res.send({
       data

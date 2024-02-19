@@ -51,7 +51,7 @@ export default async function handler(
     const completion: OpenAI.Chat.ChatCompletion = await openai.chat.completions.create(params);
 
 
-    return res.status(200).json({ completion });
+    return res.status(201).json({ completion });
   } catch (err) {
     console.error(err)
     return res.status(500).json({ message: 'Something went wrong' });

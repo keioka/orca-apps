@@ -23,10 +23,8 @@ import { BsFillCaretRightFill } from "react-icons/bs"
 
 import { LoaderBounce } from "./LoaderBounce"
 import { useSentence } from "../hooks/card"
-// import Avator from "~assets/images/ai_avatar.png"
 import { CardSmGMCheck } from "./CardSmGMCheck"
 import { CardSmParaphrase } from "./CardSmParaphrase"
-import { saveGrammarMistakes } from "~redux/features/save"
 import { useAppDispatch, useAppSelector } from "~redux/hooks"
 import { toggleSubscriptionForm } from "~redux/features/ui"
 import { saveParaphrase } from "~redux/features/note"
@@ -199,13 +197,13 @@ export function CardChat({ id, content, type = "ai", loading, isAutoPlay, url }:
   }
 
   function handleSaveGMCheck(gmCheck: GMCheckItem) {
-    dispatch(
-      saveGrammarMistakes({
-        url,
-        data: gmCheck,
-        originalSentence: currentSentence
-      })
-    )
+    // dispatch(
+    //   saveGrammarMistakes({
+    //     url,
+    //     data: gmCheck,
+    //     originalSentence: currentSentence
+    //   })
+    // )
   }
 
   return (

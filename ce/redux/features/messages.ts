@@ -39,12 +39,13 @@ interface MessageState {
   addingMessage: boolean;
   isFetchingParaphrases: boolean;
   isFetchingTranslation: boolean;
+  isCreatingMessage: boolean;
   isSendingWhisper: boolean;
   messageInputSpeech: string | null;
   error: string | null;
 }
 
-const initialState: MessageState = { messageMap: {}, paraphraseMap: {}, translationMap: {}, isFetchingTranslation: false, error: null, creatingMessage: false, addingMessage: false, messageInputSpeech: null };
+const initialState: MessageState = { messageMap: {}, paraphraseMap: {}, translationMap: {}, isFetchingTranslation: false, isCreatingMessage: false, error: null, creatingMessage: false, addingMessage: false, messageInputSpeech: null };
 
 
 export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
@@ -52,13 +53,6 @@ export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: 
     const state = getState();
     const token = await validateSessionAndToken(state, dispatch);
 
-    // const response = await axios.get(`/api/lessons/${lessonId}/messages`, {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`
-    //   }
-    // });
-
-    console.log({ lessonId, token })
     const response = await sendToBackground({
       name: "api/message/fetchMessages",
       body: {
@@ -67,7 +61,9 @@ export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: 
       }
     })
 
-    console.log(response)
+    if (response.error) {
+      return rejectWithValue(response.error)
+    }
 
     return { messages: response.data, lessonId };
   } catch (error) {
@@ -96,6 +92,12 @@ export const createAIMessage = createAsyncThunk(`${NAME}/create`, async ({
         token,
       }
     })
+
+    if (response.error) {
+      return rejectWithValue(response.error)
+    }
+
+
     const aiMessage = response.data
     return { message: aiMessage, lessonId };
   } catch (error) {
@@ -292,15 +294,15 @@ const messageSlice = createSlice({
         state.error = action.error.message || 'Failed to fetch messages';
       })
       .addCase(createAIMessage.pending, (state) => {
-        state.creatingMessage = true;
+        state.isCreatingMessage = true;
       })
       .addCase(createAIMessage.fulfilled, (state, action: PayloadAction<{ lessonId: string; message: Message }>) => {
         const { lessonId, message } = action.payload;
         state.messageMap[lessonId] = [...(state.messageMap[lessonId] || []), message];
-        state.creatingMessage = false;
+        state.isCreatingMessage = false;
       })
       .addCase(createAIMessage.rejected, (state, action) => {
-        state.creatingMessage = false;
+        state.isCreatingMessage = false;
         state.error = action.error.message || 'Failed to create AI message';
       })
       .addCase(addUserMessage.pending, (state) => {
@@ -361,6 +363,8 @@ const messageSlice = createSlice({
           state.addingMessage = false
           state.isFetchingParaphrases = false
           state.isFetchingTranslation = false
+          state.isCreatingMessage = false
+          state.creatingMessage = false
           state.isSendingWhisper = false
           state.messageInputSpeech = null
           state.error = null

@@ -14,7 +14,7 @@ import { fetchPayments, initState as initStatePayment } from "~redux/features/pa
 import { toggleDisable } from "~redux/features/ui";
 import { useAppDispatch, useAppSelector } from "~redux/hooks";
 // https://stripe.com/docs/testing?testing-method=card-numbers#cards
-import { login, signupGoogle, checkAuthStatus, clearError, logout } from "~redux/features/auth";
+import { login, checkAuthStatus, clearError, logout } from "~redux/features/auth";
 
 import "./font.css"
 
@@ -67,13 +67,13 @@ function IndexPopup() {
     dispatch(initStatePayment())
   }
 
-  function handleSignup() {
-    dispatch(signupGoogle())
-  }
+  // function handleSignup() {
+  //   dispatch(signupGoogle())
+  // }
 
-  function handleSignin() {
-    dispatch(login())
-  }
+  // function handleSignin() {
+  //   dispatch(login())
+  // }
 
   function handleCloseError() {
     dispatch(clearError())

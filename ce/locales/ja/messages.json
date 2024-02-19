@@ -15,6 +15,10 @@
     "message": "Googleでサインアップ",
     "description": "Button label for signing up with Google."
   },
+  "signout": {
+    "message": "ログアウト",
+    "description": "Button label for signing out."
+  },
   "opener_label": {
     "message": "トーク",
     "description": "会話やチャットセッションを開始するためのラベル。"
