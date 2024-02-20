@@ -22,7 +22,7 @@ export function ListChat({ messages, loadingAIResp, isAutoPlay, url }) {
         messages && messages.map((message) => {
           return (
             <Box key={message.id} mb={2} key={message.message}>
-              <CardChat id={message.id} type={message.type} content={message.content} isAutoPlay={isAutoPlay} url={url} />
+              <CardChat {...message} isAutoPlay={isAutoPlay} url={url} />
             </Box>
           )
         })

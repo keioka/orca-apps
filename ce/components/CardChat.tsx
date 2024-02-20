@@ -75,7 +75,7 @@ interface CardChatPureProps {
 }
 
 
-export function CardChat({ id, content, type = "ai", loading, isAutoPlay, url }: CardChatProps) {
+export function CardChat({ id, content, type = "ai", audioFile, loading, isAutoPlay, url }: CardChatProps) {
   const [error, setError] = useState(null)
   const { currentSentence, currentSentenceIndex, numSentences, messageSentences, selectNextSentence, selectPreviousSentence } = useSentence(content)
   const [currentTab, setCurrentTab] = useState<Tab>(null)
@@ -174,7 +174,15 @@ export function CardChat({ id, content, type = "ai", loading, isAutoPlay, url }:
   }
 
   function handlePlayAudio() {
+
     try {
+
+      if (audioFile && audioFile.path) {
+        const audio = new Audio(audioFile.path);
+        audio.play();
+        return;
+      }
+
       const synth = window.speechSynthesis;
       const voices = synth.getVoices();
       const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
