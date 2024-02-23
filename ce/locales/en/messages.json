@@ -7,6 +7,30 @@
     "message": "Orca - Practice English based on your interests",
     "description": "Description of the extension."
   },
+  "welcome_orca": {
+    "message": "Welcome to Orca",
+    "description": "Welcome message for Orca."
+  },
+  "welcome_orca_desc": {
+    "message": "Practice English based on your interests",
+    "description": "Description for Orca."
+  },
+  "message_signin": {
+    "message": "Sign in to get started",
+    "description": "Message prompting the user to sign in."
+  },
+  "sample_responses_title": {
+    "message": "AI's sample responses:",
+    "description": "Message prompting the user to sign in."
+  },
+  "fetching_sample_responses": {
+    "message": "AI's sample responses:",
+    "description": "Message fetching_sample_responses"
+  },
+  "fetch_sample_button": {
+    "message": "Example",
+    "description": "Message fetch_sample_button"
+  },
   "signout": {
     "message": "Sign out",
     "description": "Button label for signing out."

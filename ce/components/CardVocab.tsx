@@ -19,6 +19,7 @@ import { ButtonRound } from "./ButtonRound";
 const synth = window.speechSynthesis;
 
 export function CardVocab({
+  langCode = 'ja',
   isSaved,
   vocab,
   onSaveVocab,
@@ -45,6 +46,8 @@ export function CardVocab({
     onSaveVocab(vocab)
   }
 
+  const meaningInLang = vocab.translation ? vocab.translation[0].content : vocab.meaning
+
   return (
     <Card sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee" }}>
       <Stack p={3} spacing={1}>
@@ -57,12 +60,15 @@ export function CardVocab({
             borderBottom: "1px solid #f2f2f2"
           }}
         >
-          <Stack spacing={0.5} >
+          <Stack spacing={0.5}>
             <Typography variant="h6" component="h5">
               {vocab.word}
             </Typography>
             <Typography variant="body2" component="span">
               {vocab.pronounce}
+            </Typography>
+            <Typography variant="body2" component="span">
+              {vocab.level && `Level: ${vocab.level}`}
             </Typography>
           </Stack>
           <Box
@@ -83,7 +89,7 @@ export function CardVocab({
         </Stack>
         <Stack direction="row" spacing={1} sx={{ paddingTop: 1 }}>
           <Typography variant="body2" component="h6">
-            {vocab.transMeaningJaByContext}（英：{vocab.meaning}）
+            {meaningInLang}{vocab.translation && `（英：${vocab.meaning}）`}
           </Typography>
         </Stack>
         <Stack spacing={1} sx={{ paddingTop: 1 }}>

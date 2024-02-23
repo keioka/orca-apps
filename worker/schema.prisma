@@ -1,12 +1,18 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
 }
+
+// https://www.prisma.io/docs/guides/database/neon
 
 model Auth {
   id             String   @id @default(uuid()) @db.Char(36)
@@ -14,51 +20,77 @@ model Auth {
   thirdPartyId   String   @unique @map("third_party_id") @db.VarChar(255)
   providerName   String   @map("provider_name") @db.VarChar(255)
   providerId     String   @unique @map("provider_id") @db.VarChar(255)
+  user           User?
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
-  user           User?
 
   @@map("auth")
 }
 
 model User {
-  id                  String                @id @default(uuid()) @db.Char(36)
-  username            String                @db.VarChar(255)
-  authId              String                @unique @map("auth_id") @db.Char(36)
-  createdAt           DateTime              @default(now()) @map("created_at")
-  updatedAt           DateTime              @updatedAt @map("updated_at")
-  mpTrackingId        String?               @map("mp_tracking_id") @db.VarChar(255)
-  followRss           FollowRss[]
+  id           String  @id @default(uuid()) @db.Char(36)
+  username     String  @db.VarChar(255)
+  authId       String  @unique @map("auth_id") @db.Char(36)
+  mpTrackingId String? @map("mp_tracking_id") @db.VarChar(255)
+  isAdmin      Boolean @default(false) @map("is_admin")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  auth                Auth?                 @relation(fields: [authId], references: [id], map: "auth")
   lessons             Lesson[]
   messages            Message[]
-  savedGrammarMistake SavedGrammarMistake[]
   savedParaphrase     SavedParaphrase[]
+  savedGrammarMistake SavedGrammarMistake[]
+  followRss           FollowRss[]
   savedVocabularies   SavedVocabularies[]
   hashtags            UserFollowHashtag[]
-  auth                Auth                  @relation(fields: [authId], references: [id], map: "auth")
+  Rating              Rating[]
 
   @@map("users")
 }
 
 model Material {
-  id               String            @id @default(uuid()) @db.Char(36)
-  title            String            @db.VarChar(255)
-  type             String            @db.VarChar(255)
-  category         String?           @db.VarChar(100)
-  categoryExternal String?           @map("category_external") @db.VarChar(255)
-  url              String            @unique
-  imageUrl         String?           @map("image_url")
-  publishedAt      DateTime?         @map("published_at")
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @updatedAt @map("updated_at")
-  publisherId      String            @map("publisher_id")
-  lessons          Lesson[]
-  materialHashtag  MaterialHashtag[]
-  publisher        Publisher         @relation(fields: [publisherId], references: [id])
-  summary          Summary[]
-  vocabularies     Vocabulary[]
+  id                             String            @id @default(uuid()) @db.Char(36)
+  title                          String            @db.VarChar(255)
+  type                           String            @db.VarChar(255)
+  category                       String?           @db.VarChar(100)
+  categoryExternal               String?           @map("category_external") @db.VarChar(255)
+  url                            String            @unique
+  slug                           String?           @unique @db.VarChar(255)
+  imageUrl                       String?           @map("image_url")
+  publishedAt                    DateTime?         @map("published_at")
+  externalId                     String?           @unique @map("external_id") @db.VarChar(255)
+  isArchived                     Boolean           @default(false) @map("is_archived")
+  createdAt                      DateTime          @default(now()) @map("created_at")
+  updatedAt                      DateTime          @updatedAt @map("updated_at")
+  loadingVocabsScheduledSetCount Int?              @map("loading_vocabs_set_count")
+  loadingVocabsDoneSetCount      Int?              @map("loading_vocabs_done_set_count")
+  vocabGeneratorErrorMessages    String?           @map("vocab_generator_error_messages")
+  lessons                        Lesson[]
+  summary                        Summary[]
+  vocabularies                   Vocabulary[]
+  publisherId                    String            @map("publisher_id")
+  publisher                      Publisher         @relation(fields: [publisherId], references: [id])
+  materialHashtag                MaterialHashtag[]
+  questions                      Question[]
+  Rating                         Rating[]
 
   @@map("materials")
+}
+
+model Question {
+  id              Int           @id @default(autoincrement())
+  content         String
+  paragraphNumber Int?          @map("paragraph_number")
+  materialId      String        @map("material_id")
+  material        Material      @relation(fields: [materialId], references: [id])
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  translation     Translation[]
+
+  @@unique([content, paragraphNumber, materialId])
+  @@map("questions")
 }
 
 model Publisher {
@@ -70,16 +102,16 @@ model Publisher {
   domain            String?     @map("domain") @db.VarChar(255)
   category          String?     @db.VarChar(100)
   categoryExternal  String?     @map("category_external") @db.VarChar(255)
-  imageUrl          String?     @map("image_url")
-  createdAt         DateTime    @default(now()) @map("created_at")
-  updatedAt         DateTime    @updatedAt @map("updated_at")
   isActive          Boolean     @default(true) @map("is_active")
   isRecommended     Boolean     @default(false) @map("is_recommended")
+  imageUrl          String?     @map("image_url")
+  material          Material[]
+  description       String?
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+  followRss         FollowRss[]
   lastCrawledAt     DateTime?   @map("last_crawled_at")
   lastCrawlFailedAt DateTime?   @map("last_crawl_failed_at")
-  description       String?
-  followRss         FollowRss[]
-  material          Material[]
 
   @@map("publishers")
 }
@@ -89,9 +121,9 @@ model Summary {
   level       String        @db.VarChar(32)
   content     String
   materialId  String        @map("material_id")
+  material    Material      @relation(fields: [materialId], references: [id])
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
-  material    Material      @relation(fields: [materialId], references: [id])
   translation Translation[]
 
   @@map("summaries")
@@ -103,14 +135,17 @@ model Vocabulary {
   meaning           String              @db.VarChar(255)
   sentence          String              @db.VarChar(500)
   example           String              @db.VarChar(500)
+  level             String?             @db.VarChar(8)
+  pos               String?             @db.VarChar(16)
   pronounce         String              @db.VarChar(255)
+  paragraphNumber   Int?                @db.SmallInt
+  externalId        String?             @unique @map("external_id") @db.VarChar(255)
   materialId        String              @map("material_id")
+  material          Material            @relation(fields: [materialId], references: [id])
   createdAt         DateTime            @default(now()) @map("created_at")
   updatedAt         DateTime            @updatedAt @map("updated_at")
-  pos               String?             @db.VarChar(16)
-  savedVocabularies SavedVocabularies[]
   translation       Translation[]
-  material          Material            @relation(fields: [materialId], references: [id])
+  savedVocabularies SavedVocabularies[]
 
   @@unique([word, materialId])
   @@map("vocabularies")
@@ -119,28 +154,29 @@ model Vocabulary {
 model SavedVocabularies {
   id           Int        @id @default(autoincrement())
   vocabularyId Int        @map("vocabulary_id")
+  vocabulary   Vocabulary @relation(fields: [vocabularyId], references: [id])
   deleted      Boolean    @default(false)
   archived     Boolean    @default(false)
   userId       String     @map("user_id")
+  user         User       @relation(fields: [userId], references: [id])
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @updatedAt @map("updated_at")
-  user         User       @relation(fields: [userId], references: [id])
-  vocabulary   Vocabulary @relation(fields: [vocabularyId], references: [id])
 
   @@unique([userId, vocabularyId])
   @@map("saved_vocabularies")
 }
 
 model Lesson {
-  id          Int       @id @default(autoincrement())
-  userId      String    @map("user_id") @db.Char(36)
-  materialId  String    @map("material_id")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  initMessage Boolean   @default(false) @map("init_message")
-  material    Material  @relation(fields: [materialId], references: [id])
-  user        User      @relation(fields: [userId], references: [id])
-  messages    Message[]
+  id          Int     @id @default(autoincrement())
+  initMessage Boolean @default(false) @map("init_message")
+
+  userId     String    @map("user_id") @db.Char(36)
+  user       User      @relation(fields: [userId], references: [id])
+  materialId String    @map("material_id")
+  material   Material  @relation(fields: [materialId], references: [id])
+  messages   Message[]
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
 
   @@unique([userId, materialId])
   @@map("lessons")
@@ -149,15 +185,17 @@ model Lesson {
 model Message {
   id          Int           @id @default(autoincrement())
   content     String        @map("content")
+  sentences   Sentence[]
+  lesson      Lesson?       @relation(fields: [lessonId], references: [id])
   lessonId    Int?          @map("lesson_id")
   type        String        @default("user")
   createdById String?       @map("created_by_id") @db.Char(36)
+  createdBy   User?         @relation(fields: [createdById], references: [id])
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
-  createdBy   User?         @relation(fields: [createdById], references: [id])
-  lesson      Lesson?       @relation(fields: [lessonId], references: [id])
-  sentences   Sentence[]
   translation Translation[]
+  audioFile   AudioFile?    @relation(fields: [audioFileId], references: [id])
+  audioFileId Int?          @map("audio_file_id")
 
   @@map("messages")
 }
@@ -165,25 +203,27 @@ model Message {
 model Sentence {
   id              Int              @id @default(autoincrement())
   content         String
+  message         Message          @relation(fields: [messageId], references: [id])
   messageId       Int              @map("message_id")
   sentenceIndex   Int              @map("sentence_index")
-  createdAt       DateTime         @default(now()) @map("created_at")
-  updatedAt       DateTime         @updatedAt @map("updated_at")
-  grammarMistakes GrammarMistake[]
   paraphrases     Paraphrase[]
-  message         Message          @relation(fields: [messageId], references: [id])
+  grammarMistakes GrammarMistake[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("sentences")
 }
 
 model Paraphrase {
-  id              Int               @id @default(autoincrement())
-  content         String
-  type            String
-  sentenceId      Int?              @map("sentence_id")
+  id         Int       @id @default(autoincrement())
+  content    String
+  type       String
+  sentenceId Int?      @map("sentence_id")
+  sentence   Sentence? @relation(fields: [sentenceId], references: [id])
+
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt @map("updated_at")
-  sentence        Sentence?         @relation(fields: [sentenceId], references: [id])
   SavedParaphrase SavedParaphrase[]
 
   @@unique([content, sentenceId])
@@ -193,25 +233,26 @@ model Paraphrase {
 model SavedParaphrase {
   id           Int        @id @default(autoincrement())
   paraphraseId Int        @map("paraphrase_id")
+  paraphrase   Paraphrase @relation(fields: [paraphraseId], references: [id])
   userId       String     @map("user_id") @db.Char(36)
+  user         User       @relation(fields: [userId], references: [id])
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @updatedAt @map("updated_at")
-  paraphrase   Paraphrase @relation(fields: [paraphraseId], references: [id])
-  user         User       @relation(fields: [userId], references: [id])
 
   @@unique([userId, paraphraseId])
   @@map("saved_paraphrases")
 }
 
 model GrammarMistake {
-  id                  Int                   @id @default(autoincrement())
-  content             Json
-  type                String
-  url                 String
-  sentenceId          Int?                  @map("sentence_id")
+  id         Int       @id @default(autoincrement())
+  content    Json
+  type       String
+  url        String
+  sentenceId Int?      @map("sentence_id")
+  sentence   Sentence? @relation(fields: [sentenceId], references: [id])
+
   createdAt           DateTime              @default(now()) @map("created_at")
   updatedAt           DateTime              @updatedAt @map("updated_at")
-  sentence            Sentence?             @relation(fields: [sentenceId], references: [id])
   savedGrammarMistake SavedGrammarMistake[]
 
   @@map("grammar_mistakes")
@@ -220,11 +261,11 @@ model GrammarMistake {
 model SavedGrammarMistake {
   id               Int            @id @default(autoincrement())
   grammarMistakeId Int            @map("grammar_mistake_id")
+  grammarMistake   GrammarMistake @relation(fields: [grammarMistakeId], references: [id])
   userId           String         @map("user_id") @db.Char(36)
+  user             User           @relation(fields: [userId], references: [id])
   createdAt        DateTime       @default(now()) @map("created_at")
   updatedAt        DateTime       @updatedAt @map("updated_at")
-  grammarMistake   GrammarMistake @relation(fields: [grammarMistakeId], references: [id])
-  user             User           @relation(fields: [userId], references: [id])
 
   @@unique([userId, grammarMistakeId])
   @@map("saved_grammar_mistakes")
@@ -232,8 +273,8 @@ model SavedGrammarMistake {
 
 model Language {
   id           Int           @id @default(autoincrement())
-  code         String        @unique @db.VarChar(10)
-  name         String        @unique @db.VarChar(255)
+  code         String        @unique @db.VarChar(10) // e.g., 'en', 'fr', 'es'
+  name         String        @unique @db.VarChar(255) // e.g., 'English', 'French', 'Spanish'
   translations Translation[]
 
   @@map("languages")
@@ -241,17 +282,20 @@ model Language {
 
 model Translation {
   id           Int         @id @default(autoincrement())
+  language     Language    @relation(fields: [languageId], references: [id])
   languageId   Int
   content      String
   summaryId    Int?        @map("summary_id")
-  vocabularyId Int?        @map("vocabulary_id")
-  messageId    Int?        @map("message_id")
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @updatedAt @map("updated_at")
-  language     Language    @relation(fields: [languageId], references: [id])
-  message      Message?    @relation(fields: [messageId], references: [id])
   summary      Summary?    @relation(fields: [summaryId], references: [id])
+  vocabularyId Int?        @map("vocabulary_id")
   vocabulary   Vocabulary? @relation(fields: [vocabularyId], references: [id])
+  messageId    Int?        @map("message_id")
+  message      Message?    @relation(fields: [messageId], references: [id])
+  questionId   Int?        @map("question_id")
+  question     Question?   @relation(fields: [questionId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("translations")
 }
@@ -259,11 +303,11 @@ model Translation {
 model FollowRss {
   id          Int       @id @default(autoincrement())
   userId      String    @map("user_id") @db.Char(36)
+  user        User      @relation(fields: [userId], references: [id])
   publisherId String    @map("publisher_id") @db.Char(36)
+  publisher   Publisher @relation(fields: [publisherId], references: [id])
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
-  publisher   Publisher @relation(fields: [publisherId], references: [id])
-  user        User      @relation(fields: [userId], references: [id])
 
   @@unique([userId, publisherId])
   @@map("follow_rss")
@@ -283,11 +327,11 @@ model Hashtag {
 model MaterialHashtag {
   id         Int      @id @default(autoincrement())
   materialId String   @map("material_id") @db.Char(36)
+  material   Material @relation(fields: [materialId], references: [id])
   hashtagId  Int      @map("hashtag_id")
+  hashtag    Hashtag  @relation(fields: [hashtagId], references: [id])
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
-  hashtag    Hashtag  @relation(fields: [hashtagId], references: [id])
-  material   Material @relation(fields: [materialId], references: [id])
 
   @@unique([materialId, hashtagId])
   @@map("material_hashtags")
@@ -296,11 +340,11 @@ model MaterialHashtag {
 model UserFollowHashtag {
   id        Int      @id @default(autoincrement())
   userId    String   @map("user_id") @db.Char(36)
+  user      User     @relation(fields: [userId], references: [id])
   hashtagId Int      @map("hashtag_id")
+  hashtag   Hashtag  @relation(fields: [hashtagId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  hashtag   Hashtag  @relation(fields: [hashtagId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, hashtagId])
   @@map("user_follow_hashtags")
@@ -314,4 +358,40 @@ model SearchTag {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("search_tags")
+}
+
+model FeatureFlag {
+  id            Int      @id @default(autoincrement())
+  name          String   @unique @db.VarChar(255)
+  isActive      Boolean  @default(false) @map("is_active")
+  isReleaseProd Boolean  @default(false) @map("is_release_prod")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("feature_flags")
+}
+
+model AudioFile {
+  id        Int       @id @default(autoincrement())
+  path      String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  Message   Message[]
+
+  @@map("audio_files")
+}
+
+model Rating {
+  id         Int      @id @default(autoincrement())
+  userId     String?  @map("user_id") @db.Char(36)
+  user       User?    @relation(fields: [userId], references: [id])
+  materialId String   @map("material_id") @db.Char(36)
+  material   Material @relation(fields: [materialId], references: [id])
+  rating     Int
+  type       String   @db.VarChar(32)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, materialId])
+  @@map("ratings")
 }

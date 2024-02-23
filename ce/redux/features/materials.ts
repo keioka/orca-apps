@@ -97,7 +97,8 @@ const materialsSlice = createSlice({
           state.vocabs[materialId] = []
         }
 
-        state.vocabs[materialId] = uniqBy([...state.vocabs[materialId], ...vocabs], 'id')
+        console.log({ vocabs })
+        state.vocabs[materialId] = uniqBy([...vocabs, ...state.vocabs[materialId]], 'id')
         state.isFetchingVocabs = false
       })
       .addCase(fetchVocabs.rejected, (state, action) => {
@@ -111,7 +112,7 @@ const materialsSlice = createSlice({
         if (!state.summaries[materialId]) {
           state.summaries[materialId] = []
         }
-        state.summaries[materialId] = uniqBy([...state.summaries[materialId], ...summaries], 'id')
+        state.summaries[materialId] = uniqBy([...summaries, ...state.summaries[materialId]], 'id')
         state.isFetchingSummary = false
       })
       .addCase(fetchSummaries.rejected, (state, action) => {
@@ -278,6 +279,7 @@ export const fetchCurrentOpenedMaterial = createAsyncThunk<Material[], void>(
         console.error(response)
         return rejectWithValue(response.error)
       }
+
       const data = response.data;
 
       console.log({ data })

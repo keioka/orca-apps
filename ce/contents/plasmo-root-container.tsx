@@ -16,6 +16,9 @@ import type {
   PlasmoRender
 } from "plasmo"
 import { createRoot } from "react-dom/client"
+import { ErrorBoundary } from "react-error-boundary";
+import { useEffect } from "react";
+import { useAppDispatch } from "~redux/hooks";
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -51,12 +54,32 @@ function Root() {
                 pointerEvents: "none",
               }}
             >
-              <Inject />
+              <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+                <Inject />
+              </ErrorBoundary>
             </ScopedCssBaseline>
           </PersistGate>
         </Provider>
       </ThemeProvider>
     </CacheProvider >
+  )
+}
+
+function ErrorBoundaryFallback({ error, resetErrorBoundary }): React.JSX.Element {
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    console.log("ErrorBoundaryFallback")
+    console.error(error)
+    dispatch({ type: "global/RESET_STATE" });
+  }, [])
+
+  return (
+    <div>
+      <h1>Something went wrong</h1>
+      <pre>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
+    </div>
   )
 }
 

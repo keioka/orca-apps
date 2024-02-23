@@ -22,14 +22,18 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     await reduxStorage.setItem("persist:orca-storage", null)
     await storage.setItem("firebase:token", null)
     const data = await reduxStorage.getAll()
-    console.log({ data })
+    const data2 = await storage.getAll()
+
+    console.log({ data, data2 })
+
     await new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ type: "logout" }, function (response) {
         console.log(response)
         resolve(response)
       })
     })
-    res.send({ success: true, data })
+
+    res.send({ success: true, data, data2 })
   } catch (e) {
     console.error(e)
     res.send({ error: e })

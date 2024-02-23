@@ -1,7 +1,7 @@
 {
   "name": "Orca",
   "displayName": "__MSG_extensionName__",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "__MSG_extensionDescription__",
   "author": "Orca",
   "scripts": {
@@ -34,6 +34,7 @@
     "plasmo": "0.84.2",
     "react": "18.2.0",
     "react-dom": "^18.2.0",
+    "react-error-boundary": "^4.0.12",
     "react-feature-flags": "^1.0.0",
     "react-icons": "^4.10.1",
     "react-redux": "^8.1.2",

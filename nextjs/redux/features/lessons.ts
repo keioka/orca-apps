@@ -12,10 +12,10 @@ interface LessonState {
   creating: boolean;
   createdLessonId: string | null;
   error: string | null;
-  sampleResponses: [
+  sampleResponses: {
     sentence: string,
     jaSentence: string
-  ];
+  }[];
   loadingSampleResponses: boolean;
 }
 

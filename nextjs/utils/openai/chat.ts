@@ -31,7 +31,7 @@ export async function chat({ url, history, message }: { url: string, history: an
           
           Please always include an open-ended like (why, how, what) question related to the provided news article context.
           
-          Please facilitate the conversation by asking questions and encouraging the student to respond to your context-related inquiries.
+          Please facilitate the conversation by asking concrete questions about the article and encouraging the student to respond to your context-related inquiries.
 
           You should not speak more than 3 sentences at a time.
 
@@ -45,7 +45,7 @@ export async function chat({ url, history, message }: { url: string, history: an
       },
       { role: 'user', content: message }
     ],
-    model: 'gpt-3.5-turbo-16k'
+    model: 'gpt-4-0125-preview'
   };
   const completion: OpenAI.Chat.ChatCompletion = await openai.chat.completions.create(params);
 

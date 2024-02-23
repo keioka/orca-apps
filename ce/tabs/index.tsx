@@ -7,8 +7,6 @@ import {
   TextField
 } from "@mui/material"
 import type { PlasmoCSConfig } from "plasmo"
-import { ExpandableMenu } from "~components/ExpandableMenu"
-import Parser from 'rss-parser';
 import {
   BrowserRouter,
   Routes,
@@ -17,28 +15,11 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
-import { ListVocab } from "~components/ListVocab";
-import { SlFeed } from "react-icons/sl"
-import { BsGraphUpArrow } from "react-icons/bs"
-import vcRSS from "~data/rss/vc.json"
-import businessRSS from "~data/rss/business.json"
-import { CardCategory } from "~components/CardCategory"
-import { CardNewsFeed } from "~components/CardNewsFeed"
-import businessImage from "data-base64:~assets/images/business.jpg"
-import vcImage from "data-base64:~assets/images/vc.jpg"
-import financeImage from "data-base64:~assets/images/finance.jpg"
-import worldNewsImage from "data-base64:~assets/images/world_news.jpg"
-import scienceImage from "data-base64:~assets/images/science.jpg"
-
-import { BsSearch } from "react-icons/bs"
 import { NoteScreen } from "../tabScreens/NoteScreen"
 import { Provider } from "react-redux";
 import { persistor, store } from '../redux/store';
 import { getTheme } from "../theme";
 import { ThemeProvider } from '@mui/material/styles';
-import { PiNotebookDuotone } from "react-icons/pi"
-import { useAppDispatch, useAppSelector } from "~redux/hooks";
-import { fetchPublishers } from "~redux/features/publisher"
 import { PersistGate } from "@plasmohq/redux-persist/integration/react"
 import { useFirebase } from "~firebase/hooks";
 

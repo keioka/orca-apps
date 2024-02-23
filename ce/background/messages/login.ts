@@ -28,12 +28,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       // console.log(data)
       // await storage.set("capt", { color: "red" })
       // const data2 = await storage.get("capt") // { color: "red" }
+      return token
     }
-
-    chrome.runtime.sendMessage({ type: "login", token }, function (response) {
-      console.log(response)
-    });
-
   })
 
 

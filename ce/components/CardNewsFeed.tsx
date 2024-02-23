@@ -24,7 +24,6 @@ export function CardNewsFeed({ feed }: CardNewsFeedProps) {
 
   if (!feed) return <div>Loading...</div>;
 
-  console.log({ feed })
   return (
     <Card sx={{ padding: 2, boxShadow: "none", border: "1px solid #f2f2f2" }}>
       <Stack direction="row" sx={{ alignItems: "center", paddingBottom: 1 }} spacing={2}>

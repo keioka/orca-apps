@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createVocabsFromUrl } from "@/common/createVocabsFromUrl";
-import { client } from "@/trigger";
 import axios from 'axios';
 
 export default async function handler(
@@ -19,7 +18,6 @@ export default async function handler(
 
   try {
     const url = process.env.WORKSERVER_URL + "/add-vocabs"
-    console.log({ url })
     await axios.post(
       url,
       {
@@ -33,14 +31,6 @@ export default async function handler(
   }
 
   try {
-    const event = await client.sendEvent({
-      name: "openai.createVocab",
-      payload: {
-        materialId,
-        url,
-        transLangCode
-      },
-    });
     // const info = await createVocabsFromUrl({ materialId, url, transLangCode });
     return res.status(200).json({ status: "IN_PROGRESS", event });
   } catch (error) {

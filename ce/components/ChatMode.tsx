@@ -57,7 +57,6 @@ export function ChatMode() {
             url: urlPath,
           }
         })
-        console.log("orca", { resp })
 
         if (resp.error) {
           setError(resp.error)
