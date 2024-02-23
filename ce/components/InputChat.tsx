@@ -11,6 +11,7 @@ import { useTheme } from '@mui/material/styles';
 export function InputChat({
   onSubmit,
   onChange,
+  onClickFetchSamples,
   onChangeInputByVoice,
   onClearInput,
   value
@@ -102,6 +103,20 @@ export function InputChat({
             {isSpeeching ? <IoSquare color={theme.palette.customPalette.red} size={24} /> : <IoMicOutline color="#fff" size={24} />}
           </Box>
           <Stack direction="row" spacing={1} sx={{ marginTop: 1, justifyContent: "space-between" }}>
+            <Button
+              size="small"
+              color="primary"
+              variant="outlined"
+              sx={{
+                color: "#3c223c",
+                boxShadow: "none",
+                backgroundColor: "#fff",
+                fontWeight: "bold",
+              }}
+              onClick={onClickFetchSamples}
+            >
+              {chrome.i18n.getMessage("fetch_sample_button")}
+            </Button>
             <Button
               color="primary"
               variant="outlined"

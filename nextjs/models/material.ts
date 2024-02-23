@@ -276,6 +276,13 @@ export async function getVocabsByMaterialId({ materialId, langCode = 'ja' }: { m
     },
     include: {
       translation: {
+        include: {
+          language: {
+            select: {
+              code: true
+            }
+          }
+        },
         where: {
           language: {
             code: langCode

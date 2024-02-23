@@ -1,15 +1,35 @@
 {
   "extensionName": {
-    "message": "英カベ",
+    "message": "英会話壁打ちアプリ - Orca",
     "description": "Name of the extension."
   },
   "extensionDescription": {
     "message": "スキマ時間に興味のある英文記事,YouTubeを読んでAIと会話しながらスピーキング力アップ!",
     "description": "Description of the extension."
   },
+  "welcome_orca": {
+    "message": "Orcaへようこそ",
+    "description": "Orcaのウェルカムメッセージ。"
+  },
+  "welcome_orca_desc": {
+    "message": "興味のある英文記事を使ってAIと英語を練習しよう！",
+    "description": "Orcaの説明。"
+  },
   "login_google": {
     "message": "Googleでログイン",
     "description": "Button label for signing in with Google."
+  },
+  "sample_responses_title": {
+    "message": "AIの返答例:",
+    "description": "Message prompting the user to sign in."
+  },
+  "fetching_sample_responses": {
+    "message": "AIの返答例を取得中...",
+    "description": "Message fetching_sample_responses"
+  },
+  "fetch_sample_button": {
+    "message": "返答例を見る",
+    "description": "Message fetch_sample_button"
   },
   "signup_google": {
     "message": "Googleでサインアップ",

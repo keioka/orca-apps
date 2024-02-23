@@ -26,7 +26,7 @@ body {
 @font-face {
   font-family: "Outfit";
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-display: swap;
   src: url(data-base64:~assets/fonts/Outfit/Outfit-Bold.ttf) format('truetype');
 }
@@ -42,7 +42,7 @@ body {
 @font-face {
   font-family: "Outfit";
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-display: swap;
   src: url(data-base64:~assets/fonts/Outfit/Outfit-Medium.ttf) format('truetype');
 }

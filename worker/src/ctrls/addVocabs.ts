@@ -134,6 +134,7 @@ export async function createVocabs({ materialId, vocabParams }: { materialId: st
           pronounce: vocabParam.pronounce,
           pos: vocabParam.pos,
           example: vocabParam.example,
+          level: vocabParam.level,
           translation: {
             create: {
               content: vocabParam.translation,
@@ -155,3 +156,25 @@ export async function createVocabs({ materialId, vocabParams }: { materialId: st
     }
   }
 }
+
+
+// export async function createVocabs({ materialId, vocabParams }: { materialId: string, vocabParams: VocabParams[] }): Promise<Vocab> {
+//   for (const vocabParam of vocabParams) {
+//     try {
+//       await prisma.material.update({
+//         where: {
+//           id: materialId
+//         },
+//         data: {
+          
+//         }
+//       })
+//     } catch (error: any) {
+//       if (error.code === 'P2002') {
+//         console.log(`Vocab already exists: ${error.meta.target[0].name}`)
+//       } else {
+//         console.error(error)
+//       }
+//     }
+//   }
+// }

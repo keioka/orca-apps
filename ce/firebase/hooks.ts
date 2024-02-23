@@ -28,13 +28,13 @@ export const useFirebase = () => {
   }
 
   const authCheck = async () => {
+    setIsLoading(true)
     console.log("authCheck")
     try {
       const { token } = await sendToBackground({
         name: "authCheck",
       })
 
-      console.log({ token })
       if (!token) {
         console.warn("No token found")
         return
@@ -42,8 +42,10 @@ export const useFirebase = () => {
 
       const credential = GoogleAuthProvider.credential(null, token)
       await signInWithCredential(auth, credential)
+      setIsLoading(false)
     } catch (e) {
       console.error("Could not log in. ", e)
+      setIsLoading(false)
     }
   }
 

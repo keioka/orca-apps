@@ -24,7 +24,7 @@ export default async function handler(
   }
 
   if (req.method !== 'POST') {
-    return res.status(400).json({ message: 'GET' });
+    return res.status(400).json({ message: 'GET is not allowed' });
   }
 
   try {

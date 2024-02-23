@@ -15,6 +15,7 @@ import {
 } from "@mui/material"
 import { CardVocab } from "./CardVocab";
 import { Player, Controls } from '@lottiefiles/react-lottie-player';
+import { useEffect } from "react";
 const sampleVocabs = [
   {
     word: "hello",
@@ -25,6 +26,7 @@ const sampleVocabs = [
   }
 ]
 export function ListVocab({ direction, vocabs = sampleVocabs, savedVocabs, isLoading, onSaveVocab }: { direction?: "row" | "column", vocabs: any, isLoading: boolean }) {
+
   if (isLoading) {
     return (
       <Player
@@ -45,7 +47,7 @@ export function ListVocab({ direction, vocabs = sampleVocabs, savedVocabs, isLoa
         vocabs.map((vocab) => {
           const isSaved = savedVocabs?.find((v) => v.vocabularyId === vocab.id)
           return (
-            <CardVocab vocab={vocab} onSaveVocab={onSaveVocab} isSaved={isSaved} />
+            <CardVocab key={vocab.id} vocab={vocab} onSaveVocab={onSaveVocab} isSaved={isSaved} />
           )
         })
       }

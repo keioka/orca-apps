@@ -9,7 +9,12 @@ interface LessonState {
   lessons: Lesson[];
   loading: boolean;
   creating: boolean;
+  sampleResponses: {
+    sentence: string,
+    jaSentence: string
+  }[];
   createdLessonId: string | null;
+  loadingSampleResponses: boolean;
   error: string | null;
 }
 
@@ -18,6 +23,8 @@ const initialState: LessonState = {
   lessons: [],
   loading: false,
   creating: false,
+  sampleResponses: [],
+  loadingSampleResponses: false,
   createdLessonId: null,
   error: null,
 };
@@ -29,6 +36,10 @@ const lessonSlice = createSlice({
   reducers: {
     clearCreatedLessonId: (state) => {
       state.createdLessonId = null;
+    },
+    clearSampleResponses: (state) => {
+      state.loadingSampleResponses = false;
+      state.sampleResponses = [];
     },
     clearError: (state) => {
       state.error = null;
@@ -111,11 +122,30 @@ const lessonSlice = createSlice({
       state.error = action.error.message || 'Failed to fetch lesson';
     });
 
+    builder.addCase(fetchSampleResponses.pending, (state, action) => {
+      state.sampleResponses = [];
+      state.loadingSampleResponses = true;
+      state.error = null;
+    })
+
+    builder.addCase(fetchSampleResponses.fulfilled, (state, action) => {
+      state.sampleResponses = action.payload.samples;
+      state.loadingSampleResponses = false;
+      state.error = null;
+    })
+
+    builder.addCase(fetchSampleResponses.rejected, (state, action) => {
+      state.loadingSampleResponses = false;
+      state.error = action.error.message || 'Failed to fetch sample responses';
+    })
+
     builder.addCase("global/RESET_STATE", (state, action) => {
       state.lessons = [];
       state.loading = false;
       state.creating = false;
       state.createdLessonId = null;
+      state.sampleResponses = [];
+      state.loadingSampleResponses = false;
       state.error = null;
     })
   },
@@ -215,13 +245,46 @@ export const fetchLessons = createAsyncThunk<Lesson>('lesson/fetch', async (_, {
     if (response.error) {
       return rejectWithValue(response.error);
     }
-    const data = await response.data;
-    return data;
+
+    return response.data;
   } catch (error) {
     console.error(error)
     return rejectWithValue(error);
   }
 });
+
+
+export const fetchSampleResponses = createAsyncThunk(
+  'lesson/fetchSampleResponses',
+  async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
+    const state = getState()
+    const token = await validateSessionAndToken(state, dispatch)
+
+    try {
+
+      const response = await sendToBackground({
+        name: 'api/lessons/fetchSampleResponses',
+        body: {
+          token,
+          lessonId,
+        }
+      })
+
+
+      if (response.error) {
+        return rejectWithValue(response.error);
+      }
+      // data is the server's response
+
+      return response.data
+
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 
 
 // Define the async thunk to fetch the lesson
@@ -261,6 +324,6 @@ async function createLessonAPI({ materialId, url, token }: { materialId: string,
   })
 }
 
-export const { clearError } = lessonSlice.actions;
+export const { clearError, clearSampleResponses } = lessonSlice.actions;
 
 export default lessonSlice.reducer;

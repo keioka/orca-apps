@@ -93,7 +93,7 @@ export function CardSummary({ level, summary }: CardSummaryProps) {
             <EnglishProficiencyTable level={level} />
           </AccordionDetails>
         </Accordion>
-        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
           {summary}
         </Typography>
         <Box>

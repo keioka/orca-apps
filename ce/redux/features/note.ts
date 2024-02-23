@@ -161,6 +161,10 @@ export const saveVocab = createAsyncThunk(
 
       const saveInfo = response.data
 
+      if (response.error) {
+        return rejectWithValue(response.error)
+      }
+
       return saveInfo;
     } catch (error) {
       console.error(error)
@@ -188,8 +192,8 @@ export const saveParaphrase = createAsyncThunk(`note/saveParaphrase`,
         }
       })
 
-      if (!response) {
-        return rejectWithValue('Failed to create message')
+      if (response.error) {
+        return rejectWithValue(response.error)
       }
 
       const { savedPhraseInfo } = response.data
@@ -214,6 +218,10 @@ export const fetchSavedVocab = createAsyncThunk(`note/fetchSavedVocab`,
           token
         }
       })
+
+      if (response.error) {
+        return rejectWithValue(response.error)
+      }
 
       return response.data.vocabs
     } catch (error) {
@@ -240,7 +248,9 @@ export const fetchSavedParaphrases = createAsyncThunk(`note/fetchSavedParaphrase
       }
     })
 
-    console.log({ response })
+    if (response.error) {
+      return rejectWithValue(response.error);
+    }
 
     const savedParaphrases = response.data.paraphrases;
     return { savedParaphrases };

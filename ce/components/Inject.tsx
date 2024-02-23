@@ -12,7 +12,9 @@ import {
   Menu,
   MenuItem,
   Alert,
-  Popover
+  Chip,
+  Popover,
+  Tooltip
 } from "@mui/material"
 import { IoPlayCircle, IoCloseCircle, IoMicOutline } from "react-icons/io5";
 import { useFirebase } from "../firebase/hooks"
@@ -21,7 +23,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchLesson } from '../redux/features/lessons';
 import { fetchMessages, addUserMessage, createAIMessage } from "~redux/features/messages";
 import { fetchCurrentOpenedMaterial, createVocabs, fetchVocabs } from "~redux/features/materials";
-import { fetchSavedVocab, saveVocab } from "~redux/features/note";
+import { fetchSavedVocab, fetchSavedParaphrases, saveVocab } from "~redux/features/note";
 import { clearState, removeAll } from "../redux/store";
 import { Opener } from "./Opener";
 import { ChatModeProto } from "./ChatModeProto";
@@ -34,7 +36,9 @@ import type { VocabularyItem, Message } from "~types";
 import { SummaryMode } from "./SummaryMode";
 import { FormSubscription } from "./FormSubscription";
 import { fetchCurrentUser, setSession, login, signup } from "~/redux/features/auth";
-import { fetchOrCreateLessonByMaterialId } from "~/redux/features/lessons";
+import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleResponses } from "~/redux/features/lessons";
+import { ButtonGoogleAuth } from "./ButtonGoogleAuth";
+import { set } from "lodash";
 
 const drawerWidth = 380
 
@@ -137,6 +141,7 @@ export function Inject() {
   const [message, setMessage] = useState(null)
   const [isFullLoaded, setIsFullLoaded] = useState(false)
   const dispatch = useAppDispatch()
+
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   const shouldShowSubscriptionForm = useAppSelector(state => { return !state.payment.isValidSubscription && state.ui.shouldShowSubscriptionForm })
   const currentUser = useAppSelector(state => { return state.auth.currentUser })
@@ -150,6 +155,7 @@ export function Inject() {
 
   useEffect(() => {
     dispatch({ type: "global/RESET_STATE" });
+    dispatch(clearSampleResponses())
     authCheck()
   }, [])
 
@@ -207,12 +213,12 @@ export function Inject() {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log("================ onMessage ====================")
       if (request.name === "logout") {
-        console.log("logout")
+        console.log("onMessage > logout")
         onLogout()
       }
 
       if (request.name === "urlChange") {
-        console.log("urlChanged")
+        console.log("onMessage > urlChanged")
         setUrl(request.url)
         sendResponse(true)
       }
@@ -221,13 +227,11 @@ export function Inject() {
 
   async function handleSignup() {
     const userCred = await onLoginBackground()
-    console.log({ userCred })
     dispatch(signup({ accessToken: userCred.accessToken, uid: userCred.uid }))
   }
 
   async function handleSignin() {
     const userCred = await onLoginBackground()
-    console.log({ userCred })
     dispatch(login({ accessToken: userCred.accessToken, uid: userCred.uid }))
   }
 
@@ -261,6 +265,8 @@ export function Inject() {
       )
     }
   }
+
+
 
   useEffect(() => {
 
@@ -343,7 +349,7 @@ export function Inject() {
             }
 
             {
-              !currentUser && (
+              !isLoading && !currentUser && (
                 <Stack
                   sx={{
                     width: "100%",
@@ -353,27 +359,34 @@ export function Inject() {
                   }}
                   spacing={2}
                 >
+                  <Stack>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      {chrome.i18n.getMessage("welcome_orca")}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: "#444444" }}>
+                      {chrome.i18n.getMessage("welcome_orca_desc")}
+                    </Typography>
+                  </Stack>
+                  <Typography variant="h5" sx={{ color: "#444444" }}>
+                    {chrome.i18n.getMessage("message_signin")}
+                  </Typography>
                   {errorSigninMessage && <Alert severity="error">{errorSigninMessage}</Alert>}
                   {errorSignupMessage && <Alert severity="error">{errorSignupMessage}</Alert>}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSignin}
-                  >
-                    {chrome.i18n.getMessage("login_google")}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
+                  <ButtonGoogleAuth
+                    size="large"
                     onClick={handleSignup}
-                  >
-                    {chrome.i18n.getMessage("signup_google")}
-                  </Button>
+                    isSignup
+                  />
+                  <Typography>or</Typography>
+                  <ButtonGoogleAuth
+                    size="large"
+                    onClick={handleSignin}
+                  />
                 </Stack>
               )
             }
 
-            {currentUser && (
+            {!isLoading && currentUser && (
               <>
                 <Box mt={2}>
                   <Tabs onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
@@ -388,7 +401,7 @@ export function Inject() {
                       }}
                       mt={0} mb={2}
                     >
-                      <FormControlLabel
+                      {/* <FormControlLabel
                         control={
                           <Switch
                             checked={isAutoPlay}
@@ -396,9 +409,9 @@ export function Inject() {
                           />
                         }
                         label={chrome.i18n.getMessage("chat_toggle_autoplay")}
-                      />
+                      /> */}
                     </Box>
-                    <ChatModeProto isAutoPlay={isAutoPlay} handleSubmitMessage={handleSubmitMessage} messages={messages} />
+                    <ChatModeProto isAutoPlay={isAutoPlay} handleSubmitMessage={handleSubmitMessage} isCreatingMessage={isCreatingMessage} messages={messages} currentLesson={currentLesson} />
                   </>
                 )}
                 {mode === Mode.Vocab &&
@@ -432,6 +445,8 @@ export function Inject() {
   )
 }
 
+type Level = "all" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2"
+
 function VocabMode({
   setVocabs,
   setIsLoadingVocabs,
@@ -439,18 +454,30 @@ function VocabMode({
   setError,
   onSaveVocab
 }) {
-
   const dispatch = useAppDispatch()
   const materialId = useAppSelector(state => state.materials.currentOpenedMaterial?.id)
   const vocabs = useAppSelector(state => state.materials.vocabs[materialId] || [])
   const savedVocabs = useAppSelector(state => state.note.vocabularies || [])
+  const [levelsFilter, setLevelsFilter] = useState<Level[]>([])
+
+  const filteredVocabs = useMemo(() => {
+    if (levelsFilter.length === 0) {
+      return vocabs
+    }
+
+    return vocabs.filter((vocab) => {
+      if (!vocab.level) return true
+      return levelsFilter.includes(vocab.level)
+    })
+  }, [vocabs, levelsFilter])
 
   useEffect(() => {
-    dispatch(fetchSavedVocab({ materialId: materialId }))
-
     if (vocabs.length > 0) {
       return
     }
+
+    dispatch(fetchSavedVocab({ materialId: materialId }))
+
     const fetchVocabsInterval = setInterval(() => {
       dispatch(fetchVocabs({ materialId: materialId }))
     }, 5000);
@@ -463,10 +490,71 @@ function VocabMode({
 
   }, [])
 
+  const handleClickFilter = (level: string) => {
+    if (level === "all") {
+      setLevelsFilter([])
+      return
+    }
+
+    if (levelsFilter.includes(level)) {
+      setLevelsFilter(levelsFilter.filter((l) => l !== level))
+    } else {
+      setLevelsFilter([...levelsFilter, level])
+    }
+  }
+
+
+  const levels = [
+    "all", "A1", "A2", "B1", "B2", "C1", "C2"
+  ]
+
+  const description = {
+    "A1": "Beginner: TOEIC < 220, TOEFL iBT < 42, IELTS < 4.0",
+    "A2": "Elementary: TOEIC 220 - 545, TOEFL iBT 42 - 71, IELTS 4.0",
+    "B1": "Intermediate: TOEIC 546 - 780, TOEFL iBT 42 - 71, IELTS 4.0 - 5.0",
+    "B2": "Upper Intermediate: TOEIC 780 - 940, TOEFL iBT 72 - 94, IELTS 5.5 - 6.5",
+    "C1": "Advanced: TOEIC 941 - 990, TOEFL iBT 95 - 120, IELTS 7.0 - 8.0",
+    "C2": "Proficient: IELTS 8.5 - 9.0"
+  }
 
   return (
     <Box mt={2}>
-      <ListVocab vocabs={vocabs} savedVocabs={savedVocabs} isLoading={isLoadingVocabs} onSaveVocab={onSaveVocab} />
+      <Stack
+        direction="row"
+        spacing={0.5}
+        py={1}
+        sx={{ position: "relative" }}
+      >
+        {levels.map((level: Level) => {
+          return (
+            <Tooltip
+              title={description[level]}
+              PopperProps={{
+                disablePortal: true,
+                popperOptions: {
+                  positionFixed: true,
+                  modifiers: {
+                    preventOverflow: {
+                      enabled: true,
+                      boundariesElement: "window" // where "window" is the boundary
+                    }
+                  }
+                }
+              }}
+            >
+              <Chip
+                key={level}
+                label={level}
+                onClick={() => {
+                  handleClickFilter(level)
+                }}
+                color={levelsFilter.includes(level) || (levelsFilter.length === 0 && level === "all") ? "primary" : "default"}
+              />
+            </Tooltip>
+          )
+        })}
+      </Stack>
+      <ListVocab vocabs={filteredVocabs} savedVocabs={savedVocabs} isLoading={!vocabs || vocabs.length === 0} onSaveVocab={onSaveVocab} />
     </Box>
   )
 }
@@ -490,6 +578,7 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
 
   const handleSignout = () => {
     onLogout()
+    handleMenuClose()
   }
 
   return (
@@ -553,23 +642,26 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
           }}
           spacing={1}
         >
-          <Typography variant="body2" sx={{ color: "#c4c4c4" }}>Menu</Typography>
-          <Box sx={{ paddingY: 1, borderTop: "1px solid #f4f4f4" }}>
-            <Typography onClick={handleSignout} fontSize="h6">{chrome.i18n.getMessage("signout")}</Typography>
-          </Box>
+          <Typography variant="body2" sx={{ color: "#c4c4c4" }}>
+            <Box onClick={handleMenuClose}>
+              <IoCloseCircle size={18} color="#dddddd" />
+            </Box>
+          </Typography>
+
           <Box sx={{ paddingY: 1, borderTop: "1px solid #f4f4f4" }}>
             <Typography
               onClick={() => {
-                console.log({ chrome })
                 sendToBackground({ name: "openNote" })
+                handleMenuClose()
               }}
             >
               {chrome.i18n.getMessage("popup_button_open_note")}
             </Typography>
           </Box>
           <Box sx={{ paddingY: 1, borderTop: "1px solid #f4f4f4" }}>
-            <Typography onClick={handleMenuClose}>Close Menu</Typography>
+            <Typography onClick={handleSignout} fontSize="h6">{chrome.i18n.getMessage("signout")}</Typography>
           </Box>
+
         </Stack>
       }
     </Stack>

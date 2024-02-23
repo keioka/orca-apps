@@ -30,6 +30,7 @@ export async function getVocabsFromText({ id, text, transLangCode }) {
 
             [word]: The word, phrasal verb, or phrase in its base form (e.g., 'suggesting' becomes 'suggest'). This is required.
             [pronounce]: The pronunciation of the word or phrase. This is required.
+            [level]: The level of the word or phrase. This is required. Level should be CEFR A1, A2, B1, B2, C1, C2
             [part of speech (POS)]: The part of speech of the word or phrase. This is required.
             [meaning]: The meaning of the word or phrase. This is required.
             [sentence]: The sentence from the content where the word or phrase is found. This is required.
@@ -66,29 +67,6 @@ export async function getVocabsFromText({ id, text, transLangCode }) {
             ${text}
             """
             `
-            //   content: `          
-            //   You are an English teacher. Please give me a comprehensive list of vocabulary including words, phrasal verbs, and phrases extracted from the provided content. 
-            //   The list should be formatted in JSON, with details for each vocabulary item from each sentence. 
-
-            //   Don't include proper nouns, such as names of people, places, or companies.
-
-            //   Here are the specifications for the list:
-            //   - [word]: The word, phrasal verb, or phrase (e.g., verb, noun, adjective, adverb, preposition, conjunction, interjection, phrasal verb, idiom, proverb, slang). Ensure nouns are in singular form and verbs are in base form. 'suggesting' should be 'suggest'. 'suggested' should be 'suggest' Required
-            //   - [pronounce]: The pronunciation of the word or phrase. Required
-            //   - [part of speech (POS)]: The part of speech of the word or phrase. Required
-            //   - [meaning]: The meaning of the word or phrase. Required
-            //   - [sentence]: The sentence from the content where the word or phrase is found. Required
-            //   - [example]: Additional examples of the word or phrase in use. Required
-            //   - [meaningInJapanese]: The meaning of the word or phrase in Japanese. Required
-
-            //   All of fields below are required.
-            //   Please process the following text to create the list:
-
-            //   Content:
-            //   """"
-            //   ${text}
-            //   """
-            // `
           }
         ],
         functions: [{
@@ -117,6 +95,10 @@ export async function getVocabsFromText({ id, text, transLangCode }) {
                       type: "string",
                       description: "Meaning of the word or phrase"
                     },
+                    level: {
+                      type: "string",
+                      description: "Level of the word or phrase. Level should be CEFR A1, A2, B1, B2, C1, C2"
+                    },
                     sentence: {
                       type: "string",
                       description: "sentence from the given content"
@@ -138,6 +120,7 @@ export async function getVocabsFromText({ id, text, transLangCode }) {
               "pronounce",
               "pos",
               "meaning",
+              "level",
               "sentence",
               "example",
               `meaningIn${langName[transLangCode.toLowerCase()]}`

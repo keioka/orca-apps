@@ -27,14 +27,15 @@ import { CardSmGMCheck } from "./CardSmGMCheck"
 import { CardSmParaphrase } from "./CardSmParaphrase"
 import { useAppDispatch, useAppSelector } from "~redux/hooks"
 import { toggleSubscriptionForm } from "~redux/features/ui"
-import { saveParaphrase } from "~redux/features/note"
+import { saveParaphrase, fetchSavedParaphrases } from "~redux/features/note"
 import type { ParaphraseItem, GMCheckItem } from "~types"
 import styled from "@emotion/styled"
 import { fetchParaphrases } from "~redux/features/messages"
+import { createSelector } from "@reduxjs/toolkit"
 
 const TypoEn = styled(Typography)`
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: #00232f;
   letter-spacing: 0px;
 `
@@ -50,10 +51,11 @@ interface CardChatProps {
   loading?: boolean;
   isAutoPlay?: boolean;
   url: string;
+  isLastMessage?: boolean;
 }
 
 interface CardChatPureProps {
-  type?: "ai" | "human";
+  type?: "ai" | "user";
   loading?: boolean;
   handleClickGMCheck: () => void;
   handleClickParaphrase: () => void;
@@ -75,7 +77,7 @@ interface CardChatPureProps {
 }
 
 
-export function CardChat({ id, content, type = "ai", audioFile, loading, isAutoPlay, url }: CardChatProps) {
+export function CardChat({ id, content, type = "ai", audioFile, loading, isAutoPlay, url, isLastMessage }: CardChatProps) {
   const [error, setError] = useState(null)
   const { currentSentence, currentSentenceIndex, numSentences, messageSentences, selectNextSentence, selectPreviousSentence } = useSentence(content)
   const [currentTab, setCurrentTab] = useState<Tab>(null)
@@ -91,10 +93,20 @@ export function CardChat({ id, content, type = "ai", audioFile, loading, isAutoP
   const dispatch = useAppDispatch()
   const { isValidSubscription } = useAppSelector((state) => state.payment)
   const paraphrase = useAppSelector((state) => state.message.paraphraseMap[id])
-  const savedPhrasesByMessageId = useAppSelector((state) => state.note.paraphrases.filter((paraphrase) => Boolean(paraphrase)).filter((paraphraseInfo) => paraphraseInfo.paraphrase.sentence.message.id === id))
+
+  // TODO: Need to fix (Selector unknown returned a different result when called with the same parameters. This can lead to unnecessary rerenders.)
+  const selectSavedPhrasesByMessageId = createSelector(
+    state => state.note.paraphrases,
+    (paraphrases) => {
+      if (!paraphrases) return []
+      return paraphrases.filter((paraphrase) => Boolean(paraphrase)).filter((paraphraseInfo) => paraphraseInfo.paraphrase.sentence.message.id === id)
+    })
+
+  const savedPhrasesByMessageId = useAppSelector(selectSavedPhrasesByMessageId)
+  // const savedPhrasesByMessageId = useAppSelector((state) => state.note.paraphrases.filter((paraphrase) => Boolean(paraphrase)).filter((paraphraseInfo) => paraphraseInfo.paraphrase.sentence.message.id === id))
 
   useEffect(() => {
-    if (type === "human" || loading || !isAutoPlay) return
+    if (type === "user" || loading || !isAutoPlay || !isLastMessage) return
     handlePlayAudio()
   }, [])
 
@@ -137,11 +149,21 @@ export function CardChat({ id, content, type = "ai", audioFile, loading, isAutoP
     //   handleToggleSubscriptionForm()
     //   return
     // }
+    if (currentTab === Tab.Paraphrase) {
+      setCurrentTab(null)
+      return
+    }
+
     setIsLoadingParaphrase(true)
     setCurrentTab(Tab.Paraphrase)
 
     dispatch(fetchParaphrases({
       sentence: currentSentence,
+      messageId: id,
+      sentenceIndex: currentSentenceIndex
+    }))
+
+    dispatch(fetchSavedParaphrases({
       messageId: id,
       sentenceIndex: currentSentenceIndex
     }))
@@ -173,12 +195,15 @@ export function CardChat({ id, content, type = "ai", audioFile, loading, isAutoP
     setIsLoadingGMCheck(false)
   }
 
-  function handlePlayAudio() {
-
+  async function handlePlayAudio() {
     try {
-
       if (audioFile && audioFile.path) {
-        const audio = new Audio(audioFile.path);
+        const path = audioFile.path
+        const audio = new Audio(path);
+        audio.addEventListener('canplaythrough', (event) => {
+          console.log("canplaythrough", event)
+          audio.play();
+        }, false);
         audio.play();
         return;
       }
@@ -315,7 +340,7 @@ export function CardChatPure({
           {type === "user" && (
             <Stack sx={{ width: "100%" }}>
               <Stack direction="row" spacing={1}>
-                <Button
+                {/* <Button
                   sx={{
                     background: "rgba(0,0,0,0.1)",
                     borderRadius: "64px",
@@ -330,7 +355,7 @@ export function CardChatPure({
                   <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: currentTab === Tab.GMCheck ? "#fff" : "#787c80", fontWeight: 600 }}>
                     {chrome.i18n.getMessage("chat_card_button_gm_check")}
                   </Typography>
-                </Button>
+                </Button> */}
                 <Button
                   sx={{
                     background: "rgba(0,0,0,0.1)",
@@ -419,7 +444,7 @@ export function CardChatPure({
                   }}
                   onClick={handleClickTranslate}
                 >
-                  <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: "#787c80", fontWeight: 700 }}>
+                  <Typography variant="caption" component="h6" sx={{ fontSize: 12, color: "#787c80", fontWeight: 600 }}>
                     {chrome.i18n.getMessage("translate")}
                   </Typography>
                 </Button>
