@@ -13,7 +13,8 @@
     "dev": "tsx watch src .env | pino-pretty --colorize",
     "pretest": "npm run build",
     "test": "vitest",
-    "test:watch": "vitest -w"
+    "test:watch": "vitest -w",
+    "postinstall": "prisma generate"
   },
   "repository": {
     "type": "git",
