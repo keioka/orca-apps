@@ -74,16 +74,18 @@ export async function addVocabs(req: any, res: any) {
       }
     })
 
-    await createVocabs({
-      vocabParams: mappedVocabs,
-      materialId
-    })
-
-    console.timeEnd(pid)
-    return mappedVocabs
+    try {
+      return await createVocabs({
+        vocabParams: mappedVocabs,
+        materialId
+      })
+    } catch (error) {
+      console.error(error)
+      return []
+    } finally {
+      console.timeEnd(pid)
+    }
   }))
-
-
 
   return {
     status: 'ok',
