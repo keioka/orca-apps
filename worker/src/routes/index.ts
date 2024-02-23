@@ -47,16 +47,6 @@ const routes: FastifyPluginAsync = async (server) => {
       response: {
         200: Type.Object({
           status: Type.String(),
-          vocabs: Type.Array(Type.Object({
-            word: Type.String(),
-            pronounce: Type.String(),
-            pos: Type.String(),
-            level: Type.String(),
-            meaning: Type.String(),
-            sentence: Type.String(),
-            meaningInJapanese: Type.String(),
-            example: Type.String(),
-          }))
         }),
       },
     },
