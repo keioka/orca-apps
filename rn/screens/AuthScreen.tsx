@@ -87,6 +87,9 @@ export function AuthScreen({ navigation }) {
             <Button disabled={singinLoading} onPress={handleSignin} mode="contained" disabled={isSigninDisabled}>{i18n.t("loginAction")}</Button>
           </View>
           <View style={styles.verticallySpaced}>
+            <Button onPress={() => { }} mode="text">Google signin</Button>
+          </View>
+          <View style={styles.verticallySpaced}>
             <Button onPress={() => setSignin(false)} mode="text" >{i18n.t("signupAction")}</Button>
           </View>
         </>
@@ -136,8 +139,13 @@ export function AuthScreen({ navigation }) {
             <Button disabled={signupLoading} onPress={handleSignup} mode="contained" disabled={isSignupDisabled}>{i18n.t("signupAction")}</Button>
           </View>
           <View style={styles.verticallySpaced}>
+            <Button onPress={() => { }} mode="text">Google signup</Button>
+          </View>
+          <View style={styles.verticallySpaced}>
             <Button onPress={() => setSignin(true)} mode="text">{i18n.t("loginAction")}</Button>
           </View>
+
+
         </>
         }
       </KeyboardAvoidingView>
