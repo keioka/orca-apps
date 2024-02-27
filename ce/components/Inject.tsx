@@ -39,6 +39,7 @@ import { fetchCurrentUser, setSession, login, signup } from "~/redux/features/au
 import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleResponses } from "~/redux/features/lessons";
 import { ButtonGoogleAuth } from "./ButtonGoogleAuth";
 import { set } from "lodash";
+import { vocab } from "~helpers/dummy";
 
 const drawerWidth = 380
 
@@ -122,14 +123,16 @@ interface Summary {
   summary: string,
 }
 
+const levels = ["K5", "5Y", "A1", "A2", "B1", "B2", "C1", "C2"];
+
 export function Inject() {
   const urlPath = `${window.location.origin}${window.location.pathname}`
+  const dispatch = useAppDispatch()
   const [url, setUrl] = useState(urlPath)
   const [hideExtention, setHideExtention] = useState(false)
   const [open, setOpen] = useState(false)
   const [isAutoPlay, setIsAutoPlay] = useState(false)
   const [mode, setMode] = useState(Mode.Talk)
-  const [vocabs, setVocabs] = useState<Vocab[]>([])
   const [isLoadingVocabs, setIsLoadingVocabs] = useState(false)
   const [summaries, setSummaries] = useState<Summary[]>([])
   const [isLoadingSummaries, setIsLoadingSummaries] = useState(false)
@@ -140,7 +143,6 @@ export function Inject() {
   const { user, session: sessionFB, isLoading, onLogin, onLoginBackground, onLogout, authCheck } = useFirebase()
   const [message, setMessage] = useState(null)
   const [isFullLoaded, setIsFullLoaded] = useState(false)
-  const dispatch = useAppDispatch()
 
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   const shouldShowSubscriptionForm = useAppSelector(state => { return !state.payment.isValidSubscription && state.ui.shouldShowSubscriptionForm })
@@ -150,14 +152,49 @@ export function Inject() {
   const currentLesson = useAppSelector((state) => state.lesson.lessons.find((lesson) => lesson.materialId === currentOpenedMaterial?.id))
   const messages = useAppSelector((state) => currentLesson ? state.message.messageMap[currentLesson.id] || [] : [])
   const isCreatingMessage = useAppSelector((state) => state.message.isCreatingMessage)
+  const isFetchingVocabs = useAppSelector((state) => state.materials.isFetchingVocabs)
   const errorSigninMessage = useAppSelector((state) => state.auth.errorSigninMessage)
   const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage)
+  const vocabs = useAppSelector(state => currentOpenedMaterial ? state.materials.vocabs[currentOpenedMaterial.id] || [] : [])
+
 
   useEffect(() => {
     dispatch({ type: "global/RESET_STATE" });
     dispatch(clearSampleResponses())
     authCheck()
   }, [])
+
+  useEffect(() => {
+    if (summaries.length > 0) {
+      return;
+    }
+
+    async function init() {
+      setIsLoadingSummaries(true);
+      try {
+        const resp = await sendToBackground({
+          name: "summaryByLevel",
+          body: {
+            url,
+            levels: levels
+          },
+        });
+
+        console.log({ resp });
+        if (resp.error) {
+          setError(resp.error);
+        } else {
+          setIsLoadingSummaries(false);
+          setSummaries(prevSummaries => [...prevSummaries, ...resp.summaries]);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+    }
+
+    init(); // Calling the init function inside the useEffect.
+  }, [url]);
 
   // set session from Firebase to Redux State
   useEffect(() => {
@@ -193,7 +230,7 @@ export function Inject() {
     if (currentOpenedMaterial && session) {
       dispatch(fetchOrCreateLessonByMaterialId(currentOpenedMaterial.id))
     }
-  }, [open, currentOpenedMaterial, session])
+  }, [open, currentOpenedMaterial, session, currentUser])
 
   useEffect(() => {
     if (!open) return
@@ -210,6 +247,13 @@ export function Inject() {
   }, [open, currentOpenedMaterial])
 
   useEffect(() => {
+    if (!open) return
+    if (currentOpenedMaterial && !isFetchingVocabs && vocabs.length === 0) {
+      dispatch(createVocabs({ materialId: currentOpenedMaterial.id }))
+    }
+  }, [open, currentOpenedMaterial, isFetchingVocabs])
+
+  useEffect(() => {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log("================ onMessage ====================")
       if (request.name === "logout") {
@@ -224,6 +268,13 @@ export function Inject() {
       }
     })
   }, [])
+
+  const messageSorted = useMemo(() => {
+    if (!messages) return []
+    return [...messages].sort((a, b) => {
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    })
+  }, [messages])
 
   async function handleSignup() {
     const userCred = await onLoginBackground()
@@ -411,13 +462,18 @@ export function Inject() {
                         label={chrome.i18n.getMessage("chat_toggle_autoplay")}
                       /> */}
                     </Box>
-                    <ChatModeProto isAutoPlay={isAutoPlay} handleSubmitMessage={handleSubmitMessage} isCreatingMessage={isCreatingMessage} messages={messages} currentLesson={currentLesson} />
+                    <ChatModeProto
+                      isAutoPlay={isAutoPlay}
+                      handleSubmitMessage={handleSubmitMessage}
+                      isCreatingMessage={isCreatingMessage}
+                      messages={messageSorted}
+                      currentLesson={currentLesson}
+                    />
                   </>
                 )}
                 {mode === Mode.Vocab &&
                   <VocabMode
                     vocabs={vocabs}
-                    setVocabs={setVocabs}
                     setIsLoadingVocabs={setIsLoadingVocabs}
                     isLoadingVocabs={isLoadingVocabs}
                     setError={setError}
@@ -448,6 +504,7 @@ export function Inject() {
 type Level = "all" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2"
 
 function VocabMode({
+  vocabs,
   setVocabs,
   setIsLoadingVocabs,
   isLoadingVocabs,
@@ -456,7 +513,6 @@ function VocabMode({
 }) {
   const dispatch = useAppDispatch()
   const materialId = useAppSelector(state => state.materials.currentOpenedMaterial?.id)
-  const vocabs = useAppSelector(state => state.materials.vocabs[materialId] || [])
   const savedVocabs = useAppSelector(state => state.note.vocabularies || [])
   const [levelsFilter, setLevelsFilter] = useState<Level[]>([])
 

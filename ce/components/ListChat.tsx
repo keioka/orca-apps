@@ -21,7 +21,7 @@ export function ListChat({ messages, isCreatingMessage, isAutoPlay, url }) {
       {
         messages && messages.map((message, index) => {
           return (
-            <Box key={message.id} mb={2} key={message.message}>
+            <Box key={message.id} mb={2}>
               <CardChat {...message} isAutoPlay={isAutoPlay} url={url} isLastMessage={index === messages.length - 1} />
             </Box>
           )

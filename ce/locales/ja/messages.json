@@ -99,9 +99,17 @@
     "message": "ノート",
     "description": "ノート画面のタイトル。"
   },
+  "note_progress_title": {
+    "message": "学習進捗",
+    "description": "進捗のタイトル。"
+  },
+  "note_list_title": {
+    "message": "学習進捗",
+    "description": "進捗のタイトル。"
+  },
   "note_subtitle_article_label": {
-    "message": "記事",
-    "description": "記事のサブタイトルラベル。"
+    "message": "ノート一覧",
+    "description": "ノート一覧"
   },
   "note_subtitle_lesson_start_at": {
     "message": "レッスン開始時間",
@@ -119,9 +127,13 @@
     "message": "文法チェック",
     "description": "文法チェックのサブタイトルラベル。"
   },
+  "note_subtitle_word_empty_label": {
+    "message": "保存された単語がありません",
+    "description": "保存された単語がない場合のサブタイトルラベル。"
+  },
   "note_subtitle_paraphrase_empty_label": {
-    "message": "言い換えがありません",
-    "description": "言い換えがない場合のサブタイトルラベル。"
+    "message": "保存された言い換えがありません",
+    "description": "保存された言い換えがない場合のサブタイトルラベル。"
   },
   "note_subtitle_gmcheck_empty_label": {
     "message": "文法チェックがありません",

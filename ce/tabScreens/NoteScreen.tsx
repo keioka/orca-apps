@@ -15,8 +15,9 @@ import { useAppDispatch } from "~/redux/hooks"
 import { fetchSavedVocab, fetchSavedParaphrases } from "~redux/features/note"
 import { fetchLessons } from "~redux/features/lessons"
 import { useFirebase } from "~firebase/hooks"
-import { setSession, fetchCurrentUser } from "~redux/features/auth"
+import { setSession, fetchCurrentUser, fetchCurrentUserStats } from "~redux/features/auth"
 import { ButtonGoogleAuth } from "~components/ButtonGoogleAuth"
+import { UserStats } from "~/components/UserStats"
 
 export function NoteScreen() {
   const dispatch = useAppDispatch()
@@ -24,7 +25,9 @@ export function NoteScreen() {
   const { vocabularies, paraphrases } = useAppSelector(state => state.note)
   const currentUser = useAppSelector(state => { return state.auth.currentUser })
   const session = useAppSelector(state => { return state.auth.session })
-  const { user, session: sessionFB, onLoginBackground, onLogout } = useFirebase()
+  const { session: sessionFB, onLoginBackground, onLogout } = useFirebase()
+  const stats = useAppSelector((state) => state.auth.stats);
+  const fetchingCurrentUserStats = useAppSelector((state) => state.auth.fetchingCurrentUserStats);
 
   useEffect(() => {
     dispatch(setSession(sessionFB))
@@ -33,6 +36,7 @@ export function NoteScreen() {
   useEffect(() => {
     if (session) {
       dispatch(fetchCurrentUser())
+      dispatch(fetchCurrentUserStats())
     }
   }, [session])
 
@@ -70,11 +74,8 @@ export function NoteScreen() {
     return map
   }, [paraphrases])
 
-  const handleLogin = () => {
-    onLoginBackground()
-  }
-
   const notes = useMemo(() => {
+    if (!lessons || !lessons.length) return []
     return [...lessons]
       .filter(lesson => lesson.material && lesson.material.url)
       .sort((a, b) => {
@@ -92,6 +93,10 @@ export function NoteScreen() {
         return note
       })
   }, [lessons, vocabularies])
+
+  const handleLogin = () => {
+    onLoginBackground()
+  }
 
   if (!session) {
     return (
@@ -121,11 +126,26 @@ export function NoteScreen() {
           </Typography>
         </Stack>
       )} */}
-      {notes.map((note) => {
-        return (
-          <Note key={note.url} note={note} />
-        )
-      })}
+      <Stack spacing={2} my={4}>
+
+        {currentUser && (
+          <Typography variant="h5" component="h6">
+            {currentUser.username}さんの{chrome.i18n.getMessage("note_progress_title")}
+          </Typography>
+        )}
+
+        <UserStats stats={stats} />
+      </Stack>
+      <Stack spacing={2}>
+        <Typography variant="h5" component="h6">
+          {chrome.i18n.getMessage("note_subtitle_article_label")}
+        </Typography>
+        {notes.map((note) => {
+          return (
+            <Note key={note.url} note={note} />
+          )
+        })}
+      </Stack>
     </Box>
   )
 }
