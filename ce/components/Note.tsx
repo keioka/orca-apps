@@ -30,7 +30,7 @@ export function Note({ note }: NoteProps): JSX.Element {
         marginBottom: 8
       }}
     >
-      <Stack>
+      <Stack spacing={2}>
         <Typography variant="h6" component="h6">
           {chrome.i18n.getMessage("note_subtitle_lesson_start_at")}: {moment(note.lessonStartedAt).format("YYYY/MM/DD HH:mm:ss")}
         </Typography>
@@ -57,6 +57,13 @@ export function Note({ note }: NoteProps): JSX.Element {
             {chrome.i18n.getMessage("note_subtitle_vocab_label")}
           </Typography>
           <Stack direction="row" spacing={2} sx={{ overflowX: "scroll", width: "100%" }}>
+            {!vocabulary || vocabulary.length === 0 && (
+              <Box p={2} sx={{ background: "#fff" }}>
+                <Typography variant="body1" component="span">
+                  {chrome.i18n.getMessage("note_subtitle_word_empty_label")}
+                </Typography>
+              </Box>
+            )}
             {vocabulary && vocabulary.map((vocabInfo) => {
               return (
                 <Box key={`note_vocabulary_${vocabInfo.id}`} sx={{ width: 320, maxWidth: 320, minWidth: 320 }}>
