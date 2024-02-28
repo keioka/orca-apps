@@ -1,7 +1,7 @@
 {
   "name": "Orca",
   "displayName": "__MSG_extensionName__",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "__MSG_extensionDescription__",
   "author": "Orca",
   "scripts": {
@@ -63,6 +63,7 @@
     "@types/node": "20.5.0",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
+    "cypress": "^13.6.6",
     "prettier": "3.0.2",
     "storybook": "^7.4.2",
     "typescript": "5.1.6"

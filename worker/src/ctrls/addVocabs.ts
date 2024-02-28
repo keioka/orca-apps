@@ -56,7 +56,7 @@ export async function addVocabs(req: any, res: any) {
   const splitContent = splitTextBySentenceWithWordCount(cleanedText, 125)
   const transLangCodeCap = transLangCode[0].toUpperCase() + transLangCode.slice(1).toLowerCase()
 
-  const vocabs = await Promise.all(splitContent.map(async (content, index) => {
+  splitContent.forEach(async (content, index) => {
     const pid = `${materialId}_${index}`
 
     console.time(pid)
@@ -85,11 +85,10 @@ export async function addVocabs(req: any, res: any) {
     } finally {
       console.timeEnd(pid)
     }
-  }))
+  })
 
   return {
     status: 'ok',
-    vocabs: vocabs.flat()
   }
 }
 
