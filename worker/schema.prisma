@@ -51,30 +51,30 @@ model User {
 }
 
 model Material {
-  id                             String            @id @default(uuid()) @db.Char(36)
-  title                          String            @db.VarChar(255)
-  type                           String            @db.VarChar(255)
-  category                       String?           @db.VarChar(100)
-  categoryExternal               String?           @map("category_external") @db.VarChar(255)
-  url                            String            @unique
-  slug                           String?           @unique @db.VarChar(255)
-  imageUrl                       String?           @map("image_url")
-  publishedAt                    DateTime?         @map("published_at")
-  externalId                     String?           @unique @map("external_id") @db.VarChar(255)
-  isArchived                     Boolean           @default(false) @map("is_archived")
-  createdAt                      DateTime          @default(now()) @map("created_at")
-  updatedAt                      DateTime          @updatedAt @map("updated_at")
-  loadingVocabsScheduledSetCount Int?              @map("loading_vocabs_set_count")
-  loadingVocabsDoneSetCount      Int?              @map("loading_vocabs_done_set_count")
-  vocabGeneratorErrorMessages    String?           @map("vocab_generator_error_messages")
-  lessons                        Lesson[]
-  summary                        Summary[]
-  vocabularies                   Vocabulary[]
-  publisherId                    String            @map("publisher_id")
-  publisher                      Publisher         @relation(fields: [publisherId], references: [id])
-  materialHashtag                MaterialHashtag[]
-  questions                      Question[]
-  Rating                         Rating[]
+  id                        String            @id @default(uuid()) @db.Char(36)
+  title                     String            @db.VarChar(255)
+  type                      String            @db.VarChar(255)
+  category                  String?           @db.VarChar(100)
+  categoryExternal          String?           @map("category_external") @db.VarChar(255)
+  url                       String            @unique
+  slug                      String?           @unique @db.VarChar(255)
+  imageUrl                  String?           @map("image_url")
+  publishedAt               DateTime?         @map("published_at")
+  externalId                String?           @unique @map("external_id") @db.VarChar(255)
+  isArchived                Boolean           @default(false) @map("is_archived")
+  createdAt                 DateTime          @default(now()) @map("created_at")
+  updatedAt                 DateTime          @updatedAt @map("updated_at")
+  vocabGenScheduledSetCount Int?              @map("vocab_gen_scheduled_set_count")
+  vocabGenDoneSetCount      Int?              @map("vocab_gen_done_set_count")
+  vocabGenErrorMessage      String?           @map("vocab_gen_error_message")
+  lessons                   Lesson[]
+  summary                   Summary[]
+  vocabularies              Vocabulary[]
+  publisherId               String            @map("publisher_id")
+  publisher                 Publisher         @relation(fields: [publisherId], references: [id])
+  materialHashtag           MaterialHashtag[]
+  questions                 Question[]
+  Rating                    Rating[]
 
   @@map("materials")
 }

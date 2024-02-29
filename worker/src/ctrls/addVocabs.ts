@@ -32,6 +32,17 @@ export async function addVocabs(req: any, res: any) {
   const text = await parseWebText(material.url)
 
   if (!text) {
+
+    await prisma.material.update({
+      where: {
+        id: materialId
+      },
+      data: {
+        vocabGenScheduledSetCount: 1,
+        vocabGenDoneSetCount: 0
+      }
+    })
+
     const { vocabs } = await getVocabsFromUrl({ id: materialId, url: material.url, transLangCode })
     const mappedVocabs = vocabs.map((vocab) => {
       return {
@@ -46,6 +57,15 @@ export async function addVocabs(req: any, res: any) {
       materialId
     })
 
+    await prisma.material.update({
+      where: {
+        id: materialId
+      },
+      data: {
+        vocabGenDoneSetCount: 1,
+      }
+    })
+  
     return {
       status: 'ok',
       vocabs: newVocabs
@@ -56,6 +76,17 @@ export async function addVocabs(req: any, res: any) {
   const splitContent = splitTextBySentenceWithWordCount(cleanedText, 125)
   const transLangCodeCap = transLangCode[0].toUpperCase() + transLangCode.slice(1).toLowerCase()
 
+  await prisma.material.update({
+    where: {
+      id: materialId
+    },
+    data: {
+      vocabGenScheduledSetCount: splitContent.length
+    }
+  })
+
+  let done = 0
+  
   splitContent.forEach(async (content, index) => {
     const pid = `${materialId}_${index}`
 
@@ -75,15 +106,25 @@ export async function addVocabs(req: any, res: any) {
     })
 
     try {
-      return await createVocabs({
+      await createVocabs({
         vocabParams: mappedVocabs,
         materialId
       })
+      done++
     } catch (error) {
       console.error(error)
       return []
     } finally {
       console.timeEnd(pid)
+    }
+  })
+
+  await prisma.material.update({
+    where: {
+      id: materialId
+    },
+    data: {
+      vocabGenDoneSetCount: done,
     }
   })
 

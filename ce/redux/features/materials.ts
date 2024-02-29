@@ -424,22 +424,25 @@ export const fetchSummaries = createAsyncThunk<Material[], void>(
   'materials/fetchSummaries',
   async ({ materialId, levels }: FetchSummariesParams, { rejectWithValue }) => {
     try {
-      const response = await axios(`${ROOT_URL}/api/summary`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        data: JSON.stringify({
+      const response = await sendToBackground({
+        name: "api/material/fetchSummaries",
+        body: {
           materialId,
           levels
-        })
-      }); // Replace with your API endpoint
+        }
+      })
+
+      if (response.error) {
+        return rejectWithValue(response.error)
+      }
 
       const data = response.data;
 
       if (!data) {
         return rejectWithValue('Failed to fetch materials')
       }
+
+      console.log({ data })
 
       return { summaries: data.summaries, materialId };
     } catch (error) {
