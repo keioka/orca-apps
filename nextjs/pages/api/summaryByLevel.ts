@@ -2,6 +2,7 @@ import axios from "axios";
 import OpenAI from 'openai';
 import { NextResponse } from 'next/server'
 import { getMaterialById } from '@/models/material';
+import prisma from "@/db";
 
 export const config = {
   // runtime: 'edge', //This specifies the runtime environment that the middleware function will be executed in.
@@ -134,12 +135,21 @@ export default async function handler(req, res) {
   try {
     const { summaries } = await getSummary({ url, levels });
 
+    await prisma.summary.createMany({
+      data: summaries.map(summary => {
+        return {
+          level: summary.level,
+          content: summary.summary,
+          materialId: materialId
+        }
+      }
+      )
+    });
     // return resJSON(200, { summaries });
     return res.status(200).json({ summaries });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: error.message });
-    // return resJSON(500, { message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
 

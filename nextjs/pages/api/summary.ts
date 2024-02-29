@@ -41,7 +41,7 @@ async function getSummaryForLevel({ url, levels }: GetSummaryParams) {
         [Text from: ${url}]
 
         Provide a summary of the text from the provided URL for the levels: ${levels.join(', ')}.
-        Make sure each summary is at least 250 words long, different from the others, and uses different levels of vocabularies.
+        Make sure each summary should be 100 words long, different from the others, and uses different levels of vocabularies.
         -----
         ${descriptionsForLevels}
         `
@@ -84,15 +84,31 @@ async function getSummaryForLevel({ url, levels }: GetSummaryParams) {
   }
 }
 
-async function createSummary(params: GetSummaryParams) {
-  // Split the flat levels array into groups of two
-  const groupedLevels = [];
-  for (let i = 0; i < params.levels.length; i += 2) {
-    groupedLevels.push(params.levels.slice(i, i + 2));
-  }
+// async function createSummary(params: GetSummaryParams) {
+//   // Split the flat levels array into groups of two
+//   const groupedLevels = [];
+//   for (let i = 0; i < params.levels.length; i += 2) {
+//     groupedLevels.push(params.levels.slice(i, i + 2));
+//   }
 
-  const summaries = await Promise.all(groupedLevels.map(async (levelGroup) => {
-    const summaries = await getSummaryForLevel({ url: params.url, levels: levelGroup })
+//   const summaries = await Promise.all(groupedLevels.map(async (levelGroup) => {
+//     const summaries = await getSummaryForLevel({ url: params.url, levels: levelGroup })
+//     for (const summary of summaries.summaries) {
+//       return await SummaryModel.createSummary({
+//         materialId: params.materialId,
+//         level: summary.level,
+//         content: summary.summary
+//       })
+//     }
+//   }))
+
+//   return summaries
+// }
+
+
+async function createSummary(params: GetSummaryParams) {
+  const summaries = await Promise.all(params.levels.map(async (level) => {
+    const summaries = await getSummaryForLevel({ url: params.url, levels: [level] })
     for (const summary of summaries.summaries) {
       return await SummaryModel.createSummary({
         materialId: params.materialId,
@@ -102,8 +118,11 @@ async function createSummary(params: GetSummaryParams) {
     }
   }))
 
+  console.log("summaries", summaries)
+
   return summaries
 }
+
 
 
 export default async function handler(req, res) {
@@ -127,8 +146,9 @@ export default async function handler(req, res) {
 
   const material = await getMaterialById(materialId)
 
-  let findAll = true
-  let missingSummariesByLevel = []
+  if (!material) {
+    return res.status(404).json({ message: 'Material not found' });
+  }
   const summaries = []
 
   for (const level of levels) {
@@ -136,18 +156,15 @@ export default async function handler(req, res) {
       materialId: materialId,
       level: level
     })
-    if (!summary) {
-      findAll = false
-      missingSummariesByLevel.push(level)
-    } else {
+    if (summary) {
       summaries.push(summary)
     }
   }
 
-
-  if (!material) {
-    return res.status(404).json({ message: 'Material not found' });
+  if (summaries.length === levels.length) {
+    return res.status(200).json({ summaries });
   }
+
   const urlToUse = material.url
 
   if (!urlToUse) {

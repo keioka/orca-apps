@@ -22,7 +22,7 @@ import { sendToBackground } from "@plasmohq/messaging"
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchLesson } from '../redux/features/lessons';
 import { fetchMessages, addUserMessage, createAIMessage } from "~redux/features/messages";
-import { fetchCurrentOpenedMaterial, createVocabs, fetchVocabs } from "~redux/features/materials";
+import { fetchCurrentOpenedMaterial, createVocabs, fetchVocabs, fetchSummaries } from "~redux/features/materials";
 import { fetchSavedVocab, fetchSavedParaphrases, saveVocab } from "~redux/features/note";
 import { clearState, removeAll } from "../redux/store";
 import { Opener } from "./Opener";
@@ -38,8 +38,6 @@ import { FormSubscription } from "./FormSubscription";
 import { fetchCurrentUser, setSession, login, signup } from "~/redux/features/auth";
 import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleResponses } from "~/redux/features/lessons";
 import { ButtonGoogleAuth } from "./ButtonGoogleAuth";
-import { set } from "lodash";
-import { vocab } from "~helpers/dummy";
 
 const drawerWidth = 380
 
@@ -123,7 +121,18 @@ interface Summary {
   summary: string,
 }
 
-const levels = ["K5", "5Y", "A1", "A2", "B1", "B2", "C1", "C2"];
+const levels = ["5Y", "K5", "A1", "A2", "B1", "B2", "C1", "C2"];
+
+const description = {
+  "5Y": "5 years old: knows only 250 basic words.",
+  "K5": "Kindergarten: TOEIC < 220, TOEFL iBT < 42, IELTS < 4.0",
+  "A1": "Beginner: TOEIC < 220, TOEFL iBT < 42, IELTS < 4.0",
+  "A2": "Elementary: TOEIC 220 - 545, TOEFL iBT 42 - 71, IELTS 4.0",
+  "B1": "Intermediate: TOEIC 546 - 780, TOEFL iBT 42 - 71, IELTS 4.0 - 5.0",
+  "B2": "Upper Intermediate: TOEIC 780 - 940, TOEFL iBT 72 - 94, IELTS 5.5 - 6.5",
+  "C1": "Advanced: TOEIC 941 - 990, TOEFL iBT 95 - 120, IELTS 7.0 - 8.0",
+  "C2": "Proficient: IELTS 8.5 - 9.0"
+}
 
 export function Inject() {
   const urlPath = `${window.location.origin}${window.location.pathname}`
@@ -133,9 +142,6 @@ export function Inject() {
   const [open, setOpen] = useState(false)
   const [isAutoPlay, setIsAutoPlay] = useState(false)
   const [mode, setMode] = useState(Mode.Talk)
-  const [isLoadingVocabs, setIsLoadingVocabs] = useState(false)
-  const [summaries, setSummaries] = useState<Summary[]>([])
-  const [isLoadingSummaries, setIsLoadingSummaries] = useState(false)
 
   const [originalWidth, setOriginalWidth] = useState(0)
   const [error, setError] = useState(null)
@@ -151,13 +157,16 @@ export function Inject() {
   const currentOpenedMaterial = useAppSelector(state => { return state.materials.currentOpenedMaterial })
   const currentLesson = useAppSelector((state) => state.lesson.lessons.find((lesson) => lesson.materialId === currentOpenedMaterial?.id))
   const messages = useAppSelector((state) => currentLesson ? state.message.messageMap[currentLesson.id] || [] : [])
+  const vocabs = useAppSelector(state => currentOpenedMaterial ? state.materials.vocabs[currentOpenedMaterial.id] || [] : [])
+  const summaries = useAppSelector(state => currentOpenedMaterial ? state.materials.summaries[currentOpenedMaterial.id] || [] : [])
+
   const isCreatingMessage = useAppSelector((state) => state.message.isCreatingMessage)
   const isFetchingVocabs = useAppSelector((state) => state.materials.isFetchingVocabs)
+  const isFetchingSummary = useAppSelector((state) => state.materials.isFetchingSummary)
   const isCreatingVocabs = useAppSelector((state) => state.materials.isCreatingVocabs)
 
   const errorSigninMessage = useAppSelector((state) => state.auth.errorSigninMessage)
   const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage)
-  const vocabs = useAppSelector(state => currentOpenedMaterial ? state.materials.vocabs[currentOpenedMaterial.id] || [] : [])
   const errorCreateAIMessage = useAppSelector(state => state.message.errorCreateAIMessage)
   const errorFetchCurrentOpenedMaterial = useAppSelector(state => state.materials.errorFetchCurrentOpenedMaterial)
 
@@ -166,39 +175,6 @@ export function Inject() {
     dispatch(clearSampleResponses())
     authCheck()
   }, [])
-
-  useEffect(() => {
-    if (summaries.length > 0) {
-      return;
-    }
-
-    async function init() {
-      console.log("init > summaryByLevel")
-      setIsLoadingSummaries(true);
-      try {
-        if (isLoadingSummaries) return
-        const resp = await sendToBackground({
-          name: "summaryByLevel",
-          body: {
-            url,
-            levels: levels
-          },
-        });
-
-        console.log({ resp });
-        if (resp.error) {
-          setError(resp.error);
-        } else {
-          setSummaries(prevSummaries => [...prevSummaries, ...resp.summaries]);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-      setIsLoadingSummaries(false);
-    }
-
-    init(); // Calling the init function inside the useEffect.
-  }, [url]);
 
   // set session from Firebase to Redux State
   useEffect(() => {
@@ -248,6 +224,7 @@ export function Inject() {
     if (!open) return
     if (currentOpenedMaterial && currentOpenedMaterial.id) {
       dispatch(fetchVocabs({ materialId: currentOpenedMaterial.id }))
+      dispatch(fetchSummaries({ materialId: currentOpenedMaterial.id, levels: ["5Y"] }))
     }
   }, [open, currentOpenedMaterial])
 
@@ -303,6 +280,12 @@ export function Inject() {
     dispatch(saveVocab({
       vocabId: vocab.id
     }))
+  }
+
+  function handleSelectLevel(level: string) {
+    if (currentOpenedMaterial) {
+      dispatch(fetchSummaries({ materialId: currentOpenedMaterial.id, levels: [level] }))
+    }
   }
 
   function handleSubmitMessage(message: Message) {
@@ -492,20 +475,16 @@ export function Inject() {
                 {mode === Mode.Vocab &&
                   <VocabMode
                     vocabs={vocabs}
-                    setIsLoadingVocabs={setIsLoadingVocabs}
-                    isLoadingVocabs={isLoadingVocabs}
+                    isLoadingVocabs={isFetchingVocabs}
                     setError={setError}
                     onSaveVocab={handleSaveVocab}
                   />
                 }
                 {mode === Mode.Summary &&
                   <SummaryMode
-                    url={url}
                     summaries={summaries}
-                    setSummaries={setSummaries}
-                    setIsLoadingSummaries={setIsLoadingSummaries}
-                    isLoadingSummaries={isLoadingSummaries}
-                    setError={setError}
+                    isLoadingSummaries={isFetchingSummary}
+                    onSelectLevel={handleSelectLevel}
                   />
                 }
               </>
@@ -582,14 +561,6 @@ function VocabMode({
     "all", "A1", "A2", "B1", "B2", "C1", "C2"
   ]
 
-  const description = {
-    "A1": "Beginner: TOEIC < 220, TOEFL iBT < 42, IELTS < 4.0",
-    "A2": "Elementary: TOEIC 220 - 545, TOEFL iBT 42 - 71, IELTS 4.0",
-    "B1": "Intermediate: TOEIC 546 - 780, TOEFL iBT 42 - 71, IELTS 4.0 - 5.0",
-    "B2": "Upper Intermediate: TOEIC 780 - 940, TOEFL iBT 72 - 94, IELTS 5.5 - 6.5",
-    "C1": "Advanced: TOEIC 941 - 990, TOEFL iBT 95 - 120, IELTS 7.0 - 8.0",
-    "C2": "Proficient: IELTS 8.5 - 9.0"
-  }
 
   return (
     <Box mt={2}>
