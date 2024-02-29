@@ -153,6 +153,8 @@ export function Inject() {
   const messages = useAppSelector((state) => currentLesson ? state.message.messageMap[currentLesson.id] || [] : [])
   const isCreatingMessage = useAppSelector((state) => state.message.isCreatingMessage)
   const isFetchingVocabs = useAppSelector((state) => state.materials.isFetchingVocabs)
+  const isCreatingVocabs = useAppSelector((state) => state.materials.isCreatingVocabs)
+
   const errorSigninMessage = useAppSelector((state) => state.auth.errorSigninMessage)
   const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage)
   const vocabs = useAppSelector(state => currentOpenedMaterial ? state.materials.vocabs[currentOpenedMaterial.id] || [] : [])
@@ -171,8 +173,10 @@ export function Inject() {
     }
 
     async function init() {
+      console.log("init > summaryByLevel")
       setIsLoadingSummaries(true);
       try {
+        if (isLoadingSummaries) return
         const resp = await sendToBackground({
           name: "summaryByLevel",
           body: {
@@ -185,13 +189,12 @@ export function Inject() {
         if (resp.error) {
           setError(resp.error);
         } else {
-          setIsLoadingSummaries(false);
           setSummaries(prevSummaries => [...prevSummaries, ...resp.summaries]);
         }
       } catch (e) {
         console.error(e);
       }
-
+      setIsLoadingSummaries(false);
     }
 
     init(); // Calling the init function inside the useEffect.
@@ -228,7 +231,7 @@ export function Inject() {
 
   useEffect(() => {
     if (!open) return
-    if (currentOpenedMaterial && session) {
+    if (currentOpenedMaterial && currentOpenedMaterial.id && session) {
       dispatch(fetchOrCreateLessonByMaterialId(currentOpenedMaterial.id))
     }
   }, [open, currentOpenedMaterial, session, currentUser])
@@ -243,14 +246,14 @@ export function Inject() {
 
   useEffect(() => {
     if (!open) return
-    if (currentOpenedMaterial) {
+    if (currentOpenedMaterial && currentOpenedMaterial.id) {
       dispatch(fetchVocabs({ materialId: currentOpenedMaterial.id }))
     }
   }, [open, currentOpenedMaterial])
 
   useEffect(() => {
     if (!open) return
-    if (currentOpenedMaterial && !isFetchingVocabs && vocabs.length === 0) {
+    if (currentOpenedMaterial && currentOpenedMaterial.id && !isCreatingVocabs && !isFetchingVocabs && vocabs.length === 0) {
       dispatch(createVocabs({ materialId: currentOpenedMaterial.id }))
     }
   }, [open, currentOpenedMaterial, isFetchingVocabs])
@@ -521,7 +524,6 @@ type Level = "all" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2"
 function VocabMode({
   vocabs,
   onSaveVocab,
-  currentOpenedMaterial,
 }) {
   const dispatch = useAppDispatch()
   const materialId = useAppSelector(state => state.materials.currentOpenedMaterial?.id)
@@ -540,8 +542,11 @@ function VocabMode({
   }, [vocabs, levelsFilter])
 
   useEffect(() => {
-    if (!currentOpenedMaterial) return
     if (vocabs.length > 0) {
+      return
+    }
+
+    if (!materialId) {
       return
     }
 
@@ -584,10 +589,6 @@ function VocabMode({
     "B2": "Upper Intermediate: TOEIC 780 - 940, TOEFL iBT 72 - 94, IELTS 5.5 - 6.5",
     "C1": "Advanced: TOEIC 941 - 990, TOEFL iBT 95 - 120, IELTS 7.0 - 8.0",
     "C2": "Proficient: IELTS 8.5 - 9.0"
-  }
-
-  if (!currentOpenedMaterial) {
-    return
   }
 
   return (

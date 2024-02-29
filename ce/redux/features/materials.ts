@@ -22,6 +22,7 @@ interface MaterialsState {
   originalItems: Material[];
   currentOpenedMaterial: Material | null;
   isInitMaterials: boolean;
+  isCreatingVocabs: boolean;
   isFetchingMaterials: boolean;
   isFetchingSummary: boolean;
   isFetchingVocabs: boolean;
@@ -44,6 +45,7 @@ const initialState: MaterialsState = {
   vocabs: {},
   summaries: {},
   isInitMaterials: false,
+  isCreatingVocabs: false,
   isFetchingMaterials: false,
   isFetchingSummary: false,
   isFetchingVocabs: false,
@@ -129,6 +131,15 @@ const materialsSlice = createSlice({
         state.error = null;
         state.items.push(...state.searchResult)
         state.searchResult = action.payload || [];
+      })
+      .addCase(createVocabs.pending, (state) => {
+        state.isCreatingVocabs = true;
+      })
+      .addCase(createVocabs.fulfilled, (state) => {
+        state.isCreatingVocabs = true;
+      })
+      .addCase(createVocabs.rejected, (state) => {
+        state.isCreatingVocabs = true;
       })
       .addCase(fetchOriginalMaterials.pending, (state) => {
         state.isFetchingMaterials = false;

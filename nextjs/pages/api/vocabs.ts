@@ -32,7 +32,7 @@ export default async function handler(
 
   try {
     // const info = await createVocabsFromUrl({ materialId, url, transLangCode });
-    return res.status(200).json({ status: "IN_PROGRESS", event });
+    return res.status(200).json({ status: "IN_PROGRESS" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: error.message });
