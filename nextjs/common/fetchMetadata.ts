@@ -25,6 +25,11 @@ export async function fetchMetadata(url: string): Promise<Metadata | null> {
     const jsonld = data.jsonld
     const publisher = jsonld?.publisher
     const date = jsonld.datePublished
+    let publisherImage = publisher?.logo as string || data.image as string
+
+    if (publisherImage && typeof publisherImage !== 'string') {
+      publisherImage = new URL(url).host
+    }
 
     const sitedata = {
       title: data.title as string || data['og:title'] as string,
@@ -42,7 +47,8 @@ export async function fetchMetadata(url: string): Promise<Metadata | null> {
         externalId: publisher?.name as string || data.url as string,
         name: publisher?.name as string || data.url as string,
         url: publisher?.url as string || data.url as string,
-        imageUrl: publisher?.logo as string || data.image as string,
+        domain: new URL(url).host,
+        imageUrl: publisherImage
       }
     }
 

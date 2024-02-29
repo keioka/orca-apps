@@ -242,5 +242,9 @@
   "subscription_feature_gmCheck": {
     "message": "文法チェック",
     "description": "Subscription form price."
+  },
+  "error_failed_to_fetch_material": {
+    "message": "英文記事の取得に失敗しました。別記事でお試しください。",
+    "description": "Error message when failed to fetch material."
   }
 }

@@ -186,5 +186,9 @@
   "subscription_form_title": {
     "message": "Subscribe to Orca",
     "description": "Subscription form title."
+  },
+  "error_failed_to_fetch_material": {
+    "message": "Failed to fetch material",
+    "description": "Error message when failed to fetch material."
   }
 }
