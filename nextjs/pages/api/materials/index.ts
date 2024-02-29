@@ -117,7 +117,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const cleanURL = new URL(url)
       const material = await getMaterialByUrl(cleanURL.href as string)
       if (material) {
-        return res.status(200).json(material);
+        return res.status(201).json(material);
       }
 
       const metadata = await fetchMetadata(url as string)

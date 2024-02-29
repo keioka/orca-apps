@@ -156,7 +156,8 @@ export function Inject() {
   const errorSigninMessage = useAppSelector((state) => state.auth.errorSigninMessage)
   const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage)
   const vocabs = useAppSelector(state => currentOpenedMaterial ? state.materials.vocabs[currentOpenedMaterial.id] || [] : [])
-
+  const errorCreateAIMessage = useAppSelector(state => state.message.errorCreateAIMessage)
+  const errorFetchCurrentOpenedMaterial = useAppSelector(state => state.materials.errorFetchCurrentOpenedMaterial)
 
   useEffect(() => {
     dispatch({ type: "global/RESET_STATE" });
@@ -234,6 +235,7 @@ export function Inject() {
 
   useEffect(() => {
     if (!open) return
+    if (errorCreateAIMessage) return
     if (!isCreatingMessage && currentLesson && !currentLesson.initMessage && messages.length === 0) {
       dispatch(createAIMessage({ message: "Ask me a question about the news.", lessonId: currentLesson.id }))
     }
@@ -355,6 +357,7 @@ export function Inject() {
         cursor: "pointer",
       }}
     >
+
       {open &&
         <Drawer
           variant="persistent"
@@ -379,6 +382,18 @@ export function Inject() {
             }}
           >
             <Header setOpen={setOpen} onLogin={onLoginBackground} handleToggleDisable={handleToggleDisable} uiDisabled={uiDisabled} />
+
+            {errorCreateAIMessage && (
+              <Alert
+                color="error"
+                severity="error"
+                sx={{ position: "relative" }}
+              >
+                {errorCreateAIMessage}
+              </Alert>
+            )}
+            {errorFetchCurrentOpenedMaterial && <Alert color="error" severity="error">{chrome.i18n.getMessage("error_failed_to_fetch_material")}</Alert>}
+
             {
               shouldShowSubscriptionForm && (
                 <Box
@@ -505,11 +520,8 @@ type Level = "all" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2"
 
 function VocabMode({
   vocabs,
-  setVocabs,
-  setIsLoadingVocabs,
-  isLoadingVocabs,
-  setError,
-  onSaveVocab
+  onSaveVocab,
+  currentOpenedMaterial,
 }) {
   const dispatch = useAppDispatch()
   const materialId = useAppSelector(state => state.materials.currentOpenedMaterial?.id)
@@ -528,6 +540,7 @@ function VocabMode({
   }, [vocabs, levelsFilter])
 
   useEffect(() => {
+    if (!currentOpenedMaterial) return
     if (vocabs.length > 0) {
       return
     }
@@ -571,6 +584,10 @@ function VocabMode({
     "B2": "Upper Intermediate: TOEIC 780 - 940, TOEFL iBT 72 - 94, IELTS 5.5 - 6.5",
     "C1": "Advanced: TOEIC 941 - 990, TOEFL iBT 95 - 120, IELTS 7.0 - 8.0",
     "C2": "Proficient: IELTS 8.5 - 9.0"
+  }
+
+  if (!currentOpenedMaterial) {
+    return
   }
 
   return (

@@ -33,13 +33,15 @@ export async function fetchAndParseWebsite(url: string): Promise<SiteData | null
     let topics = nlp(description).topics().out('array')
     keywords.push(...topics)
 
+    const imageUrl = data.image || data['og:image']
+
     const sitedata = {
       ...data,
       domain: parsedUrl.hostname,
       title: data.title || data['og:title'],
       description: description,
       keywords: keywords,
-      imageUrl: data.image || data['og:image'],
+      imageUrl: imageUrl,
       url: data.url || data['og:url'],
       publisherName: data['og:site_name'],
       locale: data['og:locale'],

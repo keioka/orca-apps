@@ -43,9 +43,21 @@ interface MessageState {
   isSendingWhisper: boolean;
   messageInputSpeech: string | null;
   error: string | null;
+  errorCreateAIMessage: string | null;
 }
 
-const initialState: MessageState = { messageMap: {}, paraphraseMap: {}, translationMap: {}, isFetchingTranslation: false, isCreatingMessage: false, error: null, creatingMessage: false, addingMessage: false, messageInputSpeech: null };
+const initialState: MessageState = {
+  messageMap: {},
+  paraphraseMap: {},
+  translationMap: {},
+  isFetchingTranslation: false,
+  isCreatingMessage: false,
+  error: null,
+  creatingMessage: false,
+  addingMessage: false,
+  messageInputSpeech: null,
+  errorCreateAIMessage: null
+};
 
 
 export const fetchMessages = createAsyncThunk(`${NAME}/fetch`, async (lessonId: string, { getState, rejectWithValue, dispatch }) => {
@@ -93,10 +105,10 @@ export const createAIMessage = createAsyncThunk(`${NAME}/create`, async ({
       }
     })
 
+    console.log({ response })
     if (response.error) {
       return rejectWithValue(response.error)
     }
-
 
     const aiMessage = response.data
     return { message: aiMessage, lessonId };
@@ -295,15 +307,17 @@ const messageSlice = createSlice({
       })
       .addCase(createAIMessage.pending, (state) => {
         state.isCreatingMessage = true;
+        state.errorCreateAIMessage = null;
       })
       .addCase(createAIMessage.fulfilled, (state, action: PayloadAction<{ lessonId: string; message: Message }>) => {
         const { lessonId, message } = action.payload;
         state.messageMap[lessonId] = [...(state.messageMap[lessonId] || []), message];
         state.isCreatingMessage = false;
+        state.errorCreateAIMessage = null;
       })
       .addCase(createAIMessage.rejected, (state, action) => {
         state.isCreatingMessage = false;
-        state.error = action.error.message || 'Failed to create AI message';
+        state.errorCreateAIMessage = 'Failed to create AI message';
       })
       .addCase(addUserMessage.pending, (state) => {
         state.addingMessage = true;
@@ -368,6 +382,7 @@ const messageSlice = createSlice({
           state.isSendingWhisper = false
           state.messageInputSpeech = null
           state.error = null
+          state.errorCreateAIMessage = null
         })
   },
 });

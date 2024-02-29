@@ -26,6 +26,7 @@ interface MaterialsState {
   isFetchingSummary: boolean;
   isFetchingVocabs: boolean;
   error: string | null;
+  errorFetchCurrentOpenedMaterial: string | null;
   vocabs: { [key: string]: string[] }
   summaries: { [key: string]: string[] }
 }
@@ -47,6 +48,7 @@ const initialState: MaterialsState = {
   isFetchingSummary: false,
   isFetchingVocabs: false,
   error: null,
+  errorFetchCurrentOpenedMaterial: null,
 };
 
 const ROOT_URL = process.env.PLASMO_PUBLIC_API_ROOT
@@ -143,15 +145,16 @@ const materialsSlice = createSlice({
       })
       .addCase(fetchCurrentOpenedMaterial.pending, (state, action) => {
         state.isFetchingMaterial = false;
-        state.error = action.payload as string;
+        state.errorFetchCurrentOpenedMaterial = null;
       })
       .addCase(fetchCurrentOpenedMaterial.fulfilled, (state, action) => {
         state.isFetchingMaterial = false;
         state.currentOpenedMaterial = action.payload || null;
+        state.errorFetchCurrentOpenedMaterial = null;
       })
       .addCase(fetchCurrentOpenedMaterial.rejected, (state, action) => {
         state.isFetchingMaterial = false;
-        state.error = action.payload as string;
+        state.errorFetchCurrentOpenedMaterial = action.payload.message as string;
       })
       .addMatcher(
         (action) => action.type === "global/RESET_STATE",
@@ -164,6 +167,7 @@ const materialsSlice = createSlice({
           state.isFetchingSummary = false
           state.isFetchingVocabs = false
           state.error = null
+          state.errorFetchCurrentOpenedMaterial = null
           state.vocabs = {}
           state.summaries = {}
         })
@@ -273,6 +277,8 @@ export const fetchCurrentOpenedMaterial = createAsyncThunk<Material[], void>(
           url
         }
       })
+
+      console.log({ response })
 
 
       if (response.error) {
