@@ -66,13 +66,12 @@ export const convertCategory = {
   "general": "world_news",
 }
 
-
-
 export async function syncArticleByExternalId(entryId: string) {
   const entry = await getEntry(entryId)
 
   let publisher = await Publisher.getPublisherById(process.env.ORCA_PUBLISHER_ID)
 
+  console.log("<<<<<<<<<<<<< publishe >>>>>>>>>>>>>>>", publisher)
   if (!publisher) {
     const publishers = await Publisher.fetchAllPublishers()
     publisher = publishers.find((publisher) => publisher.name === "Orca News")

@@ -16,7 +16,6 @@ import { sendToBackground } from "@plasmohq/messaging"
 import { urlPath } from "~helpers/path";
 import { useAppDispatch, useAppSelector } from '~/redux/hooks';
 import { fetchSampleResponses } from '~/redux/features/lessons'
-import mixpanel from "mixpanel-browser"
 
 export function ChatModeProto({ isAutoPlay, isCreatingMessage, handleSubmitMessage, messages, currentLesson }) {
   const [message, setMessage] = useState(null)
@@ -47,9 +46,6 @@ export function ChatModeProto({ isAutoPlay, isCreatingMessage, handleSubmitMessa
   };
 
   const handleFetchSamples = () => {
-    mixpanel.track("ACT:FetchSampleResponses", {
-      lessonId: currentLesson.id
-    })
     if (currentLesson) {
       dispatch(fetchSampleResponses(currentLesson.id))
     }

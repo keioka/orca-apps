@@ -20,9 +20,11 @@ import { IoPlayCircle, IoCloseCircle, IoMicOutline } from "react-icons/io5";
 import { useFirebase } from "../firebase/hooks"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { fetchLesson } from '../redux/features/lessons';
 import { fetchMessages, addUserMessage, createAIMessage } from "~redux/features/messages";
 import { fetchCurrentOpenedMaterial, createVocabs, fetchVocabs, fetchSummaries } from "~redux/features/materials";
 import { fetchSavedVocab, fetchSavedParaphrases, saveVocab } from "~redux/features/note";
+import { clearState, removeAll } from "../redux/store";
 import { Opener } from "./Opener";
 import { ChatModeProto } from "./ChatModeProto";
 import { RiSpeakLine } from "react-icons/ri";
@@ -36,7 +38,6 @@ import { FormSubscription } from "./FormSubscription";
 import { fetchCurrentUser, setSession, login, signup } from "~/redux/features/auth";
 import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleResponses } from "~/redux/features/lessons";
 import { ButtonGoogleAuth } from "./ButtonGoogleAuth";
-import mixpanel from "mixpanel-browser";
 
 const drawerWidth = 380
 
@@ -258,27 +259,14 @@ export function Inject() {
   }, [messages])
 
   async function handleSignup() {
-    mixpanel.track("ACT:signup")
     const userCred = await onLoginBackground()
     dispatch(signup({ accessToken: userCred.accessToken, uid: userCred.uid }))
   }
 
   async function handleSignin() {
-    mixpanel.track("ACT:signin")
     const userCred = await onLoginBackground()
     dispatch(login({ accessToken: userCred.accessToken, uid: userCred.uid }))
   }
-
-  function handleOpen(shouldOpen: boolean) {
-    mixpanel.track("ACT:openExtension")
-    setOpen(shouldOpen)
-  }
-
-  function handleHideExtension(shouldHide: boolean) {
-    mixpanel.track("ACT:hideExtension")
-    setHideExtention(shouldHide)
-  }
-
 
   function handleToggleDisable() {
     dispatch(toggleDisable())
@@ -289,7 +277,6 @@ export function Inject() {
   }
 
   function handleSaveVocab(vocab: VocabularyItem) {
-    mixpanel.track("ACT:saveVocab")
     dispatch(saveVocab({
       vocabId: vocab.id
     }))
@@ -302,7 +289,6 @@ export function Inject() {
   }
 
   function handleSubmitMessage(message: Message) {
-    mixpanel.track("ACT:submitMessage")
     if (currentLesson) {
       dispatch(
         addUserMessage({
@@ -319,24 +305,6 @@ export function Inject() {
     }
   }
 
-  function handleSetMode(mode: Mode) {
-    let modeName
-
-    switch (mode) {
-      case Mode.Talk:
-        modeName = "Chat"
-        break
-      case Mode.Vocab:
-        modeName = "Vocab"
-        break
-      case Mode.Summary:
-        modeName = "Summary"
-        break
-    }
-
-    mixpanel.track(`NAV:Mode${modeName}`)
-    setMode(mode)
-  }
 
 
   useEffect(() => {
@@ -473,7 +441,7 @@ export function Inject() {
             {!isLoading && currentUser && (
               <>
                 <Box mt={2}>
-                  <Tabs onClickButton={handleSetMode} selectedMode={mode} />
+                  <Tabs onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
                 </Box>
 
                 {mode === Mode.Talk && (
@@ -525,7 +493,7 @@ export function Inject() {
         </Drawer>
       }
 
-      <Opener setOpen={handleOpen} setHideExtention={handleHideExtension} />
+      <Opener setOpen={setOpen} setHideExtention={setHideExtention} />
     </Box >
   )
 }
@@ -728,7 +696,6 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
           <Box sx={{ paddingY: 1, borderTop: "1px solid #f4f4f4" }}>
             <Typography
               onClick={() => {
-                mixpanel.track("NAV:openNote")
                 sendToBackground({ name: "openNote" })
                 handleMenuClose()
               }}

@@ -11,6 +11,9 @@ import { persistor, store } from '~/redux/store';
 import { getTheme } from "~/theme";
 import type {
   PlasmoCSConfig,
+  PlasmoCSUIJSXContainer,
+  PlasmoCSUIProps,
+  PlasmoRender
 } from "plasmo"
 import { createRoot } from "react-dom/client"
 import { ErrorBoundary } from "react-error-boundary";
@@ -19,7 +22,7 @@ import { useAppDispatch } from "~redux/hooks";
 import mixpanel from "mixpanel-browser";
 import LogRocket from 'logrocket'
 import setupLogRocketReact from 'logrocket-react';
-import { H } from 'highlight.run';
+import "https://cdn.logr-ingest.com/logger-1.min.js"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -45,10 +48,9 @@ function Root() {
   const theme = getTheme(langCode)
 
   useEffect(() => {
-    // let logrocketId = process.env.PLASMO_PUBLIC_APP_ENV === "production" ? 'taiheyyo/orca-chrome-prod' : 'taiheyyo/orca-chrome-dev'
-    // LogRocket.init(logrocketId);
-    // setupLogRocketReact(LogRocket);
-    mixpanel.init(process.env.PLASMO_PUBLIC_MIXPANEL_TOKEN, { track_pageview: true });
+    let logrocketId = process.env.PLASMO_PUBLIC_APP_ENV === "production" ? 'taiheyyo/orca-chrome-prod' : 'taiheyyo/orca-chrome-dev'
+    LogRocket.init(logrocketId);
+    setupLogRocketReact(LogRocket);
   }, [])
 
   return (
