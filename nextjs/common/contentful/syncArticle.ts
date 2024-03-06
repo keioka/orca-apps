@@ -117,7 +117,11 @@ export async function syncArticleByExternalId(entryId: string) {
       type: "article",
       slug: result.slug,
       publisher: {
-        id: process.env.ORCA_PUBLISHER_ID
+        id: process.env.ORCA_PUBLISHER_ID,
+        name: publisher.name,
+        domain: publisher.domain,
+        contentType: publisher.contentType,
+        publisherType: publisher.publisherType,
       }
     })
     const p1Vocab = Array.isArray(entry.fields.p1Vocab) ? entry.fields.p1Vocab : []
