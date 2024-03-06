@@ -7,7 +7,6 @@ import {
 } from "@mui/material"
 import { IoMicOutline, IoSquare } from "react-icons/io5";
 import { useTheme } from '@mui/material/styles';
-import mixpanel from "mixpanel-browser";
 
 export function InputChat({
   onSubmit,
@@ -29,7 +28,6 @@ export function InputChat({
   }
 
   function handleStart() {
-    mixpanel.track("ACT:StartSpeeching")
     setIsSpeeching(true)
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -49,7 +47,6 @@ export function InputChat({
   }
 
   function handleStop() {
-    mixpanel.track("ACT:StopSpeeching")
     if (micObjectRef.current) {
       micObjectRef.current.stop()
       micObjectRef.current = null;

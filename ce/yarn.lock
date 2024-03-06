@@ -1744,11 +1744,6 @@
     protobufjs "^7.2.4"
     yargs "^17.7.2"
 
-"@highlight-run/react@^3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@highlight-run/react/-/react-3.2.1.tgz#2c92347b5a7427a856e00d7b436435f40acd7ac7"
-  integrity sha512-jjnXsr0T4pXX4D6Etrw081J45ruBrxi2378cVKAqtevgBGu2mQV51/bq14nwi10hrCU/qVr1IhXLHB2y8PY2ug==
-
 "@ianvs/prettier-plugin-sort-imports@4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@ianvs/prettier-plugin-sort-imports/-/prettier-plugin-sort-imports-4.1.0.tgz#7e08cc97d68de2d502659debbe076f6970f64b00"
@@ -8400,11 +8395,6 @@ headers-polyfill@3.2.5:
   version "3.2.5"
   resolved "https://registry.yarnpkg.com/headers-polyfill/-/headers-polyfill-3.2.5.tgz#6e67d392c9d113d37448fe45014e0afdd168faed"
   integrity sha512-tUCGvt191vNSQgttSyJoibR+VO+I6+iCHIUdhzEMJKE+EAL8BwCN7fUOZlY4ofOelNHsK+gEjxB/B+9N3EWtdA==
-
-highlight.run@^8.5.0:
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/highlight.run/-/highlight.run-8.5.0.tgz#72d8c30d75fd8e335c914db82f19ccfe86d4e0d8"
-  integrity sha512-cPcDUDajvvI2xdMEnuMPqHw4cM93kcTAusGhuUZrxOTqLQ834RZgbW6kA8V86/EngC91cZFWVjiPuZwx2haumg==
 
 history@^5.3.0:
   version "5.3.0"
