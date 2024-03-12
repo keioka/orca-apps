@@ -173,6 +173,16 @@ function IndexPopup() {
         >
           {chrome.i18n.getMessage("popup_button_open_note")}
         </Button>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            chrome.tabs.create({
+              url: "./tabs/search.html"
+            })
+          }}
+        >
+          {chrome.i18n.getMessage("popup_button_open_search")}
+        </Button>
         {/* )} */}
 
         {!loadingCurrentUser && currentUser && !loadingCurrentUserSubsc && (

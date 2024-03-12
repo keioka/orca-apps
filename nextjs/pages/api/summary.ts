@@ -118,8 +118,6 @@ async function createSummary(params: GetSummaryParams) {
     }
   }))
 
-  console.log("summaries", summaries)
-
   return summaries
 }
 

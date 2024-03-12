@@ -191,8 +191,6 @@ export function FeedScreen({ navigation }) {
       })
   }, [originalItems, lessons])
 
-  console.log({ originalMaterials })
-
   const selectedMaterials = useMemo(() => {
     if (!materials) return []
     if (selectedCategory === "all") {

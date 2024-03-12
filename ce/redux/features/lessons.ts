@@ -66,7 +66,6 @@ const lessonSlice = createSlice({
     // Define the async thunk to fetch the lesson
     builder.addCase(fetchLesson.fulfilled, (state, action) => {
       const updatedLesson = action.payload;
-      console.log({ a: action.payload })
       const index = state.lessons.findIndex((lesson) => lesson.id === updatedLesson.id);
       if (index !== -1) {
         state.lessons[index] = updatedLesson;
@@ -106,7 +105,6 @@ const lessonSlice = createSlice({
     })
 
     builder.addCase(fetchOrCreateLessonByMaterialId.fulfilled, (state, action) => {
-      console.log({ lesson: action.payload })
       state.lessons = uniqBy([...state.lessons, action.payload], 'id');
       state.loading = false;
       state.error = null;

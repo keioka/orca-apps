@@ -26,6 +26,7 @@ interface MaterialsState {
   error: string | null;
   vocabs: { [key: string]: string[] }
   summaries: { [key: string]: string[] }
+  currentOpenedMaterial: Material | null;
 }
 
 // Define the initial state
@@ -39,6 +40,7 @@ const initialState: MaterialsState = {
   },
   vocabs: {},
   summaries: {},
+  currentOpenedMaterial: null,
   isInitMaterials: false,
   isFetchingMaterials: false,
   isFetchingSummary: false,
@@ -137,6 +139,19 @@ const materialsSlice = createSlice({
         state.isFetchingMaterials = false;
         state.error = action.payload as string;
       })
+      .addCase(fetchOriginalMaterial.pending, (state) => {
+        state.isFetchingMaterials = false;
+        state.error = null;
+      })
+      .addCase(fetchOriginalMaterial.fulfilled, (state, action) => {
+        state.isFetchingMaterials = true;
+        state.error = null;
+        state.currentOpenedMaterial = action.payload;
+      })
+      .addCase(fetchOriginalMaterial.rejected, (state, action) => {
+        state.isFetchingMaterials = false;
+        state.error = action.payload as string;
+      })
       .addMatcher(
         (action) => action.type === "global/RESET_STATE",
         (state) => {
@@ -146,6 +161,7 @@ const materialsSlice = createSlice({
           state.isFetchingMaterials = false
           state.isFetchingSummary = false
           state.isFetchingVocabs = false
+          state.currentOpenedMaterial = null
           state.error = null
           state.vocabs = {}
           state.summaries = {}
@@ -237,6 +253,27 @@ export const fetchOriginalMaterials = createAsyncThunk<Material[], void>(
       }
 
       return data.materials;
+    } catch (error) {
+      console.error(error)
+      return rejectWithValue(error.message)
+    }
+  }
+);
+
+
+export const fetchOriginalMaterial = createAsyncThunk<Material, void>(
+  'materials/fetchOriginalMaterial',
+  async ({ externalId }: { externalId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios(`${ROOT_URL}/api/materials/original/${externalId}`); // Replace with your API endpoint
+
+      const data = response.data;
+
+      if (!data) {
+        return rejectWithValue('Failed to fetch materials')
+      }
+
+      return data;
     } catch (error) {
       console.error(error)
       return rejectWithValue(error.message)

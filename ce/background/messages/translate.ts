@@ -18,7 +18,7 @@ async function translate({ text, lang = 'ja' }: { text: string, lang: string }):
     const data = await result.json();
 
     if (!result.ok) {
-      console.log({ data })
+      console.error({ data })
       console.error("Error fetching translate");
     }
 

@@ -11,6 +11,7 @@ import { sendToBackground } from "@plasmohq/messaging"
 
 export const useFirebase = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(false)
   const [user, setUser] = useState(null)
   const [session, setSession] = useState<{
     accessToken: string,
@@ -24,11 +25,10 @@ export const useFirebase = () => {
       name: "logout",
     })
 
-    console.log({ success })
   }
 
   const authCheck = async () => {
-    setIsLoading(true)
+    setIsCheckingAuth(true)
     console.log("authCheck")
     try {
       const { token } = await sendToBackground({
@@ -37,20 +37,19 @@ export const useFirebase = () => {
 
       if (!token) {
         console.warn("No token found")
-        return
+        throw new Error("No token found")
       }
 
       const credential = GoogleAuthProvider.credential(null, token)
       await signInWithCredential(auth, credential)
-      setIsLoading(false)
+      setIsCheckingAuth(false)
     } catch (e) {
       console.error("Could not log in. ", e)
-      setIsLoading(false)
+      setIsCheckingAuth(false)
     }
   }
 
   const onLoginBackground = async () => {
-    console.log({ isLoading, user })
     if (isLoading) return
     // if (user) return
 
@@ -115,7 +114,6 @@ export const useFirebase = () => {
     setIsLoading(true)
 
     onAuthStateChanged(auth, async (user) => {
-      console.log("onAuthStateChanged >>>", user)
       // await setPersistence(auth, browserLocalPersistence)
 
       if (!user) {
@@ -135,6 +133,7 @@ export const useFirebase = () => {
 
   return {
     isLoading,
+    isCheckingAuth,
     user,
     session,
     authCheck,

@@ -101,7 +101,6 @@ const materialsSlice = createSlice({
           state.vocabs[materialId] = []
         }
 
-        console.log({ vocabs })
         state.vocabs[materialId] = uniqBy([...vocabs, ...state.vocabs[materialId]], 'id')
         state.isFetchingVocabs = false
       })
@@ -136,10 +135,10 @@ const materialsSlice = createSlice({
         state.isCreatingVocabs = true;
       })
       .addCase(createVocabs.fulfilled, (state) => {
-        state.isCreatingVocabs = true;
+        state.isCreatingVocabs = false;
       })
       .addCase(createVocabs.rejected, (state) => {
-        state.isCreatingVocabs = true;
+        state.isCreatingVocabs = false;
       })
       .addCase(fetchOriginalMaterials.pending, (state) => {
         state.isFetchingMaterials = false;
@@ -289,17 +288,12 @@ export const fetchCurrentOpenedMaterial = createAsyncThunk<Material[], void>(
         }
       })
 
-      console.log({ response })
-
-
       if (response.error) {
         console.error(response)
         return rejectWithValue(response.error)
       }
 
       const data = response.data;
-
-      console.log({ data })
 
       return data.material;
     } catch (error) {
@@ -442,8 +436,6 @@ export const fetchSummaries = createAsyncThunk<Material[], void>(
         return rejectWithValue('Failed to fetch materials')
       }
 
-      console.log({ data })
-
       return { summaries: data.summaries, materialId };
     } catch (error) {
       console.error(error)
@@ -472,7 +464,7 @@ async function getSummariesByLevel(params: { url: string, levels: string[] }) {
   const result = await response.json()
 
   if (!response.ok) {
-    console.log({ result })
+    console.error({ result })
     console.error("Error fetching Vocab");
     throw new Error("Error fetching Vocab");
   }

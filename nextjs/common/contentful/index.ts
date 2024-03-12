@@ -115,6 +115,88 @@ export function formatEntries(entries: any[]) {
   })
 }
 
+
+
+export function formatContentfulEntryWithLocale(entry: Entry): {
+  id: string;
+  url: string;
+  title: string;
+  slug: string;
+  category: string;
+  publishedAt: Date;
+  imageUrl: string | null;
+} {
+  const cleanedArticle = getEnUS(entry)
+  const jaArticle = getJaJp(entry)
+  const file = cleanedArticle.fields.heroImage && cleanedArticle.fields.heroImage.fields ? cleanedArticle.fields.heroImage.fields.file : null
+  const imageUrl = file ? file.url : null
+  return {
+    id: cleanedArticle.sys.id,
+    title: cleanedArticle.fields.title,
+    titleJa: jaArticle.fields.title,
+    slug: cleanedArticle.fields.slug,
+    description: cleanedArticle.fields.description,
+    content: cleanedArticle.fields.content,
+    publishedDate: cleanedArticle.fields.publishedDate,
+    imageUrl: imageUrl ? "https:" + imageUrl : null,
+    p1: cleanedArticle.fields.p1,
+    p1Ja: jaArticle.fields.p1,
+    p1VocabCount: cleanedArticle.fields.p1Vocab,
+    p1AudioLink: cleanedArticle.fields.p1AudioLink,
+
+    p2: cleanedArticle.fields.p2,
+    p2Ja: jaArticle.fields.p2,
+    p2VocabCount: cleanedArticle.fields.p2Vocab,
+    p2AudioLink: cleanedArticle.fields.p2AudioLink,
+
+    p3: cleanedArticle.fields.p3,
+    p3Ja: jaArticle.fields.p3,
+    p3VoabCount: cleanedArticle.fields.p3Vocab,
+    p3AudioLink: cleanedArticle.fields.p3AudioLink,
+
+    p4: cleanedArticle.fields.p4,
+    p4Ja: jaArticle.fields.p4,
+    p4VoabCount: cleanedArticle.fields.p4Vocab,
+    p4AudioLink: cleanedArticle.fields.p4AudioLink,
+
+    p5: cleanedArticle.fields.p5,
+    p5Ja: jaArticle.fields.p5,
+    p5VoabCount: cleanedArticle.fields.p5Vocab,
+    p5AudioLink: cleanedArticle.fields.p5AudioLink,
+  }
+}
+
+export function formatContentfulEntry(article: Entry): {
+  id: string;
+  url: string;
+  title: string;
+  slug: string;
+  category: string;
+  publishedAt: Date;
+  imageUrl: string;
+} {
+  const { fields, sys } = article
+  const { id, title, slug, publishedDate, heroImage, category } = fields
+  const file = heroImage && heroImage.fields ? heroImage.fields.file : null
+  const imageUrl = file ? file.url : null
+
+  return {
+    id: sys.id,
+    title,
+    url: process.env.ROOT_URL + "/articles/" + slug,
+    slug,
+    category: category || "general",
+    publishedAt: publishedDate ? new Date(publishedDate) : new Date(),
+    imageUrl: imageUrl ? "https:" + imageUrl : null,
+    p1Vocab: fields.p1Vocab,
+    p2Vocab: fields.p2Vocab,
+    p3Vocab: fields.p3Vocab,
+    p4Vocab: fields.p4Vocab,
+    p5Vocab: fields.p5Vocab,
+  }
+}
+
+
 type locale = 'en-US' | 'ja-JP'
 
 type UpdateEntryParams = {

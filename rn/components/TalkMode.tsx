@@ -231,7 +231,6 @@ class InputChat extends Component {
                 </View>
               </View>
             </View>
-
           </>
         </KeyboardAvoidingView>
       </>

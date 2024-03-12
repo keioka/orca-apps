@@ -12,7 +12,6 @@ import { clearSubscriptionForm } from "~redux/features/ui";
 import { sendToBackground } from "@plasmohq/messaging"
 
 export function FormSubscriptionPure({ user, onLogin, onClose, onOpenPopup }) {
-  console.log({ chrome })
   return (
     <Box
       sx={(theme) => ({

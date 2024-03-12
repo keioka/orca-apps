@@ -22,6 +22,7 @@ import { getTheme } from "../theme";
 import { ThemeProvider } from '@mui/material/styles';
 import { PersistGate } from "@plasmohq/redux-persist/integration/react"
 import { useFirebase } from "~firebase/hooks";
+import { useAppDispatch } from "~redux/hooks";
 
 import "../font.css"
 
@@ -46,7 +47,8 @@ function fetchFavicon(url) {
 }
 
 function Main() {
-  const { authCheck, onLogout, user } = useFirebase()
+  const { authCheck, isCheckingAuth, onLogout, user } = useFirebase()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (!user) {
@@ -61,6 +63,7 @@ function Main() {
       if (request.name === "logout") {
         console.log("logout")
         onLogout()
+        dispatch({ type: "global/RESET_STATE" })
       }
 
       if (request.name === "login") {
@@ -68,6 +71,14 @@ function Main() {
       }
     })
   }, [])
+
+  if (isCheckingAuth) {
+    return <Box>
+      <Typography>
+        Loading...
+      </Typography>
+    </Box>
+  }
 
   return (
     <Routes>

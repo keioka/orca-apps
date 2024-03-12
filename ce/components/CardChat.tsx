@@ -32,11 +32,12 @@ import type { ParaphraseItem, GMCheckItem } from "~types"
 import styled from "@emotion/styled"
 import { fetchParaphrases } from "~redux/features/messages"
 import { createSelector } from "@reduxjs/toolkit"
+import mixpanel from "mixpanel-browser"
 
 const TypoEn = styled(Typography)`
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  color: #00232f;
+  color: #003243;
   letter-spacing: 0px;
 `
 
@@ -126,7 +127,10 @@ export function CardChat({ id, content, type = "ai", audioFile, loading, isAutoP
 
   async function handleClickTranslate(sentence: string) {
     if (translate) return
-
+    mixpanel.track("ACT:Translate", {
+      messageId: id,
+      sentenceIndex: currentSentenceIndex,
+    });
     setIsLoadingTranslate(true)
     const resp = await sendToBackground({
       name: "translate",
@@ -153,6 +157,11 @@ export function CardChat({ id, content, type = "ai", audioFile, loading, isAutoP
       setCurrentTab(null)
       return
     }
+
+    mixpanel.track("ACT:Paraphrase", {
+      messageId: id,
+      sentenceIndex: currentSentenceIndex,
+    });
 
     setIsLoadingParaphrase(true)
     setCurrentTab(Tab.Paraphrase)
@@ -197,6 +206,11 @@ export function CardChat({ id, content, type = "ai", audioFile, loading, isAutoP
 
   async function handlePlayAudio() {
     try {
+      mixpanel.track("ACT:PlayAudio", {
+        messageId: id,
+        sentenceIndex: currentSentenceIndex,
+      });
+
       if (audioFile && audioFile.path) {
         const path = audioFile.path
         const audio = new Audio(path);
@@ -226,6 +240,11 @@ export function CardChat({ id, content, type = "ai", audioFile, loading, isAutoP
   }
 
   function handleSaveParaphrase({ paraphraseId }: { paraphraseId: number }) {
+    mixpanel.track("ACT:SaveParaphrase", {
+      messageId: id,
+      sentenceIndex: currentSentenceIndex,
+      paraphraseId
+    });
     dispatch(saveParaphrase({ paraphraseId }))
   }
 

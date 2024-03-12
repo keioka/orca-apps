@@ -15,10 +15,9 @@ async function getSummariesByLevel(params: { url: string, levels: string[] }) {
   )
 
   const result = await response.json()
-  console.log({ result })
 
   if (!response.ok) {
-    console.log({ result })
+    console.error({ result })
     console.error("Error fetching Vocab");
     throw new Error("Error fetching Vocab");
   }
@@ -43,10 +42,9 @@ async function getSummaries(params: { url: string, levels: string[] }) {
   )
 
   const result = await response.json()
-  console.log({ result })
 
   if (!response.ok) {
-    console.log({ result })
+    console.error({ result })
     console.error("Error fetching Vocab");
     throw new Error("Error fetching Vocab");
   }

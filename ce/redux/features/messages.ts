@@ -105,7 +105,6 @@ export const createAIMessage = createAsyncThunk(`${NAME}/create`, async ({
       }
     })
 
-    console.log({ response })
     if (response.error) {
       return rejectWithValue(response.error)
     }
@@ -175,14 +174,6 @@ export const fetchParaphrases = createAsyncThunk(`${NAME}/fetchParaphrases`, asy
       return rejectWithValue(response.error)
     }
 
-    console.log({ response })
-
-    if (!response) {
-      console.error("Error fetching paraphrases");
-      console.error(response);
-      throw new Error("Error fetching paraphrases");
-    }
-
     return { paraphrases: response.data.phrases, messageId, sentenceIndex };
   } catch (error) {
     console.error(error)
@@ -242,7 +233,6 @@ export const sendWhisper = createAsyncThunk(
   ) => {
     try {
 
-      console.log({ file, fileURI })
       const body = new FormData()
       const fileObj = {
         uri: removeFilePrefix(fileURI),

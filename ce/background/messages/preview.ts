@@ -10,7 +10,7 @@ async function getPreview({ url }: { url: string }) {
     const data = await result.json();
 
     if (!result.ok) {
-      console.log({ data })
+      console.error({ data })
       console.error("Error fetching preview");
     }
 

@@ -31,7 +31,6 @@ export function TalkScreen({ route, navigation }) {
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     position: 'relative',

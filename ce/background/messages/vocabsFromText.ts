@@ -14,10 +14,9 @@ async function getVocabsFromText(params: { url: string }) {
   )
 
   const result = await response.json()
-  console.log({ result })
 
   if (!response.ok) {
-    console.log({ result })
+    console.error({ result })
     console.error("Error fetching Vocab");
     throw new Error("Error fetching Vocab");
   }

@@ -17,7 +17,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   console.log("authCheck message received")
 
   const data = await storage.get("firebase:token") // "value"
-
+  console.log({ data })
   res.send({ token: data })
 }
 

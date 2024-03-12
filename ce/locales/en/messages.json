@@ -135,6 +135,10 @@
     "message": "Open Note",
     "description": "Button label for opening the note screen."
   },
+  "popup_button_open_search": {
+    "message": "Open Search",
+    "description": "Button label for opening the search screen."
+  },
   "menu_note": {
     "message": "Note",
     "description": "Menu item label for opening the note screen."
@@ -190,5 +194,9 @@
   "error_failed_to_fetch_material": {
     "message": "Failed to fetch material",
     "description": "Error message when failed to fetch material."
+  },
+  "vocab_filter_title": {
+    "message": "Vocab Filter By Level",
+    "description": "Title for the vocab filter."
   }
 }
