@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       entry.fields.p6 ? pRetry(() => fetchVocab(entry.fields.p6), retryConfig) : null,
     ])
 
-    if (!entry.fields.p1 || !entry.fields.p2 || !entry.fields.p3 || !entry.fields.p4 || !entry.fields.p5) {
+    if (!entry.fields.p1 || !entry.fields.p2 || !entry.fields.p3) {
       return res.status(400).json({ message: 'Paragraphs are not filled' });
     }
 
