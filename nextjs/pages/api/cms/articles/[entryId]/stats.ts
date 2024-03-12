@@ -38,7 +38,7 @@ export const convertCategory = {
 
 
 
-function formatContentfulEntry(article: Entry): {
+export function formatContentfullEntry(article: Entry): {
   id: string;
   url: string;
   title: string;
@@ -87,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const entryId = req.query.entryId
     const entry = await getEntry(entryId)
 
-    const result = await formatContentfulEntry(entry)
+    const result = await formatContentfullEntry(entry)
     const material = await Material.getMaterialByExternalId(result.id)
     const vocabs = await Material.getVocabsByMaterialId(material.id)
 

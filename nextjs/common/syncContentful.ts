@@ -104,7 +104,7 @@ interface Entry {
   fields: Fields;
 }
 
-function formatContentfulEntry(article: Entry): {
+function formatContentfullEntry(article: Entry): {
   id: string;
   url: string;
   title: string;
@@ -164,7 +164,7 @@ export async function syncContentful() {
     articles.map(async (article) => {
 
       try {
-        const result = await formatContentfulEntry(article)
+        const result = await formatContentfullEntry(article)
 
         const material = await Material.getMaterialByExternalId(result.id)
         let newArticle = null
