@@ -508,8 +508,8 @@ export default function Article({ article, relatedArticles, body, notFound, slug
   const p1VocabWithDB = useMemo(() => p1Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 1)), [p1Vocab, vocabsFromDB])
   const p2VocabWithDB = useMemo(() => p2Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 2)), [p2Vocab, vocabsFromDB])
   const p3VocabWithDB = useMemo(() => p3Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 3)), [p3Vocab, vocabsFromDB])
-  const p4VocabWithDB = useMemo(() => p4Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 4)), [p4Vocab, vocabsFromDB])
-  const p5VocabWithDB = useMemo(() => p5Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 5)), [p5Vocab, vocabsFromDB])
+  const p4VocabWithDB = useMemo(() => p4Vocab ? p4Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 4)) : [], [p4Vocab, vocabsFromDB])
+  const p5VocabWithDB = useMemo(() => p5Vocab ? p5Vocab.map((vocab) => mapVocab(vocabsFromDB, vocab, 5)) : [], [p5Vocab, vocabsFromDB])
 
   const paragraphs = [
     {
@@ -527,19 +527,27 @@ export default function Article({ article, relatedArticles, body, notFound, slug
       ja: jaP3,
       audioFileLink: p3AudioLink,
       vocab: p3VocabWithDB
-    }, {
+    },
+  ]
+
+
+  if (p4 && p4 === "") {
+    paragraphs.push({
       en: p4,
       ja: jaP4,
       audioFileLink: p4AudioLink,
       vocab: p4VocabWithDB
-    }, {
+    })
+  }
+
+  if (p5 && p5 === "") {
+    paragraphs.push({
       en: p5,
       ja: jaP5,
       audioFileLink: p5AudioLink,
       vocab: p5VocabWithDB
-    }
-  ]
-
+    })
+  }
   return (
     <>
       <Head>

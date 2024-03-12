@@ -7,6 +7,7 @@ import { translate } from '@/utils/apis/deepL'
 import pRetry, { AbortError } from 'p-retry';
 import * as Material from '@/models/material'
 import * as Publisher from '@/models/publisher'
+import { formatContentfullEntry } from '@/common/contentful'
 
 function formatVocabData(data) {
   return { ja: data }
@@ -50,7 +51,7 @@ export async function syncArticleByExternalId(entryId: string) {
     }
   }
 
-  const result = await formatContentfulEntry(entry)
+  const result = await formatContentfullEntry(entry)
   const material = await Material.getMaterialByExternalId(result.id)
 
   let newArticle = null

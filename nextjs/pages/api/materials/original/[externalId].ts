@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import * as Material from '@/models/material';
 import { syncArticleByExternalId } from '@/common/contentful/syncArticle';
-import { getEntryWithLocale, formatContentfulEntryWithLocale } from '@/common/contentful';
+import { getEntryWithLocale, formatContentfullEntryWithLocale } from '@/common/contentful';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { externalId } = req.query
     const result = await getEntryWithLocale(externalId as string)
-    const content = await formatContentfulEntryWithLocale(result)
+    const content = await formatContentfullEntryWithLocale(result)
 
     let material = await Material.getMaterialByExternalId(externalId)
     if (!material) {

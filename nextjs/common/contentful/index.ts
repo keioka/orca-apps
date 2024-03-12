@@ -117,7 +117,7 @@ export function formatEntries(entries: any[]) {
 
 
 
-export function formatContentfulEntryWithLocale(entry: Entry): {
+export function formatContentfullEntryWithLocale(entry: Entry): {
   id: string;
   url: string;
   title: string;
@@ -166,7 +166,7 @@ export function formatContentfulEntryWithLocale(entry: Entry): {
   }
 }
 
-export function formatContentfulEntry(article: Entry): {
+export function formatContentfullEntry(article: Entry): {
   id: string;
   url: string;
   title: string;
