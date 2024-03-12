@@ -3,7 +3,9 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, Text, View } from 'react-native';
 import { CardArticle } from './components/CardArticle';
 import { FeedScreen } from './screens/FeedScreen';
+import { OriginalFeedScreen } from './screens/OriginalFeedScreen';
 import { LessonScreen } from './screens/LessonScreen';
+import { LessonOriginalScreen } from './screens/LessonOriginalScreen';
 import { HistoryScreen } from './screens/HistoryScreen';
 import { TalkScreen } from './screens/TalkScreen';
 import { NoteScreen } from './screens/NoteScreen';
@@ -84,6 +86,14 @@ const MainTab = () => (
       }}
     />
     <Tab.Screen
+      name="Feed"
+      component={FeedStack}
+      options={{
+        tabBarLabel: i18n.t('home'),
+        headerShown: false,
+      }}
+    />
+    <Tab.Screen
       name="History"
       component={HistoryScreen}
       options={{
@@ -139,6 +149,33 @@ const MainTab = () => (
 )
 
 const HomeStack = () => (
+  <Stack.Navigator>
+    <Tab.Screen
+      name="Feed"
+      component={OriginalFeedScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Tab.Screen
+      name="LessonOriginal"
+      component={LessonOriginalScreen}
+      options={{
+        tabBarLabel: 'dd',
+      }}
+    />
+    <Tab.Screen
+      name="Talk"
+      component={TalkScreen}
+      options={{
+        tabBarLabel: 'Talk',
+      }}
+    />
+
+  </Stack.Navigator>
+)
+
+const FeedStack = () => (
   <Stack.Navigator>
     <Tab.Screen
       name="Feed"

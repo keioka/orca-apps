@@ -20,11 +20,9 @@ import { IoPlayCircle, IoCloseCircle, IoMicOutline } from "react-icons/io5";
 import { useFirebase } from "../firebase/hooks"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { fetchLesson } from '../redux/features/lessons';
 import { fetchMessages, addUserMessage, createAIMessage } from "~redux/features/messages";
 import { fetchCurrentOpenedMaterial, createVocabs, fetchVocabs, fetchSummaries } from "~redux/features/materials";
 import { fetchSavedVocab, fetchSavedParaphrases, saveVocab } from "~redux/features/note";
-import { clearState, removeAll } from "../redux/store";
 import { Opener } from "./Opener";
 import { ChatModeProto } from "./ChatModeProto";
 import { RiSpeakLine } from "react-icons/ri";
@@ -38,6 +36,7 @@ import { FormSubscription } from "./FormSubscription";
 import { fetchCurrentUser, setSession, login, signup } from "~/redux/features/auth";
 import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleResponses } from "~/redux/features/lessons";
 import { ButtonGoogleAuth } from "./ButtonGoogleAuth";
+import mixpanel from "mixpanel-browser";
 
 const drawerWidth = 380
 
@@ -134,28 +133,28 @@ const description = {
   "C2": "Proficient: IELTS 8.5 - 9.0"
 }
 
-export function Inject() {
+function App({
+  setOpen,
+  uiDisabled
+}: {
+  setOpen: (shouldOpen: boolean) => void,
+  uiDisabled: boolean
+}) {
   const urlPath = `${window.location.origin}${window.location.pathname}`
   const dispatch = useAppDispatch()
   const [url, setUrl] = useState(urlPath)
-  const [hideExtention, setHideExtention] = useState(false)
-  const [open, setOpen] = useState(false)
   const [isAutoPlay, setIsAutoPlay] = useState(false)
   const [mode, setMode] = useState(Mode.Talk)
-
-  const [originalWidth, setOriginalWidth] = useState(0)
   const [error, setError] = useState(null)
   const [isLoadingData, setIsLoadingData] = useState(false)
   const { user, session: sessionFB, isLoading, onLogin, onLoginBackground, onLogout, authCheck } = useFirebase()
   const [message, setMessage] = useState(null)
-  const [isFullLoaded, setIsFullLoaded] = useState(false)
-
-  const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   const shouldShowSubscriptionForm = useAppSelector(state => { return !state.payment.isValidSubscription && state.ui.shouldShowSubscriptionForm })
   const currentUser = useAppSelector(state => { return state.auth.currentUser })
   const session = useAppSelector(state => { return state.auth.session })
   const currentOpenedMaterial = useAppSelector(state => { return state.materials.currentOpenedMaterial })
   const currentLesson = useAppSelector((state) => state.lesson.lessons.find((lesson) => lesson.materialId === currentOpenedMaterial?.id))
+
   const messages = useAppSelector((state) => currentLesson ? state.message.messageMap[currentLesson.id] || [] : [])
   const vocabs = useAppSelector(state => currentOpenedMaterial ? state.materials.vocabs[currentOpenedMaterial.id] || [] : [])
   const summaries = useAppSelector(state => currentOpenedMaterial ? state.materials.summaries[currentOpenedMaterial.id] || [] : [])
@@ -230,10 +229,11 @@ export function Inject() {
 
   useEffect(() => {
     if (!open) return
+    console.log("=========>>>>>>>>", { currentOpenedMaterial, isCreatingVocabs, isFetchingVocabs, vocabs })
     if (currentOpenedMaterial && currentOpenedMaterial.id && !isCreatingVocabs && !isFetchingVocabs && vocabs.length === 0) {
       dispatch(createVocabs({ materialId: currentOpenedMaterial.id }))
     }
-  }, [open, currentOpenedMaterial, isFetchingVocabs])
+  }, [open, currentOpenedMaterial, isCreatingVocabs, isFetchingVocabs, vocabs])
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -259,11 +259,13 @@ export function Inject() {
   }, [messages])
 
   async function handleSignup() {
+    mixpanel.track("ACT:signup")
     const userCred = await onLoginBackground()
     dispatch(signup({ accessToken: userCred.accessToken, uid: userCred.uid }))
   }
 
   async function handleSignin() {
+    mixpanel.track("ACT:signin")
     const userCred = await onLoginBackground()
     dispatch(login({ accessToken: userCred.accessToken, uid: userCred.uid }))
   }
@@ -277,6 +279,7 @@ export function Inject() {
   }
 
   function handleSaveVocab(vocab: VocabularyItem) {
+    mixpanel.track("ACT:saveVocab")
     dispatch(saveVocab({
       vocabId: vocab.id
     }))
@@ -289,6 +292,7 @@ export function Inject() {
   }
 
   function handleSubmitMessage(message: Message) {
+    mixpanel.track("ACT:submitMessage")
     if (currentLesson) {
       dispatch(
         addUserMessage({
@@ -305,7 +309,177 @@ export function Inject() {
     }
   }
 
+  function handleSetMode(mode: Mode) {
+    let modeName
 
+    switch (mode) {
+      case Mode.Talk:
+        modeName = "Chat"
+        break
+      case Mode.Vocab:
+        modeName = "Vocab"
+        break
+      case Mode.Summary:
+        modeName = "Summary"
+        break
+    }
+
+    mixpanel.track(`NAV:Mode${modeName}`)
+    setMode(mode)
+  }
+
+  return (
+    <Box
+      sx={{
+        padding: "16px",
+        height: "100%",
+        position: "relative",
+      }}
+    >
+      <Header setOpen={setOpen} onLogin={onLoginBackground} handleToggleDisable={handleToggleDisable} uiDisabled={uiDisabled} />
+
+      {errorCreateAIMessage && (
+        <Alert
+          color="error"
+          severity="error"
+          sx={{ position: "relative" }}
+        >
+          {errorCreateAIMessage}
+        </Alert>
+      )}
+      {errorFetchCurrentOpenedMaterial && <Alert color="error" severity="error">{chrome.i18n.getMessage("error_failed_to_fetch_material")}</Alert>}
+
+      {
+        shouldShowSubscriptionForm && (
+          <Box
+            sx={{
+              position: "fixed",
+              background: "rgba(0,0,0,0.5)",
+              height: "100%",
+              width: drawerWidth,
+              top: 0,
+              right: 0,
+              zIndex: 1,
+              padding: "32px",
+              display: "flex",
+            }}
+          >
+            <FormSubscription user={user} onLogin={onLoginBackground} />
+          </Box>
+        )
+      }
+
+      {
+        !isLoading && !currentUser && (
+          <Stack
+            sx={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "32px"
+            }}
+            spacing={2}
+          >
+            <Stack>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                {chrome.i18n.getMessage("welcome_orca")}
+              </Typography>
+              <Typography variant="body1" sx={{ color: "#444444" }}>
+                {chrome.i18n.getMessage("welcome_orca_desc")}
+              </Typography>
+            </Stack>
+            <Typography variant="h5" sx={{ color: "#444444" }}>
+              {chrome.i18n.getMessage("message_signin")}
+            </Typography>
+            {errorSigninMessage && <Alert severity="error">{errorSigninMessage}</Alert>}
+            {errorSignupMessage && <Alert severity="error">{errorSignupMessage}</Alert>}
+            <ButtonGoogleAuth
+              size="large"
+              onClick={handleSignup}
+              isSignup
+            />
+            <Typography>or</Typography>
+            <ButtonGoogleAuth
+              size="large"
+              onClick={handleSignin}
+            />
+          </Stack>
+        )
+      }
+
+      {!isLoading && currentUser && (
+        <>
+          <Box mt={2}>
+            <Tabs onClickButton={handleSetMode} selectedMode={mode} />
+          </Box>
+
+          {mode === Mode.Talk && (
+            <>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end"
+                }}
+                mt={0} mb={2}
+              >
+                {/* <FormControlLabel
+                  control={
+                    <Switch
+                      checked={isAutoPlay}
+                      onChange={handleChangeAutoPlay}
+                    />
+                  }
+                  label={chrome.i18n.getMessage("chat_toggle_autoplay")}
+                /> */}
+              </Box>
+              <ChatModeProto
+                isAutoPlay={isAutoPlay}
+                handleSubmitMessage={handleSubmitMessage}
+                isCreatingMessage={isCreatingMessage}
+                messages={messageSorted}
+                currentLesson={currentLesson}
+              />
+            </>
+          )}
+          {mode === Mode.Vocab &&
+            <VocabMode
+              vocabs={vocabs}
+              isLoadingVocabs={isFetchingVocabs}
+              setError={setError}
+              onSaveVocab={handleSaveVocab}
+            />
+          }
+          {mode === Mode.Summary &&
+            <SummaryMode
+              summaries={summaries}
+              isLoadingSummaries={isFetchingSummary}
+              onSelectLevel={handleSelectLevel}
+            />
+          }
+        </>
+      )}
+    </Box>
+  )
+}
+
+export function Inject() {
+  const [hideExtention, setHideExtention] = useState(false)
+  const [open, setOpen] = useState(false)
+
+  const [originalWidth, setOriginalWidth] = useState(0)
+  const [isFullLoaded, setIsFullLoaded] = useState(false)
+
+  const uiDisabled = useAppSelector(state => { return state.ui.disabled })
+
+  function handleOpen(shouldOpen: boolean) {
+    mixpanel.track("ACT:openExtension")
+    setOpen(shouldOpen)
+  }
+
+  function handleHideExtension(shouldHide: boolean) {
+    mixpanel.track("ACT:hideExtension")
+    setHideExtention(shouldHide)
+  }
 
   useEffect(() => {
 
@@ -327,7 +501,8 @@ export function Inject() {
 
   }, [open, uiDisabled])
 
-  if (uiDisabled || hideExtention || blaklist.some((url) => window.location.href.includes(url))) {
+  const isRoot = window.location.pathname == "/"; //Equals true if we're at the root
+  if (uiDisabled || isRoot || hideExtention || blaklist.some((url) => window.location.href.includes(url))) {
     return null
   }
 
@@ -360,140 +535,11 @@ export function Inject() {
             }
           }}
         >
-          <Box
-            sx={{
-              padding: "16px",
-              height: "100%",
-              position: "relative",
-            }}
-          >
-            <Header setOpen={setOpen} onLogin={onLoginBackground} handleToggleDisable={handleToggleDisable} uiDisabled={uiDisabled} />
-
-            {errorCreateAIMessage && (
-              <Alert
-                color="error"
-                severity="error"
-                sx={{ position: "relative" }}
-              >
-                {errorCreateAIMessage}
-              </Alert>
-            )}
-            {errorFetchCurrentOpenedMaterial && <Alert color="error" severity="error">{chrome.i18n.getMessage("error_failed_to_fetch_material")}</Alert>}
-
-            {
-              shouldShowSubscriptionForm && (
-                <Box
-                  sx={{
-                    position: "fixed",
-                    background: "rgba(0,0,0,0.5)",
-                    height: "100%",
-                    width: drawerWidth,
-                    top: 0,
-                    right: 0,
-                    zIndex: 1,
-                    padding: "32px",
-                    display: "flex",
-                  }}
-                >
-                  <FormSubscription user={user} onLogin={onLoginBackground} />
-                </Box>
-              )
-            }
-
-            {
-              !isLoading && !currentUser && (
-                <Stack
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "32px"
-                  }}
-                  spacing={2}
-                >
-                  <Stack>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      {chrome.i18n.getMessage("welcome_orca")}
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: "#444444" }}>
-                      {chrome.i18n.getMessage("welcome_orca_desc")}
-                    </Typography>
-                  </Stack>
-                  <Typography variant="h5" sx={{ color: "#444444" }}>
-                    {chrome.i18n.getMessage("message_signin")}
-                  </Typography>
-                  {errorSigninMessage && <Alert severity="error">{errorSigninMessage}</Alert>}
-                  {errorSignupMessage && <Alert severity="error">{errorSignupMessage}</Alert>}
-                  <ButtonGoogleAuth
-                    size="large"
-                    onClick={handleSignup}
-                    isSignup
-                  />
-                  <Typography>or</Typography>
-                  <ButtonGoogleAuth
-                    size="large"
-                    onClick={handleSignin}
-                  />
-                </Stack>
-              )
-            }
-
-            {!isLoading && currentUser && (
-              <>
-                <Box mt={2}>
-                  <Tabs onClickButton={(mode) => setMode(mode)} selectedMode={mode} />
-                </Box>
-
-                {mode === Mode.Talk && (
-                  <>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-end"
-                      }}
-                      mt={0} mb={2}
-                    >
-                      {/* <FormControlLabel
-                        control={
-                          <Switch
-                            checked={isAutoPlay}
-                            onChange={handleChangeAutoPlay}
-                          />
-                        }
-                        label={chrome.i18n.getMessage("chat_toggle_autoplay")}
-                      /> */}
-                    </Box>
-                    <ChatModeProto
-                      isAutoPlay={isAutoPlay}
-                      handleSubmitMessage={handleSubmitMessage}
-                      isCreatingMessage={isCreatingMessage}
-                      messages={messageSorted}
-                      currentLesson={currentLesson}
-                    />
-                  </>
-                )}
-                {mode === Mode.Vocab &&
-                  <VocabMode
-                    vocabs={vocabs}
-                    isLoadingVocabs={isFetchingVocabs}
-                    setError={setError}
-                    onSaveVocab={handleSaveVocab}
-                  />
-                }
-                {mode === Mode.Summary &&
-                  <SummaryMode
-                    summaries={summaries}
-                    isLoadingSummaries={isFetchingSummary}
-                    onSelectLevel={handleSelectLevel}
-                  />
-                }
-              </>
-            )}
-          </Box>
+          <App setOpen={setOpen} uiDisabled={uiDisabled} />
         </Drawer>
       }
 
-      <Opener setOpen={setOpen} setHideExtention={setHideExtention} />
+      <Opener setOpen={handleOpen} setHideExtention={handleHideExtension} />
     </Box >
   )
 }
@@ -556,14 +602,15 @@ function VocabMode({
     }
   }
 
-
   const levels = [
     "all", "A1", "A2", "B1", "B2", "C1", "C2"
   ]
 
-
   return (
     <Box mt={2}>
+      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+        {chrome.i18n.getMessage("vocab_filter_title")}
+      </Typography>
       <Stack
         direction="row"
         spacing={0.5}
@@ -574,9 +621,13 @@ function VocabMode({
           return (
             <Tooltip
               title={description[level]}
+              sx={{ fontSize: 16 }}
               PopperProps={{
                 disablePortal: true,
                 popperOptions: {
+                  sx: {
+                    fontSize: 16
+                  },
                   positionFixed: true,
                   modifiers: {
                     preventOverflow: {
@@ -622,6 +673,7 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
   };
 
   const handleSignout = () => {
+    dispatch({ type: "global/RESET_STATE" });
     onLogout()
     handleMenuClose()
   }
@@ -696,6 +748,7 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
           <Box sx={{ paddingY: 1, borderTop: "1px solid #f4f4f4" }}>
             <Typography
               onClick={() => {
+                mixpanel.track("NAV:openNote")
                 sendToBackground({ name: "openNote" })
                 handleMenuClose()
               }}

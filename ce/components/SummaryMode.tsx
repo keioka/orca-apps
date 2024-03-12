@@ -31,8 +31,6 @@ export function SummaryMode({
 
   const [selectedLevel, setSelectedLevel] = useState("5Y");
 
-  console.log({ summaries, isLoadingSummaries })
-
   const handleClickLevel = (level) => {
     if (isLoadingSummaries) return
     if (!summaries.filter((summary) => Boolean(summary)).some((summary) => summary && summary.level === level)) {
@@ -50,7 +48,6 @@ export function SummaryMode({
     return summaries.filter((summary) => Boolean(summary)).find((summary) => summary.level === selectedLevel);
   }, [selectedLevel, summaries]);
 
-  console.log({ selectedSummary })
 
   return (
     <Box mt={2}>

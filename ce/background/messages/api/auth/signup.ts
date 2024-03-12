@@ -19,15 +19,12 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     });
 
     const data = await response.json();
-    console.log({ response })
 
     if (response.status !== 201) {
       res.send({
         error: data
       });
     }
-
-    console.log({ data })
 
     if (data.error) {
       res.send({

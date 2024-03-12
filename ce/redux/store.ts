@@ -58,14 +58,21 @@ const logger = (storeAPI: any) => (next: any) => (action: any) => {
 export const store = configureStore({
   reducer: persistedReducer,
   devTools: process.env.NODE_ENV !== 'production',
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
+  middleware: (getDefaultMiddleware) => {
+    const middlewares = getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
       // serializableCheck: false,
     })
-      .concat(logger),
+
+    if (process.env.NODE_ENV !== 'production') {
+      middlewares.push(logger)
+    }
+
+    return middlewares
+  }
+
 });
 
 export const persistor = persistStore(store);
@@ -79,10 +86,8 @@ export const removeAll = () => storage.clear()
 
 storage.watch({
   [`persist:${persistConfig.key}`]: async (change, area) => {
-    console.log({ change, area })
     const { oldValue, newValue } = change;
     const updatedKeys = [];
-    console.log({ updatedKeys })
 
     if (newValue === null) {
       await persistor.pause();

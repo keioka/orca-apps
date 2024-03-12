@@ -67,6 +67,7 @@
     "firebase": "^10.7.2",
     "firebase-admin": "^11.10.1",
     "formidable": "^3.5.1",
+    "gnews": "^1.0.3",
     "graphql": "^16.7.1",
     "highlight.run": "^8.4.0",
     "i18next": "^23.8.2",

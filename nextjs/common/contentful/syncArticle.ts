@@ -8,37 +8,6 @@ import pRetry, { AbortError } from 'p-retry';
 import * as Material from '@/models/material'
 import * as Publisher from '@/models/publisher'
 
-
-function formatContentfulEntry(article: Entry): {
-  id: string;
-  url: string;
-  title: string;
-  slug: string;
-  category: string;
-  publishedAt: Date;
-  imageUrl: string;
-} {
-  const { fields, sys } = article
-  const { id, title, slug, publishedDate, heroImage, category } = fields
-  const file = heroImage && heroImage.fields ? heroImage.fields.file : null
-  const imageUrl = file ? file.url : null
-
-  return {
-    id: sys.id,
-    title,
-    url: process.env.ROOT_URL + "/articles/" + slug,
-    slug,
-    category: category || "general",
-    publishedAt: publishedDate ? new Date(publishedDate) : new Date(),
-    imageUrl: imageUrl ? "https:" + imageUrl : null,
-    p1Vocab: fields.p1Vocab,
-    p2Vocab: fields.p2Vocab,
-    p3Vocab: fields.p3Vocab,
-    p4Vocab: fields.p4Vocab,
-    p5Vocab: fields.p5Vocab,
-  }
-}
-
 function formatVocabData(data) {
   return { ja: data }
 }
@@ -159,5 +128,5 @@ export async function syncArticleByExternalId(entryId: string) {
     })
   }
 
-  return { newArticle, addedVocabs, isNew }
+  return { newArticle, addedVocabs, isNew, content: result }
 }

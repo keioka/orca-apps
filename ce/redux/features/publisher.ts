@@ -24,8 +24,6 @@ export const fetchPublishers = createAsyncThunk('publishers/fetch', async () => 
     name: 'fetchPublishers',
   })
 
-  console.log({ response })
-
   return response.data;
 });
 

@@ -33,6 +33,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
       data = await response.json()
 
+      console.log({ data })
+
       if (!data) {
         res.send({
           error: "Error creating material"

@@ -24,8 +24,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     const data = await reduxStorage.getAll()
     const data2 = await storage.getAll()
 
-    console.log({ data, data2 })
-
     await new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ type: "logout" }, function (response) {
         console.log(response)

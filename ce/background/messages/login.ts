@@ -28,20 +28,10 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       // console.log(data)
       // await storage.set("capt", { color: "red" })
       // const data2 = await storage.get("capt") // { color: "red" }
+      chrome.runtime.sendMessage({ type: "login" })
       return token
     }
   })
-
-
-  // chrome.identity.getAuthToken({ 'interactive': true }, async (token) => {
-  //   const credential = GoogleAuthProvider.credential(null, token);
-  //   try {
-  //     const { user } = await signInWithCredential(auth, credential)
-  //     console.log(`the user object is here! - ${user}`)
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // });
 }
 
 export default handler

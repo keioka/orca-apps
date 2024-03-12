@@ -9,20 +9,10 @@ import { Provider } from "react-redux";
 import { PersistGate } from "@plasmohq/redux-persist/integration/react"
 import { persistor, store } from '~/redux/store';
 import { getTheme } from "~/theme";
-import type {
-  PlasmoCSConfig,
-  PlasmoCSUIJSXContainer,
-  PlasmoCSUIProps,
-  PlasmoRender
-} from "plasmo"
-import { createRoot } from "react-dom/client"
 import { ErrorBoundary } from "react-error-boundary";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useAppDispatch } from "~redux/hooks";
 import mixpanel from "mixpanel-browser";
-import LogRocket from 'logrocket'
-import setupLogRocketReact from 'logrocket-react';
-import "https://cdn.logr-ingest.com/logger-1.min.js"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -43,14 +33,18 @@ export const getStyle = () => {
 }
 
 function Root() {
-  const lang = chrome.i18n.getUILanguage()
-  const langCode = lang.split("-")[0]
-  const theme = getTheme(langCode)
+
+  const theme = useMemo(() => {
+    if (!chrome) return getTheme("en")
+    const lang = chrome.i18n.getUILanguage()
+    const langCode = lang.split("-")[0]
+    const theme = getTheme(langCode)
+    return theme
+  }, [chrome])
+
 
   useEffect(() => {
-    let logrocketId = process.env.PLASMO_PUBLIC_APP_ENV === "production" ? 'taiheyyo/orca-chrome-prod' : 'taiheyyo/orca-chrome-dev'
-    LogRocket.init(logrocketId);
-    setupLogRocketReact(LogRocket);
+    mixpanel.init(process.env.PLASMO_PUBLIC_MIXPANEL_TOKEN, { track_pageview: false });
   }, [])
 
   return (

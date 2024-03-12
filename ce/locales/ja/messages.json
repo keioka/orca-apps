@@ -143,6 +143,10 @@
     "message": "ノートを開く",
     "description": "ノートを開くボタンのラベル。"
   },
+  "popup_button_open_search": {
+    "message": "英文記事を探す",
+    "description": "英文記事を探すボタンのラベル。"
+  },
   "menu_note": {
     "message": "ノート",
     "description": "ノートメニューのラベル。"
@@ -246,5 +250,9 @@
   "error_failed_to_fetch_material": {
     "message": "英文記事の取得に失敗しました。別記事でお試しください。",
     "description": "Error message when failed to fetch material."
+  },
+  "vocab_filter_title": {
+    "message": "単語レベルでフィルターをかける",
+    "description": "Title for the vocab filter."
   }
 }

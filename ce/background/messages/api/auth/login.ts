@@ -5,8 +5,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const token = req.body.token;
   const uid = req.body.uid;
 
-  console.log({ token, uid })
-
   if (!token || !uid) {
     return res.send({
       error: "Invalid token or uid"

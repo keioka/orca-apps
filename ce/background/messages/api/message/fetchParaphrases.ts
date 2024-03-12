@@ -25,8 +25,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       }
     );
 
-    console.log({ response })
-
     const data = await response.json();
 
     res.send({
