@@ -51,10 +51,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const p5AudioLink = entry.fields.p5 ? await polly({ text: removeCitations(entry.fields.p5), paragraphNumber: 5, slug: entry.fields.slug }) : null
 
     let titleJa, p1Ja, p2Ja, p3Ja, p4Ja, p5Ja
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV !== 'development') {
       [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }] = [{ text: null }, { text: null }, { text: null }, { text: null }, { text: null }, { text: null }]
     } else {
-      [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }] = await translate({ texts: [entry.fields.title, entry.fields.p1, entry.fields.p2, entry.fields.p3, entry.fields.p4, entry.fields.p5], targetLang: 'ja' })
+
+      const texts = [entry.fields.title, entry.fields.p1, entry.fields.p2, entry.fields.p3]
+      if (entry.fields.p4) {
+        texts.push(entry.fields.p4)
+      }
+      if (entry.fields.p5) {
+        texts.push(entry.fields.p5)
+      }
+      // [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }]
+      const result = await translate({ texts: texts, targetLang: 'ja' })
+      titleJa = result[0].text
+      p1Ja = result[1].text
+      p2Ja = result[2].text
+      p3Ja = result[3].text
+      p4Ja = result[4] ? result[4].text : null
+      p5Ja = result[5] ? result[5].text : null
     }
     const fields = deepmerge(
       entryWithLocale.fields,
