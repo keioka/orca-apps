@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const p5AudioLink = entry.fields.p5 ? await polly({ text: removeCitations(entry.fields.p5), paragraphNumber: 5, slug: entry.fields.slug }) : null
 
     let titleJa, p1Ja, p2Ja, p3Ja, p4Ja, p5Ja
-    if (process.env.NODE_ENV !== 'development') {
+    if (process.env.NODE_ENV === 'development') {
       [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }] = [{ text: null }, { text: null }, { text: null }, { text: null }, { text: null }, { text: null }]
     } else {
 
