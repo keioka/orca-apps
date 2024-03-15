@@ -72,6 +72,7 @@
     "highlight.run": "^8.4.0",
     "i18next": "^23.8.2",
     "jsdom": "^22.1.0",
+    "jsonwebtoken": "^9.0.2",
     "keyword-extractor": "^0.0.28",
     "lodash": "^4.17.21",
     "logrocket": "^8.0.0",

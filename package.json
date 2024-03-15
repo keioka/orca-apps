@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@mui/x-date-pickers": "^6.19.6",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
