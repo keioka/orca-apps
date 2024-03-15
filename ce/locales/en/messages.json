@@ -139,6 +139,10 @@
     "message": "Open Search",
     "description": "Button label for opening the search screen."
   },
+  "popup_button_open_setting": {
+    "message": "Open Setting",
+    "description": "Button label for opening the setting screen."
+  },
   "menu_note": {
     "message": "Note",
     "description": "Menu item label for opening the note screen."

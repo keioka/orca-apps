@@ -191,6 +191,10 @@
     "message": "無料トライアル中",
     "description": "無料トライアル中のステータスラベル。"
   },
+  "popup_button_open_setting": {
+    "message": "設定を開く",
+    "description": "設定を開くボタンのラベル。"
+  },
   "toggle_disable": {
     "message": "非表示",
     "description": "Toggle switch label for disabling a feature."

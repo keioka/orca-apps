@@ -13,6 +13,7 @@ import {
 } from "react-router-dom";
 import { getTheme } from "../theme";
 import { ThemeProvider } from '@mui/material/styles';
+import { Setting } from "~/components/Setting";
 
 import "../font.css"
 
@@ -45,6 +46,7 @@ function Main() {
                   allowfullscreen>
                 </iframe>
               </Stack>
+              <Setting />
               <Box
                 sx={{
                   display: "flex",
