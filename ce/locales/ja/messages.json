@@ -258,5 +258,13 @@
   "vocab_filter_title": {
     "message": "単語レベルでフィルターをかける",
     "description": "Title for the vocab filter."
+  },
+  "chat_talk_stop_button": {
+    "message": "音声入力停止",
+    "description": "Button label for stopping the chat."
+  },
+  "chat_talk_start_button": {
+    "message": "音声入力開始",
+    "description": "Button label for starting the chat."
   }
 }

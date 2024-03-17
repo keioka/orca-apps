@@ -9,7 +9,7 @@ import {
   Alert,
   Avatar
 } from "@mui/material"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { ListChat } from "./ListChat";
 import { InputChat } from "./InputChat";
 import { urlPath } from "~helpers/path";
@@ -39,16 +39,13 @@ export function ChatModeProto({ isAutoPlay, isCreatingMessage, handleSubmitMessa
   }
 
   const onChangeInputByVoice = async (newMessages: string) => {
+    console.log({ newMessages, message })
     if (!message) {
       setMessage(newMessages + ". ")
       return
     }
 
     setMessage(message + newMessages + ". ")
-
-    if (isFullMode) {
-      submitMessage()
-    }
   };
 
   const handleFetchSamples = () => {
@@ -66,6 +63,8 @@ export function ChatModeProto({ isAutoPlay, isCreatingMessage, handleSubmitMessa
   }
 
   const submitMessage = async () => {
+    if (message == null || message === "") return
+
     try {
       console.log("submit")
       handleSubmitMessage(message)
@@ -77,11 +76,22 @@ export function ChatModeProto({ isAutoPlay, isCreatingMessage, handleSubmitMessa
     }
   };
 
-  const lastMessage = messages ? messages[messages.length - 1] : null
 
-  if (lastMessage && isFullMode) {
+  const lastAIMessage = useMemo(() => {
+    if (!messages) return null
+    const aiMessages = messages.filter((message) => message.type === "ai")
+    return aiMessages[aiMessages.length - 1]
+  }, [messages])
+
+  if (lastAIMessage && isFullMode) {
     return (
-      <ChatFullMode message={message} lastMessage={lastMessage} onChangeInputByVoice={onChangeInputByVoice} onChangeFullMode={handleFullMode} />
+      <ChatFullMode
+        message={message}
+        lastMessage={lastAIMessage}
+        onChangeInputByVoice={onChangeInputByVoice}
+        onChangeFullMode={handleFullMode}
+        submitMessage={submitMessage}
+      />
     )
   }
 
