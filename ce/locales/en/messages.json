@@ -202,5 +202,13 @@
   "vocab_filter_title": {
     "message": "Vocab Filter By Level",
     "description": "Title for the vocab filter."
+  },
+  "chat_talk_stop_button": {
+    "message": "Stop Recording",
+    "description": "Button label to stop voice or speech input in the chat."
+  },
+  "chat_talk_start_button": {
+    "message": "Start Recording",
+    "description": "Button label to start voice or speech input in the chat."
   }
 }

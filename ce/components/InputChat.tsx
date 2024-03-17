@@ -4,6 +4,7 @@ import {
   Input,
   Box,
   Stack,
+  Typography,
 } from "@mui/material"
 import { IoMicOutline, IoSquare } from "react-icons/io5";
 import { useTheme } from '@mui/material/styles';
@@ -22,10 +23,10 @@ export function InputChat({
   const micObjectRef = useRef(null)
 
   function handleEventSpeech(event) {
-    const result = event.results
-    const message = result[0][0].transcript
+    const results = [...event.results]
+    if (!results) return
+    const message = results.map((result) => result[0].transcript).join("")
     onChangeInputByVoice(message)
-    handleStop()
   }
 
   function handleStart() {
@@ -70,7 +71,7 @@ export function InputChat({
         padding: 1,
       }}
     >
-      <Stack>
+      <Stack spacing={1}>
         <Input
           multiline
           disableUnderline={true}
@@ -89,63 +90,70 @@ export function InputChat({
             }
           }}
         />
-        <Stack direction="row" spacing={1} sx={{ marginTop: 1, justifyContent: "space-between" }}>
-          <Box
+        <Stack direction="row" spacing={1} sx={{ marginTop: 1, justifyContent: "flex-end" }}>
+          <Button
+            size="small"
+            color="primary"
+            variant="outlined"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 1,
-              backgroundColor: "#e36464",
-              borderRadius: 1,
-              width: 36,
-              height: 36,
+              color: "#3c223c",
+              boxShadow: "none",
+              backgroundColor: "#fff",
+              fontWeight: "bold",
             }}
-            onClick={isSpeeching ? handleStop : handleStart}
+            onClick={onClickFetchSamples}
           >
-            {isSpeeching ? <IoSquare color={theme.palette.customPalette.red} size={24} /> : <IoMicOutline color="#fff" size={24} />}
-          </Box>
-          <Stack direction="row" spacing={1} sx={{ marginTop: 1, justifyContent: "space-between" }}>
-            <Button
-              size="small"
-              color="primary"
-              variant="outlined"
-              sx={{
-                color: "#3c223c",
-                boxShadow: "none",
-                backgroundColor: "#fff",
-                fontWeight: "bold",
-              }}
-              onClick={onClickFetchSamples}
-            >
-              {chrome.i18n.getMessage("fetch_sample_button")}
-            </Button>
-            <Button
-              color="primary"
-              variant="outlined"
-              sx={{
-                color: "#3c223c",
-                boxShadow: "none",
-                backgroundColor: "#fff",
-              }}
-              onClick={onClearInput}
-            >
-              {chrome.i18n.getMessage("chat_talk_clear_button")}
-            </Button>
-            <Button
-              color="primary"
-              variant="contained"
-              sx={{
-                color: "#fff",
-                boxShadow: "none",
-              }}
-              onClick={onSubmit}
-            >
-              {chrome.i18n.getMessage("chat_talk_button")}
-            </Button>
-          </Stack>
-
+            {chrome.i18n.getMessage("fetch_sample_button")}
+          </Button>
+          <Button
+            color="primary"
+            variant="outlined"
+            sx={{
+              color: "#3c223c",
+              boxShadow: "none",
+              backgroundColor: "#fff",
+            }}
+            onClick={onClearInput}
+          >
+            {chrome.i18n.getMessage("chat_talk_clear_button")}
+          </Button>
+          <Button
+            color="primary"
+            variant="contained"
+            sx={{
+              color: "#fff",
+              boxShadow: "none",
+            }}
+            onClick={onSubmit}
+          >
+            {chrome.i18n.getMessage("chat_talk_button")}
+          </Button>
         </Stack>
+        <Button
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 1,
+            backgroundColor: "#e36464",
+            borderRadius: 1,
+            width: "100%",
+            height: 38,
+          }}
+          onClick={isSpeeching ? handleStop : handleStart}
+        >
+          {isSpeeching ? (
+            <>
+              <IoSquare color="#fff" size={24} />
+              <Typography sx={{ color: "#fff", marginRight: 1, fontSize: 12, fontWeight: 600 }}>{chrome.i18n.getMessage("chat_talk_stop_button")}</Typography>
+            </>
+          ) : (
+            <>
+              <IoMicOutline color="#fff" size={24} />
+              <Typography sx={{ color: "#fff", marginRight: 1, fontSize: 12, fontWeight: 600 }}>{chrome.i18n.getMessage("chat_talk_start_button")}</Typography>
+            </>
+          )}
+        </Button>
       </Stack>
     </Box >
   )
