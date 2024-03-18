@@ -18,12 +18,25 @@ import { getTheme } from "../theme";
 import { ThemeProvider } from '@mui/material/styles';
 import { Setting } from "~/components/Setting";
 import "../font.css"
+import mixpanel from "mixpanel-browser";
+import { fetchDeviceId } from '~/utils/fetchDeviceId'
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
 }
 
 function Main() {
+
+  useEffect(() => {
+    console.log("=====================================")
+    mixpanel.init(process.env.PLASMO_PUBLIC_MIXPANEL_TOKEN, { track_pageview: false });
+    async function setMixpanelUUID() {
+      const uuid = await fetchDeviceId()
+      mixpanel.identify(uuid)
+    }
+
+    setMixpanelUUID()
+  }, [])
 
   return (
     <Box sx={{ p: 12 }}>

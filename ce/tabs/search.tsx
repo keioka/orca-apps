@@ -18,6 +18,8 @@ import { getTheme } from "../theme";
 import { ThemeProvider } from '@mui/material/styles';
 import axios from "axios";
 import "../font.css"
+import mixpanel from "mixpanel-browser";
+import { fetchDeviceId } from '~/utils/fetchDeviceId'
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -70,9 +72,18 @@ function Main() {
   const [geoResult, setGeoResult] = useState<SearchResult[]>([]);
   const [keyword, setKeyword] = useState<string>("");
 
-  // useEffect(() => {
-  //   handleSearchByGeo()
-  // }, [])
+  useEffect(() => {
+    console.log("=====================================")
+    mixpanel.init(process.env.PLASMO_PUBLIC_MIXPANEL_TOKEN, { track_pageview: false });
+
+    async function setMixpanelUUID() {
+      const uuid = await fetchDeviceId()
+      console.log({ uuid })
+      mixpanel.identify(uuid)
+    }
+
+    setMixpanelUUID()
+  }, [])
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(event.target.value);

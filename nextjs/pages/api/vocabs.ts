@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createVocabsFromUrl } from "@/common/createVocabsFromUrl";
 import axios from 'axios';
+import * as Material from '@/models/material';
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,6 +15,16 @@ export default async function handler(
 
   if (!url && !materialId) {
     return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  const material = await Material.getMaterialById(materialId);
+
+  if (!material) {
+    return res.status(404).json({ message: 'Material not found' });
+  }
+
+  if (material.vocabGenScheduledSetCount != null) {
+    return res.status(200).json({ status: "IN_PROGRESS" });
   }
 
   try {

@@ -23,6 +23,10 @@ import { ThemeProvider } from '@mui/material/styles';
 import { PersistGate } from "@plasmohq/redux-persist/integration/react"
 import { useFirebase } from "~firebase/hooks";
 import { useAppDispatch } from "~redux/hooks";
+import mixpanel from "mixpanel-browser";
+import { fetchDeviceId } from '~/utils/fetchDeviceId'
+import { useAppSelector } from "~redux/hooks";
+import { fetchCurrentUser, setMpTrackingId } from '~redux/features/auth';
 
 import "../font.css"
 
@@ -48,6 +52,7 @@ function fetchFavicon(url) {
 
 function Main() {
   const { authCheck, isCheckingAuth, onLogout, user } = useFirebase()
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -57,6 +62,34 @@ function Main() {
   }, [])
 
   useEffect(() => {
+    setMpTrackingIdToUser()
+  }, [currentUser])
+
+  async function setMpTrackingIdToUser() {
+    const deviceId = await fetchDeviceId()
+    if (typeof deviceId !== 'string') {
+      console.error("deviceId is not string", deviceId)
+      return
+    }
+
+    if (currentUser && (!currentUser.mpTrackingId || currentUser.mpTrackingId !== deviceId)) {
+      dispatch(setMpTrackingId({ mpTrackingId: deviceId }))
+    }
+  }
+
+  useEffect(() => {
+
+    console.log("=====================================")
+    mixpanel.init(process.env.PLASMO_PUBLIC_MIXPANEL_TOKEN, { track_pageview: false });
+
+    async function setMixpanelUUID() {
+      const uuid = await fetchDeviceId()
+      console.log({ uuid })
+      mixpanel.identify(uuid)
+    }
+
+    setMixpanelUUID()
+
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log("================ onMessage ====================")
       console.log(request)

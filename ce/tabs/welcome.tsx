@@ -14,6 +14,8 @@ import {
 import { getTheme } from "../theme";
 import { ThemeProvider } from '@mui/material/styles';
 import { Setting } from "~/components/Setting";
+import mixpanel from "mixpanel-browser";
+import { fetchDeviceId } from '~/utils/fetchDeviceId'
 
 import "../font.css"
 
@@ -22,6 +24,20 @@ export const config: PlasmoCSConfig = {
 }
 
 function Main() {
+
+  useEffect(() => {
+    console.log("=====================================")
+    mixpanel.init(process.env.PLASMO_PUBLIC_MIXPANEL_TOKEN, { track_pageview: false });
+
+    async function setMixpanelUUID() {
+      const uuid = await fetchDeviceId()
+      console.log({ uuid })
+      mixpanel.identify(uuid)
+    }
+
+    setMixpanelUUID()
+  }, [])
+
   return (
     <Box sx={{ p: 4 }}>
       <Stack spacing={4}>

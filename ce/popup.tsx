@@ -15,6 +15,8 @@ import { toggleDisable } from "~redux/features/ui";
 import { useAppDispatch, useAppSelector } from "~redux/hooks";
 // https://stripe.com/docs/testing?testing-method=card-numbers#cards
 import { login, checkAuthStatus, clearError, logout } from "~redux/features/auth";
+import mixpanel from "mixpanel-browser";
+import { fetchDeviceId } from '~/utils/fetchDeviceId'
 
 import "./font.css"
 
@@ -47,9 +49,18 @@ function IndexPopup() {
 
   const { isValidSubscription, loadingCurrentUser: loadingCurrentUserSubsc, status } = payment
 
-  // useEffect(() => {
-  //   dispatch(checkAuthStatus())
-  // }, [])
+  useEffect(() => {
+    console.log("=====================================")
+    mixpanel.init(process.env.PLASMO_PUBLIC_MIXPANEL_TOKEN, { track_pageview: false });
+
+    async function setMixpanelUUID() {
+      const uuid = await fetchDeviceId()
+      console.log({ uuid })
+      mixpanel.identify(uuid)
+    }
+
+    setMixpanelUUID()
+  }, [])
 
   useEffect(() => {
     if (currentUser) {
@@ -66,14 +77,6 @@ function IndexPopup() {
     onLogout()
     dispatch(initStatePayment())
   }
-
-  // function handleSignup() {
-  //   dispatch(signupGoogle())
-  // }
-
-  // function handleSignin() {
-  //   dispatch(login())
-  // }
 
   function handleCloseError() {
     dispatch(clearError())
@@ -162,6 +165,13 @@ function IndexPopup() {
 
 
         {/* {!loadingCurrentUser && currentUser && ( */}
+        {uiDisabled && <Button
+          variant="contained"
+          onClick={handleToggleDisable}
+          sx={{ color: "#fff" }}
+        >
+          {chrome.i18n.getMessage("popup_button_enable_extension")}
+        </Button>}
         <Button
           variant="contained"
           onClick={() => {

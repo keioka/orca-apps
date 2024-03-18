@@ -15,7 +15,8 @@ import {
 } from "@mui/material"
 import { HiOutlineSpeakerWave } from "react-icons/hi2"
 import { ButtonRound } from "./ButtonRound";
-
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 const synth = window.speechSynthesis;
 
 export function CardVocab({
@@ -51,7 +52,6 @@ export function CardVocab({
   return (
     <Card sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee" }}>
       <Stack p={3} spacing={1}>
-
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -68,7 +68,7 @@ export function CardVocab({
               {vocab.pronounce}
             </Typography>
             <Stack spacing={1} direction="row" sx={{ alignItems: "center" }}>
-              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", background: getPosColor(vocab.pos), borderRadius: 1, py: 0.5, px: 1, width: 48 }}>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", background: getPosColor(vocab.pos), borderRadius: 1, py: 0.5, px: 1, width: 96 }}>
                 <Typography variant="caption" component="span" sx={{ color: "#fff", fontSize: 11, fontWeight: "bold", textAlign: "center" }}>
                   {convertPosIcon(vocab.pos, "en")}
                 </Typography>
@@ -95,32 +95,47 @@ export function CardVocab({
           </Box>
         </Stack>
         <Stack direction="row" spacing={1} sx={{ paddingTop: 1 }}>
-          <Typography variant="body2" component="h6">
+          <Typography variant="body1" component="h6">
             {meaningInLang}{vocab.translation && `（英：${vocab.meaning}）`}
           </Typography>
         </Stack>
-        <Stack spacing={1} sx={{ paddingTop: 1 }}>
 
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-            <Typography variant="caption" sx={{ lineHeight: 1 }}>
-              {chrome.i18n.getMessage("card_vocab_sentence_label")}:
+        <Accordion sx={{ border: "none", boxShadow: "none", "&::before": { background: "none" } }} disableGutters>
+          <AccordionSummary
+            sx={{ border: "none", boxShadow: "none", padding: 0, flexDirection: "row-reverse" }}
+            expandIcon={
+              <ExpandMoreIcon />
+            }
+            aria-controls="panel1a-content"
+          >
+            <Typography variant="body2" component="div">
+              例文
             </Typography>
-            <Typography variant="body2" sx={{ textDecoration: "italic" }} >
-              <q cite={window.location.href}>
-                <i>{vocab.sentence}</i>
-              </q>
-            </Typography>
-          </Stack>
+          </AccordionSummary>
+          <AccordionDetails sx={{ border: "none", boxShadow: "none", padding: 0 }}>
+            <Stack spacing={1} sx={{ paddingTop: 1 }}>
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                <Typography variant="caption" sx={{ lineHeight: 1 }}>
+                  {chrome.i18n.getMessage("card_vocab_sentence_label")}:
+                </Typography>
+                <Typography variant="body2" sx={{ textDecoration: "italic" }} >
+                  <q cite={window.location.href}>
+                    <i>{vocab.sentence}</i>
+                  </q>
+                </Typography>
+              </Stack>
 
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-            <Typography variant="caption" sx={{ lineHeight: 1 }}>
-              {chrome.i18n.getMessage("card_vocab_example_label")}:
-            </Typography>
-            <Typography variant="body2" component="h6">
-              {vocab.example}
-            </Typography>
-          </Stack>
-        </Stack>
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                <Typography variant="caption" sx={{ lineHeight: 1 }}>
+                  {chrome.i18n.getMessage("card_vocab_example_label")}:
+                </Typography>
+                <Typography variant="body2" component="h6">
+                  {vocab.example}
+                </Typography>
+              </Stack>
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
 
         <Box>
           {
@@ -132,7 +147,7 @@ export function CardVocab({
         <CardActions sx={{ borderTop: "1px solid #f2f2f2", padding: 0, paddingTop: 1 }}>
           <Stack direction="row" spacing={1}>
             {!shouldHideSave && <ButtonRound isActive={isSaved} onClick={handleClickSave}>{chrome.i18n.getMessage("card_vocab_button_save")}</ButtonRound>}
-            {!shouldHideDiscard && <ButtonRound>{chrome.i18n.getMessage("card_vocab_button_discard")}</ButtonRound>}
+            {/* {!shouldHideDiscard && <ButtonRound>{chrome.i18n.getMessage("card_vocab_button_discard")}</ButtonRound>} */}
             {/* <Button variant="outlined" size="small">Source</Button> */}
           </Stack>
         </CardActions>

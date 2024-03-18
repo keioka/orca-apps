@@ -204,11 +204,11 @@
     "description": "Toggle switch label for disabling a feature."
   },
   "menu_summary": {
-    "message": "要約",
+    "message": "要約をみる",
     "description": "Menu label for summary page."
   },
   "menu_vocab": {
-    "message": "単語",
+    "message": "単語をみる",
     "description": "Menu label for vocab page."
   },
   "menu_chat": {
@@ -266,5 +266,13 @@
   "chat_talk_start_button": {
     "message": "音声入力開始",
     "description": "Button label for starting the chat."
+  },
+  "popup_button_enable_extension": {
+    "message": "拡張機能を有効にする",
+    "description": "Button label for enabling the extension."
+  },
+  "summary_filter_title": {
+    "message": "要約の難易度レベルを選択",
+    "description": "Title for the summary filter."
   }
 }
