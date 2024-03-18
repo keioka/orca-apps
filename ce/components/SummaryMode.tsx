@@ -3,7 +3,8 @@ import {
   Box,
   Stack,
   Chip,
-  Tooltip
+  Tooltip,
+  Typography
 } from "@mui/material";
 import { sendToBackground } from "@plasmohq/messaging";
 import { CardSummary } from "./CardSummary";
@@ -51,35 +52,40 @@ export function SummaryMode({
 
   return (
     <Box mt={2}>
-      <Stack direction="row" spacing={1}>
-        {levels.map((level: Level) => {
-          return (
-            <Tooltip
-              title={description[level]}
-              PopperProps={{
-                disablePortal: true,
-                popperOptions: {
-                  positionFixed: true,
-                  modifiers: {
-                    preventOverflow: {
-                      enabled: true,
-                      boundariesElement: "window" // where "window" is the boundary
+      <Box mb={1}>
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          {chrome.i18n.getMessage("summary_filter_title")}
+        </Typography>
+        <Stack direction="row" spacing={0.5} py={1}>
+          {levels.map((level: Level) => {
+            return (
+              <Tooltip
+                title={description[level]}
+                PopperProps={{
+                  disablePortal: true,
+                  popperOptions: {
+                    positionFixed: true,
+                    modifiers: {
+                      preventOverflow: {
+                        enabled: true,
+                        boundariesElement: "window" // where "window" is the boundary
+                      }
                     }
                   }
-                }
-              }}
-            >
-              <Chip
-                key={level}
-                label={level}
-                onClick={() => {
-                  handleClickLevel(level)
                 }}
-              />
-            </Tooltip>
-          )
-        })}
-      </Stack>
+              >
+                <Chip
+                  key={level}
+                  label={level}
+                  onClick={() => {
+                    handleClickLevel(level)
+                  }}
+                />
+              </Tooltip>
+            )
+          })}
+        </Stack>
+      </Box>
       {isLoadingSummaries &&
         <Player
           autoplay

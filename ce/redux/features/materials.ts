@@ -29,6 +29,7 @@ interface MaterialsState {
   error: string | null;
   errorFetchCurrentOpenedMaterial: string | null;
   vocabs: { [key: string]: string[] }
+  statusCreatingVocabs: { [key: string]: string }
   summaries: { [key: string]: string[] }
 }
 
@@ -43,6 +44,7 @@ const initialState: MaterialsState = {
     totalPages: 0,
   },
   vocabs: {},
+  statusCreatingVocabs: {},
   summaries: {},
   isInitMaterials: false,
   isCreatingVocabs: false,
@@ -102,6 +104,7 @@ const materialsSlice = createSlice({
         }
 
         state.vocabs[materialId] = uniqBy([...vocabs, ...state.vocabs[materialId]], 'id')
+        state.statusCreatingVocabs = { ...state.statusCreatingVocabs, [action.payload.materialId]: action.payload.status }
         state.isFetchingVocabs = false
       })
       .addCase(fetchVocabs.rejected, (state, action) => {
@@ -134,8 +137,10 @@ const materialsSlice = createSlice({
       .addCase(createVocabs.pending, (state) => {
         state.isCreatingVocabs = true;
       })
-      .addCase(createVocabs.fulfilled, (state) => {
+      .addCase(createVocabs.fulfilled, (state, action) => {
+        console.log("createVocabs", { action })
         state.isCreatingVocabs = false;
+        state.statusCreatingVocabs = { ...state.statusCreatingVocabs, [action.meta.arg.materialId]: "IN_PROGRESS" }
       })
       .addCase(createVocabs.rejected, (state) => {
         state.isCreatingVocabs = false;
@@ -180,6 +185,7 @@ const materialsSlice = createSlice({
           state.errorFetchCurrentOpenedMaterial = null
           state.vocabs = {}
           state.summaries = {}
+          state.statusCreatingVocabs = {}
         })
   },
 });
@@ -399,9 +405,9 @@ export const fetchVocabs = createAsyncThunk(
         }
       })
 
-      const { vocabs } = response.data;
+      const { vocabs, material, status } = response.data;
 
-      return { vocabs, materialId }
+      return { vocabs, materialId, material, status }
     } catch (error) {
       console.error(error)
       return rejectWithValue(error.message)

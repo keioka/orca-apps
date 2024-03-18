@@ -17,6 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ code: "AUTH/NOT_FOUND", error: "follow: Unauthorized" });
     }
 
+    console.log("mpTrackingId", req.body.mpTrackingId)
+    console.log("currentUser", req.currentUser.id)
+
     await setMpTrackingId(req.currentUser.id, req.body.mpTrackingId)
     return res.status(200).json({ message: "ok" })
   } else {

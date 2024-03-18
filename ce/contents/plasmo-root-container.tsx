@@ -13,6 +13,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { useEffect, useMemo } from "react";
 import { useAppDispatch } from "~redux/hooks";
 import mixpanel from "mixpanel-browser";
+import { fetchDeviceId } from '~/utils/fetchDeviceId'
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -42,9 +43,17 @@ function Root() {
     return theme
   }, [chrome])
 
-
   useEffect(() => {
+    console.log("=====================================")
     mixpanel.init(process.env.PLASMO_PUBLIC_MIXPANEL_TOKEN, { track_pageview: false });
+
+    async function setMixpanelUUID() {
+      const uuid = await fetchDeviceId()
+      console.log({ uuid })
+      mixpanel.identify(uuid)
+    }
+
+    setMixpanelUUID()
   }, [])
 
   return (

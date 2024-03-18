@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createVocabs, getVocabsByMaterialId } from '@/models/material';
+import { createVocabs, getVocabsByMaterialId, getMaterialById } from '@/models/material';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -16,7 +16,8 @@ async function getVocabsHandler(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Missing required fields.' });
     }
     const vocabs = await getVocabsByMaterialId({ materialId });
-    return res.status(200).json({ vocabs });
+    const material = await getMaterialById(materialId as string);
+    return res.status(200).json({ vocabs, material, status: material.vocabGenScheduledSetCount === material?.vocabGenDoneSetCount ? "DONE" : "IN_PROGRESS" });
   } catch (error) {
     return res.status(500).json({ error: 'Failed to fetch vocabs.' });
   }

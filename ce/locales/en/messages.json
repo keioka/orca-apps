@@ -210,5 +210,13 @@
   "chat_talk_start_button": {
     "message": "Start Recording",
     "description": "Button label to start voice or speech input in the chat."
+  },
+  "popup_button_enable_extension": {
+    "message": "Enable Extension",
+    "description": "Button label for enabling the extension."
+  },
+  "summary_filter_title": {
+    "message": "Select Summary By Level",
+    "description": "Title for the summary filter."
   }
 }

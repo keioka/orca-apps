@@ -418,7 +418,6 @@ async function fetchDeviceId() {
   const DEVICE_ID_KEY = 'secure_deviceid';
   let fetchUUID = await SecureStore.getItemAsync(DEVICE_ID_KEY);
   if (fetchUUID) {
-    console.log({ fetchUUID })
     return fetchUUID;
   }
   let uuidV4 = uuid.v4();

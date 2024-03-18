@@ -97,7 +97,6 @@ export function Setting() {
   const [isSyncing, setIsSyncing] = useState<boolean>(true);
   const [popularSearchKeywords, setPopularSearchKeywords] = useState<string[]>([]);
 
-  console.log({ timeState })
   useEffect(() => {
     async function fetchAlarm() {
       const alarms = await chrome.alarms.getAll()
@@ -121,12 +120,12 @@ export function Setting() {
 
     async function syncTags() {
       const result = await chrome.storage.sync.get('tags') || []
-      setTags(result.tags)
+      setTags(result.tags || [])
     }
 
     async function syncFollowTags() {
       const result = await chrome.storage.sync.get('followTags') || []
-      setFollowTags(result.followTags)
+      setFollowTags(result.followTags || [])
     }
 
     chrome.alarms.getAll((alarms) => {
@@ -194,7 +193,7 @@ export function Setting() {
     const notificationOptions: NotificationOptions = {
       type: 'basic',
       iconUrl: '/assets/icon.png',
-      title: '新着記事のお知らせ。クリックして確認',
+      title: '新着記事をクリックして確認',
       message: `
         ${message}
       `,
@@ -302,25 +301,29 @@ export function Setting() {
         {searchKeywords.map((keyword) => {
           const isFollow = followTags.find((t) => t.query === keyword.query);
           return (
-            <Chip
-              sx={{ backgroundColor: isFollow ? "#DFEDF2" : "auto", marginBottom: 2 }}
-              key={keyword.query}
-              label={keyword.label}
-              onDelete={() => handleSelectTag(keyword)}
-              deleteIcon={isFollow ? null : <IoAddCircle />}
-            />
+            <Box sx={{ marginTop: 1 }}>
+              <Chip
+                sx={{ backgroundColor: isFollow ? "#DFEDF2" : "auto", marginTop: 1 }}
+                key={keyword.query}
+                label={keyword.label}
+                onDelete={() => handleSelectTag(keyword)}
+                deleteIcon={isFollow ? null : <IoAddCircle />}
+              />
+            </Box>
           );
         })}
         {popularSearchKeywords.map((keyword) => {
           const isFollow = followTags.find((t) => t.query === keyword.query);
           return (
-            <Chip
-              sx={{ backgroundColor: isFollow ? "#DFEDF2" : "auto", marginBottom: 2 }}
-              key={keyword.query}
-              label={keyword.label}
-              onDelete={() => handleSelectTag(keyword)}
-              deleteIcon={isFollow ? null : <IoAddCircle />}
-            />
+            <Box sx={{ marginTop: 1 }}>
+              <Chip
+                sx={{ backgroundColor: isFollow ? "#DFEDF2" : "auto", marginTop: 1 }}
+                key={keyword.query}
+                label={keyword.label}
+                onDelete={() => handleSelectTag(keyword)}
+                deleteIcon={isFollow ? null : <IoAddCircle />}
+              />
+            </Box>
           );
         })}
       </Stack>

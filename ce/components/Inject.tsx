@@ -14,7 +14,10 @@ import {
   Alert,
   Chip,
   Popover,
-  Tooltip
+  Tooltip,
+  Step,
+  Stepper,
+  StepLabel
 } from "@mui/material"
 import { IoPlayCircle, IoCloseCircle, IoMicOutline } from "react-icons/io5";
 import { useFirebase } from "../firebase/hooks"
@@ -33,10 +36,12 @@ import { toggleDisable, clearSubscriptionForm } from "~redux/features/ui";
 import type { VocabularyItem, Message } from "~types";
 import { SummaryMode } from "./SummaryMode";
 import { FormSubscription } from "./FormSubscription";
-import { fetchCurrentUser, setSession, login, signup } from "~/redux/features/auth";
+import { fetchCurrentUser, setSession, login, signup, setMpTrackingId } from "~/redux/features/auth";
 import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleResponses } from "~/redux/features/lessons";
 import { ButtonGoogleAuth } from "./ButtonGoogleAuth";
 import mixpanel from "mixpanel-browser";
+import { fetchDeviceId } from '~/utils/fetchDeviceId'
+import { use } from "chai";
 
 const drawerWidth = 380
 
@@ -168,12 +173,31 @@ function App({
   const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage)
   const errorCreateAIMessage = useAppSelector(state => state.message.errorCreateAIMessage)
   const errorFetchCurrentOpenedMaterial = useAppSelector(state => state.materials.errorFetchCurrentOpenedMaterial)
+  const statusCreatingVocabs = useAppSelector(state => currentOpenedMaterial ? state.materials.statusCreatingVocabs[currentOpenedMaterial.id] : null)
 
   useEffect(() => {
     dispatch({ type: "global/RESET_STATE" });
     dispatch(clearSampleResponses())
     authCheck()
   }, [])
+
+
+  useEffect(() => {
+    setMpTrackingIdToUser()
+  }, [currentUser])
+
+  async function setMpTrackingIdToUser() {
+    const deviceId = await fetchDeviceId()
+    if (typeof deviceId !== 'string') {
+      console.error("deviceId is not string", deviceId)
+      return
+    }
+
+    if (currentUser && (!currentUser.mpTrackingId || currentUser.mpTrackingId !== deviceId)) {
+      dispatch(setMpTrackingId({ mpTrackingId: deviceId }))
+    }
+  }
+
 
   // set session from Firebase to Redux State
   useEffect(() => {
@@ -229,7 +253,7 @@ function App({
 
   useEffect(() => {
     if (!open) return
-    console.log("=========>>>>>>>>", { currentOpenedMaterial, isCreatingVocabs, isFetchingVocabs, vocabs })
+    if (statusCreatingVocabs != null) return
     if (currentOpenedMaterial && currentOpenedMaterial.id && !isCreatingVocabs && !isFetchingVocabs && vocabs.length === 0) {
       dispatch(createVocabs({ materialId: currentOpenedMaterial.id }))
     }
@@ -445,6 +469,7 @@ function App({
             <VocabMode
               vocabs={vocabs}
               isLoadingVocabs={isFetchingVocabs}
+              statusCreatingVocabs={statusCreatingVocabs}
               setError={setError}
               onSaveVocab={handleSaveVocab}
             />
@@ -465,11 +490,15 @@ function App({
 export function Inject() {
   const [hideExtention, setHideExtention] = useState(false)
   const [open, setOpen] = useState(false)
-
+  const dispatch = useAppDispatch()
   const [originalWidth, setOriginalWidth] = useState(0)
   const [isFullLoaded, setIsFullLoaded] = useState(false)
-
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
+  console.log({ uiDisabled })
+
+  useEffect(() => {
+    setOpen(!uiDisabled)
+  }, [uiDisabled])
 
   function handleOpen(shouldOpen: boolean) {
     mixpanel.track("ACT:openExtension")
@@ -477,8 +506,10 @@ export function Inject() {
   }
 
   function handleHideExtension(shouldHide: boolean) {
-    mixpanel.track("ACT:hideExtension")
-    setHideExtention(shouldHide)
+    mixpanel.track("ACT:disableExtension")
+    // mixpanel.track("ACT:hideExtension")
+    dispatch(toggleDisable())
+    // setHideExtention(shouldHide)
   }
 
   useEffect(() => {
@@ -502,7 +533,7 @@ export function Inject() {
   }, [open, uiDisabled])
 
   const isRoot = window.location.pathname == "/"; //Equals true if we're at the root
-  if (uiDisabled || isRoot || hideExtention || blaklist.some((url) => window.location.href.includes(url))) {
+  if (uiDisabled || isRoot || blaklist.some((url) => window.location.href.includes(url))) {
     return null
   }
 
@@ -549,6 +580,7 @@ type Level = "all" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2"
 function VocabMode({
   vocabs,
   onSaveVocab,
+  statusCreatingVocabs,
 }) {
   const dispatch = useAppDispatch()
   const materialId = useAppSelector(state => state.materials.currentOpenedMaterial?.id)
@@ -556,8 +588,14 @@ function VocabMode({
   const [levelsFilter, setLevelsFilter] = useState<Level[]>([])
 
   const filteredVocabs = useMemo(() => {
+    if (!vocabs) return []
     if (levelsFilter.length === 0) {
-      return vocabs
+      return [...vocabs].sort((a, b) => {
+        const levelOrder = ["C2", "C1", "B2", "B1", "A2", "A1"];
+        const levelA = a.level || "";
+        const levelB = b.level || "";
+        return levelOrder.indexOf(levelA) - levelOrder.indexOf(levelB);
+      });
     }
 
     return vocabs.filter((vocab) => {
@@ -608,9 +646,14 @@ function VocabMode({
 
   return (
     <Box mt={2}>
-      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-        {chrome.i18n.getMessage("vocab_filter_title")}
-      </Typography>
+      <Stack direction="row" spacing={1}>
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          {chrome.i18n.getMessage("vocab_filter_title")}
+        </Typography>
+        <Typography variant="body2" sx={{ color: "#b4b4b4" }}>
+          {statusCreatingVocabs}
+        </Typography>
+      </Stack>
       <Stack
         direction="row"
         spacing={0.5}
@@ -765,12 +808,34 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
     </Stack>
   )
 }
+// const tabs = [
+//   {
+//     label: chrome.i18n.getMessage("menu_summary"),
+//     value: Mode.Summary
+//   },
+//   {
+//     label: chrome.i18n.getMessage("menu_vocab"),
+//     value: Mode.Vocab
+//   },
+//   {
+//     label: chrome.i18n.getMessage("menu_chat"),
+//     value: Mode.Talk
+//   },
 
+
+// ]
 function Tabs({
   onClickButton,
   selectedMode
 }) {
   return (
+    // <Stepper activeStep={selectedMode} alternativeLabel>
+    //   {tabs.map((tab) => (
+    //     <Step key={tab.label} onClick={() => onClickButton(tab.value)}>
+    //       <StepLabel>{tab.label}</StepLabel>
+    //     </Step>
+    //   ))}
+    // </Stepper>
     <ButtonGroup
       variant="outlined"
       sx={{
@@ -813,7 +878,7 @@ function Tabs({
           backgroundColor: selectedMode === Mode.Vocab ? theme.palette.primary.main : "transparent",
           borderRight: "1px solid #dddddd",
           height: 48,
-          color: selectedMode === Mode.Vocab ? "#fff" : "#b4b4b4",
+          color: selectedMode === Mode.Vocab ? "#fff" : "#848484",
           "&:hover": {
             backgroundColor: theme.palette.primary.main,  // Adjust this if you also want to use a theme color on hover
             border: "none",
@@ -824,7 +889,7 @@ function Tabs({
         onClick={() => onClickButton(Mode.Vocab)}
       >
         <FaFileWord size={16} />
-        <Typography variant="body2" component="span" sx={{ marginLeft: 0.5, fontWeight: 600 }}>
+        <Typography variant="body2" component="span" sx={{ marginLeft: 0.5, fontWeight: 600, fontSize: 12 }}>
           {chrome.i18n.getMessage("menu_vocab")}
         </Typography>
       </Button>
@@ -837,7 +902,7 @@ function Tabs({
           border: "none",
           backgroundColor: selectedMode === Mode.Summary ? theme.palette.primary.main : "transparent",
           height: 48,
-          color: selectedMode === Mode.Summary ? "#fff" : "#b4b4b4",
+          color: selectedMode === Mode.Summary ? "#fff" : "#848484",
           "&:hover": {
             backgroundColor: theme.palette.primary.main,  // Adjust this if you also want to use a theme color on hover
             border: "none",
@@ -847,7 +912,7 @@ function Tabs({
         onClick={() => onClickButton(Mode.Summary)}
       >
         <TbVocabulary size={16} />
-        <Typography variant="body2" component="span" sx={{ marginLeft: 0.5, fontWeight: 600 }}>
+        <Typography variant="body2" component="span" sx={{ marginLeft: 0.5, fontWeight: 600, fontSize: 12 }}>
           {chrome.i18n.getMessage("menu_summary")}
         </Typography>
       </Button>

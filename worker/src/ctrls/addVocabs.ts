@@ -84,8 +84,6 @@ export async function addVocabs(req: any, res: any) {
       vocabGenScheduledSetCount: splitContent.length
     }
   })
-
-  let done = 0
   
   splitContent.forEach(async (content, index) => {
     const pid = `${materialId}_${index}`
@@ -110,21 +108,35 @@ export async function addVocabs(req: any, res: any) {
         vocabParams: mappedVocabs,
         materialId
       })
-      done++
+
+      const materialLocal = await prisma.material.findUnique({
+        where: {
+          id: materialId,
+        },
+        include: {
+          publisher: true,
+        },
+      });
+
+      if (!materialLocal) {
+        throw new Error(`Material not found: ${materialId}`)
+      }
+      
+      await prisma.material.update({
+        where: {
+          id: materialId
+        },
+        data: {
+          vocabGenDoneSetCount: materialLocal.vocabGenDoneSetCount ?  materialLocal.vocabGenDoneSetCount + 1 : 1,
+        }
+      })
+
+  
     } catch (error) {
       console.error(error)
       return []
     } finally {
       console.timeEnd(pid)
-    }
-  })
-
-  await prisma.material.update({
-    where: {
-      id: materialId
-    },
-    data: {
-      vocabGenDoneSetCount: done,
     }
   })
 
