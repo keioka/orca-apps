@@ -172,9 +172,11 @@ const materialsSlice = createSlice({
         state.errorFetchCurrentOpenedMaterial = action.payload.message as string;
       })
       .addMatcher(
-        (action) => action.type === "global/RESET_STATE",
+        (action) => {
+          return action.type === "global/RESET_STATE"
+        },
         (state) => {
-          state = initialState
+          console.log(">>>>>>>> Init materials state >>>>>>>>>")
           state.items = []
           state.searchResult = []
           state.originalItems = []
