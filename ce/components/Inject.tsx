@@ -513,6 +513,10 @@ export function Inject() {
   }
 
   useEffect(() => {
+    dispatch({ type: "global/RESET_STATE" })
+  }, [])
+
+  useEffect(() => {
 
     window.addEventListener('load', function () {
       setOriginalWidth(window.innerWidth)

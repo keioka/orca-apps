@@ -99,20 +99,20 @@ storage.watch({
     }
 
 
-    // for (const key in oldValue) {
-    //   if (oldValue[key] !== newValue?.[key]) {
-    //     updatedKeys.push(key);
-    //   }
-    // }
-    // for (const key in newValue) {
-    //   if (oldValue?.[key] !== newValue[key]) {
-    //     updatedKeys.push(key);
-    //   }
-    // }
-    // if (updatedKeys.length > 0) {
-    //   persistor.resync()
+    for (const key in oldValue) {
+      if (oldValue[key] !== newValue?.[key]) {
+        updatedKeys.push(key);
+      }
+    }
+    for (const key in newValue) {
+      if (oldValue?.[key] !== newValue[key]) {
+        updatedKeys.push(key);
+      }
+    }
+    if (updatedKeys.length > 0) {
+      persistor.resync()
 
-    // }
+    }
   },
 });
 

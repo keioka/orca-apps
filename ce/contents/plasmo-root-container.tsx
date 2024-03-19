@@ -14,6 +14,7 @@ import { useEffect, useMemo } from "react";
 import { useAppDispatch } from "~redux/hooks";
 import mixpanel from "mixpanel-browser";
 import { fetchDeviceId } from '~/utils/fetchDeviceId'
+import { Drawer } from "@mui/material";
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -81,6 +82,7 @@ function Root() {
   )
 }
 
+const drawerWidth = 380
 function ErrorBoundaryFallback({ error, resetErrorBoundary }): React.JSX.Element {
   const dispatch = useAppDispatch()
 
@@ -91,11 +93,25 @@ function ErrorBoundaryFallback({ error, resetErrorBoundary }): React.JSX.Element
   }, [])
 
   return (
-    <div>
+    <Drawer
+      variant="persistent"
+      anchor="right"
+      open={true}
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        pointerEvents: "auto",
+        "& .MuiDrawer-paper": {
+          width: drawerWidth,
+          boxSizing: "border-box",
+          background: "#fff",
+        }
+      }}
+    >
       <h1>Something went wrong</h1>
       <pre>{error.message}</pre>
       <button onClick={resetErrorBoundary}>Try again</button>
-    </div>
+    </Drawer>
   )
 }
 

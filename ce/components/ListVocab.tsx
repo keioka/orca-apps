@@ -32,7 +32,7 @@ export function ListVocab({ direction, vocabs = sampleVocabs, savedVocabs, isLoa
       <Player
         autoplay
         loop
-        src="https://lottie.host/6ed0de1f-764b-411a-a4be-12987cca39df/HL0GXhsmXT.json"
+        src="https://lottie.host/f5d3cdb1-d14c-4e57-9287-df6f93f302af/1yKt5SJGbU.json"
         style={{ height: '300px', width: '300px' }}
       />
     )
