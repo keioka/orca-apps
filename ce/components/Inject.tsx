@@ -36,12 +36,11 @@ import { toggleDisable, clearSubscriptionForm } from "~redux/features/ui";
 import type { VocabularyItem, Message } from "~types";
 import { SummaryMode } from "./SummaryMode";
 import { FormSubscription } from "./FormSubscription";
-import { fetchCurrentUser, setSession, login, signup, setMpTrackingId } from "~/redux/features/auth";
+import { fetchCurrentUser, setSession, login, signup, clearError, setMpTrackingId } from "~/redux/features/auth";
 import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleResponses } from "~/redux/features/lessons";
 import { ButtonGoogleAuth } from "./ButtonGoogleAuth";
 import mixpanel from "mixpanel-browser";
 import { fetchDeviceId } from '~/utils/fetchDeviceId'
-import { use } from "chai";
 
 const drawerWidth = 380
 
@@ -179,6 +178,7 @@ function App({
     dispatch({ type: "global/RESET_STATE" });
     dispatch(clearSampleResponses())
     authCheck()
+    dispatch(clearError())
   }, [])
 
 
@@ -494,11 +494,6 @@ export function Inject() {
   const [originalWidth, setOriginalWidth] = useState(0)
   const [isFullLoaded, setIsFullLoaded] = useState(false)
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
-  console.log({ uiDisabled })
-
-  useEffect(() => {
-    setOpen(!uiDisabled)
-  }, [uiDisabled])
 
   function handleOpen(shouldOpen: boolean) {
     mixpanel.track("ACT:openExtension")

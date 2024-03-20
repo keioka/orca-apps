@@ -274,5 +274,57 @@
   "summary_filter_title": {
     "message": "要約の難易度レベルを選択",
     "description": "Title for the summary filter."
+  },
+  "setting_keyword_title": {
+    "message": "キーワード設定",
+    "description": "Title for the keyword setting."
+  },
+  "setting_keyword_input_placeholder": {
+    "message": "キーワードを入力してください",
+    "description": "Placeholder for the keyword input."
+  },
+  "setting_keyword_save_button": {
+    "message": "追加",
+    "description": "Button label for saving the keyword."
+  },
+  "setting_keyword_popular_follow_subtitle": {
+    "message": "人気のキーワードをフォローする",
+    "description": "Button label for following the keyword."
+  },
+  "setting_keyword_follow_subtitle": {
+    "message": "任意のキーワードを入力してフォローする",
+    "description": "Button label for following the keyword."
+  },
+  "setting_alarm_title": {
+    "message": "アラーム設定",
+    "description": "Title for the alarm setting."
+  },
+  "setting_set_alarm": {
+    "message": "アラームをセット",
+    "description": "Button label for setting an alarm."
+  },
+  "setting_clear_alarm": {
+    "message": "アラームを解除",
+    "description": "Button label for setting an alarm."
+  },
+  "setting_test_alarm": {
+    "message": "テスト",
+    "description": "Button label for setting an alarm."
+  },
+  "setting_goal_title": {
+    "message": "目標設定",
+    "description": "Title for the goal setting."
+  },
+  "setting_current_score": {
+    "message": "現在のスコア",
+    "description": "Button label for setting an alarm."
+  },
+  "setting_goal": {
+    "message": "英語学習の目標を自由に書いてください",
+    "description": "Label for the goal setting."
+  },
+  "setting_goal_placeholder": {
+    "message": "TOEIC 900点取得、英語でプレゼンができるようになる、３年後外資系企業で働く、英字新聞を毎日読むなど",
+    "description": "Placeholder for the goal setting."
   }
 }

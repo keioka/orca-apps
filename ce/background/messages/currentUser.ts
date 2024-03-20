@@ -11,8 +11,6 @@ import { getAuth } from "firebase/auth"
 
 import { app, auth } from "~/firebase"
 
-setPersistence(auth, browserLocalPersistence)
-
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   console.log("login message received")
   chrome.identity.getAuthToken({ interactive: false }, async function (token) {

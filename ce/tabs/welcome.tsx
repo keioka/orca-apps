@@ -5,7 +5,8 @@ import {
   Drawer,
   Stack,
   Grid,
-  TextField
+  TextField,
+  Alert
 } from "@mui/material"
 import type { PlasmoCSConfig } from "plasmo"
 import {
@@ -16,6 +17,12 @@ import { ThemeProvider } from '@mui/material/styles';
 import { Setting } from "~/components/Setting";
 import mixpanel from "mixpanel-browser";
 import { fetchDeviceId } from '~/utils/fetchDeviceId'
+import { useFirebase } from "~firebase/hooks"
+import { ButtonGoogleAuth } from "~components/ButtonGoogleAuth"
+import { store } from '~redux/store';
+import { signup, clearError } from "~/redux/features/auth";
+import { Provider } from "react-redux";
+import { useAppDispatch, useAppSelector } from "~redux/hooks";
 
 import "../font.css"
 
@@ -24,6 +31,11 @@ export const config: PlasmoCSConfig = {
 }
 
 function Main() {
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const { session: sessionFB, onLoginBackground, onLogout } = useFirebase()
+  const errorSignupMessage = useAppSelector((state) => state.auth.errorSignupMessage)
+  const currentUser = useAppSelector(state => { return state.auth.currentUser })
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     console.log("=====================================")
@@ -36,19 +48,47 @@ function Main() {
     }
 
     setMixpanelUUID()
+    dispatch(clearError())
   }, [])
+
+  const handleClickSubmit = () => {
+    setIsSubmit(true)
+  }
+
+  async function handleSignup() {
+    mixpanel.track("ACT:signup")
+    const userCred = await onLoginBackground()
+    dispatch(signup({ accessToken: userCred.accessToken, uid: userCred.uid }))
+  }
 
   return (
     <Box sx={{ p: 4 }}>
       <Stack spacing={4}>
-        <Typography variant="h4">
-          Orcaをインストールしていただきありがとうございます！
-        </Typography>
 
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <Stack spacing={4}>
-              <Stack spacing={2}>
+        <Stack spacing={4}>
+          {!isSubmit &&
+            <>
+              <Typography variant="h6">
+                Orcaをインストールしていただきありがとうございます！
+              </Typography>
+              <Typography variant="h5">
+                興味のあるカテゴリーの設定や学習の通知設定をして、学習を習慣化していきましょう！
+              </Typography>
+              <Setting onSubmit={handleClickSubmit} />
+            </>
+          }
+          {isSubmit &&
+            <Stack spacing={2}>
+              <Stack sx={{ background: "#f4f4f4", padding: 4, borderRadius: 2 }} spacing={2}>
+                <Typography variant="h6">
+                  設定完了されました！サインアップして設定を保存しましょう！
+                </Typography>
+                {errorSignupMessage && <Alert severity="error">{errorSignupMessage}</Alert>}
+                {currentUser && <Alert severity="success">サインアップ完了しました！</Alert>}
+                {!currentUser && <ButtonGoogleAuth onClick={handleSignup} isSignup />}
+              </Stack>
+
+              <Stack sx={{ background: "#f4f4f4", padding: 4, borderRadius: 2 }} spacing={2}>
                 <Typography variant="h5">
                   はじめにこちらの使い方説明動画をご覧ください。
                 </Typography>
@@ -62,35 +102,9 @@ function Main() {
                   allowfullscreen>
                 </iframe>
               </Stack>
-              <Setting />
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  background: "#f4f4f4",
-                  width: "100%",
-                  boxSizing: "border-box"
-                }}
-              >
-                <Stack sx={{ width: "100%", padding: 2, display: "flex", alignItems: "center" }} spacing={1}>
-                  <Typography sx={{ fontSize: 16 }}>
-                    {chrome.i18n.getMessage("popup_title_feedback")}
-                  </Typography>
-                  <Typography sx={{ fontSize: 12 }}>
-                    {chrome.i18n.getMessage("popup_subtitle_feedback")}
-                  </Typography>
-                  <Box sx={{ width: 120 }}>
-                    <img src="https://qr-official.line.me/gs/M_048rhxeo_GW.png?oat_content=qr" width="120" />
-                  </Box>
-                </Stack>
-              </Box>
             </Stack>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeJfIDvI5Vc1QYGljLKi4I8b0mPQqfBtnjImp7PalS1C-U3uw/viewform?embedded=true" width="640" height="1569" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-          </Grid>
-        </Grid>
-
+          }
+        </Stack>
       </Stack>
     </Box>
   )
@@ -104,9 +118,11 @@ function App() {
   return (
     <React.StrictMode>
       <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <Main />
-        </BrowserRouter>
+        <Provider store={store}>
+          <BrowserRouter>
+            <Main />
+          </BrowserRouter>
+        </Provider>
       </ThemeProvider>
     </React.StrictMode>
   )

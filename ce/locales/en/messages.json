@@ -218,5 +218,33 @@
   "summary_filter_title": {
     "message": "Select Summary By Level",
     "description": "Title for the summary filter."
+  },
+  "setting_alarm_title": {
+    "message": "Set Study Alarm",
+    "description": "Title for the alarm setting."
+  },
+  "setting_set_alarm": {
+    "message": "Set Alarm",
+    "description": "Button label for setting an alarm."
+  },
+  "setting_clear_alarm": {
+    "message": "Clear Alarm",
+    "description": "Button label for setting an alarm."
+  },
+  "setting_test_alarm": {
+    "message": "Test",
+    "description": "Button label for setting an alarm."
+  },
+  "setting_language": {
+    "message": "Language",
+    "description": "Label for the language setting."
+  },
+  "setting_goal": {
+    "message": "Goal",
+    "description": "Label for the goal setting."
+  },
+  "setting_goal_placeholder": {
+    "message": "Enter your goal",
+    "description": "Placeholder for the goal setting."
   }
 }
