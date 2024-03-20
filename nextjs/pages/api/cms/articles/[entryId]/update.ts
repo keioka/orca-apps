@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       entry.fields.p6 ? pRetry(() => fetchVocab(entry.fields.p6), retryConfig) : null,
     ])
 
-    if (!entry.fields.p1 || !entry.fields.p2 || !entry.fields.p3) {
+    if (!entry.fields.p1 || !entry.fields.p2 || !entry.fields.p3 || !entry.fields.p4 || !entry.fields.p5) {
       return res.status(400).json({ message: 'Paragraphs are not filled' });
     }
 
@@ -54,22 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (process.env.NODE_ENV === 'development') {
       [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }] = [{ text: null }, { text: null }, { text: null }, { text: null }, { text: null }, { text: null }]
     } else {
-
-      const texts = [entry.fields.title, entry.fields.p1, entry.fields.p2, entry.fields.p3]
-      if (entry.fields.p4) {
-        texts.push(entry.fields.p4)
-      }
-      if (entry.fields.p5) {
-        texts.push(entry.fields.p5)
-      }
-      // [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }]
-      const result = await translate({ texts: texts, targetLang: 'ja' })
-      titleJa = result[0].text
-      p1Ja = result[1].text
-      p2Ja = result[2].text
-      p3Ja = result[3].text
-      p4Ja = result[4] ? result[4].text : null
-      p5Ja = result[5] ? result[5].text : null
+      [{ text: titleJa }, { text: p1Ja }, { text: p2Ja }, { text: p3Ja }, { text: p4Ja }, { text: p5Ja }] = await translate({ texts: [entry.fields.title, entry.fields.p1, entry.fields.p2, entry.fields.p3, entry.fields.p4, entry.fields.p5], targetLang: 'ja' })
     }
     const fields = deepmerge(
       entryWithLocale.fields,

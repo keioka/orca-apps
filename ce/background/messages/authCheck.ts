@@ -1,14 +1,4 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
-import {
-  browserLocalPersistence,
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  setPersistence,
-  signInWithCredential,
-} from "firebase/auth"
-import { initializeApp } from "firebase/app"
-import { getAuth } from "firebase/auth"
-
 import { Storage } from "@plasmohq/storage"
 
 const storage = new Storage()

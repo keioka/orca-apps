@@ -39,7 +39,6 @@ export const useFirebase = () => {
         console.warn("No token found")
         throw new Error("No token found")
       }
-
       const credential = GoogleAuthProvider.credential(null, token)
       await signInWithCredential(auth, credential)
       setIsCheckingAuth(false)
@@ -72,9 +71,7 @@ export const useFirebase = () => {
       }
 
       const credential = GoogleAuthProvider.credential(null, token)
-
       const userCred = await signInWithCredential(auth, credential)
-      console.log("===============>>", { userCred })
       setIsLoading(false)
       return userCred.user
     } catch (e) {
@@ -96,6 +93,10 @@ export const useFirebase = () => {
       }
       if (token) {
         const credential = GoogleAuthProvider.credential(null, token)
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({
+          prompt: 'select_account'
+        });
 
         try {
           await signInWithCredential(auth, credential)
@@ -114,7 +115,7 @@ export const useFirebase = () => {
     setIsLoading(true)
 
     onAuthStateChanged(auth, async (user) => {
-      // await setPersistence(auth, browserLocalPersistence)
+      await setPersistence(auth, browserLocalPersistence)
 
       if (!user) {
         setIsLoading(false)

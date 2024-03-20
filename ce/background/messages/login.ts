@@ -1,13 +1,5 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
-import {
-  browserLocalPersistence,
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  setPersistence,
-  signInWithCredential,
-} from "firebase/auth"
 import { Storage } from "@plasmohq/storage"
-import { app, auth } from "~/firebase"
 
 const storage = new Storage()
 
@@ -21,6 +13,14 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       res.send({ error: chrome.runtime.lastError })
       return
     }
+
+    //   chrome.identity.launchWebAuthFlow(
+    //     { 'url': 'https://accounts.google.com/logout' },
+    //     function(tokenUrl) {
+    //         responseCallback();
+    //     }
+    // );
+
     if (token) {
       await storage.set("firebase:token", token)
       res.send({ token })

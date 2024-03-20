@@ -16,6 +16,7 @@ function openNewTab() {
     url: "./tabs/welcome.html"
   })
 }
+console.log(chrome.i18n.getUILanguage())
 
 chrome.runtime.onInstalled.addListener((details) => {
   if (details?.reason === 'install') {

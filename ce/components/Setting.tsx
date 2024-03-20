@@ -1,11 +1,28 @@
 import { useEffect, useState } from "react";
-import { Button, TextField, Box, Stack, Typography, Chip } from "@mui/material";
+import {
+  Button,
+  TextField,
+  Box,
+  Stack,
+  Typography,
+  Chip,
+  Step,
+  Stepper,
+  StepLabel,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
+} from "@mui/material";
+import { TextareaAutosize } from '@mui/base';
+
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { sendToBackground } from "@plasmohq/messaging";
 import { IoAddCircle } from "react-icons/io5";
+import { set } from "lodash";
 const jwt = require('jsonwebtoken')
 
 const searchKeywords = [
@@ -88,14 +105,32 @@ interface Alarm {
   scheduledTime: number // epoch time
 }
 
-export function Setting() {
+enum CEFR {
+  A1 = "A1",
+  A2 = "A2",
+  B1 = "B1",
+  B2 = "B2",
+  C1 = "C1",
+  C2 = "C2"
+}
+
+
+export function Setting({ onSubmit }: { onSubmit: () => void }) {
   const [timeState, setTimeState] = useState<Record<number, Dayjs | null>>({});
-  const [currentAlarm, setCurrentAlarm] = useState<Record<number, Dayjs | null>>({});
+  const [currentAlarm, setCurrentAlarm] = useState<Alarm[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [followTags, setFollowTags] = useState<string[]>([]);
   const [keyword, setKeyword] = useState<string>('');
   const [isSyncing, setIsSyncing] = useState<boolean>(true);
   const [popularSearchKeywords, setPopularSearchKeywords] = useState<string[]>([]);
+  const [step, setStep] = useState<number>(0);
+
+  const [cefr, setCEFR] = useState<CEFR | null>();
+  const [toeic, setTOEIC] = useState<number | null>();
+  const [toefl, setTOEFL] = useState<number | null>();
+  const [ibt, setIBT] = useState<number | null>();
+
+  const [goal, setGoal] = useState<string>('');
 
   useEffect(() => {
     async function fetchAlarm() {
@@ -128,7 +163,23 @@ export function Setting() {
       setFollowTags(result.followTags || [])
     }
 
+    async function syncScores() {
+      const result = await chrome.storage.sync.get('scores')
+      const scores = result.scores || {}
+      setCEFR(scores.cefr || CEFR.A1)
+      setTOEIC(scores.toeic || 0)
+      setTOEFL(scores.toefl || 0)
+      setIBT(scores.ibt || 0)
+    }
+
+    async function syncGoal() {
+      const result = await chrome.storage.sync.get('goal') || []
+      console.log({ result })
+      setGoal(result.goal || "")
+    }
+
     chrome.alarms.getAll((alarms) => {
+      console.log({ alarms })
       alarms.forEach((alarm: Alarm) => {
         const day = dayjs(alarm.scheduledTime).day() + 1;
         const time = dayjs(alarm.scheduledTime);
@@ -141,8 +192,10 @@ export function Setting() {
 
     syncTags()
     syncFollowTags()
+    syncCurrentAlarm()
+    syncScores()
+    syncGoal()
     fetchPopularKeywords()
-    setCurrentAlarm(chrome.alarms)
     fetchAlarm()
     setIsSyncing(false)
   }, [])
@@ -157,6 +210,52 @@ export function Setting() {
     chrome.storage.sync.set({ followTags: followTags });
   }, [followTags])
 
+  async function syncCurrentAlarm() {
+    const alarms = await chrome.alarms.getAll()
+    setCurrentAlarm(alarms.sort((a, b) => a.scheduledTime - b.scheduledTime))
+  }
+
+  const handleChangeCEFR = (event: React.ChangeEvent<{ value: unknown }>) => {
+    if (event.target.value === "") {
+      setCEFR(null)
+      return
+    }
+    setCEFR(event.target.value as number);
+  }
+
+  const handleChangeTOEIC = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === "") {
+      setTOEIC(null)
+      return
+    }
+    setTOEIC(parseInt(event.target.value));
+  }
+
+  const handleChangeTOEFL = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === "") {
+      setTOEFL(null)
+      return
+    }
+    setTOEFL(parseInt(event.target.value));
+  }
+
+  const handleChangeIBT = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIBT(parseInt(event.target.value));
+  }
+
+  console.log({ goal })
+  const handleSubmit = () => {
+    chrome.storage.sync.set({
+      scores: {
+        cefr,
+        toeic,
+        toefl,
+        ibt
+      }
+    });
+    chrome.storage.sync.set({ goal: goal });
+    onSubmit()
+  }
 
   const handleNotificationCreate = async (alarm: Alarm) => {
     const queries = []
@@ -229,35 +328,55 @@ export function Setting() {
     handleNotificationCreate()
   }
 
+  const handleClear = async () => {
+    await chrome.alarms.clearAll()
+    setCurrentAlarm([])
+  }
+
   const handleSaveSetting = async () => {
     await chrome.alarms.clearAll()
+    const currentDate = dayjs();
+    const currentDay = currentDate.day();
+    const currentTime = parseInt(currentDate.format('HH:mm'));
 
-    Object.entries(timeState).forEach(async ([day, time]) => {
+    await Promise.all(Object.entries(timeState).map(async ([day, time]) => {
       if (time) {
-        const notificationTime = time.format('HH:mm');
-        const currentDate = dayjs();
-        const currentDay = currentDate.day();
-        const currentTime = currentDate.format('HH:mm');
-        const nextDay = (parseInt(day) - currentDay + 7) % 7 - 1;
-        const nextTime = dayjs(`${currentDate.format('YYYY-MM-DD')}T${time.format('HH:mm')}`).add(nextDay, 'day');
-        const nextEpochTimeValue = nextTime.valueOf();
-        const nextEpochTime = currentTime > nextEpochTimeValue ? nextEpochTimeValue + 60 * 60 * 24 * 1000 * 7 : nextEpochTimeValue;
+        // Convert currentTime to a number
+        const nextEpochTimeValue = time.valueOf();
 
-        const alarm = await chrome.alarms.get(`orca-alarm-${nextEpochTime}`);
-
-        console.log({ nextEpochTime, nextTime, nextDay, currentDay, day: dayjs(`${currentDate.format('YYYY-MM-DD')}T${time.format('HH:mm')}`), time: time.format('HH:mm') })
+        const alarm = await chrome.alarms.get(`orca-alarm-${nextEpochTimeValue}`);
 
         if (!alarm) {
-          await chrome.alarms.create(`orca-alarm-${nextEpochTime}`, { when: nextEpochTime });
+          await chrome.alarms.create(`orca-alarm-${nextEpochTimeValue}`, { when: nextEpochTimeValue });
         }
 
 
         chrome.alarms.onAlarm.addListener(handleNotificationCreate);
       }
-    })
+    }))
+
+    syncCurrentAlarm()
   }
 
   const handleTimeChange = (day: number, newValue: Dayjs | null) => {
+    if (!newValue) {
+      setTimeState((prevState) => {
+        const newState = { ...prevState };
+        delete newState[day];
+        return newState;
+      });
+      return;
+    }
+
+    if (newValue.isBefore(dayjs())) {
+      // assign next week if the day is past
+      const currentDate = dayjs();
+      const currentDay = currentDate.day();
+      const nextDayDistance = (parseInt(day) - 1 - currentDay + 7) % 7;
+      const nextDay = nextDayDistance === 0 ? 7 : nextDayDistance;
+      newValue = newValue.add(nextDay, 'day');
+    }
+
     setTimeState((prevState) => ({
       ...prevState,
       [day]: newValue,
@@ -293,85 +412,192 @@ export function Setting() {
     setFollowTags((prevState) => [...prevState, tag])
   }
 
+  const handleClickNext = () => {
+    if (step === 2) {
+      handleSaveSetting()
+    }
+    setStep(step + 1)
+  }
+
+  const handleClickBack = () => {
+    setStep(step - 1)
+  }
+
   return (
-    <Stack spacing={2} direction="column">
-      <Typography variant="h5">通知を受ける記事のキーワード設定</Typography>
-      <Typography variant="h6">人気のキーワードをフォローする</Typography>
-      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-        {searchKeywords.map((keyword) => {
-          const isFollow = followTags.find((t) => t.query === keyword.query);
-          return (
-            <Box sx={{ marginTop: 1 }}>
-              <Chip
-                sx={{ backgroundColor: isFollow ? "#DFEDF2" : "auto", marginTop: 1 }}
-                key={keyword.query}
-                label={keyword.label}
-                onDelete={() => handleSelectTag(keyword)}
-                deleteIcon={isFollow ? null : <IoAddCircle />}
-              />
-            </Box>
-          );
-        })}
-        {popularSearchKeywords.map((keyword) => {
-          const isFollow = followTags.find((t) => t.query === keyword.query);
-          return (
-            <Box sx={{ marginTop: 1 }}>
-              <Chip
-                sx={{ backgroundColor: isFollow ? "#DFEDF2" : "auto", marginTop: 1 }}
-                key={keyword.query}
-                label={keyword.label}
-                onDelete={() => handleSelectTag(keyword)}
-                deleteIcon={isFollow ? null : <IoAddCircle />}
-              />
-            </Box>
-          );
-        })}
-      </Stack>
-      <Typography variant="h6">任意のキーワードをフォローする</Typography>
-      <TextField label="Keywords" variant="outlined" onChange={handleOnChangeKeyword} value={keyword} />
-      <Stack spacing={1} direction="row">
-        {tags.map((tag) => (
-          <Chip
-            sx={{ backgroundColor: "#DFEDF2" }}
-            key={tag}
-            label={tag}
-            onDelete={() => handleDeleteTag(tag)}
-          />
-        ))}
-      </Stack>
+    <Stack spacing={step} direction="column">
+      <Stepper activeStep={step} alternativeLabel>
+        <Step key={0} onClick={() => setStep(0)} >
+          <StepLabel>Keyword</StepLabel>
+        </Step>
+        <Step key={1} onClick={() => setStep(1)}>
+          <StepLabel>Time</StepLabel>
+        </Step>
+        <Step key={2} onClick={() => setStep(2)}>
+          <StepLabel>Goal</StepLabel>
+        </Step>
+      </Stepper>
+
       <Box>
-        <Button variant="contained" color="primary" onClick={handleAddTag}>
-          追加
-        </Button>
+        {step === 0 && (
+          <Stack spacing={2} sx={{ borderTop: "1px solid #d4d4d4", paddingTop: 4, marginTop: 8 }}>
+            <Box sx={{ marginBottom: 2 }}>
+              <Typography variant="h5">1. 通知を受ける記事のキーワード設定</Typography>
+            </Box>
+            <Box sx={{ marginBottom: 2 }}>
+
+              <Typography variant="h6">{chrome.i18n.getMessage("setting_keyword_popular_follow_subtitle")}</Typography>
+              <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+                {searchKeywords.map((keyword) => {
+                  const isFollow = followTags.find((t) => t.query === keyword.query);
+                  return (
+                    <Box sx={{ marginTop: 1 }}>
+                      <Chip
+                        sx={{ backgroundColor: isFollow ? "#DFEDF2" : "auto", marginTop: 1 }}
+                        key={keyword.query}
+                        label={keyword.label}
+                        onDelete={() => handleSelectTag(keyword)}
+                        deleteIcon={isFollow ? null : <IoAddCircle />}
+                      />
+                    </Box>
+                  );
+                })}
+                {popularSearchKeywords.map((keyword) => {
+                  const isFollow = followTags.find((t) => t.query === keyword.query);
+                  return (
+                    <Box sx={{ marginTop: 1 }}>
+                      <Chip
+                        sx={{ backgroundColor: isFollow ? "#DFEDF2" : "auto", marginTop: 1 }}
+                        key={keyword.query}
+                        label={keyword.label}
+                        onDelete={() => handleSelectTag(keyword)}
+                        deleteIcon={isFollow ? null : <IoAddCircle />}
+                      />
+                    </Box>
+                  );
+                })}
+              </Stack>
+            </Box>
+            <Box sx={{ marginTop: 8 }}>
+              <Stack spacing={1}>
+                <Typography variant="h6">{chrome.i18n.getMessage("setting_keyword_follow_subtitle")}</Typography>
+                <TextField label="Keywords" variant="outlined" onChange={handleOnChangeKeyword} value={keyword} />
+                <Stack spacing={1} direction="row">
+                  {tags.map((tag) => (
+                    <Chip
+                      sx={{ backgroundColor: "#DFEDF2" }}
+                      key={tag}
+                      label={tag}
+                      onDelete={() => handleDeleteTag(tag)}
+                    />
+                  ))}
+                </Stack>
+                <Box>
+                  <Button variant="contained" color="primary" onClick={handleAddTag}>
+                    {chrome.i18n.getMessage("setting_keyword_save_button")}
+                  </Button>
+                </Box>
+              </Stack>
+            </Box>
+          </Stack>
+        )}
+
+        {step === 1 && (
+          <Stack spacing={2} sx={{ borderTop: "1px solid #d4d4d4", paddingTop: 4, marginTop: 8 }}>
+            <Typography variant="h5">2. {chrome.i18n.getMessage("setting_alarm_title")}</Typography>
+            <Stack spacing={2} direction="row">
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                {Array.from({ length: 7 }, (_, index) => (
+                  <TimePicker
+                    sx={{ fontSize: 24 }}
+                    ampm={false}
+                    key={index}
+                    views={['hours', 'minutes']}
+                    defaultValue={dayjs('2022-04-17T21:00')}
+                    label={`${getDayOfWeek(index + 1)}`}
+                    value={timeState[index + 1] || null}
+                    onChange={(newValue) => handleTimeChange(index + 1, newValue)}
+                    renderInput={(params) => <TextField {...params} sx={{ fontSize: 24 }} />}
+                  />
+
+                ))}
+              </LocalizationProvider>
+            </Stack>
+            <Stack spacing={2} direction="column">
+              {
+                currentAlarm && currentAlarm.length > 0 && currentAlarm.map((alarm) => {
+                  return (
+                    <Typography>{dayjs(alarm.scheduledTime).format("MM/DD hh:mm A ddd")}</Typography>
+                  )
+                })
+              }
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <Button variant="contained" color="primary" onClick={handleSaveSetting}>
+                {chrome.i18n.getMessage("setting_set_alarm")}
+              </Button>
+              <Button variant="outlined" color="primary" onClick={handleClear}>
+                {chrome.i18n.getMessage("setting_clear_alarm")}
+              </Button>
+              <Button variant="outlined" color="primary" onClick={handleTest}>
+                {chrome.i18n.getMessage("setting_test_alarm")}
+              </Button>
+            </Stack>
+          </Stack>
+        )}
+
+        {step === 2 && (
+          <Stack spacing={2} sx={{ borderTop: "1px solid #d4d4d4", paddingTop: 4, marginTop: 8 }}>
+            <Typography variant="h5">3. {chrome.i18n.getMessage("setting_goal_title")}</Typography>
+            <Stack spacing={2} direction="row">
+              <Typography variant="h6">{chrome.i18n.getMessage("setting_current_score")}</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <FormControl>
+                <InputLabel id="demo-simple-select-label">CSFR</InputLabel>
+                <Select
+                  small
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={cefr}
+                  label="CEFR"
+                  onChange={handleChangeCEFR}
+                  sx={{ fontSize: 24, height: 50 }}
+                >
+                  {Object.entries(CEFR).map(([key, value]) => {
+                    return (
+                      <MenuItem key={key} value={value}>{CEFR[key]}</MenuItem>
+                    )
+                  })}
+                </Select>
+              </FormControl>
+              <TextField label="TOEIC" variant="outlined" onChange={handleChangeTOEIC} value={toeic} />
+              <TextField label="TOEFL" variant="outlined" onChange={handleChangeTOEFL} value={toefl} />
+              <TextField label="iBT" variant="outlined" onChange={handleChangeIBT} value={ibt} />
+            </Stack>
+
+            <Stack direction="column" spacing={1} sx={{ width: "100%" }}>
+              <Typography variant="h6">{chrome.i18n.getMessage("setting_goal")}</Typography>
+              <TextField
+                id="filled-multiline-static"
+                value={goal}
+                multiline
+                rows={4}
+                variant="filled"
+                placeholder={chrome.i18n.getMessage("setting_goal_placeholder")}
+                onChange={(e) => setGoal(e.target.value)}
+              />
+            </Stack>
+          </Stack>
+        )}
+
       </Box>
 
       <Box sx={{ borderBottom: "1px solid #d4d4d4" }} py={2}></Box>
-      <Typography variant="h5">Set Study Time</Typography>
-      <Stack spacing={2} direction="row">
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          {Array.from({ length: 7 }, (_, index) => (
-            <TimePicker
-              sx={{
-                fontSize: 24
-              }}
-              key={index}
-              views={['hours', 'minutes']}
-              defaultValue={dayjs('2022-04-17T21:00')}
-              label={`${getDayOfWeek(index + 1)}`}
-              value={timeState[index + 1] || null}
-              onChange={(newValue) => handleTimeChange(index + 1, newValue)}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          ))}
-        </LocalizationProvider>
-      </Stack>
-      <Stack direction="row" spacing={1}>
-        <Button variant="contained" color="primary" onClick={handleSaveSetting}>
-          アラームをセット
-        </Button>
-        <Button variant="outlined" color="primary" onClick={handleTest}>
-          Test
-        </Button>
+
+      <Stack sx={{ marginTop: 1 }} spacing={1} direction="row">
+        {step !== 0 && <Button variant="outlined" onClick={handleClickBack}>Back</Button>}
+        {step !== 2 && <Button variant="contained" onClick={handleClickNext}>Next</Button>}
+        {step === 2 && <Button variant="contained" onClick={handleSubmit}>Submit</Button>}
       </Stack>
     </Stack>
   );
