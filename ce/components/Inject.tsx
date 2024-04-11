@@ -17,7 +17,10 @@ import {
   Tooltip,
   Step,
   Stepper,
-  StepLabel
+  StepLabel,
+  FormControl,
+  Select,
+  InputLabel,
 } from "@mui/material"
 import { IoPlayCircle, IoCloseCircle, IoMicOutline } from "react-icons/io5";
 import { useFirebase } from "../firebase/hooks"
@@ -41,6 +44,8 @@ import { fetchOrCreateLessonByMaterialId, fetchSampleResponses, clearSampleRespo
 import { ButtonGoogleAuth } from "./ButtonGoogleAuth";
 import mixpanel from "mixpanel-browser";
 import { fetchDeviceId } from '~/utils/fetchDeviceId'
+import { useLocale } from "~hooks/locale";
+import { SelectLang } from "~components/SelectLang"
 
 const drawerWidth = 380
 
@@ -494,6 +499,7 @@ export function Inject() {
   const [originalWidth, setOriginalWidth] = useState(0)
   const [isFullLoaded, setIsFullLoaded] = useState(false)
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
+  const { setLocale } = useLocale()
 
   function handleOpen(shouldOpen: boolean) {
     mixpanel.track("ACT:openExtension")
@@ -509,10 +515,12 @@ export function Inject() {
 
   useEffect(() => {
     dispatch({ type: "global/RESET_STATE" })
+    const userLanguage = "en-US";
+    const languageCode = userLanguage.split('-')[0];
+    setLocale(languageCode);
   }, [])
 
   useEffect(() => {
-
     window.addEventListener('load', function () {
       setOriginalWidth(window.innerWidth)
       setIsFullLoaded(true)
@@ -585,6 +593,7 @@ function VocabMode({
   const materialId = useAppSelector(state => state.materials.currentOpenedMaterial?.id)
   const savedVocabs = useAppSelector(state => state.note.vocabularies || [])
   const [levelsFilter, setLevelsFilter] = useState<Level[]>([])
+  const { localeData } = useLocale()
 
   const filteredVocabs = useMemo(() => {
     if (!vocabs) return []
@@ -647,7 +656,7 @@ function VocabMode({
     <Box mt={2}>
       <Stack direction="row" spacing={1}>
         <Typography variant="body2" sx={{ fontWeight: 600 }}>
-          {chrome.i18n.getMessage("vocab_filter_title")}
+          {localeData["vocab_filter_title"] || chrome.i18n.getMessage("vocab_filter_title")}
         </Typography>
         <Typography variant="body2" sx={{ color: "#b4b4b4" }}>
           {statusCreatingVocabs}
@@ -697,9 +706,55 @@ function VocabMode({
   )
 }
 
+const languageOptions = [{
+  value: "en",
+  label: "English"
+}, {
+  value: "ja",
+  label: "日本語"
+}, {
+  value: "vi",
+  label: "Tiếng Việt"
+}, {
+  value: "zh",
+  label: "中文"
+}, {
+  value: "ko",
+  label: "한국어"
+}, {
+  value: "es",
+  label: "Español"
+}, {
+  value: "fr",
+  label: "Français"
+}, {
+  value: "de",
+  label: "Deutsch"
+}, {
+  value: "it",
+  label: "Italiano"
+}, {
+  value: "ru",
+  label: "Русский"
+}, {
+  value: "pt",
+  label: "Português"
+}, {
+  value: "ar",
+  label: "العربية"
+}, {
+  value: "tr",
+  label: "Türkçe"
+}, {
+  value: "pt",
+  label: "Português"
+}]
+
 function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const { onLogout } = useFirebase()
+  const { setLocale, locale } = useLocale()
+
   const dispatch = useAppDispatch()
   const open = Boolean(anchorEl);
   const handleMenuOpen = (event) => {
@@ -719,6 +774,8 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
     onLogout()
     handleMenuClose()
   }
+
+  console.log({ languageOptions })
 
   return (
     <Stack>
@@ -744,31 +801,34 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
         {/* <Box onClick={onLogin}>
         <Avatar src="" />
       </Box> */}
-        <FormControlLabel
-          sx={{
-            width: "100%",
-            justifyContent: "flex-end",
-            fontSize: 12,
-            fontWeight: 600
-          }}
-          control={
-            <Switch
-              size="small"
-              checked={uiDisabled}
-              onChange={handleToggleDisable}
-            />
-          }
-          label={chrome.i18n.getMessage("toggle_disable")}
-        />
-        <Avatar
-          id="basic-button"
-          aria-controls={open ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={handleMenuOpen}
-        // alt={currentUser.username}
-        />
+        <Stack direction="row" spacing={1}>
+          <SelectLang lang={locale} handleSelectLang={(event) => { setLocale(event.target.value) }} />
 
+          <FormControlLabel
+            sx={{
+              width: "100%",
+              justifyContent: "flex-end",
+              fontSize: 12,
+              fontWeight: 600
+            }}
+            control={
+              <Switch
+                size="small"
+                checked={uiDisabled}
+                onChange={handleToggleDisable}
+              />
+            }
+            label={chrome.i18n.getMessage("toggle_disable")}
+          />
+          <Avatar
+            id="basic-button"
+            aria-controls={open ? 'basic-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleMenuOpen}
+          // alt={currentUser.username}
+          />
+        </Stack>
       </Stack>
       {open &&
         <Stack

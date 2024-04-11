@@ -15,6 +15,7 @@ import { useAppDispatch } from "~redux/hooks";
 import mixpanel from "mixpanel-browser";
 import { fetchDeviceId } from '~/utils/fetchDeviceId'
 import { Drawer } from "@mui/material";
+import { LocaleProvider } from "~hooks/locale";
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/"],
@@ -59,26 +60,28 @@ function Root() {
 
   return (
     <CacheProvider value={styleCache}>
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <PersistGate
-            loading={null}
-            persistor={persistor}
-          >
-            <ScopedCssBaseline
-              sx={{
-                backgroundColor: "transparent",
-                pointerEvents: "none",
-              }}
+      <LocaleProvider>
+        <ThemeProvider theme={theme}>
+          <Provider store={store}>
+            <PersistGate
+              loading={null}
+              persistor={persistor}
             >
-              <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
-                <Inject />
-              </ErrorBoundary>
-            </ScopedCssBaseline>
-          </PersistGate>
-        </Provider>
-      </ThemeProvider>
-    </CacheProvider >
+              <ScopedCssBaseline
+                sx={{
+                  backgroundColor: "transparent",
+                  pointerEvents: "none",
+                }}
+              >
+                <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+                  <Inject />
+                </ErrorBoundary>
+              </ScopedCssBaseline>
+            </PersistGate>
+          </Provider>
+        </ThemeProvider>
+      </LocaleProvider>
+    </CacheProvider>
   )
 }
 

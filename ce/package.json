@@ -85,12 +85,13 @@
   },
   "manifest": {
     "name": "__MSG_extensionName__",
-    "default_locale": "ja",
+    "default_locale": "en",
     "key": "$CRX_PUBLIC_KEY",
     "web_accessible_resources": [
       {
         "resources": [
-          "assets/icon.png"
+          "assets/icon.png",
+          "assets/locales/**/messages.json"
         ],
         "matches": [
           "https://*/*",
