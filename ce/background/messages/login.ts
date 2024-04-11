@@ -14,20 +14,10 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       return
     }
 
-    //   chrome.identity.launchWebAuthFlow(
-    //     { 'url': 'https://accounts.google.com/logout' },
-    //     function(tokenUrl) {
-    //         responseCallback();
-    //     }
-    // );
-
     if (token) {
       await storage.set("firebase:token", token)
       res.send({ token })
       const data = await storage.get("firebase:token") // "value"
-      // console.log(data)
-      // await storage.set("capt", { color: "red" })
-      // const data2 = await storage.get("capt") // { color: "red" }
       chrome.runtime.sendMessage({ type: "login" })
       return token
     }

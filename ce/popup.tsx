@@ -1,6 +1,20 @@
 import { useEffect, useState } from "react"
-import { Alert, Box, Snackbar, Button, Typography, TextField, Stack, Card, FormControlLabel, Switch } from "@mui/material"
-import { sendToBackground } from "@plasmohq/messaging"
+import {
+  Alert,
+  Box,
+  Snackbar,
+  Button,
+  Typography,
+  TextField,
+  Stack,
+  Card,
+  FormControlLabel,
+  Switch,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select
+} from "@mui/material"
 import { ThemeProvider } from '@mui/material/styles';
 import { useFirebase } from "./firebase/hooks"
 // import { CheckoutForm } from "./components/CheckoutForm"
@@ -17,6 +31,9 @@ import { useAppDispatch, useAppSelector } from "~redux/hooks";
 import { login, checkAuthStatus, clearError, logout } from "~redux/features/auth";
 import mixpanel from "mixpanel-browser";
 import { fetchDeviceId } from '~/utils/fetchDeviceId'
+import { SelectLang } from "~components/SelectLang"
+import { useLocale } from "~hooks/locale";
+import { LocaleProvider } from "~hooks/locale";
 
 import "./font.css"
 
@@ -29,13 +46,15 @@ function RootPopup() {
   const langCode = lang.split("-")[0]
   const theme = getTheme(langCode)
   return (
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <PersistGate persistor={persistor}>
-          <IndexPopup />
-        </PersistGate>
-      </Provider>
-    </ThemeProvider>
+    <LocaleProvider>
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
+          <PersistGate persistor={persistor}>
+            <IndexPopup />
+          </PersistGate>
+        </Provider>
+      </ThemeProvider>
+    </LocaleProvider>
   )
 }
 
@@ -44,6 +63,7 @@ function IndexPopup() {
   const payment = useAppSelector(state => state.payment)
   const uiDisabled = useAppSelector(state => { return state.ui.disabled })
   const { currentUser, loadingCurrentUser, error } = useAppSelector(state => state.auth)
+  const { locale, setLocale } = useLocale()
 
   const dispatch = useAppDispatch()
 
@@ -101,12 +121,12 @@ function IndexPopup() {
         maxWidth: 640,
       }}>
 
-        <Stack spacing={1} sx={{ width: "100%", borderBottom: "1px solid #f4f4f4", paddingBottom: 2 }}>
-
+        <Stack spacing={1} direction="row" sx={{ width: "100%", borderBottom: "1px solid #f4f4f4", paddingBottom: 2, justifyContent: "space-between" }}>
+          <Typography variant="h6" component="h6">
+            {new Date().toLocaleDateString()}
+          </Typography>
           <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between" }}>
-            <Typography variant="h6" component="h6">
-              {new Date().toLocaleDateString()}
-            </Typography>
+            <SelectLang lang={locale} handleSelectLang={(event) => setLocale(event.target.value)} />
             <FormControlLabel
               sx={{
                 fontSize: 12,
@@ -121,7 +141,6 @@ function IndexPopup() {
               }
               label={chrome.i18n.getMessage("toggle_disable")}
             />
-
           </Stack>
           {loadingCurrentUser &&
             <Typography variant="body2" component="span">
