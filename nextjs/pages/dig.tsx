@@ -52,14 +52,18 @@ export function Main() {
   return (
     <>
       <Swiper
-        direction={'vertical'}
+        // direction={'vertical'}
         pagination={{
           clickable: true,
+          type: "bullets",
+          bulletElement: "span",
+
         }}
         modules={[Pagination]}
         className="mySwiper"
         style={{
-          height: "100%"
+          height: "100%",
+          "--swiper-pagination-top": "0px",
         }}
       >
         {
@@ -101,7 +105,7 @@ export function Main() {
             </SwiperSlide>
           ))
         }
-      </Swiper>
+      </Swiper >
     </>
   );
 }
