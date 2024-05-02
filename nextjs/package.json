@@ -10,8 +10,9 @@
   "scripts": {
     "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python3 -m flask --app api/py/bot run -p 5328 --debugger --reload",
     "next-dev": "next dev",
-    "dev": "concurrently --kill-others npm:dev:*",
+    "dev": "concurrently --kill-others npm:dev:next",
     "dev:next": "next dev",
+    "dev:remote": "next dev --hostname 0.0.0.0 --port 19281",
     "build": "I18NEXT_DEFAULT_CONFIG_PATH=./next-i18next.config.cjs; echo $I18NEXT_DEFAULT_CONFIG_PATH; next build",
     "start": "next start",
     "test": "jest",
@@ -103,6 +104,7 @@
     "rss-parser": "^3.13.0",
     "sentence-splitter": "^4.2.1",
     "stripe": "^13.9.0",
+    "swiper": "^11.1.1",
     "url-metadata": "^3.0.1",
     "utf-8-validate": "^6.0.3",
     "uuid": "^9.0.1",
