@@ -64,7 +64,7 @@ export function Main() {
       >
         {
           articles.map((article, index) => (
-            <SwiperSlide key={index}>
+            <SwiperSlide key={index} style={{ height: "100%" }}>
               <Box py={4}>
                 <Tag title={article.hashtag} />
                 <Box p={3} sx={{ background: "#fff", borderRadius: 1 }} mt={2}>
@@ -80,7 +80,7 @@ export function Main() {
               <TabContext value={value}>
                 <Tabs onChange={handleChange}>
                   <TabList onChange={handleChange} aria-label="lab API tabs example">
-                    <Tab label="Speaking" value="1" />
+                    <Tab label="Speaking" value="1" sx={{ padding: 0 }} />
                     <Tab label="Vocab" value="2" />
                   </TabList>
                 </Tabs>
