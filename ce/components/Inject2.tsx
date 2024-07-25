@@ -27,11 +27,6 @@ import { FaFileWord } from "react-icons/fa"
 import { IoCloseCircle, IoMicOutline, IoPlayCircle } from "react-icons/io5"
 import { RiSpeakLine } from "react-icons/ri"
 import { TbVocabulary } from "react-icons/tb"
-import { Swiper, SwiperSlide } from "swiper/react"
-
-// import { Swiper, SwiperSlide } from "swiper/react"
-
-import "swiper/swiper.min.css"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
@@ -107,7 +102,7 @@ function highlightSelectedText() {
     const range = window.getSelection().getRangeAt(0)
     range.surroundContents(wordEle)
 
-    console.log("orca", { rangeSentence: window.getSelection().getRangeAt(0) })
+    console.log("orca", { rangeSentence: window.getSelection().getRangeAt(1) })
 
     // // Scroll to the highlighted element for visibility
     // spanElement.scrollIntoView();
@@ -133,7 +128,7 @@ function highlightSelectedText() {
         range.collapse(false)
         const foundRange = document.createRange()
         foundRange.selectNodeContents(spanElement)
-        range.setEndAfter(foundRange.endContainer)
+        range.setEndAfter(foundRange.endContainer, foundRange.endOffset)
         const selection = window.getSelection()
         selection.removeAllRanges()
         selection.addRange(range)
@@ -295,7 +290,7 @@ function App({
   // set session from Firebase to Redux State
   useEffect(() => {
     if (!open) return
-    dispatch(setSession())
+    dispatch(setSession(sessionFB))
   }, [open, sessionFB])
 
   useEffect(() => {
@@ -308,7 +303,7 @@ function App({
   useEffect(() => {
     if (!open) return
     if (!currentOpenedMaterial || currentOpenedMaterial.url !== url) {
-      dispatch(fetchCurrentOpenedMaterial())
+      dispatch(fetchCurrentOpenedMaterial(url))
     }
   }, [open, url, currentOpenedMaterial])
 
@@ -348,8 +343,10 @@ function App({
   useEffect(() => {
     if (!open) return
     if (currentOpenedMaterial && currentOpenedMaterial.id) {
-      dispatch(fetchVocabs())
-      dispatch(fetchSummaries())
+      dispatch(fetchVocabs({ materialId: currentOpenedMaterial.id }))
+      dispatch(
+        fetchSummaries({ materialId: currentOpenedMaterial.id, levels: ["5Y"] })
+      )
     }
   }, [open, currentOpenedMaterial])
 
@@ -363,7 +360,7 @@ function App({
       !isFetchingVocabs &&
       vocabs.length === 0
     ) {
-      dispatch(createVocabs())
+      dispatch(createVocabs({ materialId: currentOpenedMaterial.id }))
     }
   }, [open, currentOpenedMaterial, isCreatingVocabs, isFetchingVocabs, vocabs])
 
@@ -421,11 +418,16 @@ function App({
 
   function handleSelectLevel(level: string) {
     if (currentOpenedMaterial) {
-      dispatch(fetchSummaries())
+      dispatch(
+        fetchSummaries({
+          materialId: currentOpenedMaterial.id,
+          levels: [level]
+        })
+      )
     }
   }
 
-  function handleSubmitMessage(message: string) {
+  function handleSubmitMessage(message: Message) {
     mixpanel.track("ACT:submitMessage")
     if (currentLesson) {
       dispatch(
@@ -467,9 +469,7 @@ function App({
       sx={{
         padding: "16px",
         height: "100%",
-        position: "relative",
-        display: "flex",
-        flexDirection: "column"
+        position: "relative"
       }}>
       <Header
         setOpen={setOpen}
@@ -477,6 +477,7 @@ function App({
         handleToggleDisable={handleToggleDisable}
         uiDisabled={uiDisabled}
       />
+
       {errorCreateAIMessage && (
         <Alert color="error" severity="error" sx={{ position: "relative" }}>
           {errorCreateAIMessage}
@@ -487,6 +488,7 @@ function App({
           {chrome.i18n.getMessage("error_failed_to_fetch_material")}
         </Alert>
       )}
+
       {shouldShowSubscriptionForm && (
         <Box
           sx={{
@@ -503,149 +505,7 @@ function App({
           <FormSubscription user={user} onLogin={onLoginBackground} />
         </Box>
       )}
-      <Box
-        sx={{
-          marginBottom: "32px",
-          padding: 2
-        }}>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Summary
-        </Typography>
-        <Typography variant="body1" sx={{ color: "#444444", fontSize: "14px" }}>
-          Welcome to Orca! Here is a sample summary: This is a sample summary
-          text created to demonstrate the summary feature.
-        </Typography>
-      </Box>
-      <Box
-        sx={{
-          marginBottom: "32px",
-          padding: 2
-        }}>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Menu
-        </Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "nowrap",
-            flexDirection: "row",
-            flexShrink: 0,
-            overflowX: "auto"
-          }}>
-          <Box
-            sx={{
-              width: "100px",
-              height: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px solid #000",
-
-              cursor: "pointer",
-              backgroundColor: "#ffe7cc",
-              fontSize: "16px",
-              textAlign: "center",
-              borderRadius: "4px"
-            }}>
-            Vocabulary
-          </Box>
-
-          <Box
-            sx={{
-              width: "100px",
-              height: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px solid #000",
-              cursor: "pointer",
-              borderRadius: "4px",
-              backgroundColor: "#e4fdf9",
-              fontSize: "16px",
-              textAlign: "center"
-            }}>
-            Speaking
-          </Box>
-
-          <Box
-            sx={{
-              width: "100px",
-              height: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px solid #000",
-              cursor: "pointer",
-              borderRadius: "4px",
-              backgroundColor: "#dde1fa",
-              fontSize: "16px",
-              textAlign: "center"
-            }}>
-            Writing
-          </Box>
-          <Box
-            sx={{
-              width: "100px",
-              height: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px solid #000",
-              margin: "8px",
-              cursor: "pointer",
-              backgroundColor: "#ffe7cc",
-              fontSize: "16px",
-              textAlign: "center",
-              borderRadius: "4px"
-            }}>
-            Vocabulary
-          </Box>
-          <Box
-            sx={{
-              width: "100px",
-              height: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px solid #000",
-              margin: "8px",
-              cursor: "pointer",
-              borderRadius: "4px"
-            }}>
-            Speaking
-          </Box>
-          <Box
-            sx={{
-              width: "100px",
-              height: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px solid #000",
-              margin: "8px",
-              cursor: "pointer",
-              borderRadius: "4px"
-            }}>
-            Reading
-          </Box>
-          <Box
-            sx={{
-              width: "100px",
-              height: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px solid #000",
-              margin: "8px",
-              cursor: "pointer",
-              borderRadius: "4px"
-            }}>
-            Writing
-          </Box>
-        </Box>
-      </Box>
-      {/* 
       {!isLoading && !currentUser && (
         <Stack
           sx={{
@@ -676,7 +536,8 @@ function App({
           <Typography>or</Typography>
           <ButtonGoogleAuth size="large" onClick={handleSignin} />
         </Stack>
-      )} */}
+      )}
+
       {!isLoading && currentUser && (
         <>
           <Box mt={2}>
@@ -714,6 +575,7 @@ function App({
           {mode === Mode.Vocab && (
             <VocabMode
               vocabs={vocabs}
+              isLoadingVocabs={isFetchingVocabs}
               statusCreatingVocabs={statusCreatingVocabs}
               setError={setError}
               onSaveVocab={handleSaveVocab}
@@ -743,6 +605,7 @@ export function Inject() {
   })
   const { setLocale } = useLocale()
 
+  alert("Inject2")
   function handleOpen(shouldOpen: boolean) {
     mixpanel.track("ACT:openExtension")
     setOpen(shouldOpen)
@@ -754,46 +617,12 @@ export function Inject() {
     dispatch(toggleDisable())
     // setHideExtention(shouldHide)
   }
+
   useEffect(() => {
     dispatch({ type: "global/RESET_STATE" })
-    const userLanguage = navigator.language || "en-US"
+    const userLanguage = "en-US"
     const languageCode = userLanguage.split("-")[0]
     setLocale(languageCode)
-    console.log("useEffect")
-    document.body.addEventListener("selectionchange", function (event) {
-      console.log("selectionchange b")
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>.")
-
-      const target = event.target as HTMLElement
-      console.log(target)
-      if (
-        target.tagName === "SPAN" &&
-        target.classList.contains("word-container")
-      ) {
-        const icon = document.createElement("img")
-        icon.src = chrome.runtime.getURL("assets/icon.png")
-        icon.style.position = "absolute"
-        icon.style.width = "16px"
-        icon.style.height = "16px"
-        icon.style.cursor = "pointer"
-        icon.style.left = `${event.pageX + 5}px`
-        icon.style.top = `${event.pageY + 5}px`
-        icon.classList.add("info-icon")
-
-        document.body.appendChild(icon)
-
-        icon.addEventListener("click", function () {
-          const meaning = target.getAttribute("data-meaning")
-          if (meaning) {
-            showPopup(meaning, event.pageX, event.pageY)
-          }
-        })
-
-        target.addEventListener("mouseleave", function () {
-          if (icon) icon.remove()
-        })
-      }
-    })
   }, [])
 
   useEffect(() => {
@@ -853,7 +682,7 @@ export function Inject() {
         </Drawer>
       )}
 
-      {/* <Opener setOpen={handleOpen} setHideExtention={handleHideExtension} /> */}
+      <Opener setOpen={handleOpen} setHideExtention={handleHideExtension} />
     </Box>
   )
 }
@@ -895,20 +724,20 @@ function VocabMode({ vocabs, onSaveVocab, statusCreatingVocabs }) {
       return
     }
 
-    dispatch(fetchSavedVocab())
+    dispatch(fetchSavedVocab({ materialId: materialId }))
 
     const fetchVocabsInterval = setInterval(() => {
-      dispatch(fetchVocabs())
+      dispatch(fetchVocabs({ materialId: materialId }))
     }, 5000)
 
-    dispatch(createVocabs())
+    dispatch(createVocabs({ materialId: materialId }))
 
     return () => {
       clearInterval(fetchVocabsInterval)
     }
   }, [])
 
-  const handleClickFilter = (level: Level) => {
+  const handleClickFilter = (level: string) => {
     if (level === "all") {
       setLevelsFilter([])
       return
@@ -947,15 +776,12 @@ function VocabMode({ vocabs, onSaveVocab, statusCreatingVocabs }) {
                     fontSize: 16
                   },
                   positionFixed: true,
-                  modifiers: [
-                    {
-                      name: "preventOverflow",
-                      options: {
-                        enabled: true,
-                        boundariesElement: "window" // where "window" is the boundary
-                      }
+                  modifiers: {
+                    preventOverflow: {
+                      enabled: true,
+                      boundariesElement: "window" // where "window" is the boundary
                     }
-                  ]
+                  }
                 }
               }}>
               <Chip
@@ -1068,6 +894,8 @@ function Header({ setOpen, onLogin, handleToggleDisable, uiDisabled }) {
     onLogout()
     handleMenuClose()
   }
+
+  console.log({ languageOptions })
 
   return (
     <Stack>
