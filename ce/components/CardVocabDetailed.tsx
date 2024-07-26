@@ -46,6 +46,7 @@ export function CardVocabDetailed({
   }
 
   function handleClickSave() {
+    console.log("handleClickSave")
     onSaveVocab(vocab)
   }
 
@@ -57,7 +58,7 @@ export function CardVocabDetailed({
   const meaningInLang = vocab.translation ? vocab.translation[0].content : vocab.meaning
 
   return (
-    <Card id="card-vocab" sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee" }} onClick={handleClose}>
+    <Card id="card-vocab" sx={{ width: "100%", height: "auto", boxShadow: "none", border: "1px solid #eeeeee", position: "absolute", zIndex: "100000000" }} onClick={handleClose}>
       
       <Stack p={3} spacing={1} alignItems="flex-start" width="100%">
         <Box sx={{ display: "flex", justifyContent: "flex-end", position: "absolute", left: 0, top: 0 }}>

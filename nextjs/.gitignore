@@ -24,3 +24,9 @@ var/
 
 # Sentry Config File
 .sentryclirc
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*ServiceAccountKey.json

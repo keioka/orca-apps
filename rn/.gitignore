@@ -78,3 +78,8 @@ dist/
 .env
 .env.*
 # @end expo-cli
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*ServiceAccountKey.json

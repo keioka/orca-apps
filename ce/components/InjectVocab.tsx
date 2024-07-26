@@ -1,18 +1,21 @@
 import { Box, Card, CardContent } from "@mui/material"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 import { CardVocabDetailed } from "./CardVocabDetailed"
 
-const PopupComponent = ({ wordInfo, x, y, onClose }) => {
+const PopupComponent = ({ wordInfo, x, y, onClose, cardRef }) => {
+  console.log({ cardRef })
   return (
     <Box
+      ref={cardRef}
       sx={{
         position: "absolute",
         width: "300px",
         left: `${x}px`,
         top: `${y}px`,
         zIndex: "100000000"
-      }}>
+      }}
+      onClick={onClose}>
       <CardVocabDetailed
         vocab={wordInfo}
         onSaveVocab={() => {}}
@@ -24,24 +27,40 @@ const PopupComponent = ({ wordInfo, x, y, onClose }) => {
 
 export const InjectVocab = () => {
   const [popupInfo, setPopupInfo] = useState(null)
+  const cardRef = useRef(null)
 
-  console.log("InjectVocab")
+  useEffect(() => {
+    if (!cardRef.current) return
+    const handleClick = (event) => {
+      event.stopPropagation()
+      event.preventDefault()
+    }
+    cardRef.current.addEventListener("click", handleClick)
+    return () => {
+      if (cardRef.current) {
+        cardRef.current.removeEventListener("click", handleClick)
+      }
+    }
+  }, [popupInfo])
+
   const handleSelectionChange = (event) => {
+    if (cardRef.current && cardRef.current.contains(event.target)) {
+      return
+    }
+
     console.log("handleSelectionChange", event)
     event.preventDefault()
     event.stopPropagation()
 
     const selection = window.getSelection()
     const anchorNode = selection.anchorNode
-
-    console.log({ anchorNode })
     if (anchorNode.nodeName !== "#text") {
       return
     }
 
     const selectedText = selection.toString().trim()
     if (selectedText.length === 0 || selectedText.length > 40) {
-      setPopupInfo(null)
+      // setPopupInfo(null)
       return
     }
     // Remove existing highlights
@@ -55,15 +74,15 @@ export const InjectVocab = () => {
       const rect = range.getBoundingClientRect()
 
       // Add highlight
-      // const highlight = document.createElement("span")
-      // highlight.style.backgroundColor = "rgba(255, 255, 0, 0.1)" // yellow with 0.1 opacity
-      // highlight.style.position = "absolute"
-      // highlight.style.left = `${rect.left + window.scrollX}px`
-      // highlight.style.top = `${rect.top + window.scrollY}px`
-      // highlight.style.width = `${rect.width}px`
-      // highlight.style.height = `${rect.height}px`
-      // highlight.classList.add("highlight")
-      // document.body.appendChild(highlight)
+      const highlight = document.createElement("span")
+      highlight.style.backgroundColor = "rgba(255, 255, 0, 0.1)" // yellow with 0.1 opacity
+      highlight.style.position = "absolute"
+      highlight.style.left = `${rect.left + window.scrollX}px`
+      highlight.style.top = `${rect.top + window.scrollY}px`
+      highlight.style.width = `${rect.width}px`
+      highlight.style.height = `${rect.height}px`
+      highlight.classList.add("highlight")
+      document.body.appendChild(highlight)
 
       // Add green highlight to the sentence containing the hovered word
       const sentenceRange = document.createRange()
@@ -74,23 +93,16 @@ export const InjectVocab = () => {
         .split(".")
         .filter((sentence) => sentence.includes(selectedText))[0]
 
-      // const sentenceRect = sentenceRange.getBoundingClientRect()
-      // const sentenceHighlight = document.createElement("span")
-      // sentenceHighlight.style.backgroundColor = "rgba(0, 255, 0, 0.1)" // green with 0.1 opacity
-      // sentenceHighlight.style.position = "absolute"
-      // sentenceHighlight.style.left = `${sentenceRect.left + window.scrollX}px`
-      // sentenceHighlight.style.top = `${sentenceRect.top + window.scrollY}px`
-      // sentenceHighlight.style.width = `${sentenceRect.width}px`
-      // sentenceHighlight.style.height = `${sentenceRect.height}px`
-      // sentenceHighlight.classList.add("sentence-highlight")
-      // document.body.appendChild(sentenceHighlight)
-
-      console.log({
-        selectedText,
-        sentenceText,
-        range,
-        sentenceRange
-      })
+      const sentenceRect = sentenceRange.getBoundingClientRect()
+      const sentenceHighlight = document.createElement("span")
+      sentenceHighlight.style.backgroundColor = "rgba(0, 255, 0, 0.1)" // green with 0.1 opacity
+      sentenceHighlight.style.position = "absolute"
+      sentenceHighlight.style.left = `${sentenceRect.left + window.scrollX}px`
+      sentenceHighlight.style.top = `${sentenceRect.top + window.scrollY}px`
+      sentenceHighlight.style.width = `${sentenceRect.width}px`
+      sentenceHighlight.style.height = `${sentenceRect.height}px`
+      sentenceHighlight.classList.add("sentence-highlight")
+      document.body.appendChild(sentenceHighlight)
 
       const wordInfo = {
         word: selectedText,
@@ -107,7 +119,7 @@ export const InjectVocab = () => {
   }
 
   useEffect(() => {
-    document.addEventListener("selectionchange", handleSelectionChange)
+    document.addEventListener("selectionchange", handleSelectionChange, false)
     return () => {
       document.removeEventListener("selectionchange", handleSelectionChange)
     }
@@ -126,6 +138,7 @@ export const InjectVocab = () => {
           x={popupInfo.x}
           y={popupInfo.y}
           onClose={handleClosePopup}
+          cardRef={cardRef}
         />
       )}
     </>

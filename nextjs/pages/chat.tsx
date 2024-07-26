@@ -33,13 +33,7 @@ const locale = {
 async function getMetadata(url: string) {
   try {
     const response = await fetch(`${apiUrl}?${new URLSearchParams({ url })}`,
-      {
-        method: 'GET',
-        headers: {
-          'X-RapidAPI-Key': 'REDACTED_RAPIDAPI_KEY',
-          'X-RapidAPI-Host': 'og-link-preview.p.rapidapi.com'
-        }
-      });
+      { method: 'GET' });
     const result = await response.json();
     return result
   } catch (error) {
@@ -67,17 +61,11 @@ enum MODE {
 }
 
 async function query(data) {
-  const response = await fetch(
-    "https://flowise-j57m.onrender.com/api/v1/prediction/6e944969-9443-423a-9397-cac4563f1683",
-    {
-      headers: {
-        Authorization: "Bearer REDACTED_FLOWISE_API_KEY",
-        "Content-Type": "application/json"
-      },
-      method: "POST",
-      body: JSON.stringify(data)
-    }
-  );
+  const response = await fetch("/api/flowise", {
+    headers: { "Content-Type": "application/json" },
+    method: "POST",
+    body: JSON.stringify(data)
+  });
   const result = await response.json();
   return result;
 }

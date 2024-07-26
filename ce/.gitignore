@@ -34,3 +34,9 @@ dist/
 
 # typescript
 .tsbuildinfo
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*ServiceAccountKey.json

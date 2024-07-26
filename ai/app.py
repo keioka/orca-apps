@@ -29,7 +29,7 @@ from validate import validate_token
 
 # Initialize the Prisma Client
 
-API_KEY = "REDACTED_OPENAI_API_KEY"
+API_KEY = os.environ["OPENAI_API_KEY"]
 
 async def chat(message, lesson_id, user_id=None):
   print(">>>>>>>>>>> chat <<<<<<<<<<<<<<<<")

@@ -1,2 +1,7 @@
 .env
 .env.*
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*ServiceAccountKey.json
