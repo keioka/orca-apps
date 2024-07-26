@@ -77,3 +77,19 @@ dist/
 
 # @end expo-cli
 .vercel
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*ServiceAccountKey.json
+serviceAccountKey.json
+*.pem
+
+# Build artifacts and caches (previously committed, contained secrets)
+__pycache__/
+*.pyc
+*.pkl
+.next/
+.next/cache/
+*.tsbuildinfo

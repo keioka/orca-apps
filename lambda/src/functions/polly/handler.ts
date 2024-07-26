@@ -8,10 +8,12 @@ import * as AWS from 'aws-sdk';
 
 
 const polly: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+  // Credentials come from the Lambda execution role by default; the env vars are
+  // only a fallback for local invocation.
   const polly = new AWS.Polly({
     region: 'us-west-2',
-    accessKeyId: "REDACTED_AWS_ACCESS_KEY_ID", //process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: "REDACTED_AWS_SECRET_ACCESS_KEY" // process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   });
 
   if (!event.body.text) {

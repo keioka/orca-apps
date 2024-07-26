@@ -95,7 +95,7 @@ export default async function handler(
 }
 
 async function fetchVideosByChannelIds(channelIds: string[]): Promise<Video[]> {
-  const apiKey = 'REDACTED_YOUTUBE_API_KEY';
+  const apiKey = process.env.YOUTUBE_API_KEY;
 
   const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&videoCaption=closedCaption&order=date&part=snippet&type=video&videoEmbeddable=true&channelId=${channelIds.join(
     ','

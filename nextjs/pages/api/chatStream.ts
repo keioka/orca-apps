@@ -80,7 +80,7 @@
 //   const options = {
 //     method: 'GET',
 //     headers: {
-//       'X-RapidAPI-Key': 'REDACTED_RAPIDAPI_KEY',
+//       'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
 //       'X-RapidAPI-Host': 'lexper.p.rapidapi.com'
 //     }
 //   };
