@@ -2,271 +2,504 @@
 
 Learn English from the news you actually want to read.
 
-Orca turns any news article into a language lesson: it extracts vocabulary at your level, generates a summary, and lets you discuss the article with an AI tutor. It ships as a **web app**, a **Chrome extension** that works on any page you're browsing, and an **iOS/Android app**.
+Orca turns any news article into a language lesson: it extracts vocabulary at your level, generates a summary, and lets you discuss the article with an AI tutor.
 
-Built and maintained since May 2023 — ~600 commits across a TypeScript monorepo with a Python AI service.
+It ships across three clients:
 
-> **Start here:** [`nextjs/`](#nextjs--web-app--api) is the core of the system. It serves the web app *and* the API that every other client talks to.
+* **Web app**
+* **Chrome extension** that works on any page you're browsing
+* **iOS / Android app**
 
 ---
 
-## Features
+## The problem
 
-**Conversation**
-- Chat with an AI tutor about the article you just read
-- Spoken replies via TTS; speech input on mobile
-- Grammar checking and paraphrase suggestions on what you write
-- Sentence-level translation into your native language
+Most English-learning apps and basic AI tutors focus on generic conversation topics such as greetings, ordering food, or making small talk.
 
-**Accounts & platform**
-- Firebase Authentication, Stripe subscriptions, feature flags
-- Contentful CMS for editorial content
-- Analytics via Mixpanel, error tracking via Sentry and LogRocket
+That works for beginners, but more serious intermediate and advanced learners often want to practice English by talking about topics they are genuinely interested in.
+
+Orca was built around that problem: instead of giving learners predefined conversation topics, it turns articles they already want to read into personalized English lessons and conversation material.
+
+---
+
+## Core features
+
+- Import an article from the web
+- Extract vocabulary based on learner level
+- Generate article summaries
+- Discuss the article with an AI tutor
+- Receive sentence-level grammar feedback
+- Get paraphrase suggestions and translations
+- Save vocabulary for later review
+
 
 ---
 
 ## Tech stack
 
-| Layer | Technologies |
-|---|---|
-| **Language** | TypeScript (clients + API + workers); Python (inactive `ai/` service) |
-| **Web** | Next.js (Pages Router), React, MUI, Redux Toolkit, next-i18next |
-| **Chrome extension** | Plasmo, React, MUI, Redux Toolkit |
-| **Mobile** | Expo, React Native, React Native Paper, Redux Toolkit |
-| **API / data** | Next.js API routes, Prisma, PostgreSQL |
-| **Auth & billing** | Firebase Auth, Stripe |
-| **AI** | OpenAI; AWS Polly (TTS via Lambda) |
-| **CMS & content** | Contentful; NewsData.io (ingestion) |
-| **Workers** | Fastify (`worker/`), Serverless Framework + AWS Lambda (`lambda/`), Firebase Cloud Functions |
-| **Observability** | Mixpanel, Sentry, LogRocket |
-| **Testing** | Cypress (extension E2E) |
+| Layer                | Technologies                                          |
+| -------------------- | ----------------------------------------------------- |
+| **Web**              | TypeScript, Next.js, React, MUI, Redux Toolkit |
+| **Chrome extension** | Plasmo, React, MUI, Redux Toolkit                     |
+| **Mobile**           | TypeScript, Expo, React Native, React Native Paper, Redux Toolkit |
+| **API / data**       | Next.js API routes, Prisma, PostgreSQL                |
+| **Auth & billing**   | Firebase Auth, Stripe                                 |
+| **AI**               | Python, OpenAI, LangChain, Chroma                             |
+| **Speech**           | AWS Polly                                             |
+| **CMS / content**    | Contentful, NewsData.io                               |
+| **Workers**          | Fastify, AWS Lambda, Firebase Cloud Functions         |
+| **Observability**    | Mixpanel, Sentry, LogRocket                           |
+| **Testing**          | Cypress                                               |
 
 ---
 
 ## Architecture
 
-Every client is a thin UI over one shared API. State lives in Postgres, accessed through Prisma.
+All three clients share the same backend and database.
 
-```
+```text
 ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-│  Web (SPA)   │   │  Chrome ext  │   │  iOS/Android │
-│   nextjs/    │   │     ce/      │   │     rn/      │
+│  Web app     │   │ Chrome ext   │   │ iOS/Android │
+│  nextjs/     │   │ ce/          │   │ rn/         │
 └──────┬───────┘   └──────┬───────┘   └──────┬───────┘
        │                  │                  │
        │        ┌─────────┴────────┐         │
-       │        │ background       │         │
+       │        │ Background       │         │
        │        │ service worker   │         │
        │        └─────────┬────────┘         │
        └──────────────────┼──────────────────┘
-                          │  REST + Firebase ID token
-                 ┌────────▼─────────┐
-                 │  nextjs/pages/api│
-                 │  Next.js API     │
-                 └────────┬─────────┘
                           │
-      ┌───────────┬───────┴────┬────────────┐
-      │           │            │            │
-┌─────▼────┐ ┌────▼────┐ ┌─────▼────┐ ┌─────▼─────┐
-│ Postgres │ │ OpenAI  │ │ lambda/  │ │ worker/   │
-│ (Prisma) │ │         │ │ AWS Polly│ │ ingestion │
-└──────────┘ └─────────┘ └──────────┘ └───────────┘
+                  REST + Firebase ID token
+                          │
+                  ┌───────▼────────┐
+                  │ Next.js API    │
+                  │ pages/api      │
+                  └───────┬────────┘
+                          │
+        ┌─────────────────┼─────────────────┐
+        │                 │                 │
+   ┌────▼────┐       ┌────▼────┐      ┌────▼────┐
+   │Postgres │       │ OpenAI  │      │Workers /│
+   │ Prisma  │       │         │      │ Lambda  │
+   └─────────┘       └─────────┘      └─────────┘
+
+
+Deprecated AI architecture:
+
+                  ┌──────────────────────┐
+                  │ ai/ Python service   │
+                  │ Flask + LangChain    │
+                  │ Chroma + SSE         │
+                  └──────────┬───────────┘
+                             │
+                  ┌──────────┴───────────┐
+                  │                      │
+             ┌────▼────┐            ┌────▼────┐
+             │Postgres │            │ OpenAI  │
+             │ Prisma  │            │ Chroma  │
+             └─────────┘            └─────────┘
 ```
 
-All three clients share the same shape: **Redux Toolkit** store, thunks calling the same endpoints, MUI components. The extension differs in one way — its network calls are proxied through a Plasmo background service worker rather than issued directly from the UI.
+The web app, Chrome extension, and mobile app all use the same Next.js API and data model.
+
+The Chrome extension is slightly different: requests from the injected UI are routed through a Manifest V3 background service worker before reaching the backend.
+
+This avoids network restrictions imposed on content scripts by the host page's Content Security Policy.
+
+The deprecated `ai/` service was the original Python chat backend. It used Flask, LangChain, Chroma, and Server-Sent Events for article-grounded, streaming AI conversation. It is no longer wired to the current clients.
 
 ---
 
-## Folder structure
+## Repository structure
 
-| Package | Stack | Role |
-|---|---|---|
-| [`nextjs/`](#nextjs--web-app--api) | Next.js (Pages Router), Prisma, MUI | **Web app + the API for all clients** |
-| [`ce/`](#ce--chrome-extension) | Plasmo, React, Redux | Chrome extension — lessons injected into any page |
-| [`rn/`](#rn--mobile-app) | Expo, React Native | iOS & Android app |
-| [`ai/`](#ai--python-service-inactive) | Flask, LangChain, Chroma | **Inactive.** Original streaming chat service |
-| `lambda/` | Serverless Framework, TypeScript | AWS Polly text-to-speech (`polly`, `chatPolly`) |
-| `worker/` | Fastify, TypeScript | Work server for long running LLM tasks such as vocabulary extraction and article parsing |
-| `writer/` | TypeScript | News ingestion from NewsData.io into Contentful |
-| `mobile/` | Python, Firebase Functions | Firebase Cloud Functions |
-| `functions/` | — | Firebase project config |
+| Package     | Stack                            | Role                                       |
+| ----------- | -------------------------------- | ------------------------------------------ |
+| `nextjs/`   | Next.js, Prisma, MUI             | Web app + API used by all clients          |
+| `ce/`       | Plasmo, React, Redux             | Chrome extension                           |
+| `rn/`       | Expo, React Native               | iOS / Android app                          |
+| `ai/`       | Flask, LangChain, Chroma         | Deprecated original Python AI chat service |
+| `lambda/`   | Serverless Framework, TypeScript | AWS Polly text-to-speech                   |
+| `worker/`   | Fastify, TypeScript              | Long-running ingestion and LLM jobs        |
+| `firebase/` | TypeScript, Firebase Functions   | Firebase Cloud Functions                   |
+| `shared/`   | TypeScript                       | Types and helpers shared across packages   |
 
-### `nextjs/` — web app + API
+---
 
-The system's core. Ships the web UI and the REST API consumed by the extension and the mobile app.
+## `nextjs/` — Web app and shared API
 
-```
+`nextjs/` is the core of the system.
+
+It contains the web client and roughly 70 REST API endpoints used by the web app, Chrome extension, and mobile app.
+
+```text
 nextjs/
 ├── pages/
-│   ├── api/              # ~70 REST endpoints — the backend for every client
-│   │   ├── lessons/      #   lesson lifecycle, chat, messages
-│   │   ├── materials/    #   article import, vocab, ratings
-│   │   ├── messages/     #   paraphrase, grammar, translation
-│   │   ├── publishers/   #   RSS sources, follow, cron
-│   │   ├── vocabs/       #   extraction and saved words
-│   │   ├── youtube/      #   captions, summaries, vocab
-│   │   ├── stripe/       #   checkout and webhooks
-│   │   └── cms/          #   Contentful sync
-│   └── *.tsx             # web app pages
-├── models/               # data access layer over Prisma
-├── db/prisma/            # schema — 25 models (User, Lesson, Message, Vocabulary…)
-├── utils/openai/         # prompt construction per feature
-├── middleware/           # setCurrentUser — resolves Firebase UID to a User
-├── firebase/             # Admin SDK, ID token validation
-├── redux/features/       # client store (mirrors ce/ and rn/)
-└── jobs/, defer/         # scheduled and deferred work
+│   ├── api/
+│   │   ├── lessons/
+│   │   ├── materials/
+│   │   ├── messages/
+│   │   ├── publishers/
+│   │   ├── vocabs/
+│   │   ├── youtube/
+│   │   ├── stripe/
+│   │   └── cms/
+│   └── *.tsx
+├── models/
+├── db/prisma/
+├── utils/openai/
+├── middleware/
+├── firebase/
+├── redux/features/
+└── jobs/, defer/
 ```
 
-**Request flow for an authenticated route:** `validateToken` (verify Firebase ID token) → `setCurrentUser` (Firebase UID → `User` row) → load the resource → verify ownership → handle.
+Authenticated requests generally follow this flow:
 
-### `ce/` — Chrome extension
-
-Built with [Plasmo](https://www.plasmo.com/). Injects a lesson panel into whatever page you're reading, so any article on the web becomes study material.
-
+```text
+Firebase ID token
+      ↓
+validateToken
+      ↓
+resolve Firebase UID → User
+      ↓
+load requested resource
+      ↓
+verify ownership
+      ↓
+handle request
 ```
-ce/
-├── contents/       # content scripts — inject the panel into the host page
-├── background/
-│   └── messages/   # service worker handlers; all API calls proxy through here
-├── components/     # Inject.tsx is the main panel
-├── tabs/           # full-tab pages
-├── redux/features/ # store, mirrors nextjs/redux
-├── firebase/       # client auth
-└── cypress/        # E2E tests
-```
-
-UI components never call the API directly. They dispatch a Redux thunk → `sendToBackground({ name })` → a handler in `background/messages/` → the Next.js API. This exists because Manifest V3 content scripts are subject to the host page's CSP; the service worker is not.
-
-### `rn/` — mobile app
-
-Expo / React Native, iOS and Android.
-
-```
-rn/
-├── screens/        # Feed, Lesson, Talk, Search, Note, Auth …
-├── components/
-├── redux/features/ # store, mirrors nextjs/redux
-├── locales/        # i18n
-└── hooks/, helpers/, styles/
-```
-
-Adds voice input (`@react-native-voice/voice`) and audio playback (`expo-av`) for spoken conversation practice.
-
-### `ai/` — Python service (inactive)
-
-**Not wired to any client.** Kept for reference; the chat feature it served was reimplemented in Node in October 2023.
-
-```
-ai/
-├── app.py          # Flask — POST /api/chat, streams text/event-stream
-├── chat/callback.py# token streaming callback handler
-├── db.py           # its own Prisma client, same Postgres
-└── Dockerfile
-```
-
-This was the original chat backend and is architecturally more capable than what replaced it:
-
-- **Token streaming** over Server-Sent Events, so replies appeared word by word
-- **Retrieval-augmented** — loaded the article with `PlaywrightURLLoader`, embedded it into a Chroma vector store, and answered against a LangChain `ConversationalRetrievalChain`
-
-It was reached through a Next.js rewrite proxying `/api/bot` to Flask on port 5328. That rewrite was not carried over when `web/` was renamed to `nextjs/`, and the service was left stranded. The current implementation (`nextjs/pages/api/lessons/[lessonId]/chat.ts`) is a single blocking OpenAI call with no retrieval step.
-
-> Restoring streaming and grounding is the highest-value open item in the codebase. See [Known gaps](#known-gaps).
 
 ---
 
-## Getting started
+## `ce/` — Chrome extension
 
-Each package installs and runs independently — there is no workspace root.
+The Chrome extension is built with Plasmo and injects the Orca lesson UI directly into the webpage the user is reading.
 
-```bash
-# Web app + API
-cd nextjs
-npm install
-cp .env.example .env          # fill in the values
-npm run db:migrate            # schema lives at db/prisma/schema.prisma
-npm run dev                   # http://localhost:3000
-
-# Chrome extension — then load build/chrome-mv3-dev as an unpacked extension
-cd ce && npm install && cp .env.example .env && npm run dev
-
-# Mobile
-cd rn && npm install && cp .env.example .env
-npm run start                 # or `npm run ios` / `npm run android`
+```text
+ce/
+├── contents/
+├── background/
+│   └── messages/
+├── components/
+├── tabs/
+├── redux/features/
+├── firebase/
+└── cypress/
 ```
 
-Every package ships a `.env.example` listing the keys it needs. **No secrets are committed** — `.env` files are gitignored and the history has been scrubbed.
+A typical request follows this path:
+
+```text
+Injected React UI
+      ↓
+Redux thunk
+      ↓
+sendToBackground()
+      ↓
+Manifest V3 service worker
+      ↓
+Next.js API
+```
+
+The service-worker layer exists because content scripts inherit restrictions from the host page's CSP.
+
+---
+
+## `rn/` — Mobile app
+
+The mobile app is built with Expo and React Native for iOS and Android.
+
+```text
+rn/
+├── screens/
+├── components/
+├── redux/features/
+├── locales/
+├── hooks/
+├── helpers/
+└── styles/
+```
 
 ---
 
 ## Data model
 
-25 Prisma models. The core chain:
+The Prisma schema contains 25 models.
 
-```
-User ──< Lesson ──< Message ──< Sentence
-             │                     └──< Paraphrase, GrammarMistake, Translation
-             └──> Material ──< Vocabulary
-                      └──> Publisher
+The core learning flow is centered around these models:
+
+| Model            | Role                                      |
+| ---------------- | ----------------------------------------- |
+| `User`           | Learner account                           |
+| `Lesson`         | A user's learning session                 |
+| `Material`       | Imported article or learning content      |
+| `Message`        | Conversation message within a lesson      |
+| `Sentence`       | Sentence-level decomposition of a message |
+| `Vocabulary`     | Vocabulary extracted from a material      |
+| `Publisher`      | Source publisher for imported content     |
+| `Paraphrase`     | Suggested alternative phrasing            |
+| `GrammarMistake` | Grammar feedback attached to a sentence   |
+| `Translation`    | Sentence-level translation                |
+
+### Relationships
+
+```mermaid
+erDiagram
+    User ||--o{ Lesson : has
+
+    Material ||--o{ Lesson : used_in
+    Publisher ||--o{ Material : publishes
+
+    Lesson ||--o{ Message : contains
+    Material ||--o{ Vocabulary : contains
+
+    Message ||--o{ Sentence : contains
+
+    Sentence ||--o{ Paraphrase : has
+    Sentence ||--o{ GrammarMistake : has
+    Sentence ||--o{ Translation : has
 ```
 
-A **Material** is an imported article. A **Lesson** is one user's session with that material. **Messages** are the tutor conversation; **Sentences** decompose them so grammar and paraphrase features can attach per sentence.
+Conceptually:
+
+```text
+User
+ └── Lesson
+      ├── Material
+      │    ├── Vocabulary
+      │    └── Publisher
+      │
+      └── Message
+           └── Sentence
+                ├── Paraphrase
+                ├── GrammarMistake
+                └── Translation
+```
+
+A `Material` represents an imported article.
+
+A `Lesson` represents one user's learning session with that material.
+
+Messages are broken into sentences so grammar feedback, paraphrases, and translations can be attached at the sentence level.
+
+----
+
+## AI Chat Service
+
+### Original Python service
+
+The original chat backend lived in `ai/` and used:
+
+* Flask
+* LangChain
+* Chroma
+* PlaywrightURLLoader
+* Server-Sent Events
+
+```text
+Article URL
+    ↓
+Load article
+    ↓
+Chunk / embed
+    ↓
+Chroma retrieval
+    ↓
+LangChain conversation
+    ↓
+SSE token streaming
+    ↓
+Client
+```
+
+### Migration to the Node API
+
+The chat feature was later moved into the main Next.js API.
+
+The current Node.js implementation was adopted after OpenAI introduced support for web content retrieval via its API. This made it possible to simplify the backend by leveraging OpenAI's capabilities to directly fetch and process article content from URLs, eliminating the need for a custom ingestion and retrieval pipeline.
+
+#### Tradeoffs of the Official OpenAI Approach
+
+##### Pros
+
+- **Simplicity:** Easily integrates content scraping and AI-powered responses without custom pipelines.
+- **Maintenance:** Reduces infrastructure to manage, as most complexity is handled by OpenAI.
+- **Rapid Development:** Speeds up prototyping and feature delivery by delegating web content handling to a third party.
+
+##### Cons
+
+- **Limited Control:** Cannot customize or debug how content is parsed or processed.
+- **Platform Dependency:** Relies on OpenAI's API availability, pricing, and long-term policy decisions.
+- **Feature Limits:** May lack support for advanced features like custom retrieval, publisher-specific rules, or detailed vocab extraction.
+
+#### Tradeoffs of a Dedicated Python AI Service (LangChain)
+
+##### Pros
+
+1. **Flexibility:** A dedicated AI service is better suited for custom retrieval pipelines, agent workflows, tool integrations, and other complex or long-running AI workloads.
+
+2. **Customizability:** Full control over tooling, embeddings, chunking, retrieval logic, and publisher-specific rules can be tailored as needed.
+
+##### Cons
+
+1. **Increased Architectural Complexity:** Running a Python service alongside Node.js adds operational overhead, requiring additional infrastructure and maintenance.
+2. **Learning Overhead:** Developers need to understand and maintain both the Node.js and Python stacks.
+
+
+-----
+### LangChain.js experiment
+
+Tried LangChain.js, but it didn’t work well with our Next.js + Vercel setup because some AI workflows were long-running and didn’t fit well within Vercel’s serverless execution model.
 
 ---
 
+If I continued developing Orca, I would reintroduce a dedicated AI service with a simpler architecture to gain more flexibility and control over web content retrieval, vocabulary extraction, PDF processing, and other custom AI workflows.
+
+
+---
+
+## Engineering challenges
+
+### 1. Parsing arbitrary websites
+
+One of the hardest parts of Orca was reliably converting arbitrary news pages into structured lesson material.
+
+Publishers use different DOM structures and may include:
+
+* Dynamically rendered content
+* Advertising
+* Navigation content
+* Incomplete metadata
+* Publisher-specific layouts
+
+The ingestion pipeline had to turn inconsistent input into content suitable for vocabulary extraction, summaries, and AI conversation.
+
+---
+
+### 2. Keeping AI conversation responsive
+
+Grounding a conversation on an entire article introduces multiple sources of latency.
+
+```text
+Scraping
+   ↓
+Parsing
+   ↓
+Embedding / retrieval
+   ↓
+LLM generation
+   ↓
+Response
+```
+
+The original service used SSE streaming so users could begin reading the response before the full completion finished.
+
+This improved perceived responsiveness, but article parsing and retrieval still added significant end-to-end latency.
+
+That tradeoff influenced the later move toward a simpler Node-based chat implementation.
+
+---
+
+### 3. Supporting three clients with one backend
+
+The web app, Chrome extension, and mobile app all needed access to the same domain model and backend functionality.
+
+Rather than building separate backends, I kept the API centralized in the Next.js application.
+
+This allowed the clients to share the same user, lesson, message, vocabulary, and material models while keeping each client focused on platform-specific UI.
+
+---
+
+### 4. Browser extension platform constraints
+
+The Chrome extension introduced constraints that do not exist in a normal React web app.
+
+Because injected content scripts are affected by the host page's CSP, API traffic is proxied through the Manifest V3 background service worker.
+
+This keeps browser-specific networking behavior in the extension background layer rather than the UI.
+
+
 ## Future improvements
 
-* **Increase test coverage:** Since this project was built at the pre-PMF / MVP stage, I prioritized rapid product iteration and shipping over comprehensive automated testing. I would add stronger unit, integration, and end-to-end coverage around the core user flows.
+* **Increase test coverage and code quality checks:** Since this project was built at the pre-PMF / MVP stage, I prioritized rapid product iteration and shipping over comprehensive automated testing and stricter CI checks. I would add stronger safeguards around the core user flows and development workflow, including:
 
-Add Storybook stories for reusable UI components, Chromatic for automated visual regression testing, and Cypress E2E tests for critical user flows.
+  * Storybook for reusable UI components
+  * Chromatic for visual regression testing
+  * Cypress for end-to-end testing
+  * ESLint checks in CI and pre-push hooks
+  * Strict TypeScript checks in CI and pre-push hooks
 
-* **Move to a monorepo:** Consolidate the web app, browser extension, and React Native app into a monorepo to share common components, types, utilities, and business logic. Today each client duplicates code and `shared/` only has a thin types/helpers stub. This layout is where that duplication would go.
+* **Restore grounded streaming conversations:** Reintroduce article-grounded retrieval and streaming while keeping the architecture simpler than the original implementation. This would include:
 
-```
+  * Controlling stop and continue behavior using a `requestId` and `AbortController.signal`
+  * Generating TTS sentence-by-sentence with Amazon Polly after each sentence is completed
+  * Throttling streamed UI updates to avoid excessive React re-renders
+  * Keeping retrieval and conversation state easier to trace and debug
+
+* **Move to a monorepo:** Put the web app, Chrome extension, and mobile app in one workspace so they can share UI, Redux, types, and API clients instead of duplicating them. That would also make it easier to add something like an Electron app later without rebuilding the web layer.
+
+```text
 orca/
 ├── apps/
-│   ├── web/          # nextjs/ — web app + API
-│   ├── extension/    # ce/ — Chrome extension
-│   └── mobile/       # rn/ — Expo / React Native
+│   ├── web/
+│   ├── extension/
+│   └── mobile/
+│
 ├── packages/
-│   ├── ui/           # shared presentational components
-│   ├── store/        # Redux Toolkit slices (auth, lessons, messages…)
-│   ├── api-client/   # typed API helpers / thunks
-│   ├── types/        # shared domain types
-│   └── config/       # eslint, tsconfig, tooling
+│   ├── ui/
+│   ├── store/
+│   ├── api-client/
+│   ├── types/
+│   └── config/
+│
 ├── services/
-│   ├── worker/       # Fastify ingestion / LLM jobs
-│   └── lambda/       # Polly TTS
-└── package.json      # workspace root (pnpm workspaces)
+│   ├── worker/
+│   └── lambda/
+│
+└── package.json
 ```
 
-* **Improve component boundaries and data flow:** Refactor several larger legacy components, reduce duplication, and make state and data ownership clearer.
+* **Standardize authorization:** Centralize resource-level authorization policies and add integration tests covering cross-user access boundaries. Some endpoints were intentionally exposed during the free-trial/MVP phase, so I would also make the authorization requirements explicit for every endpoint.
 
-* **Strengthen authorization and permissions:** Review authorization boundaries across API routes and user-owned resources, and add more systematic permission checks and tests.
-
-
-
-# Challeges
-
-### Parsing websites
-
-- **Parsing websites correctly and improving parsing/response time for real-time conversation**
-
-In 2023, grounding chat on a full article was slow end-to-end. The process—scraping → (optional) embedding/retrieval → LLM completion—resulted in laggy "real-time conversation", particularly before streaming and faster models became standard. Site parsing was (and remains) unreliable across different publishers. Ended using `[Text from: ${lessonUrl}]` because it is 
-
-#### Initial Architecture
-
-The data flow for chat messages initially was:
-
-```
-ai/app.py
-   ↓
-nextjs/pages/api/chatStream.ts
-   ↓
-nextjs/pages/api/chat.ts
+```text
+Firebase token → validateToken → UID → User → resource → ownership → request
 ```
 
-#### Change to Non-Streaming
 
-Streaming was discontinued because Polly (the TTS engine) requires the full string before synthesizing speech. As a result, token streaming is no longer the critical path. 
+---
+
+## Getting started
+
+Each package currently runs independently.
+
+### Web app + API
+
+```bash
+cd nextjs
+npm install
+cp .env.example .env
+npm run db:migrate
+npm run dev
+```
+
+### Chrome extension
+
+```bash
+cd ce
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Then load the generated Chrome MV3 build as an unpacked extension.
+
+### Mobile
+
+```bash
+cd rn
+npm install
+cp .env.example .env
+npm run start
+```
 
 ---
