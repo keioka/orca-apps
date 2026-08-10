@@ -495,6 +495,8 @@ orca/
 └── package.json
 ```
 
+* **LLM observability:** Track and version prompts, monitor token usage and costs, and evaluate model performance over time.
+
 * **Standardize authorization:** Centralize resource-level authorization policies and add integration tests covering cross-user access boundaries. Some endpoints were intentionally exposed during the free-trial/MVP phase, so I would also make the authorization requirements explicit for every endpoint.
 
 ```text
